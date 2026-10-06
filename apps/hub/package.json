@@ -2,7 +2,7 @@
   "name": "@pos/hub",
   "version": "0.0.0",
   "private": true,
-  "description": "Nodo local de la sede: tiempo real por WebSocket en la LAN, impresión ESC/POS y cola hacia la nube",
+  "description": "Local node of the location: real-time over WebSocket on the LAN, ESC/POS printing and queue to the cloud",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",

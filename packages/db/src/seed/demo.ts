@@ -48,14 +48,14 @@ type TranslationRow = typeof s.translations.$inferInsert;
 
 const TRANSLATED_LANGUAGES = ['fr', 'it', 'en'] as const satisfies readonly ContentLanguage[];
 
-/** Código público del QR: 12 caracteres URL-safe, no adivinable (RF-E06). */
+/** Public QR code: 12 URL-safe characters, unguessable (RF-E06). */
 function newQrCode(): string {
   return randomBytes(9).toString('base64url');
 }
 
 /**
- * Siembra el "Restaurant Demo Zürich". Idempotente: si la organización demo ya existe, no hace
- * nada (para empezar de cero usar `pnpm db:setup --reset`).
+ * Seeds the "Restaurant Demo Zürich". Idempotent: if the demo organization already exists, it does
+ * nothing (use `pnpm db:setup --reset` to start over).
  */
 export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
   const existing = await db
@@ -67,7 +67,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
     return { status: 'skipped', organizationId: existing[0].id };
   }
 
-  // Hash fuera de la transacción: argon2 es deliberadamente lento.
+  // Hash outside the transaction: argon2 is deliberately slow.
   const [backofficePasswordHash, ...pinHashes] = await Promise.all([
     hash(DEMO_BACKOFFICE_PASSWORD),
     ...DEMO_USERS.map((user) => hash(user.pin)),
@@ -79,7 +79,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
   const loc = { organizationId, locationId };
 
   await db.transaction(async (tx) => {
-    // ── Organización y sede ────────────────────────────────────────────────
+    // ── Organization and location ──────────────────────────────────────────
     await tx.insert(s.organizations).values({ id: organizationId, ...DEMO_ORGANIZATION });
     await tx.insert(s.locations).values({
       id: locationId,
@@ -89,7 +89,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
       settings: DEFAULT_LOCATION_SETTINGS,
     });
 
-    // ── Impresoras, estaciones, áreas, mesas y terminales ─────────────────
+    // ── Printers, stations, areas, tables and terminals ───────────────────
     const printerIds = new Map<string, string>();
     for (const printer of DEMO_PRINTERS) {
       const id = newId();
@@ -155,7 +155,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
       })),
     );
 
-    // ── Roles, permisos y usuarios ─────────────────────────────────────────
+    // ── Roles, permissions and users ───────────────────────────────────────
     const roleIds = new Map<RoleKey, string>();
     for (const key of ROLE_KEYS) {
       const roleId = newId();
@@ -187,7 +187,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
         .values(user.roles.map((role) => ({ ...org, userId, roleId: roleIds.get(role)! })));
     }
 
-    // ── MWST: categorías, tasas y reglas como datos con vigencia ─────────
+    // ── MWST: categories, rates and rules as dated data ──────────────────
     const taxCategoryIds = new Map<string, string>();
     for (const category of SWISS_TAX_CATEGORIES) {
       const id = newId();
@@ -207,7 +207,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
       ),
     );
 
-    // ── Catálogo ───────────────────────────────────────────────────────────
+    // ── Catalog ────────────────────────────────────────────────────────────
     const translationRows: TranslationRow[] = [];
     const translate = (
       entityType: TranslatableEntity,
@@ -353,7 +353,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
 
     await tx.insert(s.translations).values(translationRows);
 
-    // ── Clientes con consentimiento (RN-23) ────────────────────────────────
+    // ── Customers with consent (RN-23) ─────────────────────────────────────
     for (const customer of DEMO_CUSTOMERS) {
       const customerId = newId();
       await tx.insert(s.customers).values({

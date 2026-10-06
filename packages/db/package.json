@@ -2,7 +2,7 @@
   "name": "@pos/db",
   "version": "0.0.0",
   "private": true,
-  "description": "Esquema Drizzle (MySQL 8), migraciones versionadas, cliente y seed del Core POS",
+  "description": "Drizzle schema (MySQL 8), versioned migrations, client and seed of the Core POS",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",

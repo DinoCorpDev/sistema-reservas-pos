@@ -1,8 +1,8 @@
 import { uuidv7 } from 'uuidv7';
 
 /**
- * Identificadores del Core (PA-10): UUID v7 generados en el dispositivo, para crear registros
- * sin conexión y ordenarlos por tiempo. En MySQL se guardan como BINARY(16).
+ * Core identifiers (PA-10): UUID v7 generated on the device, so records can be created
+ * offline and sorted by time. In MySQL they are stored as BINARY(16).
  */
 
 declare const uuidBrand: unique symbol;
@@ -26,7 +26,7 @@ export function asUuid(value: string): Uuid {
   return normalized;
 }
 
-/** Milisegundos Unix codificados en un UUID v7 (útil para depurar y para ordenar). */
+/** Unix milliseconds encoded in a UUID v7 (useful for debugging and sorting). */
 export function uuidV7Timestamp(id: Uuid): number {
   const hex = id.replaceAll('-', '').slice(0, 12);
   return Number.parseInt(hex, 16);

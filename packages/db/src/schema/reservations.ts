@@ -18,11 +18,11 @@ import {
 } from '../columns';
 
 /*
- * Tablas operativas: se crean en el dispositivo y se sincronizan. Sin FK duras (la sincronización
- * puede llegar fuera de orden); la integridad la valida el dominio. Ver docs/ARQUITECTURA.md.
+ * Operational tables: created on the device and synced. No hard FKs (sync can arrive
+ * out of order); the domain validates integrity. See docs/ARQUITECTURA.md.
  */
 
-/** Reserva vinculada a mesas reales del Core (RF-E01, RF-E03). `externalRef` = id en Zitas. */
+/** Reservation linked to real Core tables (RF-E01, RF-E03). `externalRef` = id in Zitas. */
 export const reservations = mysqlTable(
   'reservations',
   {
@@ -40,7 +40,7 @@ export const reservations = mysqlTable(
     guestName: varchar('guest_name', { length: 200 }),
     guestPhone: varchar('guest_phone', { length: 20 }),
     notes: text('notes'),
-    /** El gerente la mantiene aunque pase el tiempo de no-show (RN-22). */
+    /** The manager holds it even after the no-show time has passed (RN-22). */
     heldByManager: boolean('held_by_manager').notNull().default(false),
     confirmedAt: utcDatetime('confirmed_at'),
     seatedAt: utcDatetime('seated_at'),
@@ -70,7 +70,7 @@ export const reservationTables = mysqlTable(
   (t) => [uniqueIndex('uq_reservation_tables').on(t.reservationId, t.tableId)],
 );
 
-/** Visita real al restaurante, con o sin reserva (walk-in) (RF-E02, RF-E03). */
+/** Actual visit to the restaurant, with or without a reservation (walk-in) (RF-E02, RF-E03). */
 export const visits = mysqlTable(
   'visits',
   {

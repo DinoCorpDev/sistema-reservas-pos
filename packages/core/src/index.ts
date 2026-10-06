@@ -1,10 +1,10 @@
 /**
- * @pos/core — dominio puro del Sistema Reservas POS.
+ * @pos/core — pure domain of Sistema Reservas POS.
  *
- * Reglas de este paquete (ver CLAUDE.md):
- * - Sin dependencias de framework, ORM, red ni UI (lo vigila ESLint).
- * - Dinero siempre en rappen enteros; tasas de MWST siempre como datos con vigencia.
- * - Toda regla de negocio y todo cálculo de dinero tiene test unitario.
+ * Rules for this package (see CLAUDE.md):
+ * - No framework, ORM, network or UI dependencies (enforced by ESLint).
+ * - Money always in integer rappen; MWST rates always as data with a validity period.
+ * - Every business rule and every money calculation has a unit test.
  */
 export * from './shared/money';
 export * from './shared/ids';

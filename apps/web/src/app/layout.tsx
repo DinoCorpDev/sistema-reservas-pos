@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // En tablets de sala no se hace zoom; los objetivos táctiles ya miden ≥ 44 px (RNF-22).
+  // No zoom on floor tablets; touch targets already measure ≥ 44 px (RNF-22).
   maximumScale: 1,
   userScalable: false,
 };
 
-// El idioma real por usuario y por cliente llega con next-intl en la Fase 1 (RF-A08).
+// The actual per-user and per-customer language arrives with next-intl in Phase 1 (RF-A08).
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="de">

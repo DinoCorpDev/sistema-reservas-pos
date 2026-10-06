@@ -4,8 +4,8 @@ import type { ComponentProps } from 'react';
 import { cn } from './utils';
 
 /**
- * Botón táctil (shadcn/ui). Todos los tamaños miden al menos 44 px de alto (RNF-22);
- * `pos` es el tamaño de los botones de producto en el POS.
+ * Touch button (shadcn/ui). Every size is at least 44 px tall (RNF-22);
+ * `pos` is the size of the product buttons in the POS.
  */
 export const buttonVariants = cva(
   'inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-base font-medium whitespace-nowrap transition-colors select-none outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0',
@@ -35,7 +35,7 @@ export const buttonVariants = cva(
 
 export type ButtonProps = ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
-    /** Renderiza el hijo (p. ej. un `<Link>`) con los estilos del botón. */
+    /** Renders the child (e.g. a `<Link>`) with the button styles. */
     asChild?: boolean;
   };
 

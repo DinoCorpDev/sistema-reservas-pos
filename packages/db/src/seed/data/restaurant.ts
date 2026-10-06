@@ -11,8 +11,8 @@ import type { OpeningHours } from '../../schema';
 import type { StationKey } from './catalog';
 
 /**
- * Datos del "Restaurant Demo Zürich" (DEC-004: Zúrich, DE en sede y cocina).
- * Todo es ficticio; el UID es de demostración con dígito verificador válido.
+ * Data of the "Restaurant Demo Zürich" (DEC-004: Zürich, DE for location and kitchen).
+ * Everything is fictitious; the UID is a demo one with a valid check digit.
  */
 export const DEMO_ORGANIZATION = {
   name: 'Demo Gastro AG',
@@ -54,7 +54,7 @@ export const DEMO_LOCATION = {
   } satisfies OpeningHours,
 };
 
-/** Dos áreas, 12 mesas: Saal 1-8, Terrasse T1-T4 (de temporada). */
+/** Two areas, 12 tables: Saal 1-8, Terrasse T1-T4 (seasonal). */
 export const DEMO_AREAS = [
   { name: 'Saal', qrMode: 'order_pay', tables: ['1', '2', '3', '4', '5', '6', '7', '8'] },
   { name: 'Terrasse', qrMode: 'order', tables: ['T1', 'T2', 'T3', 'T4'] },
@@ -115,8 +115,8 @@ export const DEMO_ROLE_NAMES: Record<RoleKey, string> = {
 };
 
 /**
- * Usuarios de PRUEBA. Los PIN y la contraseña son valores de desarrollo; nunca se usan en
- * producción. La contraseña del backoffice puede sobrescribirse con SEED_ADMIN_PASSWORD.
+ * TEST users. The PINs and the password are development values; never used in
+ * production. The backoffice password can be overridden with SEED_ADMIN_PASSWORD.
  */
 export const DEMO_USERS: {
   displayName: string;
@@ -172,8 +172,8 @@ export const DEMO_CONSENT_TEXT =
   'Ich bin einverstanden, dass Demo Gastro AG meine Kontaktdaten für Reservationen und Belege speichert (revDSG).';
 
 /**
- * Plantilla suiza de MWST como DATOS (RN-02): tasas vigentes desde 2024 y las anteriores,
- * para poder probar la vigencia. Se editan desde el backoffice (RF-B13).
+ * Swiss MWST template as DATA (RN-02): rates in force since 2024 plus the previous ones,
+ * so validity periods can be tested. Edited from the backoffice (RF-B13).
  */
 export const SWISS_TAX_CATEGORIES: { key: TaxCategoryKey; name: string }[] = [
   { key: 'food', name: 'Speisen' },
@@ -197,7 +197,7 @@ export const SWISS_TAX_RATES: {
   { code: 'accommodation', rateBp: 380, validFrom: '2024-01-01', validTo: null },
 ];
 
-/** RN-03: en el local tasa normal; comida y sin alcohol para llevar o a domicilio, reducida; alcohol siempre normal. */
+/** RN-03: on premise, normal rate; food and soft drinks for takeaway or delivery, reduced; alcohol always normal. */
 export const SWISS_TAX_RULES: Record<TaxCategoryKey, Record<ConsumptionType, TaxRateCode>> = {
   food: { on_premise: 'normal', takeaway: 'reduced', delivery: 'reduced' },
   non_alcoholic_beverage: { on_premise: 'normal', takeaway: 'reduced', delivery: 'reduced' },

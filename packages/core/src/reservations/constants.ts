@@ -1,4 +1,4 @@
-/** Estados de reserva (RF-E03). Los walk-ins son visitas sin reserva. */
+/** Reservation statuses (RF-E03). Walk-ins are visits without a reservation. */
 export const RESERVATION_STATUSES = [
   'pending',
   'confirmed',

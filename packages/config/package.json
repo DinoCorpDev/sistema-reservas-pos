@@ -2,7 +2,7 @@
   "name": "@pos/config",
   "version": "0.0.0",
   "private": true,
-  "description": "Configuración compartida: tsconfig base para todo el monorepo",
+  "description": "Shared configuration: base tsconfig for the whole monorepo",
   "exports": {
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./tsconfig/node.json": "./tsconfig/node.json",

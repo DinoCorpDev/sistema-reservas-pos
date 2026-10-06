@@ -1,11 +1,11 @@
 @import 'tailwindcss';
 
-/* Las clases usadas dentro de @pos/ui también se generan cuando otra app importa este CSS. */
+/* Classes used inside @pos/ui are also generated when another app imports this CSS. */
 @source '../';
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tokens de diseño (convención shadcn/ui). Paleta neutra hasta definir la marca. */
+/* Design tokens (shadcn/ui convention). Neutral palette until the brand is defined. */
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -77,7 +77,7 @@
     @apply border-border outline-ring/50;
   }
   html {
-    /* Tablets en sala: sin zoom accidental por doble toque ni resaltado gris al tocar. */
+    /* Floor tablets: no accidental double-tap zoom and no grey highlight on tap. */
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }

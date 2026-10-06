@@ -1,8 +1,8 @@
 import { defineConfig } from 'tsup';
 
 /**
- * Un solo archivo para instalar en el mini-PC o tablet de la sede. Los paquetes @pos/* (TypeScript
- * fuente) se empaquetan; el resto de dependencias se resuelven desde node_modules del hub.
+ * A single file to install on the location's mini-PC or tablet. The @pos/* packages (TypeScript
+ * source) are bundled; the other dependencies are resolved from the hub's node_modules.
  */
 export default defineConfig({
   entry: ['src/index.ts'],

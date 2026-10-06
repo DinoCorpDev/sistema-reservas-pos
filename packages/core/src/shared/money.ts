@@ -1,13 +1,13 @@
 /**
- * Dinero del Core POS (PA-08, RN-06).
+ * Core POS money (PA-08, RN-06).
  *
- * Todos los montos son enteros en rappen (1 CHF = 100 Rp). Nunca se usa float para montos:
- * la única división permitida aquí es la del redondeo a 0,05 CHF, que vuelve a entero de inmediato.
+ * All amounts are integers in rappen (1 CHF = 100 Rp). Floats are never used for amounts:
+ * the only division allowed here is the CHF 0.05 rounding, which returns to an integer at once.
  */
 
 declare const rappenBrand: unique symbol;
 
-/** Monto entero en rappen. Construir siempre con `rappen()` o `parseChf()`. */
+/** Integer amount in rappen. Always build it with `rappen()` or `parseChf()`. */
 export type Rappen = number & { readonly [rappenBrand]: true };
 
 export class MoneyError extends Error {
@@ -41,8 +41,8 @@ export function multiplyRappen(amount: Rappen, quantity: number): Rappen {
 const CHF_INPUT = /^(-)?(\d{1,3}(?:'\d{3})+|\d+)(?:[.,](\d{1,2}))?$/;
 
 /**
- * Convierte un texto en CHF a rappen sin pasar por float.
- * Acepta `12`, `12.5`, `12.50`, `12,50`, `1'234.50` y negativos. Rechaza más de 2 decimales.
+ * Converts a CHF string to rappen without going through float.
+ * Accepts `12`, `12.5`, `12.50`, `12,50`, `1'234.50` and negatives. Rejects more than 2 decimals.
  */
 export function parseChf(input: string): Rappen {
   const match = CHF_INPUT.exec(input.trim().replace(/^CHF\s*/i, ''));
@@ -56,7 +56,7 @@ export function parseChf(input: string): Rappen {
   return rappen(sign ? -value : value);
 }
 
-/** Formato suizo con apóstrofo ASCII como separador de miles: `CHF 1'234.50`. */
+/** Swiss format with an ASCII apostrophe as thousands separator: `CHF 1'234.50`. */
 export function formatChf(amount: Rappen, options: { currency?: boolean } = {}): string {
   const { currency = true } = options;
   const negative = amount < 0;
@@ -69,21 +69,21 @@ export function formatChf(amount: Rappen, options: { currency?: boolean } = {}):
 }
 
 export interface CashRounding {
-  /** Total a cobrar en efectivo, múltiplo de 5 Rp. */
+  /** Total to collect in cash, a multiple of 5 Rp. */
   payable: Rappen;
-  /** Diferencia `payable - amount`; se registra como redondeo, nunca como descuento (RN-06). */
+  /** Difference `payable - amount`; recorded as rounding, never as a discount (RN-06). */
   rounding: Rappen;
 }
 
 /**
- * Redondeo comercial suizo a 0,05 CHF. Solo se aplica al total pagado en efectivo (RN-06).
- * Restos de 1-2 Rp bajan, de 3-4 Rp suben; es simétrico para montos negativos (devoluciones).
+ * Swiss commercial rounding to CHF 0.05. Applied only to the total paid in cash (RN-06).
+ * Remainders of 1-2 Rp round down, 3-4 Rp round up; symmetric for negative amounts (refunds).
  */
 export function roundCashTo5(amount: Rappen): CashRounding {
   const magnitude = Math.abs(amount);
   const remainder = magnitude % 5;
   const roundedMagnitude = remainder <= 2 ? magnitude - remainder : magnitude + (5 - remainder);
-  // `+ 0` normaliza -0 a 0 (por ejemplo -2 Rp redondea a 0, no a -0).
+  // `+ 0` normalizes -0 to 0 (e.g. -2 Rp rounds to 0, not -0).
   const payable = rappen((amount < 0 ? -roundedMagnitude : roundedMagnitude) + 0);
   return { payable, rounding: subtractRappen(payable, amount) };
 }

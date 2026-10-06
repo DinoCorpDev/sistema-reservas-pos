@@ -3,7 +3,7 @@ import { migrateDatabase } from '../ops';
 
 loadRootEnv();
 
-// La nube y el hub de la sede comparten el mismo esquema y las mismas migraciones.
+// The cloud and the location hub share the same schema and the same migrations.
 for (const name of ['DATABASE_URL', 'HUB_DATABASE_URL']) {
   await migrateDatabase(requireEnv(name));
   console.log(`✓ Migrations applied (${name})`);

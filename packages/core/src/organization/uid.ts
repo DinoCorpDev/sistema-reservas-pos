@@ -1,6 +1,6 @@
 /**
- * Número UID suizo de empresa (CHE-123.456.789), que va en el recibo con el sufijo MWST
- * (RF-A02, RF-D20, RN-08). Dígito verificador módulo 11 con pesos 5,4,3,2,7,6,5,4 (eCH-0097).
+ * Swiss company UID number (CHE-123.456.789), printed on the receipt with the MWST suffix
+ * (RF-A02, RF-D20, RN-08). Modulo-11 check digit with weights 5,4,3,2,7,6,5,4 (eCH-0097).
  */
 const UID_PATTERN = /^CHE-?(\d{3})\.?(\d{3})\.?(\d{3})(?:\s*(MWST|TVA|IVA))?$/i;
 const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4] as const;
@@ -21,7 +21,7 @@ export function isValidSwissUid(value: string): boolean {
   return expected !== null && expected === digits[8];
 }
 
-/** Formato canónico para el recibo: `CHE-123.456.788 MWST`. */
+/** Canonical format for the receipt: `CHE-123.456.788 MWST`. */
 export function formatSwissVatUid(value: string, suffix: 'MWST' | 'TVA' | 'IVA' = 'MWST'): string {
   const match = UID_PATTERN.exec(value.trim());
   if (!match || !isValidSwissUid(value)) {

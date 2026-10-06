@@ -1,7 +1,7 @@
 import 'server-only';
 import { createDb, type Database } from '@pos/db';
 
-/** Conexión única por proceso (se reutiliza entre recargas en desarrollo). */
+/** Single connection per process (reused across reloads in development). */
 const globalForDb = globalThis as unknown as { posDb?: { db: Database; pool: unknown } };
 
 export function getDb(): Database {

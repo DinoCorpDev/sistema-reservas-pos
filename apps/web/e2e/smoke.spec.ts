@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Fase 0 smoke', () => {
+test.describe('Phase 0 smoke', () => {
   test('the home page links every operating surface', async ({ page }) => {
     await page.goto('/');
     await expect(

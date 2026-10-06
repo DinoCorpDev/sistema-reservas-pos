@@ -1,5 +1,5 @@
 /**
- * Módulo reservations: reservas vinculadas a mesas reales, check-in, visitas y no-show.
- * Zitas lee y escribe por API; el Core es la fuente de verdad. Fase 5.
+ * Reservations module: reservations linked to real tables, check-in, visits and no-show.
+ * Zitas reads and writes through the API; the Core is the source of truth. Phase 5.
  */
 export * from './constants';

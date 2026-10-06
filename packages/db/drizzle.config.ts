@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { defineConfig } from 'drizzle-kit';
 
-// drizzle-kit se ejecuta desde packages/db; el .env vive en la raíz del monorepo.
+// drizzle-kit runs from packages/db; the .env lives at the monorepo root.
 if (existsSync('../../.env')) {
   process.loadEnvFile('../../.env');
 }

@@ -26,8 +26,8 @@ function parseDatabaseUrl(url: string) {
 }
 
 /**
- * Crea la base si no existe (utf8mb4). Con `reset` la borra antes, solo en hosts locales o en CI:
- * nunca contra un servidor remoto.
+ * Creates the database if it does not exist (utf8mb4). With `reset` it drops it first, only on
+ * local hosts or in CI: never against a remote server.
  */
 export async function createDatabase(url: string, options: { reset?: boolean } = {}) {
   const { database, serverUrl, host } = parseDatabaseUrl(url);

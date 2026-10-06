@@ -1,15 +1,15 @@
 import * as s from './schema';
 
 /**
- * Clasificación de cada tabla. Los tests de invariantes (schema.test.ts) verifican que todas
- * estén clasificadas y que cada grupo cumpla sus reglas (multi-tenant, soft delete, sync, append-only).
+ * Classification of every table. The invariant tests (schema.test.ts) check that all tables are
+ * classified and that each group follows its rules (multi-tenant, soft delete, sync, append-only).
  */
 export const TABLE_GROUPS = {
-  /** Raíz del multi-tenant. */
+  /** Multi-tenant root. */
   root: [s.organizations],
-  /** Configuración de la sede: FK, soft delete, `location_id` obligatorio (salvo `locations`). */
+  /** Location configuration: FK, soft delete, required `location_id` (except `locations`). */
   config: [s.locations, s.areas, s.diningTables, s.terminals, s.kitchenStations, s.printers],
-  /** Datos maestros de la organización: FK, soft delete; `location_id` solo si aplica. */
+  /** Organization master data: FK, soft delete; `location_id` only when applicable. */
   master: [
     s.users,
     s.userLocations,
@@ -36,7 +36,7 @@ export const TABLE_GROUPS = {
     s.customers,
     s.consents,
   ],
-  /** Operación diaria sincronizable: org + sede obligatorias, sin FK duras, soft delete, versión. */
+  /** Syncable daily operations: required org + location, no hard FKs, soft delete, version. */
   operational: [
     s.reservations,
     s.reservationTables,
@@ -54,11 +54,11 @@ export const TABLE_GROUPS = {
     s.cashMovements,
     s.paymentReconciliations,
   ],
-  /** Solo se agrega; triggers MySQL rechazan UPDATE y DELETE (RN-10). */
+  /** Insert-only; MySQL triggers reject UPDATE and DELETE (RN-10). */
   appendOnly: [s.auditEvents, s.receipts, s.dailyClosings],
-  /** Infraestructura de eventos, sincronización y numeración. */
+  /** Infrastructure for events, sync and numbering. */
   infrastructure: [s.outboxEvents, s.syncOperations, s.orderNumberSequences],
 } as const;
 
-/** Tablas append-only por nombre SQL, usadas por la migración de triggers. */
+/** Append-only tables by SQL name, used by the triggers migration. */
 export const APPEND_ONLY_TABLE_NAMES = ['audit_events', 'receipts', 'daily_closings'] as const;

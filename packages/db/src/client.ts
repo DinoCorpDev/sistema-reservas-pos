@@ -3,8 +3,8 @@ import mysql from 'mysql2/promise';
 import * as schema from './schema';
 
 /**
- * Pool MySQL en UTC: `timezone: 'Z'` para que mysql2 lea y escriba DATETIME como UTC, y cada
- * conexión fija `time_zone = '+00:00'` para que CURRENT_TIMESTAMP también sea UTC.
+ * MySQL pool in UTC: `timezone: 'Z'` so mysql2 reads and writes DATETIME as UTC, and each
+ * connection sets `time_zone = '+00:00'` so CURRENT_TIMESTAMP is UTC as well.
  */
 export function createPool(url: string, options: { connectionLimit?: number } = {}) {
   const pool = mysql.createPool({

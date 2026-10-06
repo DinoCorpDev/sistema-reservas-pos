@@ -1,7 +1,7 @@
 import { Button } from '@pos/ui/button';
 import Link from 'next/link';
 
-/** Pantalla provisional de un módulo mientras se construye su fase. */
+/** Temporary screen for a module while its phase is being built. */
 export function ModulePlaceholder({
   title,
   subtitle,

@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { createPool } from '@pos/db';
 import { startHub } from './server';
 
-// En desarrollo se usa el .env de la raíz del monorepo; en la sede, variables del servicio.
+// In development the monorepo root .env is used; at the location, the service's variables.
 const rootEnv = resolve(process.cwd(), '../../.env');
 if (existsSync(rootEnv)) {
   process.loadEnvFile(rootEnv);

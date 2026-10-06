@@ -3,12 +3,12 @@ import { organizationId, primaryId, timestamps, uuid } from '../columns';
 import { organizations } from './organization';
 
 /**
- * MWST como datos con vigencia (RF-B12, RF-B13, RN-02, RN-03). Ningún porcentaje vive en el código:
- * la tasa de una línea se resuelve con categoría fiscal + tipo de consumo + fecha de la venta,
- * y queda congelada en `order_items` (RN-04).
+ * MWST as data with validity periods (RF-B12, RF-B13, RN-02, RN-03). No percentage lives in code:
+ * a line's rate is resolved from tax category + consumption type + sale date,
+ * and stays frozen in `order_items` (RN-04).
  */
 
-/** Categoría fiscal del producto: food, non_alcoholic_beverage, alcoholic_beverage, accommodation, other. */
+/** Product tax category: food, non_alcoholic_beverage, alcoholic_beverage, accommodation, other. */
 export const taxCategories = mysqlTable(
   'tax_categories',
   {
@@ -21,7 +21,7 @@ export const taxCategories = mysqlTable(
   (t) => [uniqueIndex('uq_tax_categories_org_key').on(t.organizationId, t.key)],
 );
 
-/** Tasa por código y vigencia, en puntos básicos (8,1 % = 810). `validTo` null = vigente. */
+/** Rate per code and validity period, in basis points (8.1 % = 810). `validTo` null = current. */
 export const taxRates = mysqlTable(
   'tax_rates',
   {
@@ -36,7 +36,7 @@ export const taxRates = mysqlTable(
   (t) => [uniqueIndex('uq_tax_rates_org_code_from').on(t.organizationId, t.code, t.validFrom)],
 );
 
-/** Regla: categoría fiscal + tipo de consumo → código de tasa, con vigencia (RN-03). */
+/** Rule: tax category + consumption type → rate code, with a validity period (RN-03). */
 export const taxRules = mysqlTable(
   'tax_rules',
   {

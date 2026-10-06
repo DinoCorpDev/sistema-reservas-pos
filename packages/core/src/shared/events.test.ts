@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EVENT_TYPES, isEventType } from './events';
 
-describe('EVENT_TYPES (sección 16)', () => {
+describe('EVENT_TYPES (section 16)', () => {
   it('uses the lowercase module.fact naming rule', () => {
     for (const type of EVENT_TYPES) {
       expect(type).toMatch(/^[a-z]+\.[a-z_]+$/);

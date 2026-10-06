@@ -3,8 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 const PORT = 3000;
 
 /**
- * E2E del POS. En la Fase 2 se agregan los escenarios con la red apagada
- * (`page.context().setOffline(true)`), obligatorios en cada versión (RNF-19).
+ * POS E2E tests. Phase 2 adds the scenarios with the network turned off
+ * (`page.context().setOffline(true)`), mandatory for every release (RNF-19).
  */
 export default defineConfig({
   testDir: './e2e',

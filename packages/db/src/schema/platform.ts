@@ -11,10 +11,10 @@ import {
 import { locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
 
 /**
- * Auditoría append-only de toda operación sensible (RF-F11, RN-10, RN-11): quién, quién autorizó,
- * qué, cuándo, dónde, estado anterior y nuevo, y motivo. Se conserva 10 años (RF-F13).
- * APPEND-ONLY: la migración instala triggers que rechazan UPDATE y DELETE.
- * `locationId` es null en operaciones de la organización (p. ej. cambio de precio del catálogo).
+ * Append-only audit of every sensitive operation (RF-F11, RN-10, RN-11): who, who authorized,
+ * what, when, where, previous and new state, and reason. Kept for 10 years (RF-F13).
+ * APPEND-ONLY: the migration installs triggers that reject UPDATE and DELETE.
+ * `locationId` is null for organization-level operations (e.g. a catalog price change).
  */
 export const auditEvents = mysqlTable(
   'audit_events',
@@ -32,9 +32,9 @@ export const auditEvents = mysqlTable(
     before: json('before'),
     after: json('after'),
     requestId: varchar('request_id', { length: 64 }),
-    /** Hora del dispositivo. */
+    /** Device time. */
     occurredAt: utcDatetime('occurred_at').notNull(),
-    /** Hora del servidor al registrarlo. */
+    /** Server time when recorded. */
     recordedAt: utcDatetime('recorded_at').notNull(),
   },
   (t) => [
@@ -45,8 +45,8 @@ export const auditEvents = mysqlTable(
 );
 
 /**
- * Outbox de eventos (PA-10): se escribe en la misma transacción que el cambio y un publicador
- * lo entrega después. Solo se actualiza `publishedAt`, `attempts` y `lastError`.
+ * Event outbox (PA-10): written in the same transaction as the change and delivered later by a
+ * publisher. Only `publishedAt`, `attempts` and `lastError` are updated.
  */
 export const outboxEvents = mysqlTable(
   'outbox_events',
@@ -74,9 +74,9 @@ export const outboxEvents = mysqlTable(
 );
 
 /**
- * Operación hecha sin conexión, recibida por el hub o la nube (RNF-03, RNF-04). La clave
- * idempotente hace que repetir el envío no duplique el efecto; los conflictos quedan aquí
- * para que el gerente los resuelva (`sync.conflict_detected`).
+ * Operation made offline, received by the hub or the cloud (RNF-03, RNF-04). The idempotency
+ * key makes resending it not duplicate the effect; conflicts stay here for the manager
+ * to resolve (`sync.conflict_detected`).
  */
 export const syncOperations = mysqlTable(
   'sync_operations',

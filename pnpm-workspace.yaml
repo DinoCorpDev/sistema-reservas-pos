@@ -2,7 +2,7 @@ packages:
   - apps/*
   - packages/*
 
-# Versiones compartidas: un solo lugar para fijar el stack (usar "catalog:" en cada package.json).
+# Shared versions: a single place to pin the stack (use "catalog:" in each package.json).
 catalog:
   '@types/node': ^24.19.1
   '@types/react': ^19.2.18

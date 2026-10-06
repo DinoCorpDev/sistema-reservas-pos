@@ -1,9 +1,9 @@
 import type { Allergen, Channel, OriginKind, TaxCategoryKey } from '@pos/core';
 
 /**
- * Carta del "Restaurant Demo Zürich": 30 productos suizos en 6 categorías, con alérgenos,
- * origen de carne/ave/pescado y traducciones FR/IT/EN (RF-B05…RF-B07). Precios en CHF con MWST
- * incluida; el seed los convierte a rappen con `parseChf`.
+ * Menu of the "Restaurant Demo Zürich": 30 Swiss products in 6 categories, with allergens,
+ * meat/poultry/fish origin and FR/IT/EN translations (RF-B05…RF-B07). Prices in CHF with MWST
+ * included; the seed converts them to rappen with `parseChf`.
  */
 
 type I18n = { fr: string; it: string; en: string };
@@ -44,7 +44,7 @@ export interface SeedProduct {
   variants?: { name: string; i18n: I18n; priceChf: string; isDefault?: boolean }[];
   modifierGroups?: ModifierGroupKey[];
   channelPrices?: { channel: Channel; priceChf: string }[];
-  /** Disponibilidad restringida: días (bitmask lun=1…dom=64) y franja horaria (RF-B08). */
+  /** Restricted availability: days (bitmask mon=1…sun=64) and time slot (RF-B08). */
   availability?: { daysOfWeek: number; start: string; end: string };
 }
 
@@ -559,7 +559,7 @@ export const SEED_PRODUCTS: SeedProduct[] = [
     allergens: ['sulphites'],
   },
   {
-    // Cerveza sin alcohol: bebida sin alcohol para la MWST (tasa reducida para llevar). Caso límite de RN-03.
+    // Alcohol-free beer: a non-alcoholic beverage for MWST (reduced rate for takeaway). Edge case of RN-03.
     key: 'alkoholfreies_bier',
     category: 'beer_wine',
     name: 'Alkoholfreies Bier 3.3 dl',

@@ -1,5 +1,5 @@
 /**
- * Módulo kitchen: tickets por estación, ruteo por producto, cursos, tiempos y alertas,
- * idioma de cocina y recall. Fase 3.
+ * Kitchen module: tickets per station, routing by product, courses, timings and alerts,
+ * kitchen language and recall. Phase 3.
  */
 export * from './constants';

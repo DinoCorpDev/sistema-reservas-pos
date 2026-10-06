@@ -20,10 +20,10 @@ import {
   uuid,
 } from '../columns';
 
-/** Conteo del arqueo: denominación en rappen → cantidad de piezas (RF-D14). */
+/** Cash count: denomination in rappen → number of pieces (RF-D14). */
 export type DenominationCount = Record<string, number>;
 
-/** Turno de caja por terminal o por cajero; uno abierto a la vez (RF-D12, RN-19). */
+/** Cash shift per terminal or per cashier; one open at a time (RF-D12, RN-19). */
 export const shifts = mysqlTable(
   'shifts',
   {
@@ -43,7 +43,7 @@ export const shifts = mysqlTable(
     countedCashRappen: int('counted_cash_rappen'),
     differenceRappen: int('difference_rappen'),
     countByDenomination: json('count_by_denomination').$type<DenominationCount>(),
-    /** Obligatorio si hay diferencia (RF-D14). */
+    /** Required when there is a difference (RF-D14). */
     differenceComment: text('difference_comment'),
     ...syncColumns(),
     ...timestamps(),
@@ -52,8 +52,8 @@ export const shifts = mysqlTable(
 );
 
 /**
- * Movimiento de caja: ingreso, retiro, gasto o corrección (RF-D13). Una corrección posterior a un
- * cierre referencia el cierre afectado y nunca lo edita (RF-D17, RN-21).
+ * Cash movement: cash in, cash out, expense or correction (RF-D13). A correction made after a
+ * closing references the affected closing and never edits it (RF-D17, RN-21).
  */
 export const cashMovements = mysqlTable(
   'cash_movements',
@@ -63,7 +63,7 @@ export const cashMovements = mysqlTable(
     locationId: locationId(),
     shiftId: uuid('shift_id'),
     kind: varchar('kind', { length: 16 }).notNull(),
-    /** Con signo: positivo entra a la caja, negativo sale. */
+    /** Signed: positive goes into the drawer, negative comes out. */
     amountRappen: rappen('amount_rappen'),
     reason: text('reason').notNull(),
     attachmentUrl: varchar('attachment_url', { length: 500 }),
@@ -76,7 +76,7 @@ export const cashMovements = mysqlTable(
   (t) => [index('idx_cash_movements_shift').on(t.shiftId)],
 );
 
-/** Conciliación del total del POS por medio contra el cierre del terminal de pago (RF-D11). */
+/** Reconciliation of the POS total per method against the payment terminal closing (RF-D11). */
 export const paymentReconciliations = mysqlTable(
   'payment_reconciliations',
   {
@@ -98,7 +98,7 @@ export const paymentReconciliations = mysqlTable(
   (t) => [index('idx_payment_reconciliations_day').on(t.locationId, t.businessDate)],
 );
 
-/** Totales congelados del cierre Z (RF-D15). */
+/** Frozen totals of the Z closing (RF-D15). */
 export interface DailyClosingTotals {
   grossSalesRappen: number;
   byPaymentMethod: Record<string, number>;
@@ -112,8 +112,8 @@ export interface DailyClosingTotals {
 }
 
 /**
- * Cierre Z del día: inalterable (RF-D17, RN-21). APPEND-ONLY: la migración instala triggers
- * que rechazan UPDATE y DELETE (RN-10).
+ * Daily Z closing: immutable (RF-D17, RN-21). APPEND-ONLY: the migration installs triggers
+ * that reject UPDATE and DELETE (RN-10).
  */
 export const dailyClosings = mysqlTable(
   'daily_closings',
@@ -124,7 +124,7 @@ export const dailyClosings = mysqlTable(
     businessDate: date('business_date', { mode: 'string' }).notNull(),
     closingNumber: int('closing_number').notNull(),
     totals: json('totals').$type<DailyClosingTotals>().notNull(),
-    /** SHA-256 del contenido, para detectar alteraciones fuera de la aplicación. */
+    /** SHA-256 of the content, to detect tampering outside the application. */
     contentHash: char('content_hash', { length: 64 }).notNull(),
     closedByUserId: uuid('closed_by_user_id').notNull(),
     closedAt: utcDatetime('closed_at').notNull(),
@@ -137,8 +137,8 @@ export const dailyClosings = mysqlTable(
 );
 
 /**
- * Contador del número corto de orden por sede, día y prefijo (RN-16). Los números nunca se
- * reutilizan; cada nodo que numera sin conexión usa su propio prefijo.
+ * Counter for the short order number per location, day and prefix (RN-16). Numbers are never
+ * reused; each node that numbers offline uses its own prefix.
  */
 export const orderNumberSequences = mysqlTable(
   'order_number_sequences',

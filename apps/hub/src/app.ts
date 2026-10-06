@@ -1,15 +1,15 @@
 import { Hono } from 'hono';
 
 export interface HubDependencies {
-  /** Comprueba la base local del hub; null si el hub corre sin base (modo diagnóstico). */
+  /** Checks the hub's local database; null if the hub runs without one (diagnostic mode). */
   pingDatabase: (() => Promise<void>) | null;
-  /** Cantidad de terminales conectados por WebSocket. */
+  /** Number of terminals connected over WebSocket. */
   connectedClients: () => number;
 }
 
 /**
- * API HTTP del hub en la LAN de la sede. La Fase 2 agrega el endpoint de sincronización y la
- * Fase 3 el ruteo a KDS e impresoras.
+ * HTTP API of the hub on the location's LAN. Phase 2 adds the sync endpoint and
+ * Phase 3 the routing to KDS and printers.
  */
 export function createApp(deps: HubDependencies) {
   const app = new Hono();

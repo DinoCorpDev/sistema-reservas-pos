@@ -1,6 +1,6 @@
 /**
- * Módulo organization: organización, sedes, áreas, terminales, estaciones, impresoras,
- * usuarios, roles, permisos y PIN (RF-A01…RF-A12). Fase 1.
+ * Organization module: organization, locations, areas, terminals, stations, printers,
+ * users, roles, permissions and PIN (RF-A01…RF-A12). Phase 1.
  */
 export * from './constants';
 export * from './permissions';

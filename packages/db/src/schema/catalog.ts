@@ -18,8 +18,8 @@ import { taxCategories } from './tax';
 import { users } from './users';
 
 /**
- * Catálogo maestro: uno por organización (RF-B01). Una sola ficha alimenta POS, QR, web y carta
- * impresa (RF-B15). Los textos en el idioma por defecto viven en la ficha; los demás en `translations`.
+ * Master catalog: one per organization (RF-B01). A single record feeds POS, QR, web and the
+ * printed menu (RF-B15). Texts in the default language live on the record; others in `translations`.
  */
 
 export const categories = mysqlTable('categories', {
@@ -34,7 +34,7 @@ export const categories = mysqlTable('categories', {
   ...timestamps(),
 });
 
-/** Producto con precio en CHF con MWST incluida, en rappen (RF-B04, RN-01). */
+/** Product with a CHF price including MWST, in rappen (RF-B04, RN-01). */
 export const products = mysqlTable('products', {
   id: primaryId(),
   organizationId: organizationId().references(() => organizations.id),
@@ -47,14 +47,14 @@ export const products = mysqlTable('products', {
   sku: varchar('sku', { length: 64 }),
   name: varchar('name', { length: 150 }).notNull(),
   description: text('description'),
-  /** Precio bruto (MWST incluida). Con variantes, es el precio de la variante por defecto. */
+  /** Gross price (MWST included). With variants, it is the price of the default variant. */
   basePriceRappen: rappen('base_price_rappen'),
-  /** Curso por defecto: 0 bebidas, 1 entradas, 2 platos, 3 postres (RF-B11). */
+  /** Default course: 0 drinks, 1 starters, 2 mains, 3 desserts (RF-B11). */
   defaultCourse: smallint('default_course').notNull().default(1),
   imageUrl: varchar('image_url', { length: 500 }),
-  /** Lleva carne, ave o pescado: el origen es obligatorio para publicarlo (RF-B06, RN-18). */
+  /** Contains meat, poultry or fish: origin is required to publish it (RF-B06, RN-18). */
   requiresOrigin: boolean('requires_origin').notNull().default(false),
-  /** Alérgenos revisados y confirmados, aunque sean cero (RN-18). */
+  /** Allergens reviewed and confirmed, even if there are none (RN-18). */
   allergensComplete: boolean('allergens_complete').notNull().default(false),
   publishQr: boolean('publish_qr').notNull().default(true),
   publishWeb: boolean('publish_web').notNull().default(true),
@@ -63,7 +63,7 @@ export const products = mysqlTable('products', {
   ...timestamps(),
 });
 
-/** Variante con precio propio: 3 dl / 5 dl, copa / botella (RF-B02). */
+/** Variant with its own price: 3 dl / 5 dl, glass / bottle (RF-B02). */
 export const productVariants = mysqlTable('product_variants', {
   id: primaryId(),
   organizationId: organizationId().references(() => organizations.id),
@@ -78,7 +78,7 @@ export const productVariants = mysqlTable('product_variants', {
   ...timestamps(),
 });
 
-/** Grupo de modificadores; obligatorio si `minSelect > 0` (RF-B02). */
+/** Modifier group; mandatory if `minSelect > 0` (RF-B02). */
 export const modifierGroups = mysqlTable('modifier_groups', {
   id: primaryId(),
   organizationId: organizationId().references(() => organizations.id),
@@ -120,7 +120,7 @@ export const productModifierGroups = mysqlTable(
   (t) => [uniqueIndex('uq_product_modifier_groups').on(t.productId, t.modifierGroupId)],
 );
 
-/** Alérgeno de un producto: clave de `ALLERGENS`; `presence` = contains | may_contain (RF-B05). */
+/** Allergen of a product: key from `ALLERGENS`; `presence` = contains | may_contain (RF-B05). */
 export const productAllergens = mysqlTable(
   'product_allergens',
   {
@@ -151,7 +151,7 @@ export const modifierAllergens = mysqlTable(
   (t) => [uniqueIndex('uq_modifier_allergens').on(t.modifierId, t.allergen)],
 );
 
-/** Origen (país ISO 3166-1 alfa-2) de la carne, el ave o el pescado del producto (RF-B06). */
+/** Origin (ISO 3166-1 alpha-2 country) of the product's meat, poultry or fish (RF-B06). */
 export const productOrigins = mysqlTable('product_origins', {
   id: primaryId(),
   organizationId: organizationId().references(() => organizations.id),
@@ -165,8 +165,8 @@ export const productOrigins = mysqlTable('product_origins', {
 });
 
 /**
- * Traducción de nombre o descripción de una entidad del catálogo (RF-B07). Si falta, se muestra
- * el idioma de la sede. Polimórfica: `entityType` es uno de `TRANSLATABLE_ENTITIES`.
+ * Translation of the name or description of a catalog entity (RF-B07). If missing, the
+ * location's language is shown. Polymorphic: `entityType` is one of `TRANSLATABLE_ENTITIES`.
  */
 export const translations = mysqlTable(
   'translations',
@@ -184,8 +184,8 @@ export const translations = mysqlTable(
 );
 
 /**
- * Disponibilidad por franja, día y canal (RF-B08). Si un producto (o su categoría) tiene reglas,
- * solo se puede pedir cuando alguna coincide (RN-17). `daysOfWeek`: bitmask lun=1 … dom=64.
+ * Availability by time slot, day and channel (RF-B08). If a product (or its category) has rules,
+ * it can only be ordered when one of them matches (RN-17). `daysOfWeek`: bitmask mon=1 … sun=64.
  */
 export const availabilityRules = mysqlTable('availability_rules', {
   id: primaryId(),
@@ -202,7 +202,7 @@ export const availabilityRules = mysqlTable('availability_rules', {
   ...timestamps(),
 });
 
-/** Precio distinto por canal (y opcionalmente por sede y variante) (RF-B04). */
+/** Different price per channel (and optionally per location and variant) (RF-B04). */
 export const channelPrices = mysqlTable('channel_prices', {
   id: primaryId(),
   organizationId: organizationId().references(() => organizations.id),
@@ -217,8 +217,8 @@ export const channelPrices = mysqlTable('channel_prices', {
 });
 
 /**
- * Ajustes del producto en una sede: activo, precio propio (RF-B01) y agotado "86" con vuelta
- * programada (RF-B09).
+ * Product settings at a location: active, own price (RF-B01) and sold out ("86") with a
+ * scheduled return (RF-B09).
  */
 export const productLocationSettings = mysqlTable(
   'product_location_settings',
@@ -232,18 +232,18 @@ export const productLocationSettings = mysqlTable(
       .notNull()
       .references(() => products.id),
     isActive: boolean('is_active').notNull().default(true),
-    /** null = usa el precio del catálogo. */
+    /** null = use the catalog price. */
     priceRappen: int('price_rappen'),
     soldOutAt: utcDatetime('sold_out_at'),
     soldOutByUserId: uuid('sold_out_by_user_id').references(() => users.id),
-    /** Vuelve a estar disponible automáticamente en este momento (p. ej. al día siguiente). */
+    /** Becomes available again automatically at this time (e.g. the next day). */
     soldOutUntil: utcDatetime('sold_out_until'),
     ...timestamps(),
   },
   (t) => [uniqueIndex('uq_product_location_settings').on(t.locationId, t.productId)],
 );
 
-/** Ruteo del producto a una o varias estaciones de cocina de la sede (RF-B11, RF-C21). */
+/** Routing of the product to one or more kitchen stations of the location (RF-B11, RF-C21). */
 export const productStationRoutes = mysqlTable(
   'product_station_routes',
   {

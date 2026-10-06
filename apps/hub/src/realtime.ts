@@ -4,14 +4,14 @@ import { WebSocket, WebSocketServer } from 'ws';
 
 export const WS_PATH = '/ws';
 
-/** Mensajes del hub a los terminales. Fase 0: saludo y latido; las fases siguientes agregan eventos. */
+/** Messages from the hub to the terminals. Phase 0: greeting and heartbeat; later phases add events. */
 export type HubMessage =
   | { type: 'hub.hello'; serverTime: string; protocolVersion: 1 }
   | { type: 'hub.pong'; serverTime: string };
 
 /**
- * Canal en tiempo real de la sede (RNF-07): POS, handhelds y KDS se conectan por WebSocket al hub
- * en la LAN, sin pasar por la nube (RF-C27, RNF-05).
+ * Real-time channel of the location (RNF-07): POS, handhelds and KDS connect to the hub over
+ * WebSocket on the LAN, without going through the cloud (RF-C27, RNF-05).
  */
 export function attachRealtime(server: Server) {
   const wss = new WebSocketServer({ noServer: true });

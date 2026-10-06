@@ -5,8 +5,8 @@ import { getDb } from '@/server/db';
 export const dynamic = 'force-dynamic';
 
 /**
- * Salud de la nube (RNF-16): responde 200 si la API y la base están arriba, 503 si la base no
- * responde. Lo consume el monitoreo de la Fase 6.
+ * Cloud health (RNF-16): responds 200 if the API and the database are up, 503 if the database
+ * does not respond. Consumed by the Phase 6 monitoring.
  */
 export async function GET() {
   const startedAt = Date.now();

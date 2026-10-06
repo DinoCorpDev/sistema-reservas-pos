@@ -1,40 +1,40 @@
 /**
- * Roles y permisos (RF-A04, RF-A05, RNF-10).
+ * Roles and permissions (RF-A04, RF-A05, RNF-10).
  *
- * Los permisos son claves fijas del código; las asignaciones por rol viven en la base
- * (`role_permissions`) y se pueden ajustar por organización. Toda verificación ocurre en el
- * servidor y en el dominio, nunca solo en pantalla.
+ * Permissions are fixed keys in the code; per-role assignments live in the database
+ * (`role_permissions`) and can be adjusted per organization. Every check happens on the
+ * server and in the domain, never only on screen.
  */
 export const PERMISSIONS = [
-  // órdenes
+  // orders
   'order.create',
   'order.void_item',
   'order.void',
   'order.discount',
   'order.reopen',
   'order.transfer',
-  // pagos y recibos
+  // payments and receipts
   'payment.take',
   'payment.refund',
   'receipt.reprint',
-  // caja
+  // cash
   'cash.open_drawer',
   'cash.movement',
   'shift.open',
   'shift.close',
   'day.close',
-  // cocina y catálogo
+  // kitchen and catalog
   'kitchen.operate',
   'catalog.sold_out',
   'catalog.manage',
   'catalog.price_change',
   'tax.manage',
-  // sala, reservas y clientes
+  // floor, reservations and customers
   'reservation.checkin',
   'reservation.manage',
   'customer.manage',
   'customer.anonymize',
-  // administración
+  // administration
   'location.manage',
   'user.manage',
   'report.view',
@@ -58,7 +58,7 @@ const MANAGER_PERMISSIONS: readonly Permission[] = PERMISSIONS.filter(
     ].includes(permission),
 );
 
-/** Permisos por defecto de los roles predefinidos; el seed y el montaje de una organización los copian. */
+/** Default permissions of the predefined roles; the seed and organization setup copy them. */
 export const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<RoleKey, readonly Permission[]>> = {
   admin: PERMISSIONS,
   manager: MANAGER_PERMISSIONS,

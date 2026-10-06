@@ -9,14 +9,14 @@ export interface StartedHub {
   close: () => Promise<void>;
 }
 
-/** Arranca HTTP + WebSocket en el mismo puerto. `port: 0` elige uno libre (tests). */
+/** Starts HTTP + WebSocket on the same port. `port: 0` picks a free one (tests). */
 export function startHub(options: {
   port: number;
   hostname?: string;
   pingDatabase: HubDependencies['pingDatabase'];
 }): Promise<StartedHub> {
   return new Promise((resolve) => {
-    // Los callbacks solo leen `realtime` después de que el servidor escucha, ya inicializado.
+    // The callbacks only read `realtime` once the server is listening, when it is initialized.
     const app = createApp({
       pingDatabase: options.pingDatabase,
       connectedClients: () => realtime.connectedClients(),

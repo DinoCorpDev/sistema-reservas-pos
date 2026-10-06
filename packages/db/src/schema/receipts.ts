@@ -11,9 +11,9 @@ import {
 import { locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
 
 /**
- * Recibo emitido con su contenido congelado tal como se imprimió (RF-D20, RN-08).
- * Cada reimpresión es una fila nueva con el mismo número y `copyNumber` > 0 (RF-D24, RN-09).
- * APPEND-ONLY: la migración instala triggers que rechazan UPDATE y DELETE (RN-10).
+ * Issued receipt with its content frozen exactly as printed (RF-D20, RN-08).
+ * Each reprint is a new row with the same number and `copyNumber` > 0 (RF-D24, RN-09).
+ * APPEND-ONLY: the migration installs triggers that reject UPDATE and DELETE (RN-10).
  */
 export const receipts = mysqlTable(
   'receipts',
@@ -24,18 +24,18 @@ export const receipts = mysqlTable(
     orderId: uuid('order_id').notNull(),
     paymentId: uuid('payment_id'),
     receiptNumber: varchar('receipt_number', { length: 32 }).notNull(),
-    /** 0 = original; 1, 2… = copias. */
+    /** 0 = original; 1, 2… = copies. */
     copyNumber: smallint('copy_number').notNull().default(0),
     language: char('language', { length: 2 }).notNull(),
-    /** JSON del recibo exactamente como se emitió. */
+    /** Receipt JSON exactly as issued. */
     content: json('content').$type<Record<string, unknown>>().notNull(),
-    /** SHA-256 del contenido, para detectar alteraciones fuera de la aplicación. */
+    /** SHA-256 of the content, to detect tampering outside the application. */
     contentHash: char('content_hash', { length: 64 }).notNull(),
     customerName: varchar('customer_name', { length: 200 }),
     customerAddress: text('customer_address'),
     terminalId: uuid('terminal_id'),
     issuedByUserId: uuid('issued_by_user_id'),
-    /** Hora del dispositivo al emitir. */
+    /** Device time at issue. */
     issuedAt: utcDatetime('issued_at').notNull(),
     createdAt: utcDatetime('created_at').notNull(),
   },

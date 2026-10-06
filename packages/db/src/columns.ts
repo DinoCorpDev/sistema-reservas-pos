@@ -3,12 +3,12 @@ import { sql } from 'drizzle-orm';
 import { customType, datetime, int } from 'drizzle-orm/mysql-core';
 
 /**
- * Convenciones de columnas del esquema (ver docs/ARQUITECTURA.md → "Convenciones de datos").
+ * Schema column conventions (see docs/ARQUITECTURA.md → "Convenciones de datos").
  *
- * - IDs: UUID v7 generados en el dispositivo, guardados como BINARY(16), expuestos como string.
- * - Dinero: enteros en rappen, columnas con sufijo `_rappen` (int). Nunca decimal ni float.
- * - Tiempos: DATETIME(3) en UTC. Las fechas de negocio (`business_date`) son DATE en la zona de la sede.
- * - Nada se borra: `deleted_at` (soft delete) en todo lo que no es append-only.
+ * - IDs: UUID v7 generated on the device, stored as BINARY(16), exposed as strings.
+ * - Money: integers in rappen, columns with the `_rappen` suffix (int). Never decimal or float.
+ * - Times: DATETIME(3) in UTC. Business dates (`business_date`) are DATE in the location's time zone.
+ * - Nothing is deleted: `deleted_at` (soft delete) on everything that is not append-only.
  */
 
 function uuidToBuffer(value: string): Buffer {
@@ -24,7 +24,7 @@ function bufferToUuid(value: Buffer | Uint8Array): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
-/** UUID guardado como BINARY(16). En TypeScript es siempre un string canónico en minúsculas. */
+/** UUID stored as BINARY(16). In TypeScript it is always a canonical lowercase string. */
 export const uuid = customType<{ data: string; driverData: Buffer }>({
   dataType() {
     return 'binary(16)';
@@ -39,20 +39,20 @@ export const uuid = customType<{ data: string; driverData: Buffer }>({
 
 export const uuidCodec = { toBuffer: uuidToBuffer, fromBuffer: bufferToUuid };
 
-/** Clave primaria UUID v7; si el dispositivo no la manda, se genera aquí. */
+/** UUID v7 primary key; generated here if the device does not send one. */
 export const primaryId = () => uuid('id').primaryKey().$defaultFn(newId);
 
 export const organizationId = () => uuid('organization_id').notNull();
 export const locationId = () => uuid('location_id').notNull();
 
-/** Monto en rappen (entero con signo). */
+/** Amount in rappen (signed integer). */
 export const rappen = (name: string) => int(name).notNull().default(0);
 
 export const utcDatetime = (name: string) => datetime(name, { mode: 'date', fsp: 3 });
 
 const now = sql`(CURRENT_TIMESTAMP(3))`;
 
-/** created_at / updated_at (hora del servidor) y deleted_at (soft delete). */
+/** created_at / updated_at (server time) and deleted_at (soft delete). */
 export const timestamps = () => ({
   createdAt: utcDatetime('created_at')
     .notNull()
@@ -67,8 +67,8 @@ export const timestamps = () => ({
 });
 
 /**
- * Columnas de sincronización de las tablas operativas (PA-10, RNF-04): versión optimista y hora
- * del dispositivo del último cambio. Las reglas de conflicto se escriben en docs/SYNC.md.
+ * Sync columns of the operational tables (PA-10, RNF-04): optimistic version and device time
+ * of the last change. The conflict rules are written in docs/SYNC.md.
  */
 export const syncColumns = () => ({
   version: int('version').notNull().default(1),

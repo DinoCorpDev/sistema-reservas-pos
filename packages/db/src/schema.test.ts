@@ -76,7 +76,7 @@ describe('schema invariants', () => {
   });
 
   it.each(tablesIn('root', 'config', 'master', 'operational').map((t) => [nameOf(t), t] as const))(
-    '%s supports soft delete and server timestamps (nada se borra)',
+    '%s supports soft delete and server timestamps (nothing is deleted)',
     (_name, table) => {
       expect(column(table, 'deleted_at')).toBeDefined();
       expect(column(table, 'created_at')?.notNull).toBe(true);

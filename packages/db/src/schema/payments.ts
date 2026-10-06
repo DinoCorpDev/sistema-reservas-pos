@@ -11,9 +11,9 @@ import {
 } from '../columns';
 
 /**
- * Pago de una orden por un adaptador (PA-04). Lo cobrado = `amount + rounding + tip`.
- * Un pago completado no se modifica: si está mal, se devuelve y se registra otro (RN-14).
- * `idempotencyKey` impide duplicarlo al sincronizar (RNF-03).
+ * Payment of an order through an adapter (PA-04). Amount charged = `amount + rounding + tip`.
+ * A completed payment is never modified: if it is wrong, refund it and record another (RN-14).
+ * `idempotencyKey` prevents duplicates during sync (RNF-03).
  */
 export const payments = mysqlTable(
   'payments',
@@ -29,18 +29,18 @@ export const payments = mysqlTable(
     adapter: varchar('adapter', { length: 32 }).notNull(),
     status: varchar('status', { length: 16 }).notNull().default('pending'),
     currency: char('currency', { length: 3 }).notNull().default('CHF'),
-    /** Parte de la venta que salda este pago. */
+    /** Part of the sale settled by this payment. */
     amountRappen: rappen('amount_rappen'),
-    /** Redondeo a 0,05 CHF en efectivo; nunca es descuento (RN-06). */
+    /** Cash rounding to CHF 0.05; never a discount (RN-06). */
     roundingRappen: rappen('rounding_rappen'),
-    /** Propina: fuera de la venta y sin MWST (RN-07). */
+    /** Tip: outside the sale and without MWST (RN-07). */
     tipRappen: rappen('tip_rappen'),
     tenderedRappen: rappen('tendered_rappen'),
     changeRappen: rappen('change_rappen'),
-    /** Proveedor real detrás del adaptador (worldline, wallee, sumup, twint…). */
+    /** Actual provider behind the adapter (worldline, wallee, sumup, twint…). */
     provider: varchar('provider', { length: 32 }),
     externalReference: varchar('external_reference', { length: 128 }),
-    /** Etiqueta de la parte cuando la cuenta se dividió (asiento 2, 1/3…) (RF-C12). */
+    /** Label of the part when the bill was split (seat 2, 1/3…) (RF-C12). */
     splitLabel: varchar('split_label', { length: 32 }),
     idempotencyKey: varchar('idempotency_key', { length: 64 }).notNull(),
     completedAt: utcDatetime('completed_at'),
@@ -56,7 +56,7 @@ export const payments = mysqlTable(
   ],
 );
 
-/** Devolución ligada al pago original, con motivo y autorizador (RF-D07). */
+/** Refund linked to the original payment, with reason and authorizer (RF-D07). */
 export const refunds = mysqlTable(
   'refunds',
   {
@@ -85,7 +85,7 @@ export const refunds = mysqlTable(
   ],
 );
 
-/** Propina asignada al mesero de la orden y reportada por persona (RF-D06, RF-F07). */
+/** Tip assigned to the order's waiter and reported per person (RF-D06, RF-F07). */
 export const tips = mysqlTable(
   'tips',
   {

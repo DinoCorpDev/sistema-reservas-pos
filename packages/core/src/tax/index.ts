@@ -1,6 +1,6 @@
 /**
- * Módulo tax: MWST suiza. Precios con impuesto incluido (se extrae, nunca se suma), tasa decidida
- * por categoría fiscal + canal + tipo de consumo y congelada en la línea (RN-01…RN-07).
- * El cálculo y sus pruebas exhaustivas son la puerta de la Fase 1.
+ * Tax module: Swiss MWST. Tax-inclusive prices (tax is extracted, never added), rate decided
+ * by tax category + channel + consumption type and frozen on the line (RN-01…RN-07).
+ * The calculation and its exhaustive tests are the gate of Phase 1.
  */
 export * from './constants';

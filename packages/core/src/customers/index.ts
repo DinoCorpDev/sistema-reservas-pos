@@ -1,5 +1,5 @@
 /**
- * Módulo customers: cliente único por teléfono o correo, historial, consentimiento y
- * anonimización sin tocar las ventas (RF-E14…RF-E16, RN-23). Fase 1 y 5.
+ * Customers module: one customer per phone or email, history, consent and
+ * anonymization without touching sales (RF-E14…RF-E16, RN-23). Phases 1 and 5.
  */
 export * from './constants';

@@ -2,7 +2,7 @@
   "name": "@pos/ui",
   "version": "0.0.0",
   "private": true,
-  "description": "Componentes compartidos (Tailwind v4 + shadcn/ui), pensados para táctil: objetivos de al menos 44 px (RNF-22)",
+  "description": "Shared components (Tailwind v4 + shadcn/ui), built for touch: targets of at least 44 px (RNF-22)",
   "type": "module",
   "sideEffects": [
     "**/*.css"

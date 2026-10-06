@@ -3,7 +3,7 @@ import { loadRootEnv, requireEnv } from '../env';
 import { createDatabase, migrateDatabase } from '../ops';
 import { seedDemoRestaurant } from '../seed/demo';
 
-/** Crea las bases (nube y hub), aplica migraciones y siembra el restaurante demo en la nube. */
+/** Creates the cloud and hub databases, runs migrations and seeds the demo restaurant (cloud). */
 loadRootEnv();
 const reset = process.argv.includes('--reset');
 const cloudUrl = requireEnv('DATABASE_URL');

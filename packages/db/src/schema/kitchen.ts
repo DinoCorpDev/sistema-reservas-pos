@@ -9,7 +9,7 @@ import {
   uuid,
 } from '../columns';
 
-/** Ticket enviado a una estación en un momento: ítems, curso, hora de envío y estado (RF-C20). */
+/** Ticket sent to a station at a given moment: items, course, send time and status (RF-C20). */
 export const kitchenTickets = mysqlTable(
   'kitchen_tickets',
   {
@@ -20,7 +20,7 @@ export const kitchenTickets = mysqlTable(
     kitchenStationId: uuid('kitchen_station_id').notNull(),
     course: smallint('course'),
     status: varchar('status', { length: 16 }).notNull().default('sent'),
-    /** Idioma de cocina congelado al enviar (RF-C25). */
+    /** Kitchen language frozen at send time (RF-C25). */
     language: char('language', { length: 2 }).notNull(),
     sentAt: utcDatetime('sent_at').notNull(),
     preparingAt: utcDatetime('preparing_at'),

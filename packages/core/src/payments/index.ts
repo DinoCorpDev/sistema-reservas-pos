@@ -1,5 +1,5 @@
 /**
- * Módulo payments: pagos desacoplados por adaptador, mixtos y parciales, propinas fuera de la
- * venta y devoluciones ligadas al pago original. Fase 2.
+ * Payments module: payments decoupled through adapters, mixed and partial, tips outside the
+ * sale and refunds linked to the original payment. Phase 2.
  */
 export * from './constants';

@@ -1,6 +1,6 @@
 /**
- * Módulo orders: motor de órdenes offline-first. Ítems con variante, modificadores, nota,
- * asiento y curso; anulaciones, descuentos, dividir, transferir y unir; cierre automático.
- * Los casos de uso llegan en la Fase 2.
+ * Orders module: offline-first order engine. Items with variant, modifiers, note,
+ * seat and course; voids, discounts, split, transfer and merge; automatic closing.
+ * The use cases arrive in Phase 2.
  */
 export * from './constants';

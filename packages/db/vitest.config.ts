@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    // Las pruebas de integración contra MySQL comparten la base: sin paralelismo entre archivos.
+    // Integration tests against MySQL share the database: no parallelism across files.
     fileParallelism: false,
     testTimeout: 30_000,
     hookTimeout: 60_000,

@@ -1,5 +1,5 @@
 /**
- * Módulo reports: ventas, MWST por tasa, cierres, anulaciones, propinas y exportaciones
- * (RF-F01…RF-F07). Se alimenta de eventos, no de las tablas de operación. Fase 4.
+ * Reports module: sales, MWST by rate, closings, voids, tips and exports
+ * (RF-F01…RF-F07). Fed by events, not by the operational tables. Phase 4.
  */
 export {};

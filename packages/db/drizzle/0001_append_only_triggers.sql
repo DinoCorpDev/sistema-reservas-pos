@@ -1,5 +1,5 @@
--- Append-only (RN-10, RF-F13): recibos, cierres Z y auditoría no se modifican ni se borran
--- desde ninguna aplicación. Las correcciones son registros nuevos (RN-11, RN-21).
+-- Append-only (RN-10, RF-F13): receipts, Z closings and audit records are never modified or
+-- deleted by any application. Corrections are new records (RN-11, RN-21).
 CREATE TRIGGER `trg_audit_events_no_update` BEFORE UPDATE ON `audit_events` FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'audit_events is append-only (RN-10)';
 --> statement-breakpoint
 CREATE TRIGGER `trg_audit_events_no_delete` BEFORE DELETE ON `audit_events` FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'audit_events is append-only (RN-10)';

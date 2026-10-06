@@ -1,6 +1,6 @@
 /**
- * Estado visible de una mesa en el mapa (RF-C01). Se DERIVA de sus órdenes y reservas;
- * nadie lo cambia a mano, por eso no se guarda como columna.
+ * Visible state of a table on the map (RF-C01). It is DERIVED from its orders and reservations;
+ * nobody changes it by hand, so it is not stored as a column.
  */
 export const TABLE_STATES = [
   'free',
@@ -13,6 +13,6 @@ export const TABLE_STATES = [
 ] as const;
 export type TableState = (typeof TABLE_STATES)[number];
 
-/** Qué permite el QR de un área o mesa (RF-E08, RN-24). */
+/** What the QR of an area or table allows (RF-E08, RN-24). */
 export const QR_MODES = ['disabled', 'view', 'order', 'order_pay'] as const;
 export type QrMode = (typeof QR_MODES)[number];

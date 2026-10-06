@@ -1,9 +1,9 @@
 /**
- * Vocabulario de MWST (RF-B12, RN-02, RN-03).
+ * MWST vocabulary (RF-B12, RN-02, RN-03).
  *
- * Aquí NO hay porcentajes: las tasas y las reglas son datos con fecha de vigencia que viven en
- * la base (`tax_rates`, `tax_rules`) y se editan desde el backoffice (RF-B13). El cálculo
- * (Fase 1) recibe esos datos como parámetros.
+ * There are NO percentages here: rates and rules are data with a validity date that live in
+ * the database (`tax_rates`, `tax_rules`) and are edited from the backoffice (RF-B13). The
+ * calculation (Phase 1) receives that data as parameters.
  */
 export const TAX_CATEGORY_KEYS = [
   'food',
@@ -17,5 +17,5 @@ export type TaxCategoryKey = (typeof TAX_CATEGORY_KEYS)[number];
 export const TAX_RATE_CODES = ['normal', 'reduced', 'accommodation'] as const;
 export type TaxRateCode = (typeof TAX_RATE_CODES)[number];
 
-/** Una tasa se expresa en puntos básicos (1 bp = 0,01 %): 8,1 % = 810 bp. Siempre entero. */
+/** A rate is expressed in basis points (1 bp = 0.01 %): 8.1 % = 810 bp. Always an integer. */
 export type BasisPoints = number;

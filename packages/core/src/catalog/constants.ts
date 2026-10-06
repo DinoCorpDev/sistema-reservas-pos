@@ -1,6 +1,6 @@
 /**
- * Los 14 alérgenos de declaración obligatoria en Suiza y la UE (RF-B05).
- * Son datos de referencia fijos: el catálogo guarda la clave y la UI la traduce.
+ * The 14 allergens that must be declared in Switzerland and the EU (RF-B05).
+ * Fixed reference data: the catalog stores the key and the UI translates it.
  */
 export const ALLERGENS = [
   'gluten',
@@ -20,11 +20,11 @@ export const ALLERGENS = [
 ] as const;
 export type Allergen = (typeof ALLERGENS)[number];
 
-/** Tipos de proteína animal cuyo origen (país) es obligatorio (RF-B06, RN-18). */
+/** Animal protein kinds whose origin (country) is mandatory (RF-B06, RN-18). */
 export const ORIGIN_KINDS = ['meat', 'poultry', 'fish'] as const;
 export type OriginKind = (typeof ORIGIN_KINDS)[number];
 
-/** Entidades del catálogo que tienen traducciones (RF-B07). */
+/** Catalog entities that have translations (RF-B07). */
 export const TRANSLATABLE_ENTITIES = [
   'category',
   'product',

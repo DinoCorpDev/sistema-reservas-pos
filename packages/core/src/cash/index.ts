@@ -1,5 +1,5 @@
 /**
- * Módulo cash: turnos, movimientos, arqueo por denominación, cierre de turno, cierre Z
- * inalterable y libro de caja. Fase 4.
+ * Cash module: shifts, movements, count by denomination, shift closing, immutable Z closing
+ * and cash book. Phase 4.
  */
 export * from './constants';

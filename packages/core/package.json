@@ -2,7 +2,7 @@
   "name": "@pos/core",
   "version": "0.0.0",
   "private": true,
-  "description": "Dominio puro del Core POS: entidades, reglas MWST, máquinas de estado y cálculo de dinero. Sin frameworks.",
+  "description": "Pure domain of the Core POS: entities, MWST rules, state machines and money calculation. No frameworks.",
   "type": "module",
   "sideEffects": false,
   "exports": {

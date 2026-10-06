@@ -3,8 +3,8 @@ import { organizationId, primaryId, timestamps, utcDatetime, uuid } from '../col
 import { locations, organizations } from './organization';
 
 /**
- * Usuario de la organización (RF-A04). Entra al backoffice con correo y contraseña (RF-A07) y al
- * POS con un PIN de 4-6 dígitos hasheado con argon2 (RF-A06). Se desactiva, nunca se borra (RF-A12).
+ * Organization user (RF-A04). Signs in to the backoffice with email and password (RF-A07) and to
+ * the POS with a 4-6 digit PIN hashed with argon2 (RF-A06). Deactivated, never deleted (RF-A12).
  */
 export const users = mysqlTable(
   'users',
@@ -15,7 +15,7 @@ export const users = mysqlTable(
     email: varchar('email', { length: 254 }),
     passwordHash: varchar('password_hash', { length: 255 }),
     pinHash: varchar('pin_hash', { length: 255 }),
-    /** Idioma de la interfaz del usuario, independiente de la sede y del cliente (RF-A08). */
+    /** The user's UI language, independent of the location and the customer (RF-A08). */
     uiLanguage: char('ui_language', { length: 2 }).notNull().default('de'),
     failedPinAttempts: int('failed_pin_attempts').notNull().default(0),
     lockedUntil: utcDatetime('locked_until'),
@@ -28,7 +28,7 @@ export const users = mysqlTable(
   (t) => [uniqueIndex('uq_users_email').on(t.email)],
 );
 
-/** Sedes en las que trabaja un usuario (RF-A04: varias sedes). */
+/** Locations where a user works (RF-A04: multiple locations). */
 export const userLocations = mysqlTable(
   'user_locations',
   {
@@ -45,7 +45,7 @@ export const userLocations = mysqlTable(
   (t) => [uniqueIndex('uq_user_locations').on(t.userId, t.locationId)],
 );
 
-/** Rol de la organización. Los predefinidos (`isSystem`) son admin, manager, cashier, waiter, kitchen. */
+/** Organization role. The predefined ones (`isSystem`) are admin, manager, cashier, waiter, kitchen. */
 export const roles = mysqlTable(
   'roles',
   {
@@ -59,7 +59,7 @@ export const roles = mysqlTable(
   (t) => [uniqueIndex('uq_roles_org_key').on(t.organizationId, t.key)],
 );
 
-/** Roles de un usuario; `locationId` null = en todas sus sedes (RF-A04: varios roles). */
+/** A user's roles; `locationId` null = at all of their locations (RF-A04: multiple roles). */
 export const userRoles = mysqlTable(
   'user_roles',
   {
@@ -77,7 +77,7 @@ export const userRoles = mysqlTable(
   (t) => [uniqueIndex('uq_user_roles').on(t.userId, t.roleId, t.locationId)],
 );
 
-/** Permiso concedido a un rol; la clave es una de `PERMISSIONS` de @pos/core (RF-A05). */
+/** Permission granted to a role; the key is one of `PERMISSIONS` from @pos/core (RF-A05). */
 export const rolePermissions = mysqlTable(
   'role_permissions',
   {

@@ -1,5 +1,5 @@
 /**
- * Módulo sync: outbox del dispositivo, operaciones idempotentes, reglas de conflicto escritas
- * (docs/SYNC.md, antes de la Fase 2) y numeración offline por prefijo (RN-16).
+ * Sync module: device outbox, idempotent operations, written conflict rules
+ * (docs/SYNC.md, before Phase 2) and offline numbering by prefix (RN-16).
  */
 export * from './constants';

@@ -20,8 +20,8 @@ import {
 } from '../columns';
 
 /**
- * Orden: una cuenta con dos estados independientes, preparación por ítem y pago por orden
- * (PA-05, RF-C16). Número corto legible por sede y día además del UUID (RF-C15, RN-16).
+ * Order: a bill with two independent statuses, preparation per item and payment per order
+ * (PA-05, RF-C16). Short readable number per location and day besides the UUID (RF-C15, RN-16).
  */
 export const orders = mysqlTable(
   'orders',
@@ -32,9 +32,9 @@ export const orders = mysqlTable(
     terminalId: uuid('terminal_id'),
     businessDate: date('business_date', { mode: 'string' }).notNull(),
     orderNumber: int('order_number').notNull(),
-    /** Prefijo del terminal cuando numeró sin conexión (RN-16); vacío si numeró el hub o la nube. */
+    /** Terminal prefix when it numbered offline (RN-16); empty if the hub or cloud numbered it. */
     orderNumberPrefix: varchar('order_number_prefix', { length: 4 }).notNull().default(''),
-    /** Número que se dice en voz alta y se imprime: `0042` o `H1-0042`. */
+    /** Number called out loud and printed: `0042` or `H1-0042`. */
     displayNumber: varchar('display_number', { length: 12 }).notNull(),
     channel: varchar('channel', { length: 16 }).notNull(),
     consumptionType: varchar('consumption_type', { length: 16 }).notNull(),
@@ -45,11 +45,11 @@ export const orders = mysqlTable(
     guestCount: smallint('guest_count'),
     status: varchar('status', { length: 16 }).notNull().default('open'),
     paymentStatus: varchar('payment_status', { length: 16 }).notNull().default('unpaid'),
-    /** Hora de recogida de takeaway (RF-E11). */
+    /** Takeaway pickup time (RF-E11). */
     pickupAt: utcDatetime('pickup_at'),
     customerName: varchar('customer_name', { length: 200 }),
     note: text('note'),
-    /** Totales en rappen, MWST incluida. La propina va aparte y no es venta (RN-07). */
+    /** Totals in rappen, MWST included. The tip is separate and is not a sale (RN-07). */
     subtotalRappen: rappen('subtotal_rappen'),
     discountTotalRappen: rappen('discount_total_rappen'),
     totalRappen: rappen('total_rappen'),
@@ -75,8 +75,8 @@ export const orders = mysqlTable(
 );
 
 /**
- * Línea de la orden. Precio, tasa e impuesto se congelan al vender (RN-04): un cambio posterior
- * de tasas o precios no la recalcula. Anular marca la línea, nunca la borra (RF-C10, RN-11).
+ * Order line. Price, rate and tax are frozen at sale time (RN-04): a later change of rates
+ * or prices does not recalculate it. Voiding marks the line, never deletes it (RF-C10, RN-11).
  */
 export const orderItems = mysqlTable(
   'order_items',
@@ -135,7 +135,7 @@ export const orderItemModifiers = mysqlTable(
   (t) => [index('idx_order_item_modifiers_item').on(t.orderItemId)],
 );
 
-/** Descuento por ítem u orden, en % (bp) o monto (Rp), con motivo y autorizador (RF-C11, RN-15). */
+/** Item or order discount, in % (bp) or amount (Rp), with reason and authorizer (RF-C11, RN-15). */
 export const discounts = mysqlTable(
   'discounts',
   {
@@ -145,7 +145,7 @@ export const discounts = mysqlTable(
     orderId: uuid('order_id').notNull(),
     orderItemId: uuid('order_item_id'),
     kind: varchar('kind', { length: 16 }).notNull(),
-    /** bp si `kind = percent`, rappen si `kind = amount`. */
+    /** bp if `kind = percent`, rappen if `kind = amount`. */
     value: int('value').notNull(),
     amountRappen: rappen('amount_rappen'),
     reasonCode: varchar('reason_code', { length: 32 }).notNull(),

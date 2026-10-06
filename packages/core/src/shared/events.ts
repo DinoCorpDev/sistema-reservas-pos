@@ -1,9 +1,9 @@
 /**
- * Eventos del sistema (sección 16 del documento, PA-10).
+ * System events (section 16 of the document, PA-10).
  *
- * Nombre fijo `modulo.hecho` en minúscula. Se guardan en `outbox_events` dentro de la misma
- * transacción que el cambio y se publican después. Un evento nunca se edita: si fue un error,
- * se publica otro que lo corrige.
+ * Fixed lowercase `module.fact` name. They are stored in `outbox_events` within the same
+ * transaction as the change and published afterwards. An event is never edited: if it was a
+ * mistake, another event that corrects it is published.
  */
 export const EVENT_TYPES = [
   'order.created',
@@ -51,8 +51,8 @@ export function isEventType(value: unknown): value is EventType {
 }
 
 /**
- * Sobre común de todo evento: identificador único, hora del dispositivo y del servidor,
- * organización y sede, usuario y terminal de origen, y versión del esquema del payload.
+ * Common envelope of every event: unique identifier, device and server time,
+ * organization and location, originating user and terminal, and payload schema version.
  */
 export interface EventEnvelope<TType extends EventType = EventType, TPayload = unknown> {
   id: string;
@@ -64,9 +64,9 @@ export interface EventEnvelope<TType extends EventType = EventType, TPayload = u
   terminalId: string | null;
   aggregateType: string;
   aggregateId: string;
-  /** ISO 8601, reloj del dispositivo que originó el cambio. */
+  /** ISO 8601, clock of the device that originated the change. */
   occurredAt: string;
-  /** ISO 8601, reloj del servidor al recibirlo; null mientras está solo en el dispositivo. */
+  /** ISO 8601, server clock on receipt; null while it exists only on the device. */
   recordedAt: string | null;
   payload: TPayload;
 }
