@@ -1,0 +1,24 @@
+{
+  "name": "@pos/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Dominio puro del Core POS: entidades, reglas MWST, máquinas de estado y cálculo de dinero. Sin frameworks.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "uuidv7": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@pos/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
