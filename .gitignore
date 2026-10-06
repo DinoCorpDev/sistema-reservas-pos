@@ -1,0 +1,30 @@
+# dependencias
+node_modules/
+.pnpm-store/
+
+# builds
+.next/
+dist/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# turbo / caches
+.turbo/
+.eslintcache
+
+# entorno (nunca subir secretos)
+.env
+.env.*
+!.env.example
+
+# tests
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# sistema
+.DS_Store
+Thumbs.db
+*.log

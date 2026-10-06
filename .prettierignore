@@ -1,0 +1,11 @@
+pnpm-lock.yaml
+node_modules
+.next
+dist
+.turbo
+coverage
+playwright-report
+test-results
+packages/db/drizzle
+docs/requerimientos.txt
+docs/PROMPT_MAESTRO_POS.md

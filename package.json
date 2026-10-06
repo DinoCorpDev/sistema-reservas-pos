@@ -1,0 +1,40 @@
+{
+  "name": "sistema-reservas-pos",
+  "private": true,
+  "description": "Sistema Reservas POS — Core POS offline-first para restaurantes en Suiza (DINOLABS)",
+  "packageManager": "pnpm@10.34.6",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test && pnpm run check:trace",
+    "test:integration": "turbo run test:integration --concurrency=1",
+    "e2e": "turbo run e2e",
+    "lint": "eslint . --cache",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:trace": "tsx scripts/check-traceability.ts",
+    "db:create": "pnpm --filter @pos/db run db:create",
+    "db:generate": "pnpm --filter @pos/db run db:generate",
+    "db:migrate": "pnpm --filter @pos/db run db:migrate",
+    "db:seed": "pnpm --filter @pos/db run db:seed",
+    "db:setup": "pnpm --filter @pos/db run db:setup"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@next/eslint-plugin-next": "15.5.27",
+    "@types/node": "catalog:",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.9",
+    "tsx": "catalog:",
+    "turbo": "^2.11.7",
+    "typescript": "catalog:",
+    "typescript-eslint": "^8.71.1"
+  }
+}

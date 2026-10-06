@@ -1,0 +1,1899 @@
+                                                                     DOCUMENTO DE REQUERIMIENTOS · V1.0
+                                                                 PROYECTO SISTEMA FULL POS · 5 OCT 2026
+
+RESERVAS    ×   CORE   POS   ·   MERCADO:   SUIZA
+
+SISTEMA
+RESERVAS POS
+REQUERIMIENTOS
+Qué debe hacer el sistema para que un restaurante opere
+mesa → pedido → cocina → pago → cierre, 24/7 y sin internet.
+Base para los casos de uso, la documentación técnica y el plan
+de pruebas.
+
+  FUNCIONAL, SIN STACK            PARA EL EQUIPO DE DESARROLLO      CONFIDENCIAL
+
+  126                        23                     24                12                    52
+  REQ.                       NO FUNCIONALES         REGLAS DE         PRINCIPIOS            CASOS DE USO
+  FUNCIONALES                                       NEGOCIO
+
+Preparado por DINOLABS para el equipo de desarrollo del                               JUAN FELIPE · DINOLABS
+Sistema Reservas POS.                                                                    INTELLIGENT SYSTEMS
+
+Versión viva y editable: documento en claude.ai (consultar a                DINOLABS.DEV · IG @IACONJUANFE
+Juan Felipe para acceso).                                                          WHATSAPP +57 300 425 3257
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                          DINOLABS
+
+ÍNDICE
+
+CONTENIDO
+01      Propósito de este documento                                                                                         2
+
+02      Visión del producto                                                                                                 2
+
+03      Glosario                                                                                                            3
+
+04      Actores                                                                                                             5
+
+05      Alcance del MVP                                                                                                     6
+
+06      Principios de arquitectura                                                                                          8
+
+07      Requerimientos funcionales A — Organización, sedes, usuarios y permisos                                          10
+
+08      Requerimientos funcionales B — Catálogo maestro e impuestos                                                      10
+
+09      Requerimientos funcionales C — Mesas, órdenes y cocina                                                           12
+
+10      Requerimientos funcionales D — Pagos, caja y recibos                                                             14
+
+11      Requerimientos funcionales E — Capa Zitas: reservas, menú QR, takeaway y clientes                                15
+
+12      Requerimientos funcionales F — Reportes, auditoría, integraciones, IA y backoffice                               17
+
+13      Reglas de negocio                                                                                                19
+
+14      Requerimientos no funcionales — operación 24/7                                                                   21
+
+15      Modelo de datos (entidades principales)                                                                          24
+
+16      Eventos del sistema                                                                                              25
+
+17      Flujos principales                                                                                               27
+
+18      Roadmap por fases                                                                                                29
+
+19      Criterios de aceptación del piloto                                                                               30
+
+20      Riesgos, supuestos y decisiones pendientes                                                                       32
+
+21      Mapa de casos de uso                                                                                             34
+
+ DEBE     entra en el MVP ·    DEBERÍA       pocas semanas después del arranque ·   PODRÍA   se decide después del piloto
+
+                    Ó
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                            PÁGINA 1 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                           DINOLABS
+
+01     PROPÓSITO DE ESTE DOCUMENTO
+Este documento define qué debe hacer el Sistema Reservas POS, no cómo se construye. Es la fuente
+única de alcance: de aquí salen los casos de uso, la documentación técnica y el plan de pruebas.
+
+Para quién: el socio del proyecto y el equipo de desarrollo. Está escrito en lenguaje simple; los términos
+técnicos están en el glosario.
+
+Cómo leerlo. Cada requerimiento tiene un código y una prioridad:
+
+ CÓDIGO        QUÉ ES                                                                          EJEMPLO
+
+ RF            Requerimiento funcional: algo que el sistema hace                               RF-C12 Dividir la
+                                                                                               cuenta
+
+ RNF           Requerimiento no funcional: cómo debe comportarse (velocidad,                   RNF-02 Operar sin
+               disponibilidad, seguridad)                                                      internet
+
+ RN            Regla de negocio: una regla que el sistema aplica siempre                       RN-02 Tasas de MWST
+
+ PA            Principio de arquitectura: restricción que el equipo técnico no puede cambiar   PA-03 Offline-first
+               sin aprobación
+
+ PRIORIDAD        SIGNIFICADO
+
+     DEBE         Sin esto el piloto no sale. Entra en el MVP.
+
+     DEBERÍA      Importante; puede entregarse pocas semanas después de arrancar el piloto.
+
+     PODRÍA       Deseable; se decide después del piloto con datos reales.
+
+Documentos base que este documento reemplaza como fuente de alcance: el plan de septiembre
+2026 (Plan_POS_Suiza_Zitas), la revisión del 1 de octubre 2026 con sus 6 ajustes críticos (todos
+incorporados aquí como obligatorios) y la investigación de mercado suizo del 30 de septiembre 2026.
+
+QUÉ SIGUE DESPUÉS DE ESTE DOCUMENTO:
+
+ 1. Casos de uso: uno por cada flujo de la sección 17 y por cada RF que lo necesite (la sección 21 trae el
+    mapa).
+ 2. Documentación técnica: stack, modelo de datos detallado, API, infraestructura y hosting en Suiza.
+ 3. Plan de pruebas: cada RN y RNF se convierte en una prueba automática o un chequeo del piloto.
+
+02     VISIÓN DEL PRODUCTO
+Tesis: no crear otro sistema aparte. Zitas (reservas, menú QR, pedidos, clientes, IA) se convierte en la capa
+digital de un nuevo Core POS modular que maneja la operación real del restaurante: mesas, órdenes,
+cocina, caja, pagos, impuestos, auditoría y reportes.
+
+Promesa al cliente: “Todo tu restaurante en un solo sistema”. Reservas, pedidos (sala, QR y takeaway),
+cocina, caja, pagos (tarjeta, TWINT y efectivo) y clientes en una sola plataforma, con precio claro en CHF
+por sede.
+
+Nombre de trabajo: Sistema Reservas POS (el producto no llevará el nombre Zitas). Mercado: Suiza.
+Cliente objetivo del piloto: restaurantes independientes y grupos pequeños, con dueño presente, una
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                          PÁGINA 2 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                                   DINOLABS
+
+sede y servicio en mesa, en una sola región lingüística (Zúrich en alemán o la Romandía en francés).
+Piloto con 3 a 5 restaurantes.
+
+Dónde se gana. Cada dolor del mercado suizo tiene una respuesta concreta en el producto:
+
+ DOLOR DEL MERCADO (SEGÚN LA
+                                                      RESPUESTA DEL PRODUCTO                        REQUERIMIENTOS
+ INVESTIGACIÓN)
+
+ El líder (Lightspeed) falla sin internet:            Offline-first: la sede sigue vendiendo,       PA-03, RNF-02, RF-C18,
+ KDS y fidelización dejan de funcionar                cocinando e imprimiendo sin nube              RF-C27
+
+ Pagos amarrados a un solo proveedor                  El restaurante elige: Worldline, wallee,      PA-04, RF-D10
+                                                      SumUp, TWINT; el Core no depende del
+                                                      proveedor
+
+ POS, reservas, QR y delivery son                     Un solo sistema con una sola fuente de        PA-02, RF-E01 a RF-E13
+ proveedores distintos                                datos
+
+ La mayoría de sistemas son alemanes;                 4 idiomas reales: el mesero, la cocina y el   RF-A08, RF-B07, RF-C25,
+ francés e italiano quedan atrás                      cliente pueden ver cada uno el suyo           RNF-23
+
+ Alérgenos, origen de la carne y menú                 Una sola ficha de producto publica            RF-B05, RF-B06, RF-B15,
+ del día se mantienen a mano en tres                  carta, QR, web y carta impresa                RN-18
+ lugares
+
+ MWST calculada a mano o mal según el                 La tasa sale sola del producto y del          RF-B12, RN-02, RN-03,
+ canal                                                canal; reportes listos para la fiduciaria     RF-F02
+
+ Precios por módulos y add-ons sin                    Precio claro en CHF, todo incluido por        Decisión comercial
+ precio público                                       sede                                          pendiente (sección 20)
+
+Lo que el producto no intenta ser en su primera versión: un ERP, un sistema de nómina, un inventario
+avanzado ni una plataforma de delivery propia. La sección 5 lo detalla.
+
+03    GLOSARIO
+Los términos se usan con este significado en todo el documento, en los casos de uso y en el código.
+
+ TÉRMINO                   SIGNIFICADO
+
+ Core POS                  El núcleo nuevo: la única fuente de verdad de catálogo, mesas, órdenes, pagos, caja,
+                           clientes y auditoría. Todo lo demás lo consume por API.
+
+ Zitas (capa digital)      Lo que ya existe: portal web del restaurante, menú QR, pedidos online, reservas, clientes,
+                           WhatsApp y Zita IA.
+
+ Organization              La empresa cliente (un dueño puede tener varias sedes).
+
+ Location (sede)           Un restaurante físico con su dirección, número MWST, horarios, mesas y terminales.
+
+ Terminal                  Un dispositivo que opera el POS: tablet de caja, handheld del mesero o pantalla de cocina.
+
+ Área                      Una zona del restaurante: salón, terraza, barra.
+
+ Mesa                      Un puesto de servicio dentro de un área. Puede unirse con otras.
+
+ Canal                     Por dónde entra la venta: mesa, barra, takeaway (para llevar), QR, web, delivery. El canal
+                           define la tasa de impuesto.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                                  PÁGINA 3 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                              DINOLABS
+
+ TÉRMINO                   SIGNIFICADO
+
+ Catálogo maestro          La única lista de productos de la organización. De ahí salen el POS, el QR, la web y la carta
+                           impresa.
+
+ Variante                  Versión de un producto con precio propio: pequeña / grande, 3 dl / 5 dl.
+
+ Modificador               Opción que cambia un ítem: término de la carne, sin cebolla, extra queso (con o sin costo).
+
+ Orden                     Una cuenta. Tiene ítems, un canal, estados y pagos. Una mesa puede tener varias órdenes.
+
+ Ítem                      Una línea de la orden: producto + variante + modificadores + nota + asiento + curso.
+
+ Curso                     El tiempo de servicio: entradas, platos fuertes, postres. “Marchar” es enviar el siguiente
+                           curso a cocina.
+
+ Asiento (seat)            El comensal al que pertenece un ítem; sirve para dividir la cuenta.
+
+ Ticket de cocina          Lo que recibe una estación cuando se envía una orden o un curso.
+
+ KDS                       Kitchen Display System: pantalla de cocina que reemplaza o complementa la comanda
+                           impresa.
+
+ Estación                  Un puesto de preparación: cocina caliente, fría, bar, postres. Cada producto se rutea a una.
+
+ Medio de pago             Cómo se paga: efectivo, tarjeta, TWINT, online, vale.
+ (tender)
+
+ Adaptador de pago         Pieza de software que conecta el Core con un proveedor (Worldline, wallee, SumUp,
+                           TWINT) sin tocar las órdenes.
+
+ Turno                     Periodo de caja de un cajero o terminal: abre con un fondo, cierra con un arqueo.
+
+ Arqueo                    Contar el efectivo real y compararlo con el esperado.
+
+ Cierre Z                  El cierre definitivo del día: ventas por medio de pago y por tasa, propinas, anulaciones. No
+                           se edita.
+
+ Libro de caja             Registro diario de entradas y salidas de efectivo. Obligatorio en Suiza si se cobra en
+                           efectivo.
+
+ MWST                      Mehrwertsteuer: el IVA suizo. Tasas 8,1 % normal, 2,6 % reducida, 3,8 % alojamiento.
+
+ UID                       Número de identificación de la empresa en Suiza (CHE-xxx.xxx.xxx). Va en el recibo con el
+                           sufijo MWST.
+
+ Fiduciaria                El contador externo que lleva la contabilidad y la declaración de MWST. Recibe las
+ (Treuhänder)              exportaciones.
+
+ Offline-first             El sistema funciona primero en la sede, sin internet, y sincroniza con la nube cuando
+                           puede.
+
+ Idempotente               Una operación que puede repetirse sin duplicar su efecto. Clave para sincronizar sin crear
+                           pagos dobles.
+
+ Evento                    Un hecho registrado: “orden creada”, “pago completado”. Alimenta reportes, CRM, auditoría
+                           e integraciones.
+
+ Auditoría append-         Registro al que solo se agregan líneas; nunca se edita ni se borra.
+ only
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                             PÁGINA 4 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                           DINOLABS
+
+ TÉRMINO                   SIGNIFICADO
+
+ Multi-tenant              Varias organizaciones en la misma plataforma, con datos aislados entre sí.
+
+ Backoffice                El panel web donde el dueño o gerente configura todo y ve reportes.
+
+ Tagesmenü                 Menú del día, muy común en Suiza; cambia a diario.
+
+ revDSG                    Nueva ley suiza de protección de datos (vigente desde septiembre de 2023).
+
+ L-GAV                     Convenio colectivo de la gastronomía suiza; exige control de horas del personal.
+
+ Lunch-Check               Vale de comida suizo que algunos restaurantes aceptan como medio de pago.
+
+ MVP                       La primera versión vendible: lo marcado como “Debe”.
+
+04    ACTORES
+Ocho tipos de personas y seis sistemas externos interactúan con el producto. Cada caso de uso nombra a
+uno de estos actores.
+
+ ACTOR                   QUIÉN ES                                    QUÉ HACE EN EL SISTEMA
+
+ Dueño /                 Dueño del restaurante o su persona de       Configura la organización, las sedes, el catálogo,
+ Administrador           confianza                                   los impuestos y los usuarios; ve todos los reportes;
+                                                                     autoriza lo sensible
+
+ Gerente                 Responsable del turno                       Abre y cierra la caja, autoriza anulaciones y
+                                                                     descuentos, reabre órdenes, revisa el cierre,
+                                                                     maneja reservas
+
+ Mesero                  Personal de sala                            Abre mesas, toma pedidos en tablet o handheld,
+                                                                     envía a cocina, divide cuentas, cobra, hace check-
+                                                                     in de reservas
+
+ Cajero                  Quien opera la caja en mostrador (en        Cobra, emite recibos, registra movimientos de caja,
+                         locales pequeños es el mismo mesero         toma pedidos takeaway
+                         o gerente)
+
+ Cocina / Bar            Personal de una estación                    Ve sus tickets en el KDS, cambia estados, marca
+                                                                     productos agotados
+
+ Cliente                 Quien come o pide                           Reserva, escanea el QR, ve la carta en su idioma,
+ (comensal)                                                          pide, paga online, recibe recibo digital, pide
+                                                                     takeaway
+
+ Soporte                 Equipo que opera la plataforma              Monitorea la salud del sistema, atiende incidentes,
+ DINOLABS                                                            entra a una organización solo con permiso y
+                                                                     queda registrado
+
+ Fiduciaria              Contador externo del restaurante            Recibe exportaciones contables, reportes MWST y
+                                                                     cierres; no opera el sistema
+
+ SISTEMA EXTERNO                         PARA QUÉ SE CONECTA                   CUÁNDO
+
+ Terminal de pago (Worldline,            Cobro con tarjeta y TWINT             Piloto: terminal independiente (monto
+ wallee, SumUp)                          presencial                            digitado). Después: integración directa
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                             PÁGINA 5 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                              DINOLABS
+
+ SISTEMA EXTERNO                         PARA QUÉ SE CONECTA                      CUÁNDO
+
+ TWINT                                   Pago online del pedido QR o web          MVP
+
+ Impresoras de red (Epson                Recibos de cliente y comandas de         MVP
+ ePOS, Star CloudPRNT,                   cocina
+ ESC/POS)
+
+ WhatsApp (ya en Zitas)                  Confirmaciones de reserva, avisos        MVP para reservas; recibos y avisos
+                                         de pedido listo, recibo digital          después
+
+ Software contable (bexio,               Exportación de ventas y MWST             CSV genérico en el MVP; formatos
+ Abacus, Banana)                         para la fiduciaria                       nativos después
+
+ Plataformas de delivery (Uber           Importar pedidos al Core                 Post-piloto
+ Eats, Just Eat / eat.ch, Smood)
+
+05    ALCANCE DEL MVP
+El MVP es lo que se necesita para que 3 a 5 restaurantes operen un servicio completo (mesa → pedido →
+cocina → pago → cierre) con el sistema como única herramienta, incluso sin internet. Todo lo que está
+marcado “Debe” en las secciones 7 a 14 forma el MVP.
+
+ ENTRA EN EL MVP           LO QUE INCLUYE
+
+ Organización y            Montaje completo de un restaurante desde el backoffice, usuarios, roles y PIN
+ sedes
+
+ Catálogo maestro          Productos, variantes, modificadores, alérgenos, origen, traducciones, precios por canal,
+                           agotados
+
+ Impuestos MWST            Tasa automática por producto y canal, con fecha de vigencia
+
+ Mesas y sala              Mapa de mesas por área, estados, unir, mover, dividir
+
+ Órdenes                   Tomar pedido, cursos, notas, anulaciones, descuentos, dividir y transferir, estados de
+                           preparación y de pago separados
+
+ Cocina                    KDS por estación, ruteo, tiempos, idioma de cocina, comanda impresa opcional
+
+ Pagos                     Efectivo con redondeo, terminal independiente, TWINT online, pagos mixtos, propinas,
+                           devoluciones
+
+ Caja                      Turnos, movimientos, arqueo, cierre Z, libro de caja
+
+ Recibos                   Recibo válido MWST impreso; reimpresión; un recibo por pago
+
+ Capa Zitas                Reserva → mesa, menú QR por mesa, pedido QR → orden, takeaway, cliente único
+
+ Reportes                  Ventas, MWST por tasa, cierres, anulaciones, propinas; exportación CSV
+
+ Auditoría                 Registro append-only de todo lo sensible; archivo 10 años
+
+ Operación 24/7            Offline-first, sincronización, monitoreo, respaldos, datos en Suiza
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                              PÁGINA 6 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                            DINOLABS
+
+ QUEDA FUERA DE LA PRIMERA                                                                              CUÁNDO SE
+                                                 POR QUÉ
+ VERSIÓN                                                                                                REVISA
+
+ Integración directa con terminales de           El piloto funciona con terminal independiente; la      Después del piloto
+ pago                                            integración depende del proveedor que elijan los
+                                                 pilotos
+
+ Importar pedidos de Uber Eats, Just             Es integración, no logística; no bloquea el servicio   Post-piloto
+ Eat, Smood                                      en mesa
+
+ Inventario por receta y costo por plato         Requiere disciplina de datos que un restaurante        Post-piloto
+                                                 nuevo en el sistema no tiene aún
+
+ Fidelización (puntos, niveles) y gift           No es el dolor principal; el CRM básico basta          Post-piloto
+ cards
+
+ Fichaje de horas del personal                   Útil para el L-GAV pero no es parte del servicio       Podría entrar
+                                                                                                        como módulo
+                                                                                                        simple
+
+ Multi-sede avanzada (precios y                  El piloto es con sedes únicas; el modelo de datos      Cuando haya un
+ reportes consolidados)                          ya lo soporta                                          grupo cliente
+
+ Nómina, ERP, contabilidad completa,             Lo hace la fiduciaria o un software contable; el       No previsto
+ compras y proveedores                           sistema exporta
+
+ PMS / hoteles, delivery propio, flotas,         Fuera del cliente objetivo                             No previsto
+ franquicias grandes, forecasting
+ avanzado
+
+Regla de alcance: si algo nuevo retrasa el flujo mesa → pedido → cocina → pago → cierre en el piloto, no
+entra.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                              PÁGINA 7 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                                        DINOLABS
+
+06    PRINCIPIOS DE ARQUITECTURA
+Estos doce principios son restricciones, no sugerencias: cambiarlos después de escribir código cuesta
+meses. La documentación técnica debe mostrar cómo cumple cada uno.
+
+      Todo pasa por el Core: una sola fuente de verdad
+
+         Capa digital Zitas (cliente)                                   Apps de operación (en la sede)
+
+                Portal web                     Menú QR                         POS de caja           Handheld del mesero
+
+             Pedidos QR y web                  Reservas                      KDS de cocina              Backoffice web
+
+                  Zita IA                     WhatsApp                  POS, handheld y KDS siguen sin internet
+
+                                      lee y escribe por API                                         lee y escribe por API
+
+         Core POS: una sola fuente de verdad, expuesta por API
+
+             Catálogo               MWST               Mesas          Órdenes             Cocina               Pagos
+
+                Caja               Recibos            Clientes        Reservas           Reportes             Auditoría
+
+                                                                    pagos, impresión, exportación, delivery
+
+         Adaptadores (se cambian sin tocar el Core)
+
+            Pagos: TWINT, tarjeta             Impresoras de red        Contabilidad (bexio)         Delivery (post-piloto)
+
+La capa Zitas y las apps de la sede leen y escriben en el Core por API; el Core habla con pagos, impresoras y
+contabilidad a través de adaptadores que se cambian sin tocar la lógica central.
+
+ CÓDIGO      PRINCIPIO                       QUÉ SIGNIFICA EN LA PRÁCTICA
+
+ PA-01       Monolito modular +              Un solo sistema desplegable, dividido en módulos con fronteras claras
+             API-first                       (catálogo, órdenes, pagos, caja…). Toda función se expone por API antes de
+                                             tener pantalla. Nada de microservicios en esta etapa.
+
+ PA-02       Una sola fuente de              Productos, clientes, órdenes y pagos viven una sola vez, en el Core. Zitas y
+             verdad                          cualquier app los consumen por API; nunca se copian ni se mantienen aparte.
+
+ PA-03       Offline-first en la             Cada terminal guarda sus órdenes localmente y sincroniza con una cola. El KDS
+             sede                            y las impresoras funcionan en la red local sin nube. Si internet falla, el
+                                             restaurante no se entera hasta el cierre.
+
+ PA-04       Pagos desacoplados              El motor de órdenes no conoce al proveedor de pago. Cada proveedor (efectivo,
+                                             TWINT, Worldline, wallee, SumUp, online) es un adaptador intercambiable.
+
+ PA-05       Estado de cocina ≠              Cada ítem tiene su estado de preparación; cada orden tiene su estado de pago.
+             estado de pago                  Son independientes: un pedido QR se paga antes de cocinarse, una mesa se
+                                             paga después. La orden se cierra cuando ambos terminan.
+
+ PA-06       Nada se borra                   Anulaciones, devoluciones y correcciones son nuevos registros con usuario,
+                                             motivo y hora. La auditoría es append-only.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                                          PÁGINA 8 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                                DINOLABS
+
+ CÓDIGO      PRINCIPIO                   QUÉ SIGNIFICA EN LA PRÁCTICA
+
+ PA-07       La IA interpreta, el        Zita IA puede entender lenguaje natural, sugerir y asistir, pero precios,
+             Core decide                 impuestos, disponibilidad y pagos los calcula y valida siempre el Core.
+
+ PA-08       Dinero en enteros           Todos los montos se guardan en rappen (céntimos), nunca en decimales
+                                         flotantes. Los impuestos se calculan con reglas que tienen fecha de vigencia.
+
+ PA-09       Multi-tenant desde          Todo dato pertenece a una organización y a una sede. Ninguna consulta corre
+             el día uno                  sin ese filtro.
+
+ PA-10       Eventos confiables e        Cada cambio importante emite un evento que no se pierde (patrón outbox).
+             idempotencia                Los IDs se generan en el dispositivo (UUID v7) y toda operación puede repetirse
+                                         sin duplicar su efecto.
+
+ PA-11       Configurable sin            Un restaurante nuevo se monta completo desde el backoffice: sedes, mesas,
+             código                      catálogo, impuestos, usuarios, impresoras.
+
+ PA-12       Datos en Suiza              La base de datos y los respaldos viven en una región suiza. Es requisito de la
+                                         revDSG y argumento de venta.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                                  PÁGINA 9 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                        DINOLABS
+
+07    REQUERIMIENTOS FUNCIONALES A —
+      ORGANIZACIÓN, SEDES, USUARIOS Y PERMISOS
+El objetivo de este grupo es que un restaurante nuevo quede montado y operando sin tocar código, y
+que cada acción sensible tenga un responsable identificado.
+
+ ID          REQUERIMIENTO                                                                                  PRIORIDAD
+
+ RF-A01      Crear una organización (empresa) con una o varias sedes. Cada dato del sistema                  DEBE
+             pertenece a una organización y a una sede.
+
+ RF-A02      Configurar por sede: nombre comercial, razón social, dirección, número UID/MWST,                DEBE
+             moneda (CHF), zona horaria, idiomas, horarios de apertura y datos que van en el recibo.
+
+ RF-A03      Configurar por sede las áreas (salón, terraza, barra), las mesas con su capacidad, los          DEBE
+             terminales (caja, handheld, KDS) y las estaciones de cocina.
+
+ RF-A04      Crear usuarios con roles predefinidos: administrador, gerente, cajero, mesero, cocina. Un       DEBE
+             usuario puede tener varios roles y trabajar en varias sedes.
+
+ RF-A05      Permisos por acción sensible (anular, descontar, reabrir, abrir cajón, cerrar caja, cambiar     DEBE
+             precios, devolver). Las acciones que el rol no tiene piden autorización de un gerente con
+             su PIN, en el mismo dispositivo.
+
+ RF-A06      Ingreso al POS con PIN de 4 a 6 dígitos y cambio de usuario en menos de 3 segundos. El          DEBE
+             terminal recuerda la sede; el usuario solo se identifica.
+
+ RF-A07      Ingreso al backoffice con correo y contraseña; verificación en dos pasos para                   DEBERÍA
+             administradores.
+
+ RF-A08      Cada usuario elige el idioma de su interfaz (DE, FR, IT, EN; ES para soporte), independiente    DEBE
+             del idioma de la sede o del cliente.
+
+ RF-A09      Fichaje simple de entrada y salida por empleado desde el POS, con reporte de horas por          PODRÍA
+             persona (control de horas del L-GAV).
+
+ RF-A10      Soporte DINOLABS puede entrar a una organización solo con permiso del dueño, por                DEBERÍA
+             tiempo limitado, y cada acción queda en la auditoría.
+
+ RF-A11      Montar un restaurante completo (sede, áreas, mesas, terminales, estaciones, catálogo,           DEBE
+             impuestos, impresoras, usuarios) únicamente desde el backoffice, con una lista de
+             verificación que indique qué falta para operar.
+
+ RF-A12      Desactivar usuarios y terminales sin borrarlos; su historial se conserva.                       DEBE
+
+08    REQUERIMIENTOS FUNCIONALES B — CATÁLOGO
+      MAESTRO E IMPUESTOS
+Una sola ficha de producto alimenta el POS, el menú QR, la web y la carta impresa, y decide sola la tasa
+de MWST. Es el módulo que más trabajo manual le ahorra al restaurante.
+
+ ID          REQUERIMIENTO                                                                                  PRIORIDAD
+
+ RF-B01      Un solo catálogo maestro por organización. Cada sede puede activar o desactivar                 DEBE
+             productos y definir precios propios.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                         PÁGINA 10 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                        DINOLABS
+
+ ID          REQUERIMIENTO                                                                                  PRIORIDAD
+
+ RF-B02      Categorías, productos, variantes (tamaño, medida) y grupos de modificadores:                    DEBE
+             obligatorios u opcionales, con mínimo y máximo de selección, con o sin costo adicional.
+
+ RF-B03      Combos y menús (Tagesmenü) con precio fijo y componentes elegibles; el menú del día             DEBERÍA
+             se publica en un paso.
+
+ RF-B04      Precio en CHF con MWST incluida. Precio distinto por canal (mesa, barra, takeaway, QR,          DEBE
+             web, delivery) cuando el restaurante lo quiera.
+
+ RF-B05      Alérgenos (los 14 reconocidos en Suiza y la UE) por producto y por modificador; se              DEBE
+             muestran en el POS, el QR, la web y la comanda de cocina.
+
+ RF-B06      Origen de la carne, las aves y el pescado por producto (país), visible al cliente en el menú    DEBE
+             digital e impreso.
+
+ RF-B07      Traducciones de nombre y descripción en DE, FR, IT y EN. Como mínimo el idioma de la            DEBE
+             sede más uno; si falta una traducción se muestra la del idioma de la sede.
+
+ RF-B08      Disponibilidad por franja horaria (desayuno, almuerzo, cena), por día de la semana y por        DEBE
+             canal.
+
+ RF-B09      Agotar un producto en un toque desde el POS o el KDS (“86”). Deja de poder pedirse en el        DEBE
+             POS, el QR y la web de inmediato; se puede programar que vuelva al día siguiente.
+
+ RF-B10      Imagen por producto y por categoría para el menú digital.                                       DEBERÍA
+
+ RF-B11      Cada producto se asocia a una estación de cocina (ruteo) y a un curso por defecto; ambos        DEBE
+             se pueden cambiar al tomar el pedido.
+
+ RF-B12      Reglas de impuesto: cada producto tiene una categoría fiscal (comida, bebida sin alcohol,       DEBE
+             bebida alcohólica, alojamiento, otro). La tasa de cada línea se calcula con la regla
+             categoría fiscal + canal + tipo de consumo (en el local, para llevar, a domicilio).
+
+ RF-B13      Tasas y reglas de MWST editables desde el backoffice con fecha de inicio de vigencia; el        DEBE
+             sistema aplica la tasa vigente en el momento de la venta sin desplegar código.
+
+ RF-B14      Importar el catálogo desde CSV o Excel y desde la carta actual de Zitas, con vista previa de    DEBERÍA
+             errores antes de confirmar.
+
+ RF-B15      Publicar desde una sola ficha a POS, menú QR y portal web Zitas. Un cambio de precio,           DEBE
+             nombre o disponibilidad se refleja en todos los canales.
+
+ RF-B16      Generar la carta imprimible (PDF) por idioma con precios, alérgenos y origen, desde el          DEBERÍA
+             mismo catálogo.
+
+ RF-B17      Historial de cambios de precio, impuesto y disponibilidad: quién, cuándo, valor anterior y      DEBE
+             nuevo.
+
+ RF-B18      Duplicar un producto o una categoría completa para crear otro rápido.                           DEBERÍA
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                         PÁGINA 11 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                                DINOLABS
+
+09    REQUERIMIENTOS FUNCIONALES C — MESAS,
+      ÓRDENES Y COCINA
+Este es el corazón del producto: el flujo mesa → pedido → cocina debe funcionar rápido, sin internet y sin
+perder un solo ítem. La orden lleva dos estados independientes: el de preparación (por ítem) y el de pago
+(por orden).
+
+      La orden se cierra cuando cocina y pago terminan, en cualquier orden
+
+          Preparación: estado por ítem
+
+            Pendiente          Enviado         Preparando             Listo         Servido
+
+                                                                                                        Orden cerrada
+                                                   Anulado    desde cualquier estado, con motivo
+                                                                                                          todo servido
+                                                                                                           o anulado
+                                                                                                        + pago completo
+
+          Pago: estado por orden
+
+              Sin pagar             Pago parcial             Pagada               Devuelta
+
+      Un pedido QR o takeaway se paga antes de cocinarse; una mesa, después. Las dos líneas avanzan por separado.
+
+La preparación avanza por ítem y el pago por orden; ninguno espera al otro, y la orden se cierra sola cuando ambos
+terminan.
+
+MESAS Y SALA
+
+ ID          REQUERIMIENTO                                                                                          PRIORIDAD
+
+ RF-C01      Mapa visual de mesas por área, con estado en tiempo real: libre, reservada, ocupada,                    DEBE
+             esperando pedido, en cocina, lista, esperando pago. El estado se deriva de la orden; nadie
+             lo cambia a mano.
+
+ RF-C02      Abrir una mesa indicando número de comensales y mesero responsable.                                     DEBE
+
+ RF-C03      Unir mesas, separar mesas unidas, mover una cuenta a otra mesa y cambiar el mesero                      DEBE
+             responsable, sin perder ítems ni pagos.
+
+ RF-C04      Vincular la mesa con la reserva (check-in) y con la visita del cliente; desde la mesa se ve             DEBE
+             quién reservó y su historial.
+
+ RF-C05      Varias órdenes abiertas en una misma mesa (grupos que pagan por separado desde el                       DEBERÍA
+             inicio).
+
+ RF-C06      Áreas de temporada (terraza) que se activan o desactivan sin borrar sus mesas.                          PODRÍA
+
+ÓRDENES (ORDER ENGINE)
+
+ ID          REQUERIMIENTO                                                                                          PRIORIDAD
+
+ RF-C07      Crear órdenes de tipo mesa, barra, takeaway, QR y web (delivery después del piloto). El                 DEBE
+             tipo define el canal y, con él, la tasa de MWST de cada línea.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                                 PÁGINA 12 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                       DINOLABS
+
+ ID          REQUERIMIENTO                                                                                 PRIORIDAD
+
+ RF-C08      Agregar ítems con variante, modificadores, nota libre para cocina, asiento y curso.            DEBE
+             Cambiar cantidad antes de enviar.
+
+ RF-C09      Enviar a cocina todo lo pendiente o solo un curso; “marchar” el siguiente curso cuando el      DEBE
+             mesero lo decida.
+
+ RF-C10      Anular un ítem antes o después de enviarlo a cocina, con motivo obligatorio y permiso; el      DEBE
+             ítem queda marcado como anulado, nunca se borra. Si ya estaba enviado, el KDS lo
+             muestra tachado.
+
+ RF-C11      Descuentos por ítem o por orden, en porcentaje o monto, con motivo; descuentos                 DEBE
+             frecuentes como botones (empleado, cortesía, promoción).
+
+ RF-C12      Dividir la cuenta por partes iguales, por ítems o por asientos; cada parte genera su propio    DEBE
+             pago y recibo.
+
+ RF-C13      Transferir ítems entre órdenes y unir dos órdenes en una.                                      DEBE
+
+ RF-C14      Reabrir una orden cerrada con permiso de gerente y motivo; queda en auditoría y el cierre      DEBE
+             del día refleja la corrección como movimiento nuevo.
+
+ RF-C15      Número de orden corto y legible por sede y día (por ejemplo 0042) para hablar con cocina       DEBE
+             y clientes; identificador único interno generado en el dispositivo.
+
+ RF-C16      Dos estados independientes: preparación por ítem (pendiente, enviado, en preparación,          DEBE
+             listo, servido, anulado) y pago por orden (sin pagar, pago parcial, pagada, devuelta). La
+             orden se cierra sola cuando todos los ítems están servidos o anulados y el pago está
+             completo.
+
+ RF-C17      Un pedido QR, takeaway o web puede pagarse antes de prepararse (prepago) o después;            DEBE
+             el flujo de cocina es el mismo.
+
+ RF-C18      Todas las operaciones de esta sección funcionan sin internet dentro de la sede y se            DEBE
+             sincronizan al volver la conexión, sin duplicados ni pérdidas.
+
+ RF-C19      Vista “mis mesas” para el mesero y vista “todas las órdenes abiertas” para el gerente, con     DEBE
+             tiempo transcurrido desde el último envío.
+
+COCINA (KDS)
+
+ ID          REQUERIMIENTO                                                                                 PRIORIDAD
+
+ RF-C20      KDS en tablet o pantalla por estación. Cada ticket muestra mesa o número de orden,             DEBE
+             hora, ítems con modificadores y notas, alérgenos marcados y el nombre del mesero.
+
+ RF-C21      Ruteo automático por estación según el producto (pizza a cocina, cerveza a bar, postre a       DEBE
+             postres). Un ítem puede ir a más de una estación.
+
+ RF-C22      Cambiar el estado por ítem o por ticket completo: en preparación, listo, servido. Marcar       DEBE
+             servido desde el KDS o desde el POS.
+
+ RF-C23      Aviso al mesero en su handheld o POS cuando un ticket está listo.                              DEBERÍA
+
+ RF-C24      Tiempos: hora de envío, tiempo transcurrido visible, alerta de color al pasar un umbral        DEBE
+             configurable por estación.
+
+ RF-C25      El ticket se muestra e imprime en el idioma configurado para la cocina, aunque el pedido       DEBERÍA
+             se haya tomado en otro idioma.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                        PÁGINA 13 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                      DINOLABS
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-C26      Impresión de comanda en la impresora de la estación (ESC/POS o red) como alternativa o        DEBERÍA
+             complemento al KDS; reimpresión manual.
+
+ RF-C27      KDS, ruteo e impresión de comandas funcionan en la red local de la sede sin conexión a        DEBE
+             la nube.
+
+ RF-C28      Vista de tickets ya terminados (recall) de las últimas horas.                                 DEBERÍA
+
+10    REQUERIMIENTOS FUNCIONALES D — PAGOS, CAJA
+      Y RECIBOS
+El cliente suizo paga con tarjeta, TWINT o efectivo, pide el recibo para sus gastos y espera que el cierre
+cuadre al céntimo. Los pagos son adaptadores intercambiables; la caja y los recibos son parte del MVP.
+
+PAGOS
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-D01      Medios de pago en el MVP: efectivo en CHF, tarjeta en terminal, TWINT presencial (en el       DEBE
+             terminal) y pago online (TWINT o tarjeta) para pedidos QR y web.
+
+ RF-D02      Pagos mixtos y parciales en una misma orden (por ejemplo, 50 CHF en tarjeta y el resto        DEBE
+             en efectivo); la orden muestra siempre el saldo pendiente.
+
+ RF-D03      Efectivo: cálculo del cambio con redondeo del total a 0,05 CHF y registro de la diferencia    DEBE
+             de redondeo.
+
+ RF-D04      Terminal de pago independiente en el piloto: el cajero digita el monto en el terminal y       DEBE
+             confirma en el POS el medio y el monto aprobado.
+
+ RF-D05      Integración directa con el terminal (el POS envía el monto y recibe la aprobación) para       DEBERÍA
+             Worldline, wallee y SumUp, como adaptadores.
+
+ RF-D06      Propina voluntaria al pagar: en el terminal, en efectivo o en el pago online; se asigna al    DEBE
+             mesero de la orden y se reporta por persona. No forma parte de la venta.
+
+ RF-D07      Devolución total o parcial con motivo y permiso, siempre ligada al pago original y por el     DEBE
+             mismo medio cuando el proveedor lo permita.
+
+ RF-D08      Pago en EUR con tasa de cambio configurada por la sede y cambio en CHF (zonas                 PODRÍA
+             turísticas).
+
+ RF-D09      Vales de comida (Lunch-Check y similares) como medio de pago manual.                          PODRÍA
+
+ RF-D10      El módulo de pagos es un adaptador: agregar un proveedor nuevo no modifica el motor           DEBE
+             de órdenes ni la caja.
+
+ RF-D11      Conciliación al cierre: el total del POS por medio de pago se compara con el cierre del       DEBE
+             terminal; las diferencias quedan registradas con motivo.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                       PÁGINA 14 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                     DINOLABS
+
+CAJA Y TURNOS
+
+ ID          REQUERIMIENTO                                                                               PRIORIDAD
+
+ RF-D12      Apertura de turno con fondo inicial contado, por terminal o por cajero según configure la    DEBE
+             sede.
+
+ RF-D13      Movimientos de caja durante el turno: ingresos, retiros y gastos menores, con motivo y       DEBE
+             comprobante opcional (foto).
+
+ RF-D14      Arqueo: conteo del efectivo por denominación, efectivo esperado frente a contado y           DEBE
+             diferencia, con comentario obligatorio si hay diferencia.
+
+ RF-D15      Cierre de turno y cierre del día (Z) con resumen por medio de pago, por tasa de MWST,        DEBE
+             propinas, descuentos, anulaciones, devoluciones y redondeos.
+
+ RF-D16      Libro de caja diario generado automáticamente a partir de los movimientos y cierres,         DEBE
+             consultable y exportable (PDF y CSV).
+
+ RF-D17      Un cierre no se edita. Las correcciones posteriores se registran como movimientos nuevos     DEBE
+             con referencia al cierre afectado.
+
+ RF-D18      Apertura del cajón de dinero conectado a la impresora al cobrar en efectivo o con            DEBERÍA
+             permiso.
+
+ RF-D19      No se puede cerrar el día con turnos abiertos ni con órdenes abiertas sin resolver; el       DEBE
+             sistema las lista para resolverlas.
+
+RECIBOS E IMPRESIÓN
+
+ ID          REQUERIMIENTO                                                                               PRIORIDAD
+
+ RF-D20      Recibo de cliente válido para MWST: nombre y dirección de la sede, número UID con            DEBE
+             sufijo MWST, fecha y hora, detalle por línea, tasa y monto de impuesto por tasa, total,
+             medio de pago y propina.
+
+ RF-D21      Recibo digital por QR en pantalla, correo o WhatsApp, además del impreso.                    DEBERÍA
+
+ RF-D22      Campo opcional para el nombre y la dirección del cliente en el recibo; el sistema lo pide    DEBE
+             cuando el total supera CHF 400.
+
+ RF-D23      Recibo en el idioma del cliente (DE, FR, IT, EN), elegible al cobrar.                        DEBERÍA
+
+ RF-D24      Reimprimir un recibo marcado como copia; cada reimpresión queda en auditoría.                DEBE
+
+ RF-D25      Un recibo por cada pago de una cuenta dividida, y un recibo por pedido QR o takeaway         DEBE
+             pagado online.
+
+11    REQUERIMIENTOS FUNCIONALES E — CAPA ZITAS:
+      RESERVAS, MENÚ QR, TAKEAWAY Y CLIENTES
+Aquí se une lo que Zitas ya hace con la operación del Core. La regla es una sola: Zitas no guarda
+productos, órdenes ni clientes propios; los lee y escribe en el Core.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                      PÁGINA 15 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                      DINOLABS
+
+RESERVAS
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-E01      Las reservas (ya existentes en Zitas) se vinculan a las áreas y mesas reales del Core; la     DEBE
+             disponibilidad se calcula sobre esas mesas y sus tiempos de ocupación configurables.
+
+ RF-E02      Check-in de la reserva desde el mapa de mesas o la agenda: crea la visita, ocupa la mesa y    DEBE
+             abre la orden con el nombre del cliente.
+
+ RF-E03      Estados de reserva: pendiente, confirmada, sentada, completada, no-show, cancelada. Los       DEBE
+             walk-ins se registran como visita sin reserva.
+
+ RF-E04      Confirmaciones y recordatorios por WhatsApp o correo, en el idioma del cliente (ya en         DEBE
+             Zitas).
+
+ RF-E05      Depósito o prepago al reservar grupos grandes, con política de cancelación.                   PODRÍA
+
+MENÚ QR Y PEDIDOS QR
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-E06      Menú QR con un código único por mesa que muestra el catálogo maestro en el idioma             DEBE
+             del cliente, con precios, alérgenos, origen y disponibilidad en tiempo real.
+
+ RF-E07      El pedido hecho desde el QR entra como orden del Core en la mesa correcta; el mesero lo       DEBE
+             ve en su dispositivo y la cocina lo recibe por el ruteo normal.
+
+ RF-E08      El restaurante decide por área o por mesa qué permite el QR: solo ver la carta, pedir, o      DEBE
+             pedir y pagar.
+
+ RF-E09      Pago online del pedido QR con TWINT o tarjeta, o la opción “pagar en caja”; el pago online    DEBE
+             queda registrado como un medio más en la orden.
+
+ RF-E10      Desde el QR el cliente puede llamar al mesero o pedir la cuenta; el aviso llega al mesero     DEBERÍA
+             de la mesa.
+
+TAKEAWAY
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-E11      Pedido para llevar desde el portal web Zitas con hora de recogida; el canal aplica la tasa    DEBE
+             reducida de MWST automáticamente (alcohol a tasa normal).
+
+ RF-E12      Pedido takeaway desde el POS en mostrador con número de pedido para llamar al                 DEBE
+             cliente.
+
+ RF-E13      Aviso al cliente por WhatsApp o SMS cuando el pedido está listo.                              DEBERÍA
+
+CLIENTES (CRM)
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-E14      Un cliente único identificado por teléfono o correo, compartido por reservas, pedidos QR      DEBE
+             y web, y POS.
+
+ RF-E15      Historial por cliente: visitas, gasto total y promedio, platos pedidos, frecuencia, mesero    DEBE
+             habitual, notas y alergias declaradas por el propio cliente.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                       PÁGINA 16 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                      DINOLABS
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-E16      Consentimiento registrado al crear el cliente (revDSG). El cliente puede pedir exportar o     DEBE
+             borrar sus datos: se anonimizan sin tocar la integridad de las ventas.
+
+ RF-E17      Etiquetas simples (VIP, habitual, empresa) y búsqueda rápida por nombre o teléfono            DEBERÍA
+             desde el POS.
+
+ RF-E18      Programa de fidelización simple (visitas o puntos) después del piloto.                        PODRÍA
+
+COMUNICACIÓN
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-E19      WhatsApp como canal para recibos digitales y avisos de pedido, reutilizando la                DEBERÍA
+             integración de Zitas.
+
+ RF-E20      Zita IA puede responder preguntas de clientes sobre la carta (alérgenos, horarios) con        DEBE
+             datos del Core, sin crear pedidos ni reservas por su cuenta.
+
+12    REQUERIMIENTOS FUNCIONALES F — REPORTES,
+      AUDITORÍA, INTEGRACIONES, IA Y BACKOFFICE
+El dueño debe entender su día sin llamar a soporte, la fiduciaria debe recibir lo suyo sin pedirlo y cada
+operación sensible debe poder reconstruirse años después.
+
+REPORTES Y EXPORTACIÓN
+
+ ID          REQUERIMIENTO                                                                                PRIORIDAD
+
+ RF-F01      Ventas por día, hora, sede, mesero, canal, categoría y producto, con comparación contra el    DEBE
+             periodo anterior.
+
+ RF-F02      Reporte de MWST por tasa y periodo (mes, trimestre, semestre) con base imponible e            DEBE
+             impuesto, listo para la fiduciaria; totales compatibles con el método de tasa saldo.
+
+ RF-F03      Cierres diarios (Z) consultables por fecha, inalterables, exportables en PDF y CSV.           DEBE
+
+ RF-F04      Exportación contable en CSV genérico con ventas por tasa, medio de pago y día.                DEBE
+
+ RF-F05      Exportación en el formato nativo de bexio, Abacus y Banana.                                   DEBERÍA
+
+ RF-F06      Anulaciones, descuentos y devoluciones por usuario, con motivo y monto.                       DEBE
+
+ RF-F07      Propinas por persona y periodo, separadas de la venta.                                        DEBE
+
+ RF-F08      Tiempos de cocina por estación y producto (envío a listo), y tiempos de mesa (apertura a      DEBERÍA
+             cierre).
+
+ RF-F09      Reservas: ocupación por franja, no-shows, origen de la reserva.                               DEBERÍA
+
+ RF-F10      Tablero del dueño en el celular con ventas del día en vivo, mesas ocupadas y cierre           DEBERÍA
+             esperado.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                       PÁGINA 17 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                        DINOLABS
+
+AUDITORÍA Y ARCHIVO
+
+ ID          REQUERIMIENTO                                                                                  PRIORIDAD
+
+ RF-F11      Registro append-only de toda operación sensible (anular, descontar, devolver, reabrir,          DEBE
+             abrir cajón, cerrar caja, cambiar precio o impuesto, entrar como soporte): usuario,
+             terminal, sede, fecha y hora, estado anterior, estado nuevo y motivo.
+
+ RF-F12      Consulta del registro por rango de fechas, usuario, terminal y tipo de operación;               DEBE
+             exportación CSV.
+
+ RF-F13      Archivo de recibos, cierres, libro de caja y auditoría por 10 años, a prueba de                 DEBE
+             modificaciones y exportable en formatos abiertos (PDF, CSV, JSON).
+
+INTEGRACIONES Y API
+
+ ID          REQUERIMIENTO                                                                                  PRIORIDAD
+
+ RF-F14      API HTTP documentada, con credenciales por organización, para que la web del                    DEBE
+             restaurante y otras apps lean la carta y la disponibilidad, creen reservas y pedidos y
+             consulten su estado.
+
+ RF-F15      Webhooks: el restaurante o un integrador puede suscribirse a eventos (orden creada,             DEBERÍA
+             pago completado, reserva creada, producto agotado).
+
+ RF-F16      Importar pedidos de Uber Eats, Just Eat (eat.ch) y Smood como órdenes de canal delivery.        PODRÍA
+
+ RF-F17      Impresoras de red para recibos y comandas: Epson ePOS, Star CloudPRNT y cualquier               DEBE
+             impresora ESC/POS; configuración desde el backoffice y prueba de impresión.
+
+IA (ZITA IA)
+
+ ID          REQUERIMIENTO                                                                                  PRIORIDAD
+
+ RF-F18      El dueño pregunta en lenguaje natural sobre su negocio (“¿qué plato deja más margen?”,          DEBERÍA
+             “¿cómo fue el sábado frente al anterior?”) y la IA responde solo con datos del Core, citando
+             el reporte del que salen.
+
+ RF-F19      Sugerencias operativas (agotar un producto, reforzar personal según reservas) que un            PODRÍA
+             humano confirma antes de aplicarse.
+
+ RF-F20      La IA nunca crea, modifica ni anula órdenes, pagos, precios ni impuestos por su cuenta.         DEBE
+
+BACKOFFICE
+
+ ID          REQUERIMIENTO                                                                                  PRIORIDAD
+
+ RF-F21      Panel web responsivo para configurar todo lo descrito en RF-A, RF-B y RF-F17, administrar       DEBE
+             usuarios y ver reportes.
+
+ RF-F22      Modo entrenamiento: un restaurante de práctica con datos ficticios que no se mezclan            DEBERÍA
+             con la operación real, para capacitar personal.
+
+ RF-F23      Los cambios hechos en el backoffice llegan a los terminales en menos de un minuto, o al         DEBE
+             reconectarse si estaban sin internet.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                         PÁGINA 18 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                        DINOLABS
+
+13    REGLAS DE NEGOCIO
+Estas reglas se aplican siempre, en todos los canales y dispositivos. Cada una debe convertirse en una
+prueba automática del Core.
+
+PRECIOS E IMPUESTOS (MWST)
+
+ ID        REGLA
+
+ RN-01     Los precios se muestran y se guardan con MWST incluida, como se publican en Suiza. El impuesto se
+           extrae del precio bruto, nunca se suma encima.
+
+ RN-02     Tasas vigentes al redactar este documento: 8,1 % normal, 2,6 % reducida, 3,8 % alojamiento. Son datos
+           configurables con fecha de vigencia, no constantes del código.
+
+ RN-03     La tasa de cada línea se decide en el momento de la venta con tres datos: categoría fiscal del producto,
+           canal y tipo de consumo. Consumo en el local: tasa normal. Comida y bebidas sin alcohol para llevar o a
+           domicilio: tasa reducida. Bebidas alcohólicas: siempre tasa normal.
+
+ RN-04     La tasa y el monto de impuesto quedan guardados en la línea vendida. Un cambio posterior de tasas no
+           recalcula ventas pasadas.
+
+ RN-05     Si una orden cambia de canal antes de pagarse (de mesa a para llevar), las tasas de sus líneas se
+           recalculan y el cambio queda en auditoría. Después de pagada no cambia.
+
+ RN-06     Todos los montos se guardan en rappen (enteros). El redondeo a 0,05 CHF se aplica solo al total pagado
+           en efectivo; la diferencia se registra como redondeo, no como descuento.
+
+ RN-07     La propina voluntaria destinada al personal no forma parte de la venta ni lleva MWST; se registra aparte y
+           se asigna al mesero de la orden.
+
+RECIBOS Y ARCHIVO
+
+ ID        REGLA
+
+ RN-08     Todo recibo lleva nombre y dirección de la sede, UID con sufijo MWST, fecha y hora, detalle, tasa y monto
+           de impuesto por tasa y total. Para totales de CHF 400 o más el sistema pide el nombre del cliente; por
+           debajo es opcional.
+
+ RN-09     Cada pago genera un recibo. Una reimpresión se marca como copia.
+
+ RN-10     Recibos, cierres, libro de caja y auditoría se conservan 10 años y no se pueden modificar ni borrar desde la
+           aplicación.
+
+ÓRDENES, COCINA Y PAGOS
+
+ ID        REGLA
+
+ RN-11     Nada se borra. Ítems anulados, órdenes anuladas, devoluciones y correcciones son registros nuevos con
+           usuario, motivo y hora.
+
+ RN-12     Una orden se cierra sola cuando todos sus ítems están servidos o anulados y su pago está completo. Una
+           orden sin ítems válidos y sin pagos se anula, no se cierra.
+
+ RN-13     Un ítem anulado después de enviado a cocina genera un aviso visible en el KDS de su estación.
+
+ RN-14     Un pago registrado no se modifica. Si está mal, se devuelve y se registra uno nuevo.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                         PÁGINA 19 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                       DINOLABS
+
+ ID        REGLA
+
+ RN-15     Descuentos, anulaciones y devoluciones por encima del umbral configurado por la sede requieren
+           autorización de gerente con PIN.
+
+ RN-16     Los números de orden son secuenciales por sede y día y nunca se reutilizan. Cuando un terminal opera
+           sin conexión, usa su propio rango o prefijo para evitar choques.
+
+ RN-17     Un producto solo se puede pedir si está disponible para ese canal, en esa franja horaria y no está agotado.
+           El Core valida; la pantalla no basta.
+
+ RN-18     Un producto no se publica al menú QR ni a la web si le faltan alérgenos o, siendo carne, ave o pescado, el
+           origen. El backoffice lo bloquea con un aviso claro.
+
+CAJA
+
+ ID        REGLA
+
+ RN-19     Solo un turno abierto por terminal o por cajero (según configure la sede). No se puede cobrar en efectivo
+           sin turno abierto.
+
+ RN-20     No se puede cerrar el día con turnos abiertos ni con órdenes abiertas sin resolver.
+
+ RN-21     Un cierre es definitivo. Las correcciones se registran como movimientos nuevos que referencian el cierre
+           afectado.
+
+RESERVAS Y CLIENTES
+
+ ID        REGLA
+
+ RN-22     Una mesa reservada bloquea su disponibilidad desde los minutos configurados antes de la hora de
+           reserva y pasa a no-show después del tiempo de espera configurado, salvo que el gerente la mantenga.
+
+ RN-23     Todo cliente nuevo se crea con su consentimiento registrado (fecha, canal, texto aceptado). Al pedir el
+           borrado, sus datos personales se anonimizan; las ventas y los recibos se conservan.
+
+ RN-24     Un pedido QR solo se acepta si la mesa está en un estado que lo permite (ocupada o libre con QR
+           habilitado) y el restaurante tiene el QR en modo “pedir” para esa mesa.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                           Ó
+                                                                                                           PÁGINA 20 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                             DINOLABS
+
+14    REQUERIMIENTOS NO FUNCIONALES — OPERACIÓN
+      24/7
+Un restaurante no puede dejar de cobrar un sábado a las 20:00. Estos requerimientos definen qué
+significa “funciona siempre” con números medibles; la documentación técnica debe decir cómo se
+cumple cada uno y el plan de pruebas cómo se verifica.
+
+DISPONIBILIDAD Y OPERACIÓN SIN INTERNET
+
+ ID          REQUERIMIENTO                                       META MEDIBLE                                    PRIORIDAD
+
+ RNF-01      Disponibilidad del servicio en la nube (API,        99,9 % mensual, es decir, máximo 44              DEBE
+             backoffice, QR, web)                                minutos de caída al mes, fuera de
+                                                                 ventanas de mantenimiento anunciadas
+                                                                 con 48 h
+
+ RNF-02      Operación de la sede sin internet: tomar            Al menos 24 horas continuas sin conexión,        DEBE
+             pedidos, enviar a cocina, cobrar en efectivo        sin que el personal note diferencia salvo
+             y con terminal independiente, imprimir              QR, pago online y reportes en la nube
+             recibos y comandas, abrir y cerrar turno
+
+ RNF-03      Sincronización al volver la conexión                Cero órdenes o pagos perdidos o                  DEBE
+                                                                 duplicados; la cola se vacía sola; el usuario
+                                                                 ve un indicador de “pendiente de
+                                                                 sincronizar” con el número de
+                                                                 operaciones
+
+ RNF-04      Resolución de conflictos definida por regla,        Reglas escritas en la documentación              DEBE
+             no por azar                                         técnica: los pagos nunca se pierden, el
+                                                                 último cambio por campo gana, los
+                                                                 conflictos no resueltos se listan al gerente
+
+ RNF-05      Red local de la sede: POS, handhelds, KDS e         Un dispositivo de la sede actúa como             DEBE
+             impresoras se comunican entre sí sin pasar          nodo principal; si se apaga, otro toma el
+             por la nube                                         rol sin configuración manual
+
+RENDIMIENTO Y CAPACIDAD
+
+ ID          REQUERIMIENTO                   META MEDIBLE                                                        PRIORIDAD
+
+ RNF-06      Velocidad en el POS             Tocar un producto y verlo en la orden: menos de 200 ms. Abrir        DEBE
+                                             el mapa de mesas: menos de 1 s. Enviar a cocina y verlo en el
+                                             KDS: menos de 2 s en red local
+
+ RNF-07      Tiempo real entre               Un cambio de estado se ve en todos los dispositivos en menos         DEBE
+             dispositivos de la sede         de 2 s
+
+ RNF-08      Capacidad por sede              10 terminales, 50 mesas, 300 órdenes por día y 60 órdenes en         DEBE
+                                             la hora pico sin degradación
+
+ RNF-09      Capacidad de la                 Crecer de 5 a 500 sedes sin rediseñar el modelo de datos ni la       DEBE
+             plataforma                      arquitectura
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                              PÁGINA 21 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                          DINOLABS
+
+SEGURIDAD Y DATOS
+
+ ID          REQUERIMIENTO              META MEDIBLE                                                          PRIORIDAD
+
+ RNF-10      Seguridad de acceso        HTTPS en todo; contraseñas con hash; PIN para el POS con               DEBE
+                                        bloqueo tras intentos fallidos; permisos por rol verificados en el
+                                        servidor, no solo en pantalla
+
+ RNF-11      Datos de tarjeta           El sistema nunca guarda ni ve números de tarjeta; los maneja el        DEBE
+                                        terminal o el proveedor de pago (PCI fuera del alcance del Core)
+
+ RNF-12      Aislamiento entre          Ninguna consulta ni API corre sin el filtro de organización; prueba    DEBE
+             organizaciones             automática que intenta cruzar datos y debe fallar
+
+ RNF-13      Datos alojados en          Base de datos, archivos y respaldos en región suiza; contrato de       DEBE
+             Suiza y revDSG             tratamiento de datos con cada restaurante; registro de
+                                        consentimientos
+
+ RNF-14      Respaldo y                 Copias continuas o al menos cada hora, retención 30 días, prueba       DEBE
+             recuperación               de restauración mensual. Pérdida máxima de datos (RPO) 1 hora;
+                                        tiempo máximo de recuperación (RTO) 4 horas
+
+ RNF-15      Retención legal            Recibos, cierres, libro de caja y auditoría conservados 10 años,       DEBE
+                                        exportables en PDF, CSV y JSON aunque el restaurante deje de
+                                        ser cliente
+
+OPERACIÓN, MONITOREO Y SOPORTE
+
+ ID          REQUERIMIENTO            META MEDIBLE                                                            PRIORIDAD
+
+ RNF-16      Monitoreo y              Salud del servicio, errores, tamaño de las colas de sincronización,      DEBE
+             alertas                  terminales e impresoras desconectados; alerta a soporte en menos
+                                      de 5 minutos
+
+ RNF-17      Despliegues sin          Actualizaciones de la nube sin interrumpir el servicio; compatibles      DEBE
+             corte                    con terminales que aún no se actualizan; actualizaciones de app
+                                      fuera de horas pico y nunca en fin de semana
+
+ RNF-18      Registro técnico         Estructurado por organización, sede, terminal y usuario, con             DEBE
+             (logs)                   identificador por petición; conservación 90 días
+
+ RNF-19      Pruebas                  Toda regla de negocio (sección 13) y todo cálculo de dinero e            DEBE
+             automáticas              impuesto cubierto por pruebas; prueba de sincronización offline en
+                                      cada versión
+
+ RNF-20      Soporte durante el       Canal directo (WhatsApp y teléfono) en el idioma del restaurante;        DEBE
+             piloto                   respuesta en menos de 15 minutos en horas pico; horario y
+                                      responsable definidos antes de arrancar
+
+ RNF-21      Documentación            API documentada, manual corto por rol (mesero, cocina, gerente) y        DEBERÍA
+                                      guía de operación para soporte
+
+USABILIDAD, IDIOMAS Y HARDWARE
+
+ ID          REQUERIMIENTO         META MEDIBLE                                                               PRIORIDAD
+
+ RNF-22      Facilidad de uso      Un mesero nuevo toma su primer pedido completo tras 30 minutos              DEBERÍA
+                                   de capacitación; botones táctiles de al menos 44 px; máximo 3
+                                   toques para agregar un ítem simple
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                           PÁGINA 22 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                      DINOLABS
+
+ ID          REQUERIMIENTO         META MEDIBLE                                                           PRIORIDAD
+
+ RNF-23      Idiomas y             Interfaz en DE, FR, IT y EN (ES para soporte); fecha, hora, moneda y    PODRÍA
+             formatos              separadores en formato suizo (CHF 1'234.50)
+
+Hardware soportado en el MVP: tablets iPad o Android de 10″ para caja, handhelds Android de 6″ (tipo
+Sunmi) para meseros, KDS en tablet o pantalla con navegador, impresoras térmicas de red ESC/POS,
+cajón conectado a la impresora y terminal de pago del proveedor que elija el restaurante. El hardware
+exacto recomendado por sede es una decisión pendiente (sección 20).
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                       PÁGINA 23 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                            DINOLABS
+
+15       MODELO DE DATOS (ENTIDADES PRINCIPALES)
+Estas son las “cosas” que el sistema guarda y cómo se relacionan, en lenguaje simple. El modelo
+detallado (campos, tipos, índices) va en la documentación técnica; aquí se fija qué existe y qué depende
+de qué.
+
+Jerarquía de configuración (todo cuelga de la organización):
+
+     Organization (empresa)
+     Location (sede)
+         Area (salón, terraza) → Table (mesa)
+         Terminal (caja, handheld, KDS)
+         KitchenStation (estación de cocina)
+         Printer (impresora)
+         Shift (turno de caja)
+
+     User → Role → Permission
+     Catalog (catálogo maestro)
+         Category → Product → Variant
+         ModifierGroup → Modifier
+         TaxCategory + TaxRule (con fecha de vigencia)
+         Allergen, Origin, Translation, Availability, ChannelPrice
+
+     Customer (cliente) → Consent (consentimiento)
+
+Entidades de operación (lo que pasa cada día):
+
+ ENTIDAD               QUÉ GUARDA                                                            SE RELACIONA CON
+
+ Reservation           Fecha, hora, personas, estado, canal de origen, notas                 Customer, Table, Visit
+
+ Visit                 Una visita real al restaurante, con o sin reserva                     Reservation, Table,
+                                                                                             Customer, Order
+
+ Order                 Una cuenta: canal, tipo de consumo, mesa, mesero, estado de           Visit, Table, User,
+                       pago, número legible, totales                                         OrderItem, Payment
+
+ OrderItem             Una línea: producto, variante, modificadores, nota, asiento, curso,   Order, Product,
+                       precio, tasa y monto de MWST guardados, estado de                     KitchenTicket
+                       preparación
+
+ Discount              Descuento aplicado a un ítem o a la orden, con motivo y               Order, OrderItem, User
+                       autorizador
+
+ KitchenTicket         Lo enviado a una estación en un momento: ítems, curso, hora de        Order, KitchenStation,
+                       envío, estado                                                         OrderItem
+
+ Payment               Un pago: medio, monto, propina, redondeo, proveedor,                  Order, Shift, User
+                       referencia externa, estado
+
+ Refund                Devolución ligada a un pago, con motivo y autorizador                 Payment, User
+
+ Tip                   Propina asignada a un mesero                                          Payment, User
+
+ Receipt               Recibo emitido: contenido congelado, idioma, número de copia          Payment, Order
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                            PÁGINA 24 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                            DINOLABS
+
+ ENTIDAD               QUÉ GUARDA                                                            SE RELACIONA CON
+
+ Shift                 Turno: apertura, fondo, cajero o terminal, cierre, arqueo             Location, User, Terminal,
+                                                                                             CashMovement
+
+ CashMovement          Ingreso, retiro o gasto de caja con motivo                            Shift, User
+
+ DailyClosing (Z)      Cierre del día: totales por medio de pago y por tasa, propinas,       Location, Shift
+                       anulaciones, diferencias
+
+ AuditEvent            Quién, qué, cuándo, dónde, estado anterior y nuevo, motivo. Solo      Todas las anteriores
+                       se agrega
+
+ OutboxEvent           Evento pendiente de publicar a los consumidores (sección 16)          Todas las de operación
+
+ SyncOperation         Operación hecha sin conexión en espera de sincronizar, con su         Terminal, cualquier
+                       identificador idempotente                                             entidad de operación
+
+Decisiones de modelo que no se negocian: toda entidad lleva organización y sede; los identificadores
+se generan en el dispositivo (UUID v7) para funcionar sin conexión; los montos son enteros en rappen; el
+precio, la tasa y el impuesto se congelan en la línea vendida; nada se borra físicamente (se marca).
+
+16    EVENTOS DEL SISTEMA
+Cada hecho importante se publica como un evento con nombre fijo. Los eventos alimentan reportes,
+CRM, auditoría, webhooks e IA sin que esos módulos toquen las tablas de operación. Se guardan primero
+junto con la transacción (patrón outbox) y después se publican, para que ninguno se pierda.
+
+ EVENTO                                                 CUÁNDO OCURRE                     QUIÉN LO CONSUME
+
+ order.created                                          Se abre una orden en              Mapa de mesas, reportes,
+                                                        cualquier canal                   auditoría
+
+ order.item_added                                       Se agrega un ítem                 Mapa de mesas, reportes
+
+ order.item_voided                                      Se anula un ítem (con             KDS, auditoría, reportes
+                                                        motivo)
+
+ order.sent_to_kitchen                                  Se envía la orden o un curso      Ruteo a KDS e impresoras,
+                                                                                          tiempos
+
+ kitchen.ticket_ready                                   Una estación marca listo          Aviso al mesero, tiempos de
+                                                                                          cocina
+
+ order.item_served                                      El ítem llega a la mesa           Estado de la mesa, cierre
+                                                                                          automático
+
+ order.discount_applied                                 Se aplica un descuento            Auditoría, reportes
+
+ order.transferred / order.merged / order.split         Se mueve, une o divide una        Mapa de mesas, auditoría
+                                                        cuenta
+
+ order.reopened                                         Se reabre una orden cerrada       Auditoría, cierre del día
+
+ order.closed                                           Ítems servidos y pago             Mesa libre, CRM (visita
+                                                        completo                          completada), reportes
+
+ order.voided                                           Se anula la orden completa        Auditoría, reportes
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                             PÁGINA 25 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                          DINOLABS
+
+ EVENTO                                               CUÁNDO OCURRE                     QUIÉN LO CONSUME
+
+ payment.created                                      Se registra un pago               Caja
+                                                      (pendiente de confirmar)
+
+ payment.completed                                    El pago se confirma               Recibo, caja, reportes, CRM
+
+ payment.refunded                                     Se devuelve un pago               Caja, auditoría, reportes
+
+ receipt.issued                                       Se emite o reimprime un           Archivo, auditoría
+                                                      recibo
+
+ shift.opened / shift.closed                          Abre o cierra un turno            Caja, libro de caja
+
+ cash.movement_recorded                               Ingreso, retiro o gasto de caja   Libro de caja
+
+ day.closed                                           Cierre Z del día                  Archivo, exportación
+                                                                                        contable, tablero del dueño
+
+ reservation.created / confirmed / seated /           Cambia el estado de una           Mapa de mesas, WhatsApp,
+ no_show / cancelled                                  reserva                           CRM
+
+ customer.created / customer.consent_recorded         Ciclo de vida del cliente         CRM, cumplimiento revDSG
+ / customer.anonymized
+
+ catalog.product_updated                              Cambia precio, nombre,            Terminales, QR, web,
+                                                      impuesto o traducción             auditoría
+
+ catalog.product_sold_out /                           Se agota o vuelve un              POS, QR, web, KDS
+ catalog.product_available                            producto
+
+ tax.rule_changed                                     Cambia una regla o tasa de        Terminales, auditoría
+                                                      MWST
+
+ sync.conflict_detected                               Dos dispositivos cambiaron        Lista de conflictos del
+                                                      lo mismo sin conexión             gerente, soporte
+
+ device.offline / device.online                       Un terminal pierde o              Monitoreo, indicador en
+                                                      recupera conexión                 pantalla
+
+Reglas para los eventos: nombre en minúscula con punto (módulo.hecho), identificador único, hora del
+dispositivo y hora del servidor, organización y sede, usuario y terminal que lo originó, y la versión del
+esquema. Un evento nunca se edita; si fue un error, se publica otro que lo corrige.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                           PÁGINA 26 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                 DINOLABS
+
+17     FLUJOS PRINCIPALES
+Siete flujos cubren la operación diaria. Cada uno se convierte en uno o varios casos de uso; los pasos
+nombran al actor y los requerimientos que intervienen.
+
+Flujo 1 — Servicio en mesa con reserva (el flujo completo del producto)
+
+ 1. El cliente reserva para 4 personas a las 20:00 desde el portal Zitas; recibe confirmación por WhatsApp
+    (RF-E01, RF-E04).
+ 2. Al llegar, el mesero hace check-in desde el mapa: se crea la visita, la mesa pasa a ocupada y se abre la
+    orden con el nombre del cliente (RF-E02, RF-C02).
+ 3. El mesero toma el pedido en el handheld: entradas como curso 1, platos como curso 2, una nota “sin
+    cebolla”, un ítem por asiento (RF-C08).
+ 4. Envía el curso 1; cocina y bar reciben sus tickets en el idioma de cocina (RF-C09, RF-C21, RF-C25).
+ 5. Cocina marca listo; el mesero recibe el aviso, sirve y marca servido; marcha el curso 2 (RF-C22, RF-C23).
+ 6. Al pedir la cuenta, el grupo divide por asientos: dos pagan con tarjeta en el terminal, uno con TWINT y
+    uno en efectivo con redondeo (RF-C12, RF-D01, RF-D03).
+ 7. Cada pago genera su recibo con UID y MWST por línea; uno pide recibo con nombre de empresa
+    (RF-D20, RF-D22).
+ 8. La orden se cierra sola, la mesa queda libre y la visita se guarda en el historial del cliente con gasto y
+     platos (RN-12, RF-E15).
+
+FLUJO 2 — PEDIDO QR PAGADO ONLINE
+
+ 1. El cliente escanea el QR de la mesa 12 y ve la carta en francés con alérgenos y origen (RF-E06).
+ 2. Pide dos platos y una cerveza; el Core valida disponibilidad y canal y aplica la tasa normal (RN-17, RN-03).
+ 3. Paga con TWINT online; el pago queda completado antes de cocinar (RF-E09, RF-C17).
+ 4. La orden aparece en la mesa 12 del mapa y los tickets salen en cocina y bar (RF-E07).
+ 5. El mesero sirve y marca servido; la orden se cierra; el recibo digital llega por WhatsApp (RF-D21).
+
+FLUJO 3 — TAKEAWAY EN MOSTRADOR
+
+ 1. El cajero crea una orden takeaway; el canal aplica la tasa reducida a la comida y la normal a la cerveza
+    (RF-C07, RN-03).
+ 2. Cobra con terminal independiente: digita el monto en el terminal y confirma en el POS (RF-D04).
+ 3. Imprime el recibo y la comanda sale en cocina con el número de pedido (RF-D20, RF-C26).
+ 4. Cocina marca listo; el cliente recibe un aviso o se le llama por número (RF-E13, RF-E12).
+
+FLUJO 4 — ANULACIÓN Y DEVOLUCIÓN
+
+ 1. Un plato ya enviado se anula por error del mesero; pide autorización al gerente, que ingresa su PIN y
+    elige el motivo (RF-C10, RF-A05, RN-15).
+ 2. El KDS muestra el ítem tachado (RN-13); la auditoría guarda quién, cuándo, motivo, antes y después
+    (RF-F11).
+ 3. Si ya estaba pagado, se registra una devolución ligada al pago original por el mismo medio (RF-D07,
+    RN-14).
+
+FLUJO 5 — CIERRE DEL DÍA
+
+ 1. El gerente revisa que no queden órdenes abiertas; el sistema las lista (RF-D19).
+ 2. Cada cajero cierra su turno con arqueo por denominación; la diferencia pide comentario (RF-D14).
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                  PÁGINA 27 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                 DINOLABS
+
+ 3. El gerente compara los totales por medio de pago con el cierre del terminal y registra diferencias
+    (RF-D11).
+ 4. Ejecuta el cierre Z: ventas por medio y por tasa, propinas, anulaciones, descuentos, redondeos (RF-D15).
+ 5. El libro de caja del día queda generado y archivado; la fiduciaria lo recibe en la exportación mensual
+    (RF-D16, RF-F04).
+
+FLUJO 6 — OPERACIÓN SIN INTERNET
+
+ 1. La conexión a internet se cae a las 20:30, en plena hora pico; los dispositivos muestran un indicador
+    discreto de “sin conexión” (RNF-02).
+ 2. Los meseros siguen tomando pedidos; los tickets llegan al KDS y a las impresoras por la red local
+    (RF-C18, RF-C27).
+ 3. Se cobra en efectivo y con terminal independiente; los recibos se imprimen; el pago online y los
+    pedidos QR quedan deshabilitados con un aviso al cliente (RNF-02).
+ 4. A las 21:10 vuelve la conexión: la cola se sincroniza sin duplicar órdenes ni pagos; si hubo conflicto, el
+    gerente lo ve en una lista (RNF-03, RNF-04).
+
+FLUJO 7 — MONTAR UN RESTAURANTE NUEVO
+
+ 1. Soporte crea la organización y la sede con UID, idiomas e impuestos (RF-A01, RF-A02, RF-B13).
+ 2. El dueño importa su carta desde Excel, completa alérgenos y origen; el sistema bloquea la
+    publicación hasta que estén completos (RF-B14, RN-18).
+ 3. Configura áreas, mesas, estaciones, impresoras y usuarios con PIN desde el backoffice (RF-A03, RF-A04,
+    RF-F17).
+
+ 4. Prueba en modo entrenamiento con su equipo y, cuando la lista de verificación está completa, activa
+    la operación real (RF-F22, RF-A11).
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                  PÁGINA 28 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                        DINOLABS
+
+18    ROADMAP POR FASES
+Siete fases, cada una con una puerta de salida que se cumple o no se avanza. Frente al plan de
+septiembre cambian tres cosas: la localización suiza (MWST, recibos, idiomas) ya no es una fase aparte
+sino parte del Core desde la Fase 1; el modo offline nace con el motor de órdenes en la Fase 2; y la Fase 0
+audita dos bases de código, Zitas y el repositorio externo.
+
+      Siete puertas antes de escalar: ninguna fase avanza sin cumplir la suya
+
+         Fase 0 — Auditoría y decisiones
+         Zitas y repositorio: KEEP, REFACTOR, REPLACE
+
+                                       Puerta: doc técnico aprobado y licencia verificada
+
+         Fase 1 — Core
+         Sedes, usuarios, catálogo, MWST, clientes, API
+
+                                       Puerta: restaurante de prueba montado sin código
+
+         Fase 2 — POS y órdenes offline
+         Mesas, órdenes, pagos manuales, recibo
+
+                                       Puerta: mesa → pago → recibo con internet apagado
+
+         Fase 3 — Cocina
+         KDS, ruteo, cursos, tiempos, comandas
+
+                                       Puerta: cero tickets perdidos en hora pico
+
+         Fase 4 — Caja y reportes
+         Turnos, arqueo, cierre Z, MWST, exportación
+
+                                       Puerta: el gerente cierra solo y la fiduciaria acepta
+
+         Fase 5 — Integración con Zitas
+         Reserva → mesa, QR → orden, TWINT online
+
+                                       Puerta: pedido QR termina en cocina y en el cierre
+
+         Fase 6 — Piloto en Suiza
+         Hosting CH, monitoreo, hardware, 3 a 5 locales
+
+                                       Puerta: criterios del piloto 4 semanas seguidas
+
+         Post-piloto
+         Terminales, delivery, inventario, fidelización
+
+Cada rombo es una puerta: la fase siguiente no arranca hasta cumplir el criterio. El piloto (Fase 6) es la meta del MVP;
+lo que sigue se prioriza con lo aprendido allí.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                         PÁGINA 29 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                         DINOLABS
+
+                                                                                  PUERTA DE SALIDA (CRITERIO
+ FASE                 QUÉ SE CONSTRUYE
+                                                                                  PARA AVANZAR)
+
+ 0 — Auditoría y      Revisar Zitas y el repositorio externo: esquema de datos,   Documento técnico aprobado por
+ decisiones           autenticación, multi-tenant, pedidos, pagos, calidad,       Juan y su socio; licencia del
+                      licencia. Clasificar cada módulo como KEEP / REFACTOR       repositorio verificada; decisión de
+                      / REPLACE / NEW. Cerrar las decisiones pendientes de la     cuál base manda.
+                      sección 20 y escribir la documentación técnica base.
+
+ 1 — Core             Organización, sedes, usuarios, roles y permisos; catálogo   Un restaurante de prueba se
+                      maestro con alérgenos, origen y traducciones; reglas de     monta completo desde el
+                      MWST con vigencia; clientes y consentimiento; API;          backoffice sin tocar código
+                      auditoría append-only; eventos con outbox.                  (RF-A11); el cálculo de MWST pasa
+                                                                                  todas las pruebas de la sección 13.
+
+ 2 — POS y            Mapa de mesas, órdenes con dos estados,                     El flujo mesa → pedido → pago →
+ motor de             modificadores, cursos, anulaciones, descuentos, dividir y   recibo funciona con internet
+ órdenes offline      transferir; sincronización local y con la nube; pagos en    apagado y sincroniza sin
+                      efectivo y terminal independiente; recibo impreso válido    duplicados al volver.
+                      MWST.
+
+ 3 — Cocina           KDS por estación, ruteo, cursos, estados, tiempos y         En una prueba de carga de la hora
+                      alertas, idioma de cocina, impresión de comandas en         pico (60 órdenes/hora) ningún
+                      red local.                                                  ticket se pierde ni cambia de
+                                                                                  estado por sí solo.
+
+ 4 — Caja y           Turnos, movimientos, arqueo, cierre Z, libro de caja,       Un gerente cierra el día sin ayuda y
+ reportes             reportes de ventas y MWST, exportación CSV, auditoría       la fiduciaria acepta la exportación.
+                      consultable.
+
+ 5—                   Reserva → mesa, check-in, menú QR por mesa, pedido          Un pedido QR pagado online
+ Integración          QR → orden, pago online con TWINT, takeaway web,            termina en cocina, en la mesa
+ con Zitas            cliente único, WhatsApp.                                    correcta y en el cierre del día sin
+                                                                                  intervención manual.
+
+ 6 — Piloto en        Hosting en región suiza, monitoreo y alertas, respaldos     Los criterios de la sección 19 se
+ Suiza                probados, hardware instalado, capacitación, soporte en      cumplen durante 4 semanas
+                      el idioma del piloto, 3 a 5 restaurantes operando.          seguidas de operación real.
+
+ Post-piloto          Integración directa con terminales (Worldline, wallee,      Se prioriza con lo aprendido en el
+                      SumUp), importación de delivery, formatos nativos           piloto.
+                      contables, fichaje, fidelización simple, inventario por
+                      receta, multi-sede avanzada.
+
+Las duraciones de cada fase se estiman en la documentación técnica, una vez auditado el código
+existente; este documento no las fija.
+
+19    CRITERIOS DE ACEPTACIÓN DEL PILOTO
+El piloto se considera exitoso cuando 3 a 5 restaurantes cumplen estas metas durante 4 semanas
+seguidas de operación real. Las preguntas vienen del plan de septiembre; aquí cada una tiene una meta
+medible.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                          PÁGINA 30 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                             DINOLABS
+
+                      PREGUNTA DE
+ ÁREA                                                 META MEDIBLE                              CÓMO SE MIDE
+                      VALIDACIÓN
+
+ Configuración        ¿Se puede montar un             100 % de los pilotos montados desde       Lista de verificación de
+                      restaurante nuevo sin           el backoffice; ninguna configuración      RF-A11 y auditoría
+                      tocar código?                   hecha por un desarrollador en base
+                                                      de datos
+
+ Aprendizaje          ¿Un mesero puede usarlo         Primer pedido completo tras 30            Observación en sitio y
+                      después de una                  minutos de capacitación; menos de 2       anulaciones por motivo
+                      capacitación corta?             errores por turno en la primera           “error”
+                                                      semana
+
+ Velocidad            ¿Cuánto tarda en abrir          Menos de 60 segundos desde abrir la       Tiempos registrados por
+                      una mesa y mandar un            mesa hasta que el ticket está en el       el sistema
+                      plato?                          KDS
+
+ Cocina               ¿Se pierde algún pedido         Cero tickets perdidos; cero cambios       Comparación diaria de
+                      o estado?                       de estado inexplicables                   ítems enviados frente a
+                                                                                                tickets recibidos
+
+ Pagos                ¿Coincide el POS con los        Diferencia de conciliación explicada al   Reporte de conciliación y
+                      terminales y medios de          100 %; diferencia de caja menor a CHF     arqueos
+                      pago?                           10 por turno
+
+ Conectividad         ¿Qué ocurre cuando falla        Ninguna venta perdida ni duplicada        Cola de sincronización y
+                      internet?                       en cortes reales o simulados (al          auditoría
+                                                      menos un corte simulado por
+                                                      semana)
+
+ Cierre               ¿El gerente entiende el         90 % de los cierres hechos sin            Registro de soporte
+                      cierre sin llamar a             contactar a soporte a partir de la
+                      soporte?                        segunda semana
+
+ Autonomía            ¿Puede cambiar precios          100 % de los cambios de carta hechos      Auditoría del catálogo
+                      o agotar productos por sí       por el restaurante, reflejados en QR y
+                      mismo?                          web en menos de 1 minuto
+
+ Cumplimiento         ¿Los recibos y reportes         La fiduciaria de cada piloto acepta el    Confirmación escrita de
+                      sirven a la fiduciaria?         reporte de MWST y el libro de caja sin    la fiduciaria
+                                                      pedir correcciones
+
+ Disponibilidad       ¿El sistema está                99,9 % de disponibilidad en la nube;      Monitoreo (RNF-16)
+                      disponible cuando el            cero incidentes que detengan el
+                      restaurante abre?               servicio en sala
+
+ Soporte              ¿Llega la ayuda a tiempo        Respuesta en menos de 15 minutos          Registro de soporte
+                      en hora pico?                   en el 95 % de los casos en horas pico
+
+ Satisfacción         ¿El dueño lo                    Al menos 3 de los pilotos quieren         Entrevista de cierre
+                      recomendaría?                   seguir pagando al terminar el piloto y
+                                                      2 aceptan ser referencia
+
+Qué se aprende además: cada fricción observada en hora pico se registra con fecha, restaurante y rol, y
+se convierte en un requerimiento nuevo o en un cambio de prioridad de este documento.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                            PÁGINA 31 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                              DINOLABS
+
+20     RIESGOS, SUPUESTOS Y DECISIONES PENDIENTES
+Los riesgos más caros son los que se descubren con código escrito. Esta sección los pone sobre la mesa
+ahora, junto con lo que el documento da por supuesto y lo que falta decidir antes de la Fase 1.
+
+RIESGOS
+
+ RIESGO                                         IMPACTO SI OCURRE                 CÓMO SE REDUCE
+
+ El repositorio externo tiene una               No se puede usar su código;       Verificar la licencia en la Fase 0 antes
+ licencia que no permite uso                    se pierde el tiempo invertido     de leer una línea de código; conservar
+ comercial cerrado (GPL, AGPL, sin              en él                             avisos de copyright si es MIT o Apache
+ licencia)
+
+ Zitas y el repositorio usan stacks o           Dos bases que no se unen;         La Fase 0 decide cuál base manda; lo
+ modelos de datos incompatibles                 duplicación de lógica             demás se migra o se reescribe
+
+ El motor de órdenes se construye               Reescritura casi total del        PA-03 y RNF-02 son obligatorios desde la
+ solo en el servidor y el modo offline          módulo central                    Fase 2; la puerta de salida lo verifica
+ se intenta después                                                               con internet apagado
+
+ Errores de cálculo de MWST o                   Pérdida de confianza del          Reglas RN-01 a RN-07 con pruebas
+ redondeo                                       restaurante y de su fiduciaria;   automáticas; revisión de una fiduciaria
+                                                correcciones contables            suiza antes del piloto
+
+ Soporte insuficiente en hora pico              Un restaurante abandona en        RNF-20 definido antes de arrancar; una
+ durante el piloto                              la primera semana                 persona de soporte en sitio la primera
+                                                                                  semana de cada piloto
+
+ Hardware o impresoras                          Días sin imprimir recibos o       Lista de hardware homologado y
+ incompatibles en el local                      comandas                          prueba de impresión en la instalación
+
+ Alcance que crece durante el                   El piloto se retrasa meses        Regla de alcance de la sección 5; todo
+ desarrollo                                                                       lo nuevo entra como “Podría” hasta
+                                                                                  después del piloto
+
+ Cambios de tasas de MWST (en                   Reportes incorrectos si las       RF-B13: tasas como datos con fecha de
+ discusión hacia 2028)                          tasas están en el código          vigencia
+
+SUPUESTOS
+
+     Zitas ya resuelve reservas, menú QR, pedidos online, clientes, multi-idioma, pagos online, WhatsApp y
+     Zita IA, y su código es reutilizable tras la auditoría.
+     Los pilotos operan con terminal de pago independiente; la integración directa no es condición para
+     arrancar.
+     Los restaurantes piloto tienen una sola sede y servicio en mesa, y están en una misma región
+     lingüística.
+     No existe en Suiza obligación de certificar la caja registradora; la confianza se gana con archivo
+     inalterable y exportación correcta.
+     El equipo de desarrollo es pequeño y por eso se elige un monolito modular, no microservicios.
+
+Decisiones pendientes antes de la Fase 1 (marcar al decidir)
+
+     Qué base de código manda: Zitas, el repositorio externo o una nueva, con las dos como cantera.
+     Quién decide: Juan y su socio, con el resultado de la Fase 0.
+     Licencia del repositorio externo verificada y documentada.
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                               PÁGINA 32 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                            DINOLABS
+
+     Región lingüística del piloto: Zúrich (alemán) o Romandía (francés). Define el idioma de soporte y de
+     la primera carta.
+     Proveedor de hosting en Suiza (se evalúa en la documentación técnica).
+     Proveedor de pago online para TWINT y tarjeta en QR y web (wallee, Worldline u otro).
+     Precio del servicio por sede en CHF y qué incluye (hardware, soporte, pagos).
+     Hardware recomendado por sede y quién lo provee e instala.
+     Modelo de soporte del piloto: horario, canal, persona responsable y presencia en sitio.
+     Umbrales por defecto: descuento y anulación que requieren gerente, minutos de bloqueo y de no-
+     show de reservas, alerta de demora en cocina.
+     Nombre comercial definitivo del producto en Suiza (hoy: Sistema Reservas POS).
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                             PÁGINA 33 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                       DINOLABS
+
+21    MAPA DE CASOS DE USO
+El siguiente documento desarrolla estos 52 casos de uso, uno por fila, con actor, precondiciones, pasos,
+variantes y reglas aplicadas. La columna de requerimientos da la trazabilidad: cada RF “Debe” aparece al
+menos en un caso de uso.
+
+                                                                                  ACTOR
+ MÓDULO                     CASO DE USO                                                            REQUERIMIENTOS
+                                                                                  PRINCIPAL
+
+ Organización               CU-01 Montar un restaurante nuevo                     Dueño,           RF-A01 a RF-A03,
+                                                                                  Soporte          RF-A11, RF-F21
+
+ Organización               CU-02 Administrar usuarios, roles y PIN               Dueño            RF-A04 a RF-A08,
+                                                                                                   RF-A12
+
+ Organización               CU-03 Autorizar una acción sensible con PIN de        Gerente          RF-A05, RN-15
+                            gerente
+
+ Organización               CU-04 Entrar como soporte con permiso del dueño       Soporte          RF-A10, RF-F11
+
+ Catálogo                   CU-05 Crear y editar productos, variantes y           Dueño            RF-B01, RF-B02,
+                            modificadores                                                          RF-B11, RF-B17,
+                                                                                                   RF-B18, RF-F23
+
+ Catálogo                   CU-06 Completar alérgenos, origen y traducciones      Dueño            RF-B05 a RF-B07,
+                                                                                                   RN-18
+
+ Catálogo                   CU-07 Configurar precios por canal y disponibilidad   Dueño            RF-B04, RF-B08
+
+ Catálogo                   CU-08 Publicar el menú del día                        Gerente          RF-B03, RF-B15
+
+ Catálogo                   CU-09 Agotar y reactivar un producto                  Cocina, Mesero   RF-B09, RN-17
+
+ Catálogo                   CU-10 Importar la carta desde Excel o Zitas           Dueño            RF-B14
+
+ Catálogo                   CU-11 Generar la carta imprimible                     Dueño            RF-B16
+
+ Impuestos                  CU-12 Configurar categorías fiscales y reglas de      Dueño,           RF-B12, RF-B13,
+                            MWST                                                  Soporte          RN-02
+
+ Impuestos                  CU-13 Calcular la tasa de una línea al vender         Sistema          RN-01, RN-03 a
+                                                                                                   RN-06
+
+ Mesas                      CU-14 Abrir una mesa                                  Mesero           RF-C01, RF-C02
+
+ Mesas                      CU-15 Unir, separar y mover mesas o cuentas           Mesero           RF-C03, RF-C13
+
+ Mesas                      CU-16 Ver el estado de la sala en tiempo real         Gerente          RF-C01, RF-C19,
+                                                                                                   RNF-07
+
+ Órdenes                    CU-17 Tomar un pedido con modificadores, notas,       Mesero           RF-C07, RF-C08,
+                            asientos y cursos                                                      RF-C15
+
+ Órdenes                    CU-18 Enviar a cocina y marchar cursos                Mesero           RF-C09, RF-C21
+
+ Órdenes                    CU-19 Anular un ítem o una orden                      Mesero,          RF-C10, RN-11,
+                                                                                  Gerente          RN-13
+
+ Órdenes                    CU-20 Aplicar un descuento                            Mesero,          RF-C11, RN-15
+                                                                                  Gerente
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                        PÁGINA 34 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                 DINOLABS
+
+                                                                                 ACTOR
+ MÓDULO                     CASO DE USO                                                      REQUERIMIENTOS
+                                                                                 PRINCIPAL
+
+ Órdenes                    CU-21 Dividir la cuenta                              Mesero      RF-C12, RF-D25
+
+ Órdenes                    CU-22 Reabrir una orden cerrada                      Gerente     RF-C14, RF-D17
+
+ Órdenes                    CU-23 Cerrar una orden automáticamente               Sistema     RF-C16, RN-12
+
+ Órdenes                    CU-24 Operar sin internet y sincronizar              Sistema,    RF-C18, RNF-02 a
+                                                                                 Gerente     RNF-05, RN-16
+
+ Cocina                     CU-25 Recibir y preparar un ticket en el KDS         Cocina      RF-C20 a RF-C22,
+                                                                                             RF-C25, RF-C27
+
+ Cocina                     CU-26 Avisar al mesero que un ticket está listo      Sistema     RF-C23
+
+ Cocina                     CU-27 Imprimir y reimprimir una comanda              Cocina      RF-C26, RF-F17
+
+ Cocina                     CU-28 Alertar por demora                             Sistema     RF-C24
+
+ Pagos                      CU-29 Cobrar en efectivo con redondeo                Cajero      RF-D01, RF-D03,
+                                                                                             RN-06
+
+ Pagos                      CU-30 Cobrar con terminal independiente              Cajero      RF-D04
+
+ Pagos                      CU-31 Cobrar con pago mixto                          Cajero      RF-D02
+
+ Pagos                      CU-32 Registrar una propina                          Cajero      RF-D06, RN-07
+
+ Pagos                      CU-33 Devolver un pago                               Gerente     RF-D07, RN-14
+
+ Pagos                      CU-34 Cobrar online un pedido QR o web               Cliente,    RF-D01, RF-D10,
+                                                                                 Sistema     RF-C17, RF-E09
+
+ Caja                       CU-35 Abrir un turno                                 Cajero      RF-D12, RN-19
+
+ Caja                       CU-36 Registrar un movimiento de caja                Cajero      RF-D13
+
+ Caja                       CU-37 Hacer el arqueo y cerrar el turno              Cajero,     RF-D14, RF-D15
+                                                                                 Gerente
+
+ Caja                       CU-38 Cerrar el día (Z) y generar el libro de caja   Gerente     RF-D15 a RF-D17,
+                                                                                             RF-D19, RN-20,
+                                                                                             RN-21
+
+ Caja                       CU-39 Conciliar con el terminal de pago              Gerente     RF-D11
+
+ Recibos                    CU-40 Emitir el recibo de cliente                    Sistema     RF-D20, RF-D22,
+                                                                                             RF-D23, RN-08
+
+ Recibos                    CU-41 Reimprimir o enviar un recibo digital          Cajero      RF-D21, RF-D24,
+                                                                                             RN-09
+
+ Reservas                   CU-42 Reservar desde el portal y confirmar           Cliente     RF-E01, RF-E03,
+                                                                                             RF-E04
+
+ Reservas                   CU-43 Hacer check-in y sentar una reserva            Mesero      RF-E02, RF-C04
+
+ Reservas                   CU-44 Marcar no-show o cancelar                      Gerente     RF-E03, RN-22
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                  PÁGINA 35 / 36
+SISTEMA RESERVAS POS · REQUERIMIENTOS V1.0                                                                        DINOLABS
+
+                                                                                  ACTOR
+ MÓDULO                     CASO DE USO                                                             REQUERIMIENTOS
+                                                                                  PRINCIPAL
+
+ QR                         CU-45 Ver la carta y pedir desde el QR                Cliente           RF-E06 a RF-E08,
+                                                                                                    RN-24
+
+ QR                         CU-46 Llamar al mesero o pedir la cuenta              Cliente           RF-E10
+
+ Takeaway                   CU-47 Pedir para llevar desde la web o en             Cliente, Cajero   RF-E11 a RF-E13
+                            mostrador
+
+ Clientes                   CU-48 Crear un cliente con consentimiento y ver su    Mesero,           RF-E14 a RF-E17,
+                            historial                                             Sistema           RN-23
+
+ Clientes                   CU-49 Exportar o anonimizar los datos de un cliente   Dueño             RF-E16, RN-23
+
+ Reportes                   CU-50 Consultar ventas, MWST, propinas y              Dueño,            RF-F01 a RF-F03,
+                            anulaciones                                           Gerente           RF-F06, RF-F07
+
+ Reportes                   CU-51 Exportar para la fiduciaria                     Dueño             RF-F04, RF-F05,
+                                                                                                    RF-F13
+
+ Auditoría e                CU-52 Consultar la auditoría; usar la API y los       Dueño,            RF-F11, RF-F12,
+ integraciones              webhooks; preguntar a Zita IA                         Integrador        RF-F14, RF-F15,
+                                                                                                    RF-F18 a RF-F20,
+                                                                                                    RF-E20
+
+CONFIDENCIAL · DINOLABS · DINOLABS.DEV · 5 OCT 2026                                                         PÁGINA 36 / 36
