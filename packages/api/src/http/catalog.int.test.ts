@@ -3,7 +3,13 @@ import { schema as s } from '@pos/db';
 import { and, desc, eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { generateApiKey } from '../auth/api-keys';
-import { createOtherOrganization, createTestApi, type DemoContext, demoSession, loadDemo } from '../testing';
+import {
+  createOtherOrganization,
+  createTestApi,
+  type DemoContext,
+  demoSession,
+  loadDemo,
+} from '../testing';
 
 const api = createTestApi();
 let demo: DemoContext;
@@ -36,12 +42,23 @@ interface Product {
   basePriceRappen: number;
   allergensComplete: boolean;
   publishQr: boolean;
-  variants: { id: string; name: string; priceRappen: number; isDefault: boolean; translations: Record<string, string> }[];
+  variants: {
+    id: string;
+    name: string;
+    priceRappen: number;
+    isDefault: boolean;
+    translations: Record<string, string>;
+  }[];
   modifierGroupIds: string[];
   allergens: { allergen: string; presence: string }[];
   origins: { kind: string; species: string | null; country: string }[];
   translations: Record<string, { name?: string; description?: string }>;
-  availability: { channel: string | null; daysOfWeek: number; startTime: string | null; endTime: string | null }[];
+  availability: {
+    channel: string | null;
+    daysOfWeek: number;
+    startTime: string | null;
+    endTime: string | null;
+  }[];
   channelPrices: { channel: string; variantId: string | null; priceRappen: number }[];
   locationSettings: {
     isActive: boolean;
@@ -123,7 +140,8 @@ beforeAll(async () => {
   otherAdmin = api.as(other.session);
 
   const org = eq(s.products.organizationId, demo.organizationId);
-  for (const row of await api.db.select().from(s.products).where(org)) products.set(row.name, row.id);
+  for (const row of await api.db.select().from(s.products).where(org))
+    products.set(row.name, row.id);
   for (const row of await api.db
     .select()
     .from(s.categories)
@@ -153,10 +171,18 @@ beforeAll(async () => {
   const roleId = newId();
   editorId = newId();
   const organizationId = demo.organizationId;
-  await api.db.insert(s.roles).values({ id: roleId, organizationId, key: 'catalog_editor', name: 'Catalog editor' });
-  await api.db.insert(s.rolePermissions).values({ organizationId, roleId, permission: 'catalog.manage' });
-  await api.db.insert(s.users).values({ id: editorId, organizationId, displayName: 'Catalog Editor' });
-  await api.db.insert(s.userLocations).values({ organizationId, userId: editorId, locationId: demo.locationId });
+  await api.db
+    .insert(s.roles)
+    .values({ id: roleId, organizationId, key: 'catalog_editor', name: 'Catalog editor' });
+  await api.db
+    .insert(s.rolePermissions)
+    .values({ organizationId, roleId, permission: 'catalog.manage' });
+  await api.db
+    .insert(s.users)
+    .values({ id: editorId, organizationId, displayName: 'Catalog Editor' });
+  await api.db
+    .insert(s.userLocations)
+    .values({ organizationId, userId: editorId, locationId: demo.locationId });
   await api.db.insert(s.userRoles).values({ organizationId, userId: editorId, roleId });
   editor = api.as({ kind: 'user', userId: editorId, organizationId, locationId: demo.locationId });
 });
@@ -197,10 +223,15 @@ describe('categories (RF-B02, RF-B07)', () => {
   });
 
   it('runs the lifecycle of a category', async () => {
-    const created = await call<{ id: string; isActive: boolean }>('POST', '/catalog/categories', admin, {
-      name: 'Saisonales',
-      sortOrder: 9,
-    });
+    const created = await call<{ id: string; isActive: boolean }>(
+      'POST',
+      '/catalog/categories',
+      admin,
+      {
+        name: 'Saisonales',
+        sortOrder: 9,
+      },
+    );
     expect(created.status).toBe(201);
     const categoryId = created.body.id;
 
@@ -209,14 +240,24 @@ describe('categories (RF-B02, RF-B07)', () => {
       en: { name: 'Seasonal', description: 'From the market' },
     });
     expect(translated.body).toMatchObject({
-      translations: { fr: { name: 'De saison' }, en: { name: 'Seasonal', description: 'From the market' } },
+      translations: {
+        fr: { name: 'De saison' },
+        en: { name: 'Seasonal', description: 'From the market' },
+      },
     });
-    const retranslated = await call('PUT', `/catalog/categories/${categoryId}/translations`, admin, {
-      fr: { name: 'Saison' },
-    });
+    const retranslated = await call(
+      'PUT',
+      `/catalog/categories/${categoryId}/translations`,
+      admin,
+      {
+        fr: { name: 'Saison' },
+      },
+    );
     expect(retranslated.body.translations).toEqual({ fr: { name: 'Saison' } });
 
-    const deactivated = await call('PATCH', `/catalog/categories/${categoryId}`, admin, { isActive: false });
+    const deactivated = await call('PATCH', `/catalog/categories/${categoryId}`, admin, {
+      isActive: false,
+    });
     expect(deactivated.body).toMatchObject({ isActive: false, name: 'Saisonales', sortOrder: 9 });
     expect((await auditsOf(categoryId, 'catalog.availability_changed'))[0]).toMatchObject({
       before: { isActive: true },
@@ -232,13 +273,17 @@ describe('categories (RF-B02, RF-B07)', () => {
   });
 
   it('refuses a category inside itself', async () => {
-    const parent = await call<{ id: string }>('POST', '/catalog/categories', admin, { name: 'Getränke' });
+    const parent = await call<{ id: string }>('POST', '/catalog/categories', admin, {
+      name: 'Getränke',
+    });
     const child = await call<{ id: string }>('POST', '/catalog/categories', admin, {
       name: 'Säfte',
       parentId: parent.body.id,
     });
     expect(child.status).toBe(201);
-    const loop = await call('PATCH', `/catalog/categories/${parent.body.id}`, admin, { parentId: child.body.id });
+    const loop = await call('PATCH', `/catalog/categories/${parent.body.id}`, admin, {
+      parentId: child.body.id,
+    });
     expect(loop.status).toBe(422);
   });
 });
@@ -262,8 +307,15 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
       locationSettings: { isActive: true, priceRappen: null, isSoldOut: false },
       publication: { publishable: true, issues: [] },
     });
-    expect(tagesmenu.allergens.map((a) => a.allergen)).toEqual(['gluten', 'eggs', 'milk', 'celery']);
-    expect(tagesmenu.stationIds.sort()).toEqual([id(stations, 'Küche'), id(stations, 'Patisserie')].sort());
+    expect(tagesmenu.allergens.map((a) => a.allergen)).toEqual([
+      'gluten',
+      'eggs',
+      'milk',
+      'celery',
+    ]);
+    expect(tagesmenu.stationIds.sort()).toEqual(
+      [id(stations, 'Küche'), id(stations, 'Patisserie')].sort(),
+    );
 
     const water = await getProduct(id(products, 'Mineralwasser'));
     expect(water.variants).toMatchObject([
@@ -271,7 +323,10 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
       { name: '5 dl', priceRappen: 650, isDefault: false },
     ]);
     const fillet = await getProduct(id(products, 'Rindsfilet mit Kräuterbutter'));
-    expect(fillet.modifierGroupIds).toEqual([id(modifierGroups, 'Garstufe'), id(modifierGroups, 'Beilage')]);
+    expect(fillet.modifierGroupIds).toEqual([
+      id(modifierGroups, 'Garstufe'),
+      id(modifierGroups, 'Beilage'),
+    ]);
     const coupe = await getProduct(id(products, 'Coupe Dänemark'));
     expect(coupe.allergens).toEqual([
       { allergen: 'peanuts', presence: 'may_contain' },
@@ -294,7 +349,11 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
   });
 
   it('creates a product and replaces each of its collections', async () => {
-    const created = await createProduct({ name: 'Cordon bleu', basePriceRappen: 3450, requiresOrigin: true });
+    const created = await createProduct({
+      name: 'Cordon bleu',
+      basePriceRappen: 3450,
+      requiresOrigin: true,
+    });
     expect(created).toMatchObject({
       isActive: true,
       publishQr: false,
@@ -303,7 +362,12 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
     });
     const productId = created.id;
     const put = async (collection: string, body: unknown) => {
-      const response = await call<Product>('PUT', `/catalog/products/${productId}/${collection}`, admin, body);
+      const response = await call<Product>(
+        'PUT',
+        `/catalog/products/${productId}/${collection}`,
+        admin,
+        body,
+      );
       expect(response.status, `${collection}: ${JSON.stringify(response.body)}`).toBe(200);
       return response.body;
     };
@@ -321,14 +385,27 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
     const large = withVariants.variants[1]!;
 
     await put('allergens', {
-      allergens: [{ allergen: 'milk' }, { allergen: 'gluten' }, { allergen: 'eggs', presence: 'may_contain' }],
+      allergens: [
+        { allergen: 'milk' },
+        { allergen: 'gluten' },
+        { allergen: 'eggs', presence: 'may_contain' },
+      ],
       confirmed: true,
     });
     await put('origins', { origins: [{ kind: 'meat', species: 'Schwein', country: 'ch' }] });
-    await put('translations', { fr: { name: 'Cordon bleu', description: 'Porc pané' }, en: { name: 'Cordon bleu' } });
-    await put('modifier-groups', { modifierGroupIds: [id(modifierGroups, 'Extras'), id(modifierGroups, 'Beilage')] });
-    await put('availability', { rules: [{ daysOfWeek: 96, startTime: '17:30', endTime: '22:00' }] });
-    await put('channel-prices', { prices: [{ channel: 'takeaway', variantId: large.id, priceRappen: 3500 }] });
+    await put('translations', {
+      fr: { name: 'Cordon bleu', description: 'Porc pané' },
+      en: { name: 'Cordon bleu' },
+    });
+    await put('modifier-groups', {
+      modifierGroupIds: [id(modifierGroups, 'Extras'), id(modifierGroups, 'Beilage')],
+    });
+    await put('availability', {
+      rules: [{ daysOfWeek: 96, startTime: '17:30', endTime: '22:00' }],
+    });
+    await put('channel-prices', {
+      prices: [{ channel: 'takeaway', variantId: large.id, priceRappen: 3500 }],
+    });
     await put('stations', { stationIds: [id(stations, 'Küche')] });
     await put('location-settings', { isActive: true, priceRappen: 3300 });
 
@@ -341,7 +418,10 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
         { allergen: 'milk', presence: 'contains' },
       ],
       origins: [{ kind: 'meat', species: 'Schwein', country: 'CH' }],
-      translations: { fr: { name: 'Cordon bleu', description: 'Porc pané' }, en: { name: 'Cordon bleu' } },
+      translations: {
+        fr: { name: 'Cordon bleu', description: 'Porc pané' },
+        en: { name: 'Cordon bleu' },
+      },
       modifierGroupIds: [id(modifierGroups, 'Extras'), id(modifierGroups, 'Beilage')],
       availability: [{ channel: null, daysOfWeek: 96, startTime: '17:30:00', endTime: '22:00:00' }],
       channelPrices: [{ channel: 'takeaway', variantId: large.id, priceRappen: 3500 }],
@@ -351,8 +431,13 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
     });
 
     // Removing rows soft-deletes them (PA-06); the remaining variant becomes the default.
-    const reduced = await put('variants', { variants: [{ id: large.id, name: 'Gross', priceRappen: 3950 }] });
-    expect(reduced).toMatchObject({ basePriceRappen: 3950, variants: [{ id: large.id, isDefault: true }] });
+    const reduced = await put('variants', {
+      variants: [{ id: large.id, name: 'Gross', priceRappen: 3950 }],
+    });
+    expect(reduced).toMatchObject({
+      basePriceRappen: 3950,
+      variants: [{ id: large.id, isDefault: true }],
+    });
     const variantRows = await api.db
       .select()
       .from(s.productVariants)
@@ -363,7 +448,10 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
 
     // A removed allergen comes back on the same row (unique index), not as a duplicate.
     await put('allergens', { allergens: [{ allergen: 'gluten' }], confirmed: true });
-    const readded = await put('allergens', { allergens: [{ allergen: 'gluten' }, { allergen: 'milk' }], confirmed: true });
+    const readded = await put('allergens', {
+      allergens: [{ allergen: 'gluten' }, { allergen: 'milk' }],
+      confirmed: true,
+    });
     expect(readded.allergens.map((a) => a.allergen)).toEqual(['gluten', 'milk']);
     const allergenRows = await api.db
       .select()
@@ -434,12 +522,18 @@ describe('products (RF-B01, RF-B02, RF-B05…RF-B08, RF-B11)', () => {
     });
     expect(copy.stationIds.sort()).toEqual(source.stationIds.sort());
 
-    const water = await call<Product>('POST', `/catalog/products/${id(products, 'Mineralwasser')}/duplicate`, admin);
+    const water = await call<Product>(
+      'POST',
+      `/catalog/products/${id(products, 'Mineralwasser')}/duplicate`,
+      admin,
+    );
     expect(water.body.variants.map((v) => [v.name, v.priceRappen, v.translations.fr])).toEqual([
       ['3 dl', 450, '3 dl'],
       ['5 dl', 650, '5 dl'],
     ]);
-    const originalVariantIds = (await getProduct(id(products, 'Mineralwasser'))).variants.map((v) => v.id);
+    const originalVariantIds = (await getProduct(id(products, 'Mineralwasser'))).variants.map(
+      (v) => v.id,
+    );
     expect(water.body.variants.some((v) => originalVariantIds.includes(v.id))).toBe(false);
   });
 
@@ -489,7 +583,9 @@ describe('RF-B17 · price, tax and availability changes are audited', () => {
 
   it('forbids price changes without catalog.price_change', async () => {
     const productId = id(products, 'Käsespätzle');
-    const renamed = await call('PATCH', `/catalog/products/${productId}`, editor, { name: 'Chässpätzli' });
+    const renamed = await call('PATCH', `/catalog/products/${productId}`, editor, {
+      name: 'Chässpätzli',
+    });
     expect(renamed.status).toBe(200);
     const [renameAudit] = await auditsOf(productId, 'catalog.product_updated');
     expect(renameAudit).toMatchObject({
@@ -501,8 +597,16 @@ describe('RF-B17 · price, tax and availability changes are audited', () => {
     for (const [method, path, body] of [
       ['PATCH', `/catalog/products/${productId}`, { basePriceRappen: 100 }],
       ['PUT', `/catalog/products/${productId}/channel-prices`, { prices: [] }],
-      ['PUT', `/catalog/products/${productId}/location-settings`, { isActive: true, priceRappen: 100 }],
-      ['PUT', `/catalog/products/${productId}/variants`, { variants: [{ name: 'Klein', priceRappen: 100 }] }],
+      [
+        'PUT',
+        `/catalog/products/${productId}/location-settings`,
+        { isActive: true, priceRappen: 100 },
+      ],
+      [
+        'PUT',
+        `/catalog/products/${productId}/variants`,
+        { variants: [{ name: 'Klein', priceRappen: 100 }] },
+      ],
     ] as const) {
       const response = await call<{ error: { code: string; details: { missing: string[] } } }>(
         method,
@@ -514,30 +618,47 @@ describe('RF-B17 · price, tax and availability changes are audited', () => {
       expect(response.body.error.details.missing).toEqual(['catalog.price_change']);
     }
     const unchanged = await getProduct(productId);
-    expect(unchanged).toMatchObject({ basePriceRappen: 2750, variants: [], channelPrices: [{ priceRappen: 2400 }] });
+    expect(unchanged).toMatchObject({
+      basePriceRappen: 2750,
+      variants: [],
+      channelPrices: [{ priceRappen: 2400 }],
+    });
 
     // Without a price change, the editor may deactivate the product at the location.
-    const deactivated = await call<Product>('PUT', `/catalog/products/${productId}/location-settings`, editor, {
-      isActive: false,
-      priceRappen: null,
-    });
+    const deactivated = await call<Product>(
+      'PUT',
+      `/catalog/products/${productId}/location-settings`,
+      editor,
+      {
+        isActive: false,
+        priceRappen: null,
+      },
+    );
     expect(deactivated.body.locationSettings).toMatchObject({ isActive: false, priceRappen: null });
     expect((await auditsOf(productId, 'catalog.availability_changed'))[0]).toMatchObject({
       locationId: demo.locationId,
       before: { isActive: true },
       after: { isActive: false },
     });
-    await call('PUT', `/catalog/products/${productId}/location-settings`, admin, { isActive: true, priceRappen: null });
+    await call('PUT', `/catalog/products/${productId}/location-settings`, admin, {
+      isActive: true,
+      priceRappen: null,
+    });
   });
 
   it('audits channel price changes', async () => {
     const productId = id(products, 'Zürcher Geschnetzeltes mit Rösti');
-    const response = await call<Product>('PUT', `/catalog/products/${productId}/channel-prices`, admin, {
-      prices: [
-        { channel: 'takeaway', priceRappen: 3400 },
-        { channel: 'web', priceRappen: 3600 },
-      ],
-    });
+    const response = await call<Product>(
+      'PUT',
+      `/catalog/products/${productId}/channel-prices`,
+      admin,
+      {
+        prices: [
+          { channel: 'takeaway', priceRappen: 3400 },
+          { channel: 'web', priceRappen: 3600 },
+        ],
+      },
+    );
     expect(response.body.channelPrices).toHaveLength(2);
     expect((await auditsOf(productId, 'catalog.price_changed'))[0]).toMatchObject({
       before: { channelPrices: [{ channel: 'takeaway', priceRappen: 3400 }] },
@@ -553,10 +674,19 @@ describe('RF-B17 · price, tax and availability changes are audited', () => {
   it('forbids catalog edits to staff without catalog.manage', async () => {
     const productId = id(products, 'Cappuccino');
     for (const headers of [manager, waiter, kitchen]) {
-      const response = await call('PATCH', `/catalog/products/${productId}`, headers, { name: 'Hacked' });
+      const response = await call('PATCH', `/catalog/products/${productId}`, headers, {
+        name: 'Hacked',
+      });
       expect(response.status).toBe(403);
     }
-    expect((await call('PUT', `/catalog/products/${productId}/allergens`, waiter, { allergens: [], confirmed: true })).status).toBe(403);
+    expect(
+      (
+        await call('PUT', `/catalog/products/${productId}/allergens`, waiter, {
+          allergens: [],
+          confirmed: true,
+        })
+      ).status,
+    ).toBe(403);
     expect((await getProduct(productId)).name).toBe('Cappuccino');
   });
 });
@@ -584,7 +714,10 @@ describe('RN-18 · no publication to QR or web without allergens and origin', ()
     });
     expect(created.status).toBe(422);
 
-    await call('PUT', `/catalog/products/${product.id}/allergens`, admin, { allergens: [], confirmed: true });
+    await call('PUT', `/catalog/products/${product.id}/allergens`, admin, {
+      allergens: [],
+      confirmed: true,
+    });
     await call('PUT', `/catalog/products/${product.id}/origins`, admin, {
       origins: [{ kind: 'meat', species: 'Lamm', country: 'NZ' }],
     });
@@ -622,16 +755,25 @@ describe('RF-B09 · sold out ("86")', () => {
   it('lets a waiter 86 a product until the next business day and restore it', async () => {
     const productId = id(products, 'Rivella Rot 3.3 dl');
     const expectedUntil = nextLocalTime(new Date(), 'Europe/Zurich', '04:00');
-    const response = await call<Product>('POST', `/catalog/products/${productId}/sold-out`, waiter, {
-      nextBusinessDay: true,
-    });
+    const response = await call<Product>(
+      'POST',
+      `/catalog/products/${productId}/sold-out`,
+      waiter,
+      {
+        nextBusinessDay: true,
+      },
+    );
     expect(response.status).toBe(200);
     expect(response.body.locationSettings).toMatchObject({
       isSoldOut: true,
       soldOutUntil: expectedUntil.toISOString(),
     });
     expect(await eventsOf(productId, 'catalog.product_sold_out')).toMatchObject([
-      { locationId: demo.locationId, userId: demo.users.waiter.id, payload: { until: expectedUntil.toISOString() } },
+      {
+        locationId: demo.locationId,
+        userId: demo.users.waiter.id,
+        payload: { until: expectedUntil.toISOString() },
+      },
     ]);
     expect((await auditsOf(productId, 'catalog.availability_changed'))[0]).toMatchObject({
       locationId: demo.locationId,
@@ -650,17 +792,28 @@ describe('RF-B09 · sold out ("86")', () => {
       reason: null,
     });
 
-    const restored = await call<Product>('DELETE', `/catalog/products/${productId}/sold-out`, waiter);
+    const restored = await call<Product>(
+      'DELETE',
+      `/catalog/products/${productId}/sold-out`,
+      waiter,
+    );
     expect(restored.status).toBe(200);
     expect(restored.body.locationSettings).toMatchObject({ isSoldOut: false, soldOutUntil: null });
     expect(await eventsOf(productId, 'catalog.product_available')).toHaveLength(1);
-    expect(menuProduct(await getMenu('channel=table'), productId)).toMatchObject({ orderable: true });
+    expect(menuProduct(await getMenu('channel=table'), productId)).toMatchObject({
+      orderable: true,
+    });
   });
 
   it('lets the kitchen 86 a product until a given time', async () => {
     const productId = id(products, 'Meringue mit Doppelrahm');
     const until = new Date(Date.now() + 2 * 3_600_000).toISOString();
-    const response = await call<Product>('POST', `/catalog/products/${productId}/sold-out`, kitchen, { until });
+    const response = await call<Product>(
+      'POST',
+      `/catalog/products/${productId}/sold-out`,
+      kitchen,
+      { until },
+    );
     expect(response.body.locationSettings).toMatchObject({ isSoldOut: true, soldOutUntil: until });
 
     const past = await call('POST', `/catalog/products/${productId}/sold-out`, kitchen, {
@@ -673,20 +826,40 @@ describe('RF-B09 · sold out ("86")', () => {
     });
     expect(both.status).toBe(422);
 
-    const untilRestored = await call<Product>('POST', `/catalog/products/${productId}/sold-out`, kitchen, {});
-    expect(untilRestored.body.locationSettings).toMatchObject({ isSoldOut: true, soldOutUntil: null });
-    expect((await call('DELETE', `/catalog/products/${productId}/sold-out`, kitchen)).status).toBe(200);
+    const untilRestored = await call<Product>(
+      'POST',
+      `/catalog/products/${productId}/sold-out`,
+      kitchen,
+      {},
+    );
+    expect(untilRestored.body.locationSettings).toMatchObject({
+      isSoldOut: true,
+      soldOutUntil: null,
+    });
+    expect((await call('DELETE', `/catalog/products/${productId}/sold-out`, kitchen)).status).toBe(
+      200,
+    );
   });
 
   it('lets a waiter 86 but not edit the catalog', async () => {
     const juiceId = id(products, 'Frisch gepresster Orangensaft');
-    expect((await call('POST', `/catalog/products/${juiceId}/sold-out`, waiter, {})).status).toBe(200);
-    expect((await call('PATCH', `/catalog/products/${juiceId}`, waiter, { isActive: false })).status).toBe(403);
+    expect((await call('POST', `/catalog/products/${juiceId}/sold-out`, waiter, {})).status).toBe(
+      200,
+    );
     expect(
-      (await call('PUT', `/catalog/products/${juiceId}/location-settings`, waiter, { isActive: false, priceRappen: null }))
-        .status,
+      (await call('PATCH', `/catalog/products/${juiceId}`, waiter, { isActive: false })).status,
     ).toBe(403);
-    expect((await call('DELETE', `/catalog/products/${juiceId}/sold-out`, waiter)).status).toBe(200);
+    expect(
+      (
+        await call('PUT', `/catalog/products/${juiceId}/location-settings`, waiter, {
+          isActive: false,
+          priceRappen: null,
+        })
+      ).status,
+    ).toBe(403);
+    expect((await call('DELETE', `/catalog/products/${juiceId}/sold-out`, waiter)).status).toBe(
+      200,
+    );
   });
 });
 
@@ -705,7 +878,9 @@ describe('menu (RF-B15, RF-E06, RN-17)', () => {
       orderable: true,
       reason: null,
     });
-    expect(menuProduct(takeaway, id(products, 'Zürcher Geschnetzeltes mit Rösti'))?.priceRappen).toBe(3400);
+    expect(
+      menuProduct(takeaway, id(products, 'Zürcher Geschnetzeltes mit Rösti'))?.priceRappen,
+    ).toBe(3400);
 
     const table = await getMenu(`channel=table&language=fr&at=${tuesdayLunch}`);
     expect(menuProduct(table, id(products, 'Tagesmenü'))?.priceRappen).toBe(2450);
@@ -723,12 +898,16 @@ describe('menu (RF-B15, RF-E06, RN-17)', () => {
       expect.objectContaining({ name: 'Rösti', priceDeltaRappen: 300 }),
     );
     // Inactive copies (RF-B18) never reach the menu.
-    expect(table.categories.flatMap((c) => c.products).some((p) => p.name.endsWith('(Kopie)'))).toBe(false);
+    expect(
+      table.categories.flatMap((c) => c.products).some((p) => p.name.endsWith('(Kopie)')),
+    ).toBe(false);
   });
 
   it('falls back to the location language, then to the catalog text (RF-B07)', async () => {
     const product = await createProduct({ name: 'Hausburger' });
-    await call('PUT', `/catalog/products/${product.id}/translations`, admin, { fr: { name: 'Burger maison' } });
+    await call('PUT', `/catalog/products/${product.id}/translations`, admin, {
+      fr: { name: 'Burger maison' },
+    });
     expect(menuProduct(await getMenu('language=fr'), product.id)?.name).toBe('Burger maison');
     expect(menuProduct(await getMenu('language=it'), product.id)?.name).toBe('Hausburger');
     expect(menuProduct(await getMenu('language=en'), product.id)).toMatchObject({
@@ -743,14 +922,20 @@ describe('menu (RF-B15, RF-E06, RN-17)', () => {
       orderable: false,
       reason: 'not_available_now',
     });
-    expect(menuProduct(await getMenu('at=2026-10-10T10:15:00Z'), tagesmenu)?.reason).toBe('not_available_now');
+    expect(menuProduct(await getMenu('at=2026-10-10T10:15:00Z'), tagesmenu)?.reason).toBe(
+      'not_available_now',
+    );
 
     const product = await createProduct({ name: 'Mittagsteller' });
     await call('PUT', `/catalog/products/${product.id}/availability`, admin, {
       rules: [{ channel: 'table', daysOfWeek: 127, startTime: '11:00', endTime: '14:00' }],
     });
-    expect(menuProduct(await getMenu(`channel=table&at=${tuesdayLunch}`), product.id)?.orderable).toBe(true);
-    expect(menuProduct(await getMenu(`channel=takeaway&at=${tuesdayLunch}`), product.id)).toMatchObject({
+    expect(
+      menuProduct(await getMenu(`channel=table&at=${tuesdayLunch}`), product.id)?.orderable,
+    ).toBe(true);
+    expect(
+      menuProduct(await getMenu(`channel=takeaway&at=${tuesdayLunch}`), product.id),
+    ).toMatchObject({
       orderable: false,
       reason: 'not_available_on_channel',
     });
@@ -788,8 +973,12 @@ describe('menu (RF-B15, RF-E06, RN-17)', () => {
     expect((await call('GET', '/catalog/products', reader)).status).toBe(200);
 
     const productId = id(products, 'Cappuccino');
-    expect((await call('PATCH', `/catalog/products/${productId}`, reader, { name: 'x' })).status).toBe(403);
-    expect((await call('POST', `/catalog/products/${productId}/sold-out`, reader, {})).status).toBe(403);
+    expect(
+      (await call('PATCH', `/catalog/products/${productId}`, reader, { name: 'x' })).status,
+    ).toBe(403);
+    expect((await call('POST', `/catalog/products/${productId}/sold-out`, reader, {})).status).toBe(
+      403,
+    );
     expect((await call('POST', '/catalog/categories', reader, { name: 'x' })).status).toBe(403);
 
     const unscoped = await insertKey([]);
@@ -809,7 +998,13 @@ describe('modifier groups (RF-B02, RF-B05)', () => {
     const groupId = created.body.id;
 
     const withModifiers = await call<{
-      modifiers: { id: string; name: string; priceDeltaRappen: number; allergens: unknown[]; translations: unknown }[];
+      modifiers: {
+        id: string;
+        name: string;
+        priceDeltaRappen: number;
+        allergens: unknown[];
+        translations: unknown;
+      }[];
     }>('PUT', `/catalog/modifier-groups/${groupId}/modifiers`, admin, {
       modifiers: [
         {
@@ -834,38 +1029,75 @@ describe('modifier groups (RF-B02, RF-B05)', () => {
     const pepper = withModifiers.body.modifiers[0]!;
 
     // A changed surcharge is a price change.
-    const editorChange = await call('PUT', `/catalog/modifier-groups/${groupId}/modifiers`, editor, {
-      modifiers: [{ id: pepper.id, name: 'Pfeffersauce', priceDeltaRappen: 1 }],
-    });
+    const editorChange = await call(
+      'PUT',
+      `/catalog/modifier-groups/${groupId}/modifiers`,
+      editor,
+      {
+        modifiers: [{ id: pepper.id, name: 'Pfeffersauce', priceDeltaRappen: 1 }],
+      },
+    );
     expect(editorChange.status).toBe(403);
     await call('PUT', `/catalog/modifier-groups/${groupId}/modifiers`, admin, {
-      modifiers: [{ id: pepper.id, name: 'Pfeffersauce', priceDeltaRappen: 400, allergens: [{ allergen: 'milk' }] }],
+      modifiers: [
+        {
+          id: pepper.id,
+          name: 'Pfeffersauce',
+          priceDeltaRappen: 400,
+          allergens: [{ allergen: 'milk' }],
+        },
+      ],
     });
     expect((await auditsOf(groupId, 'catalog.price_changed'))[0]).toMatchObject({
-      before: { modifiers: [{ name: 'Pfeffersauce', priceDeltaRappen: 350 }, { name: 'Ohne Sauce' }] },
+      before: {
+        modifiers: [{ name: 'Pfeffersauce', priceDeltaRappen: 350 }, { name: 'Ohne Sauce' }],
+      },
       after: { modifiers: [{ name: 'Pfeffersauce', priceDeltaRappen: 400 }] },
     });
 
-    const translated = await call('PUT', `/catalog/modifier-groups/${groupId}/translations`, admin, {
-      fr: { name: 'Sauce' },
-      it: { name: 'Salsa' },
+    const translated = await call(
+      'PUT',
+      `/catalog/modifier-groups/${groupId}/translations`,
+      admin,
+      {
+        fr: { name: 'Sauce' },
+        it: { name: 'Salsa' },
+      },
+    );
+    expect(translated.body).toMatchObject({
+      translations: { fr: { name: 'Sauce' }, it: { name: 'Salsa' } },
     });
-    expect(translated.body).toMatchObject({ translations: { fr: { name: 'Sauce' }, it: { name: 'Salsa' } } });
 
-    expect((await call('PATCH', `/catalog/modifier-groups/${groupId}`, admin, { minSelect: 3 })).status).toBe(422);
     expect(
-      (await call('POST', '/catalog/modifier-groups', admin, { name: 'Falsch', minSelect: 2, maxSelect: 1 })).status,
+      (await call('PATCH', `/catalog/modifier-groups/${groupId}`, admin, { minSelect: 3 })).status,
+    ).toBe(422);
+    expect(
+      (
+        await call('POST', '/catalog/modifier-groups', admin, {
+          name: 'Falsch',
+          minSelect: 2,
+          maxSelect: 1,
+        })
+      ).status,
     ).toBe(422);
 
     const productId = id(products, 'Rindsfilet mit Kräuterbutter');
     const links = [id(modifierGroups, 'Garstufe'), id(modifierGroups, 'Beilage')];
-    await call('PUT', `/catalog/products/${productId}/modifier-groups`, admin, { modifierGroupIds: [...links, groupId] });
+    await call('PUT', `/catalog/products/${productId}/modifier-groups`, admin, {
+      modifierGroupIds: [...links, groupId],
+    });
     expect((await call('DELETE', `/catalog/modifier-groups/${groupId}`, admin)).status).toBe(409);
-    await call('PUT', `/catalog/products/${productId}/modifier-groups`, admin, { modifierGroupIds: links });
+    await call('PUT', `/catalog/products/${productId}/modifier-groups`, admin, {
+      modifierGroupIds: links,
+    });
     expect((await call('DELETE', `/catalog/modifier-groups/${groupId}`, admin)).status).toBe(204);
     expect((await call('GET', `/catalog/modifier-groups/${groupId}`, admin)).status).toBe(404);
 
-    const listed = await call<{ name: string; modifiers: unknown[] }[]>('GET', '/catalog/modifier-groups', waiter);
+    const listed = await call<{ name: string; modifiers: unknown[] }[]>(
+      'GET',
+      '/catalog/modifier-groups',
+      waiter,
+    );
     expect(listed.body.find((g) => g.name === 'Garstufe')?.modifiers).toHaveLength(3);
   });
 });
@@ -882,20 +1114,32 @@ describe('RNF-12 · another organization sees nothing of our catalog', () => {
       ['POST', `/catalog/products/${productId}/duplicate`, undefined],
       ['PUT', `/catalog/products/${productId}/variants`, { variants: [] }],
       ['PUT', `/catalog/products/${productId}/allergens`, { allergens: [], confirmed: true }],
-      ['PUT', `/catalog/products/${productId}/location-settings`, { isActive: false, priceRappen: null }],
+      [
+        'PUT',
+        `/catalog/products/${productId}/location-settings`,
+        { isActive: false, priceRappen: null },
+      ],
       ['POST', `/catalog/products/${productId}/sold-out`, {}],
       ['DELETE', `/catalog/products/${productId}/sold-out`, undefined],
       ['PATCH', `/catalog/categories/${categoryId}`, { name: 'x' }],
       ['DELETE', `/catalog/categories/${categoryId}`, undefined],
       ['GET', `/catalog/modifier-groups/${groupId}`, undefined],
       ['PUT', `/catalog/modifier-groups/${groupId}/modifiers`, { modifiers: [] }],
-      ['POST', '/catalog/products', { categoryId, taxCategoryId: id(taxCategories, 'food'), name: 'x', basePriceRappen: 1 }],
+      [
+        'POST',
+        '/catalog/products',
+        { categoryId, taxCategoryId: id(taxCategories, 'food'), name: 'x', basePriceRappen: 1 },
+      ],
     ] as const) {
       const response = await call(method, path, otherAdmin, body);
       expect(response.status, `${method} ${path}`).toBe(404);
     }
     const product = await getProduct(productId);
-    expect(product).toMatchObject({ name: 'Rindstatar', isActive: true, locationSettings: { isActive: true } });
+    expect(product).toMatchObject({
+      name: 'Rindstatar',
+      isActive: true,
+      locationSettings: { isActive: true },
+    });
   });
 
   it('sees an empty catalog and menu', async () => {
@@ -906,11 +1150,18 @@ describe('RNF-12 · another organization sees nothing of our catalog', () => {
   });
 
   it('cannot reference its own records from our catalog', async () => {
-    const theirs = await call<{ id: string }>('POST', '/catalog/categories', otherAdmin, { name: 'Fremd' });
-    expect(theirs.status).toBe(201);
-    const response = await call('PATCH', `/catalog/products/${id(products, 'Tomatensuppe')}`, admin, {
-      categoryId: theirs.body.id,
+    const theirs = await call<{ id: string }>('POST', '/catalog/categories', otherAdmin, {
+      name: 'Fremd',
     });
+    expect(theirs.status).toBe(201);
+    const response = await call(
+      'PATCH',
+      `/catalog/products/${id(products, 'Tomatensuppe')}`,
+      admin,
+      {
+        categoryId: theirs.body.id,
+      },
+    );
     expect(response.status).toBe(404);
   });
 });

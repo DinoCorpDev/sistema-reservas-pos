@@ -47,33 +47,55 @@ describe('localMoment', () => {
 
 describe('nextLocalTime', () => {
   it('returns today when the time is still ahead, otherwise tomorrow', () => {
-    expect(nextLocalTime(at('2026-10-06T01:00:00Z'), ZH, '04:00')).toEqual(at('2026-10-06T02:00:00Z'));
-    expect(nextLocalTime(at('2026-10-06T10:15:00Z'), ZH, '04:00')).toEqual(at('2026-10-07T02:00:00Z'));
+    expect(nextLocalTime(at('2026-10-06T01:00:00Z'), ZH, '04:00')).toEqual(
+      at('2026-10-06T02:00:00Z'),
+    );
+    expect(nextLocalTime(at('2026-10-06T10:15:00Z'), ZH, '04:00')).toEqual(
+      at('2026-10-07T02:00:00Z'),
+    );
   });
 
   it('is strictly after now', () => {
-    expect(nextLocalTime(at('2026-10-06T02:00:00Z'), ZH, '04:00')).toEqual(at('2026-10-07T02:00:00Z'));
+    expect(nextLocalTime(at('2026-10-06T02:00:00Z'), ZH, '04:00')).toEqual(
+      at('2026-10-07T02:00:00Z'),
+    );
   });
 
   it('crosses midnight', () => {
-    expect(nextLocalTime(at('2026-10-06T21:30:00Z'), ZH, '00:00')).toEqual(at('2026-10-06T22:00:00Z'));
-    expect(nextLocalTime(at('2026-12-31T22:30:00Z'), ZH, '04:00')).toEqual(at('2027-01-01T03:00:00Z'));
+    expect(nextLocalTime(at('2026-10-06T21:30:00Z'), ZH, '00:00')).toEqual(
+      at('2026-10-06T22:00:00Z'),
+    );
+    expect(nextLocalTime(at('2026-12-31T22:30:00Z'), ZH, '04:00')).toEqual(
+      at('2027-01-01T03:00:00Z'),
+    );
   });
 
   it('uses the new offset after the spring DST change', () => {
     // 22:00 CET on Saturday → 04:00 CEST on Sunday.
-    expect(nextLocalTime(at('2026-03-28T21:00:00Z'), ZH, '04:00')).toEqual(at('2026-03-29T02:00:00Z'));
+    expect(nextLocalTime(at('2026-03-28T21:00:00Z'), ZH, '04:00')).toEqual(
+      at('2026-03-29T02:00:00Z'),
+    );
     // 02:30 does not exist that night: moved forward to 03:30 CEST.
-    expect(nextLocalTime(at('2026-03-28T21:00:00Z'), ZH, '02:30')).toEqual(at('2026-03-29T01:30:00Z'));
+    expect(nextLocalTime(at('2026-03-28T21:00:00Z'), ZH, '02:30')).toEqual(
+      at('2026-03-29T01:30:00Z'),
+    );
   });
 
   it('uses the new offset after the autumn DST change and handles the repeated hour', () => {
     // 22:00 CEST on Saturday → 04:00 CET on Sunday.
-    expect(nextLocalTime(at('2026-10-24T20:00:00Z'), ZH, '04:00')).toEqual(at('2026-10-25T03:00:00Z'));
+    expect(nextLocalTime(at('2026-10-24T20:00:00Z'), ZH, '04:00')).toEqual(
+      at('2026-10-25T03:00:00Z'),
+    );
     // 02:30 happens twice: first in CEST, then in CET.
-    expect(nextLocalTime(at('2026-10-24T20:00:00Z'), ZH, '02:30')).toEqual(at('2026-10-25T00:30:00Z'));
-    expect(nextLocalTime(at('2026-10-25T00:45:00Z'), ZH, '02:30')).toEqual(at('2026-10-25T01:30:00Z'));
-    expect(nextLocalTime(at('2026-10-25T01:30:00Z'), ZH, '02:30')).toEqual(at('2026-10-26T01:30:00Z'));
+    expect(nextLocalTime(at('2026-10-24T20:00:00Z'), ZH, '02:30')).toEqual(
+      at('2026-10-25T00:30:00Z'),
+    );
+    expect(nextLocalTime(at('2026-10-25T00:45:00Z'), ZH, '02:30')).toEqual(
+      at('2026-10-25T01:30:00Z'),
+    );
+    expect(nextLocalTime(at('2026-10-25T01:30:00Z'), ZH, '02:30')).toEqual(
+      at('2026-10-26T01:30:00Z'),
+    );
   });
 
   it('rejects malformed times', () => {

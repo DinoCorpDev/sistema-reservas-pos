@@ -59,7 +59,9 @@ async function assertParent(db: Database, actor: Actor, id: string | null, paren
   if (!parentOf.has(parentId)) throw notFound('Category');
   for (let cursor: string | null = parentId, steps = 0; cursor && steps <= all.length; steps += 1) {
     if (cursor === id) {
-      throw new ApiError('VALIDATION_FAILED', 'A category cannot be inside itself', { path: ['parentId'] });
+      throw new ApiError('VALIDATION_FAILED', 'A category cannot be inside itself', {
+        path: ['parentId'],
+      });
     }
     cursor = parentOf.get(cursor) ?? null;
   }
@@ -100,7 +102,10 @@ export async function updateCategory(
   if (patch.parentId) await assertParent(deps.db, actor, id, patch.parentId);
   if (Object.keys(patch).length > 0) {
     await runCommand(deps.db, actor, async (tx, recorder) => {
-      await tx.update(s.categories).set(patch).where(inOrg(s.categories, actor, eq(s.categories.id, id)));
+      await tx
+        .update(s.categories)
+        .set(patch)
+        .where(inOrg(s.categories, actor, eq(s.categories.id, id)));
       // Deactivating a category hides all its products (RF-B17: availability history).
       if (patch.isActive !== undefined && patch.isActive !== current.isActive) {
         recorder.audit({

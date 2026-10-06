@@ -683,11 +683,18 @@ describe('DINOLABS support (RF-A10, Flujo 7)', () => {
     expect(response.status).toBe(200);
     const list =
       await json<
-        { id: string; slug: string; locationsCount: number; supportGrantExpiresAt: string | null }[]
+        {
+          id: string;
+          slug: string;
+          locationsCount: number;
+          primaryLocationId: string | null;
+          supportGrantExpiresAt: string | null;
+        }[]
       >(response);
     expect(list.find((o) => o.id === demo.organizationId)).toMatchObject({
       slug: 'demo-gastro',
       locationsCount: 1,
+      primaryLocationId: demo.locationId,
       supportGrantExpiresAt: null,
     });
   });
@@ -741,6 +748,13 @@ describe('DINOLABS support (RF-A10, Flujo 7)', () => {
       organizationId: result.organizationId,
       requestId: `support:${staffId}`,
     });
+    // The console opens the new organization at its first location.
+    const listed = await json<{ id: string; primaryLocationId: string | null }[]>(
+      await api.request('GET', '/platform/organizations', { headers: platform }),
+    );
+    expect(listed.find((o) => o.id === result.organizationId)?.primaryLocationId).toBe(
+      result.locationId,
+    );
 
     const ownerHeaders = api.as({
       kind: 'user',

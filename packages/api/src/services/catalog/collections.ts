@@ -63,13 +63,20 @@ export async function replaceVariants(
   if (items.length > 0 && !items.some((v) => v.isDefault)) {
     (items.find((v) => v.isActive) ?? items[0]!).isDefault = true;
   }
-  const plan = planReplace(existing, items, (row) => row.id, (item) => item.id ?? null);
+  const plan = planReplace(
+    existing,
+    items,
+    (row) => row.id,
+    (item) => item.id ?? null,
+  );
   const inserts = plan.insert.map((item) => ({ ...item, id: item.id ?? newId() }));
   const after = [...plan.update.map(([row, item]) => ({ ...item, id: row.id })), ...inserts].sort(
     (a, b) => a.sortOrder - b.sortOrder,
   );
 
-  const live = existing.filter((row) => row.deletedAt === null).sort((a, b) => a.sortOrder - b.sortOrder);
+  const live = existing
+    .filter((row) => row.deletedAt === null)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
   const priceBefore = new Map(live.map((row) => [row.id, row.priceRappen]));
   const defaultVariant = after.find((v) => v.isDefault);
   // With variants, the catalog price is the default variant's price (schema comment).
@@ -128,7 +135,13 @@ export async function replaceVariants(
     }
     for (const item of after) {
       if (item.translations) {
-        await replaceTranslations(tx, actor, 'product_variant', item.id, desiredLabels(item.translations));
+        await replaceTranslations(
+          tx,
+          actor,
+          'product_variant',
+          item.id,
+          desiredLabels(item.translations),
+        );
       }
     }
     if (basePriceRappen !== product.basePriceRappen) {
@@ -168,7 +181,12 @@ export async function replaceAllergens(
     .select()
     .from(s.productAllergens)
     .where(inOrg(s.productAllergens, actor, eq(s.productAllergens.productId, productId)));
-  const plan = planReplace(existing, input.allergens, (row) => row.allergen, (item) => item.allergen);
+  const plan = planReplace(
+    existing,
+    input.allergens,
+    (row) => row.allergen,
+    (item) => item.allergen,
+  );
   const live = existing.filter((row) => row.deletedAt === null);
   const summary = (list: readonly { allergen: string; presence: string }[]) =>
     list.map(({ allergen, presence }) => ({ allergen, presence }));
@@ -225,7 +243,12 @@ export async function replaceOrigins(
     .select()
     .from(s.productOrigins)
     .where(inOrg(s.productOrigins, actor, eq(s.productOrigins.productId, productId)));
-  const plan = planReplace(existing, input.origins, (row) => row.id, (item) => item.id ?? null);
+  const plan = planReplace(
+    existing,
+    input.origins,
+    (row) => row.id,
+    (item) => item.id ?? null,
+  );
   const summary = (list: readonly { kind: string; species: string | null; country: string }[]) =>
     list.map(({ kind, species, country }) => ({ kind, species, country }));
 
@@ -306,7 +329,14 @@ export async function replaceProductModifierGroups(
     const groups = await deps.db
       .select({ id: s.modifierGroups.id })
       .from(s.modifierGroups)
-      .where(inOrg(s.modifierGroups, actor, inArray(s.modifierGroups.id, wanted), notDeleted(s.modifierGroups)));
+      .where(
+        inOrg(
+          s.modifierGroups,
+          actor,
+          inArray(s.modifierGroups.id, wanted),
+          notDeleted(s.modifierGroups),
+        ),
+      );
     if (groups.length !== wanted.length) throw notFound('Modifier group');
   }
   const existing = await deps.db
@@ -314,7 +344,12 @@ export async function replaceProductModifierGroups(
     .from(s.productModifierGroups)
     .where(inOrg(s.productModifierGroups, actor, eq(s.productModifierGroups.productId, productId)));
   const items = wanted.map((modifierGroupId, sortOrder) => ({ modifierGroupId, sortOrder }));
-  const plan = planReplace(existing, items, (row) => row.modifierGroupId, (item) => item.modifierGroupId);
+  const plan = planReplace(
+    existing,
+    items,
+    (row) => row.modifierGroupId,
+    (item) => item.modifierGroupId,
+  );
 
   await runCommand(deps.db, actor, async (tx, recorder) => {
     for (const [row, item] of plan.update) {
@@ -333,7 +368,13 @@ export async function replaceProductModifierGroups(
       await tx
         .update(s.productModifierGroups)
         .set(softDeleted())
-        .where(inOrg(s.productModifierGroups, actor, inArray(s.productModifierGroups.id, ids(plan.remove))));
+        .where(
+          inOrg(
+            s.productModifierGroups,
+            actor,
+            inArray(s.productModifierGroups.id, ids(plan.remove)),
+          ),
+        );
     }
     recorder.event(productUpdatedEvent(productId, ['modifierGroups']));
   });
@@ -366,7 +407,12 @@ export async function replaceAvailability(
     startTime: withSeconds(rule.startTime),
     endTime: withSeconds(rule.endTime),
   }));
-  const plan = planReplace(existing, items, (row) => row.id, (item) => item.id ?? null);
+  const plan = planReplace(
+    existing,
+    items,
+    (row) => row.id,
+    (item) => item.id ?? null,
+  );
   type RuleValues = Omit<(typeof items)[number], 'id' | 'channel'> & { channel: string | null };
   const values = (item: RuleValues) => ({
     locationId: item.locationId,
@@ -390,14 +436,18 @@ export async function replaceAvailability(
       await tx
         .insert(s.availabilityRules)
         .values(
-          plan.insert.map((item) => ownedByOrg(actor, { id: item.id ?? newId(), productId, ...values(item) })),
+          plan.insert.map((item) =>
+            ownedByOrg(actor, { id: item.id ?? newId(), productId, ...values(item) }),
+          ),
         );
     }
     if (plan.remove.length > 0) {
       await tx
         .update(s.availabilityRules)
         .set(softDeleted())
-        .where(inOrg(s.availabilityRules, actor, inArray(s.availabilityRules.id, ids(plan.remove))));
+        .where(
+          inOrg(s.availabilityRules, actor, inArray(s.availabilityRules.id, ids(plan.remove))),
+        );
     }
     recorder.audit({
       action: 'catalog.availability_changed',
@@ -427,7 +477,9 @@ export async function replaceChannelPrices(
     actor,
     input.prices.map((price) => price.locationId),
   );
-  const variantIds = [...new Set(input.prices.map((p) => p.variantId).filter((id): id is string => !!id))];
+  const variantIds = [
+    ...new Set(input.prices.map((p) => p.variantId).filter((id): id is string => !!id)),
+  ];
   if (variantIds.length > 0) {
     const variants = await deps.db
       .select({ id: s.productVariants.id })
@@ -451,10 +503,20 @@ export async function replaceChannelPrices(
   const key = (p: { channel: string; locationId: string | null; variantId: string | null }) =>
     `${p.channel}|${p.locationId}|${p.variantId}`;
   const plan = planReplace(existing, input.prices, key, key);
-  type PriceValues = { channel: string; locationId: string | null; variantId: string | null; priceRappen: number };
+  type PriceValues = {
+    channel: string;
+    locationId: string | null;
+    variantId: string | null;
+    priceRappen: number;
+  };
   const summary = (list: readonly PriceValues[]) =>
     list
-      .map(({ channel, locationId, variantId, priceRappen }) => ({ channel, locationId, variantId, priceRappen }))
+      .map(({ channel, locationId, variantId, priceRappen }) => ({
+        channel,
+        locationId,
+        variantId,
+        priceRappen,
+      }))
       .sort((a, b) => key(a).localeCompare(key(b)));
   const before = summary(existing.filter((row) => row.deletedAt === null));
   const after = summary(input.prices);
@@ -512,16 +574,28 @@ export async function replaceProductStations(
       .select({ id: s.kitchenStations.id })
       .from(s.kitchenStations)
       .where(
-        inLocation(s.kitchenStations, actor, inArray(s.kitchenStations.id, wanted), notDeleted(s.kitchenStations)),
+        inLocation(
+          s.kitchenStations,
+          actor,
+          inArray(s.kitchenStations.id, wanted),
+          notDeleted(s.kitchenStations),
+        ),
       );
     if (stations.length !== wanted.length) throw notFound('Kitchen station');
   }
   const existing = await deps.db
     .select()
     .from(s.productStationRoutes)
-    .where(inLocation(s.productStationRoutes, actor, eq(s.productStationRoutes.productId, productId)));
+    .where(
+      inLocation(s.productStationRoutes, actor, eq(s.productStationRoutes.productId, productId)),
+    );
   const items = wanted.map((kitchenStationId) => ({ kitchenStationId }));
-  const plan = planReplace(existing, items, (row) => row.kitchenStationId, (item) => item.kitchenStationId);
+  const plan = planReplace(
+    existing,
+    items,
+    (row) => row.kitchenStationId,
+    (item) => item.kitchenStationId,
+  );
 
   await runCommand(deps.db, actor, async (tx, recorder) => {
     const revive = plan.update.filter(([row]) => row.deletedAt !== null).map(([row]) => row);
@@ -529,7 +603,13 @@ export async function replaceProductStations(
       await tx
         .update(s.productStationRoutes)
         .set({ deletedAt: null })
-        .where(inLocation(s.productStationRoutes, actor, inArray(s.productStationRoutes.id, ids(revive))));
+        .where(
+          inLocation(
+            s.productStationRoutes,
+            actor,
+            inArray(s.productStationRoutes.id, ids(revive)),
+          ),
+        );
     }
     if (plan.insert.length > 0) {
       await tx
@@ -540,7 +620,13 @@ export async function replaceProductStations(
       await tx
         .update(s.productStationRoutes)
         .set(softDeleted())
-        .where(inLocation(s.productStationRoutes, actor, inArray(s.productStationRoutes.id, ids(plan.remove))));
+        .where(
+          inLocation(
+            s.productStationRoutes,
+            actor,
+            inArray(s.productStationRoutes.id, ids(plan.remove)),
+          ),
+        );
     }
     recorder.event(productUpdatedEvent(productId, ['stations'], locationId));
   });
@@ -554,7 +640,13 @@ export async function loadSettingRow(deps: ServiceDeps, actor: Actor, productId:
   const [row] = await deps.db
     .select()
     .from(s.productLocationSettings)
-    .where(inLocation(s.productLocationSettings, actor, eq(s.productLocationSettings.productId, productId)));
+    .where(
+      inLocation(
+        s.productLocationSettings,
+        actor,
+        eq(s.productLocationSettings.productId, productId),
+      ),
+    );
   return row ?? null;
 }
 
@@ -572,7 +664,8 @@ export async function updateProductLocationSettings(
   const before = { isActive: live?.isActive ?? true, priceRappen: live?.priceRappen ?? null };
   const priceChanged = before.priceRappen !== input.priceRappen;
   if (priceChanged) assertPermission(actor, 'catalog.price_change');
-  if (!priceChanged && before.isActive === input.isActive) return buildProductDto(deps, actor, productId);
+  if (!priceChanged && before.isActive === input.isActive)
+    return buildProductDto(deps, actor, productId);
 
   await runCommand(deps.db, actor, async (tx, recorder) => {
     if (row) {
@@ -583,9 +676,13 @@ export async function updateProductLocationSettings(
           deletedAt: null,
           ...(live ? {} : { soldOutAt: null, soldOutUntil: null, soldOutByUserId: null }),
         })
-        .where(inLocation(s.productLocationSettings, actor, eq(s.productLocationSettings.id, row.id)));
+        .where(
+          inLocation(s.productLocationSettings, actor, eq(s.productLocationSettings.id, row.id)),
+        );
     } else {
-      await tx.insert(s.productLocationSettings).values(ownedByLocation(actor, { productId, ...input }));
+      await tx
+        .insert(s.productLocationSettings)
+        .values(ownedByLocation(actor, { productId, ...input }));
     }
     const audit = { entityType: 'product', entityId: productId };
     if (priceChanged) {

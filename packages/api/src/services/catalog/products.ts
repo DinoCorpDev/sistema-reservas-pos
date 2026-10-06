@@ -66,7 +66,11 @@ const allergenOrder = (allergen: string) => (ALLERGENS as readonly string[]).ind
 
 type SettingRow = typeof s.productLocationSettings.$inferSelect;
 
-export function toLocationSettingsDto(locationId: string, row: SettingRow | null, now = new Date()) {
+export function toLocationSettingsDto(
+  locationId: string,
+  row: SettingRow | null,
+  now = new Date(),
+) {
   const live = row && row.deletedAt === null ? row : null;
   return {
     locationId,
@@ -87,7 +91,14 @@ export async function buildProductDto(deps: ServiceDeps, actor: Actor, id: strin
     db
       .select()
       .from(s.productVariants)
-      .where(inOrg(s.productVariants, actor, eq(s.productVariants.productId, id), notDeleted(s.productVariants)))
+      .where(
+        inOrg(
+          s.productVariants,
+          actor,
+          eq(s.productVariants.productId, id),
+          notDeleted(s.productVariants),
+        ),
+      )
       .orderBy(asc(s.productVariants.sortOrder)),
     db
       .select()
@@ -104,23 +115,49 @@ export async function buildProductDto(deps: ServiceDeps, actor: Actor, id: strin
     db
       .select()
       .from(s.productAllergens)
-      .where(inOrg(s.productAllergens, actor, eq(s.productAllergens.productId, id), notDeleted(s.productAllergens))),
+      .where(
+        inOrg(
+          s.productAllergens,
+          actor,
+          eq(s.productAllergens.productId, id),
+          notDeleted(s.productAllergens),
+        ),
+      ),
     db
       .select()
       .from(s.productOrigins)
-      .where(inOrg(s.productOrigins, actor, eq(s.productOrigins.productId, id), notDeleted(s.productOrigins)))
+      .where(
+        inOrg(
+          s.productOrigins,
+          actor,
+          eq(s.productOrigins.productId, id),
+          notDeleted(s.productOrigins),
+        ),
+      )
       .orderBy(asc(s.productOrigins.createdAt)),
     db
       .select()
       .from(s.availabilityRules)
       .where(
-        inOrg(s.availabilityRules, actor, eq(s.availabilityRules.productId, id), notDeleted(s.availabilityRules)),
+        inOrg(
+          s.availabilityRules,
+          actor,
+          eq(s.availabilityRules.productId, id),
+          notDeleted(s.availabilityRules),
+        ),
       )
       .orderBy(asc(s.availabilityRules.createdAt)),
     db
       .select()
       .from(s.channelPrices)
-      .where(inOrg(s.channelPrices, actor, eq(s.channelPrices.productId, id), notDeleted(s.channelPrices)))
+      .where(
+        inOrg(
+          s.channelPrices,
+          actor,
+          eq(s.channelPrices.productId, id),
+          notDeleted(s.channelPrices),
+        ),
+      )
       .orderBy(asc(s.channelPrices.channel)),
     locationId
       ? db
@@ -171,7 +208,12 @@ export async function buildProductDto(deps: ServiceDeps, actor: Actor, id: strin
     allergens: allergens
       .map((a) => ({ allergen: a.allergen, presence: a.presence }))
       .sort((a, b) => allergenOrder(a.allergen) - allergenOrder(b.allergen)),
-    origins: origins.map((o) => ({ id: o.id, kind: o.kind, species: o.species, country: o.country })),
+    origins: origins.map((o) => ({
+      id: o.id,
+      kind: o.kind,
+      species: o.species,
+      country: o.country,
+    })),
     translations: translations.get(id) ?? {},
     availability: rules.map((r) => ({
       id: r.id,
@@ -224,7 +266,11 @@ export async function listProducts(
     .orderBy(asc(s.products.sortOrder), asc(s.products.name));
   if (rows.length === 0) return [];
   const origins = await deps.db
-    .select({ productId: s.productOrigins.productId, kind: s.productOrigins.kind, country: s.productOrigins.country })
+    .select({
+      productId: s.productOrigins.productId,
+      kind: s.productOrigins.kind,
+      country: s.productOrigins.country,
+    })
     .from(s.productOrigins)
     .where(
       inOrg(
@@ -278,7 +324,11 @@ export async function createProduct(
   await assertCategoryExists(deps.db, actor, input.categoryId);
   await assertTaxCategoryExists(deps.db, actor, input.taxCategoryId);
   if (input.publishQr || input.publishWeb) {
-    assertPublishable({ allergensComplete: false, requiresOrigin: input.requiresOrigin, origins: [] });
+    assertPublishable({
+      allergensComplete: false,
+      requiresOrigin: input.requiresOrigin,
+      origins: [],
+    });
   }
   const id = newId();
   await runCommand(deps.db, actor, async (tx, recorder) => {
@@ -324,12 +374,20 @@ export async function updateProduct(
   if (patch.categoryId) await assertCategoryExists(deps.db, actor, patch.categoryId);
   if (patch.taxCategoryId) await assertTaxCategoryExists(deps.db, actor, patch.taxCategoryId);
 
-  const publishing = (patch.publishQr && !current.publishQr) || (patch.publishWeb && !current.publishWeb);
+  const publishing =
+    (patch.publishQr && !current.publishQr) || (patch.publishWeb && !current.publishWeb);
   if (publishing) {
     const origins = await deps.db
       .select({ kind: s.productOrigins.kind, country: s.productOrigins.country })
       .from(s.productOrigins)
-      .where(inOrg(s.productOrigins, actor, eq(s.productOrigins.productId, id), notDeleted(s.productOrigins)));
+      .where(
+        inOrg(
+          s.productOrigins,
+          actor,
+          eq(s.productOrigins.productId, id),
+          notDeleted(s.productOrigins),
+        ),
+      );
     assertPublishable({
       allergensComplete: current.allergensComplete,
       requiresOrigin: patch.requiresOrigin ?? current.requiresOrigin,
@@ -341,11 +399,15 @@ export async function updateProduct(
   if (Object.keys(diff.after).length === 0) return buildProductDto(deps, actor, id);
 
   await runCommand(deps.db, actor, async (tx, recorder) => {
-    await tx.update(s.products).set(patch).where(inOrg(s.products, actor, eq(s.products.id, id)));
+    await tx
+      .update(s.products)
+      .set(patch)
+      .where(inOrg(s.products, actor, eq(s.products.id, id)));
     const { price, availability, other } = splitDiff(diff);
     const audit = { entityType: 'product', entityId: id, locationId: null };
     if (price) recorder.audit({ action: 'catalog.price_changed', ...audit, ...price });
-    if (availability) recorder.audit({ action: 'catalog.availability_changed', ...audit, ...availability });
+    if (availability)
+      recorder.audit({ action: 'catalog.availability_changed', ...audit, ...availability });
     if (other) recorder.audit({ action: 'catalog.product_updated', ...audit, ...other });
     recorder.event(productUpdatedEvent(id, Object.keys(diff.after)));
   });
@@ -379,22 +441,51 @@ const COPY_SUFFIX = ' (Kopie)';
  * RF-B18: copies the product with its variants, allergens, origins, translations, modifier groups,
  * channel prices, availability and station routes. The copy starts inactive.
  */
-export async function duplicateProduct(deps: ServiceDeps, actor: Actor, id: string): Promise<ProductDto> {
+export async function duplicateProduct(
+  deps: ServiceDeps,
+  actor: Actor,
+  id: string,
+): Promise<ProductDto> {
   assertPermission(actor, 'catalog.manage');
   const { db } = deps;
   const source = await loadProductRow(db, actor, id);
   const byProduct = {
-    variants: inOrg(s.productVariants, actor, eq(s.productVariants.productId, id), notDeleted(s.productVariants)),
+    variants: inOrg(
+      s.productVariants,
+      actor,
+      eq(s.productVariants.productId, id),
+      notDeleted(s.productVariants),
+    ),
     links: inOrg(
       s.productModifierGroups,
       actor,
       eq(s.productModifierGroups.productId, id),
       notDeleted(s.productModifierGroups),
     ),
-    allergens: inOrg(s.productAllergens, actor, eq(s.productAllergens.productId, id), notDeleted(s.productAllergens)),
-    origins: inOrg(s.productOrigins, actor, eq(s.productOrigins.productId, id), notDeleted(s.productOrigins)),
-    rules: inOrg(s.availabilityRules, actor, eq(s.availabilityRules.productId, id), notDeleted(s.availabilityRules)),
-    prices: inOrg(s.channelPrices, actor, eq(s.channelPrices.productId, id), notDeleted(s.channelPrices)),
+    allergens: inOrg(
+      s.productAllergens,
+      actor,
+      eq(s.productAllergens.productId, id),
+      notDeleted(s.productAllergens),
+    ),
+    origins: inOrg(
+      s.productOrigins,
+      actor,
+      eq(s.productOrigins.productId, id),
+      notDeleted(s.productOrigins),
+    ),
+    rules: inOrg(
+      s.availabilityRules,
+      actor,
+      eq(s.availabilityRules.productId, id),
+      notDeleted(s.availabilityRules),
+    ),
+    prices: inOrg(
+      s.channelPrices,
+      actor,
+      eq(s.channelPrices.productId, id),
+      notDeleted(s.channelPrices),
+    ),
     routes: inOrg(
       s.productStationRoutes,
       actor,
@@ -464,20 +555,30 @@ export async function duplicateProduct(deps: ServiceDeps, actor: Actor, id: stri
     if (links.length > 0) {
       await tx.insert(s.productModifierGroups).values(
         links.map((l) =>
-          ownedByOrg(actor, { productId, modifierGroupId: l.modifierGroupId, sortOrder: l.sortOrder }),
+          ownedByOrg(actor, {
+            productId,
+            modifierGroupId: l.modifierGroupId,
+            sortOrder: l.sortOrder,
+          }),
         ),
       );
     }
     if (allergens.length > 0) {
       await tx
         .insert(s.productAllergens)
-        .values(allergens.map((a) => ownedByOrg(actor, { productId, allergen: a.allergen, presence: a.presence })));
+        .values(
+          allergens.map((a) =>
+            ownedByOrg(actor, { productId, allergen: a.allergen, presence: a.presence }),
+          ),
+        );
     }
     if (origins.length > 0) {
       await tx
         .insert(s.productOrigins)
         .values(
-          origins.map((o) => ownedByOrg(actor, { productId, kind: o.kind, species: o.species, country: o.country })),
+          origins.map((o) =>
+            ownedByOrg(actor, { productId, kind: o.kind, species: o.species, country: o.country }),
+          ),
         );
     }
     if (rules.length > 0) {
@@ -515,7 +616,11 @@ export async function duplicateProduct(deps: ServiceDeps, actor: Actor, id: stri
     if (routes.length > 0) {
       await tx.insert(s.productStationRoutes).values(
         routes.map((r) =>
-          ownedByOrg(actor, { productId, locationId: r.locationId, kitchenStationId: r.kitchenStationId }),
+          ownedByOrg(actor, {
+            productId,
+            locationId: r.locationId,
+            kitchenStationId: r.kitchenStationId,
+          }),
         ),
       );
     }

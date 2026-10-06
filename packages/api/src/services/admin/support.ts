@@ -16,7 +16,7 @@ import {
   runCommand,
   schema as s,
 } from '@pos/db';
-import { and, asc, count, desc, eq, gt, isNull, like, max, or } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, isNull, like, max, or } from 'drizzle-orm';
 import { type Actor, assertPermission, requireUserId } from '../../actor';
 import { ApiError, notFound } from '../../errors';
 import { iso, type ServiceDeps } from '../shared';
@@ -40,6 +40,8 @@ export interface PlatformOrganizationDto {
   isTraining: boolean;
   createdAt: string;
   locationsCount: number;
+  /** Oldest location of the organization: where the console opens it; null = none yet. */
+  primaryLocationId: string | null;
   /** Latest expiry of the grants that let this staff member in; null = no access now. */
   supportGrantExpiresAt: string | null;
 }
@@ -87,17 +89,17 @@ export async function listPlatformOrganizations(
   staff: { staffId: string },
 ): Promise<PlatformOrganizationDto[]> {
   await assertActiveStaff(deps.db, staff.staffId);
-  const [organizations, locationCounts, grants] = await Promise.all([
+  const [organizations, locations, grants] = await Promise.all([
     deps.db
       .select()
       .from(s.organizations)
       .where(isNull(s.organizations.deletedAt))
       .orderBy(asc(s.organizations.name)),
     deps.db
-      .select({ organizationId: s.locations.organizationId, value: count() })
+      .select({ id: s.locations.id, organizationId: s.locations.organizationId })
       .from(s.locations)
       .where(isNull(s.locations.deletedAt))
-      .groupBy(s.locations.organizationId),
+      .orderBy(asc(s.locations.createdAt), asc(s.locations.id)),
     deps.db
       .select({
         organizationId: s.supportAccessGrants.organizationId,
@@ -117,7 +119,13 @@ export async function listPlatformOrganizations(
       )
       .groupBy(s.supportAccessGrants.organizationId),
   ]);
-  const locationsOf = new Map(locationCounts.map((row) => [row.organizationId, Number(row.value)]));
+  const locationsOf = new Map<string, string[]>();
+  for (const location of locations) {
+    locationsOf.set(location.organizationId, [
+      ...(locationsOf.get(location.organizationId) ?? []),
+      location.id,
+    ]);
+  }
   const grantOf = new Map(grants.map((row) => [row.organizationId, row.expiresAt]));
   return organizations.map((org) => ({
     id: org.id,
@@ -128,7 +136,8 @@ export async function listPlatformOrganizations(
     status: org.status,
     isTraining: org.isTraining,
     createdAt: org.createdAt.toISOString(),
-    locationsCount: locationsOf.get(org.id) ?? 0,
+    locationsCount: locationsOf.get(org.id)?.length ?? 0,
+    primaryLocationId: locationsOf.get(org.id)?.[0] ?? null,
     supportGrantExpiresAt: iso(grantOf.get(org.id)),
   }));
 }

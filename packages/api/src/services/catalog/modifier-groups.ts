@@ -45,7 +45,14 @@ async function buildModifierGroupDtos(db: Database, actor: Actor, ids?: string[]
   const modifiers = await db
     .select()
     .from(s.modifiers)
-    .where(inOrg(s.modifiers, actor, inArray(s.modifiers.modifierGroupId, groupIds), notDeleted(s.modifiers)))
+    .where(
+      inOrg(
+        s.modifiers,
+        actor,
+        inArray(s.modifiers.modifierGroupId, groupIds),
+        notDeleted(s.modifiers),
+      ),
+    )
     .orderBy(asc(s.modifiers.sortOrder), asc(s.modifiers.name));
   const modifierIds = modifiers.map((m) => m.id);
   const allergens =
@@ -62,7 +69,12 @@ async function buildModifierGroupDtos(db: Database, actor: Actor, ids?: string[]
               notDeleted(s.modifierAllergens),
             ),
           );
-  const translations = await loadTranslations(db, actor, ['modifier_group', 'modifier'], [...groupIds, ...modifierIds]);
+  const translations = await loadTranslations(
+    db,
+    actor,
+    ['modifier_group', 'modifier'],
+    [...groupIds, ...modifierIds],
+  );
 
   return groups.map((group) => ({
     id: group.id,
@@ -94,7 +106,9 @@ async function loadGroup(db: Database, actor: Actor, id: string) {
   const [row] = await db
     .select()
     .from(s.modifierGroups)
-    .where(inOrg(s.modifierGroups, actor, eq(s.modifierGroups.id, id), notDeleted(s.modifierGroups)));
+    .where(
+      inOrg(s.modifierGroups, actor, eq(s.modifierGroups.id, id), notDeleted(s.modifierGroups)),
+    );
   if (!row) throw notFound('Modifier group');
   return row;
 }
@@ -105,12 +119,19 @@ async function groupDto(db: Database, actor: Actor, id: string): Promise<Modifie
   return dto;
 }
 
-export async function listModifierGroups(deps: ServiceDeps, actor: Actor): Promise<ModifierGroupDto[]> {
+export async function listModifierGroups(
+  deps: ServiceDeps,
+  actor: Actor,
+): Promise<ModifierGroupDto[]> {
   assertCatalogRead(actor);
   return buildModifierGroupDtos(deps.db, actor);
 }
 
-export async function getModifierGroup(deps: ServiceDeps, actor: Actor, id: string): Promise<ModifierGroupDto> {
+export async function getModifierGroup(
+  deps: ServiceDeps,
+  actor: Actor,
+  id: string,
+): Promise<ModifierGroupDto> {
   assertCatalogRead(actor);
   return groupDto(deps.db, actor, id);
 }
@@ -138,7 +159,9 @@ export async function updateModifierGroup(
   const minSelect = patch.minSelect ?? current.minSelect;
   const maxSelect = patch.maxSelect ?? current.maxSelect;
   if (minSelect > maxSelect) {
-    throw new ApiError('VALIDATION_FAILED', 'minSelect must not exceed maxSelect', { path: ['minSelect'] });
+    throw new ApiError('VALIDATION_FAILED', 'minSelect must not exceed maxSelect', {
+      path: ['minSelect'],
+    });
   }
   if (Object.keys(patch).length > 0) {
     await deps.db
@@ -150,7 +173,11 @@ export async function updateModifierGroup(
 }
 
 /** Soft delete (PA-06) of the group and its modifiers, only when no product uses it. */
-export async function deleteModifierGroup(deps: ServiceDeps, actor: Actor, id: string): Promise<void> {
+export async function deleteModifierGroup(
+  deps: ServiceDeps,
+  actor: Actor,
+  id: string,
+): Promise<void> {
   assertPermission(actor, 'catalog.manage');
   await loadGroup(deps.db, actor, id);
   const [link] = await deps.db
@@ -166,7 +193,10 @@ export async function deleteModifierGroup(deps: ServiceDeps, actor: Actor, id: s
     )
     .limit(1);
   if (link) {
-    throw new ApiError('CONFLICT', 'Products still use this modifier group; remove it from them, or deactivate it');
+    throw new ApiError(
+      'CONFLICT',
+      'Products still use this modifier group; remove it from them, or deactivate it',
+    );
   }
   await runCommand(deps.db, actor, async (tx) => {
     const deletedAt = new Date();
@@ -177,7 +207,9 @@ export async function deleteModifierGroup(deps: ServiceDeps, actor: Actor, id: s
     await tx
       .update(s.modifiers)
       .set({ deletedAt, isActive: false })
-      .where(inOrg(s.modifiers, actor, eq(s.modifiers.modifierGroupId, id), notDeleted(s.modifiers)));
+      .where(
+        inOrg(s.modifiers, actor, eq(s.modifiers.modifierGroupId, id), notDeleted(s.modifiers)),
+      );
   });
 }
 
@@ -195,10 +227,18 @@ export async function replaceModifiers(
     .from(s.modifiers)
     .where(inOrg(s.modifiers, actor, eq(s.modifiers.modifierGroupId, groupId)));
   const items = input.modifiers.map((m, index) => ({ ...m, sortOrder: m.sortOrder ?? index }));
-  const plan = planReplace(existing, items, (row) => row.id, (item) => item.id ?? null);
+  const plan = planReplace(
+    existing,
+    items,
+    (row) => row.id,
+    (item) => item.id ?? null,
+  );
   const inserts = plan.insert.map((item) => ({ ...item, id: item.id ?? newId() }));
-  const bySortOrder = (a: { sortOrder: number }, b: { sortOrder: number }) => a.sortOrder - b.sortOrder;
-  const after = [...plan.update.map(([row, item]) => ({ ...item, id: row.id })), ...inserts].sort(bySortOrder);
+  const bySortOrder = (a: { sortOrder: number }, b: { sortOrder: number }) =>
+    a.sortOrder - b.sortOrder;
+  const after = [...plan.update.map(([row, item]) => ({ ...item, id: row.id })), ...inserts].sort(
+    bySortOrder,
+  );
 
   const live = existing.filter((row) => row.deletedAt === null).sort(bySortOrder);
   const priceBefore = new Map(live.map((row) => [row.id, row.priceDeltaRappen]));
@@ -266,7 +306,12 @@ export async function replaceModifiers(
     }
     for (const modifier of after) {
       const rows = allergenRows.filter((a) => a.modifierId === modifier.id);
-      const allergenPlan = planReplace(rows, modifier.allergens, (row) => row.allergen, (item) => item.allergen);
+      const allergenPlan = planReplace(
+        rows,
+        modifier.allergens,
+        (row) => row.allergen,
+        (item) => item.allergen,
+      );
       for (const [row, item] of allergenPlan.update) {
         if (row.presence === item.presence && row.deletedAt === null) continue;
         await tx
@@ -277,7 +322,11 @@ export async function replaceModifiers(
       if (allergenPlan.insert.length > 0) {
         await tx
           .insert(s.modifierAllergens)
-          .values(allergenPlan.insert.map((item) => ownedByOrg(actor, { modifierId: modifier.id, ...item })));
+          .values(
+            allergenPlan.insert.map((item) =>
+              ownedByOrg(actor, { modifierId: modifier.id, ...item }),
+            ),
+          );
       }
       if (allergenPlan.remove.length > 0) {
         await tx
@@ -295,7 +344,13 @@ export async function replaceModifiers(
           );
       }
       if (modifier.translations) {
-        await replaceTranslations(tx, actor, 'modifier', modifier.id, desiredLabels(modifier.translations));
+        await replaceTranslations(
+          tx,
+          actor,
+          'modifier',
+          modifier.id,
+          desiredLabels(modifier.translations),
+        );
       }
     }
     if (priceChanged) {

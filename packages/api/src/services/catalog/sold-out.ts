@@ -47,9 +47,13 @@ export async function markSoldOut(
       await tx
         .update(s.productLocationSettings)
         .set({ ...change, ...(live ? {} : { isActive: true, priceRappen: null, deletedAt: null }) })
-        .where(inLocation(s.productLocationSettings, actor, eq(s.productLocationSettings.id, row.id)));
+        .where(
+          inLocation(s.productLocationSettings, actor, eq(s.productLocationSettings.id, row.id)),
+        );
     } else {
-      await tx.insert(s.productLocationSettings).values(ownedByLocation(actor, { productId, ...change }));
+      await tx
+        .insert(s.productLocationSettings)
+        .values(ownedByLocation(actor, { productId, ...change }));
     }
     recorder.audit({
       action: 'catalog.availability_changed',
@@ -69,7 +73,11 @@ export async function markSoldOut(
 }
 
 /** Available again at the current location (RF-B09). Idempotent. */
-export async function restoreSoldOut(deps: ServiceDeps, actor: Actor, productId: string): Promise<ProductDto> {
+export async function restoreSoldOut(
+  deps: ServiceDeps,
+  actor: Actor,
+  productId: string,
+): Promise<ProductDto> {
   assertPermission(actor, 'catalog.sold_out');
   const locationId = requireLocationId(actor);
   await loadProductRow(deps.db, actor, productId);
@@ -79,7 +87,9 @@ export async function restoreSoldOut(deps: ServiceDeps, actor: Actor, productId:
       await tx
         .update(s.productLocationSettings)
         .set({ soldOutAt: null, soldOutUntil: null, soldOutByUserId: null })
-        .where(inLocation(s.productLocationSettings, actor, eq(s.productLocationSettings.id, row.id)));
+        .where(
+          inLocation(s.productLocationSettings, actor, eq(s.productLocationSettings.id, row.id)),
+        );
       recorder.audit({
         action: 'catalog.availability_changed',
         entityType: 'product',

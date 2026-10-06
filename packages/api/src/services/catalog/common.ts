@@ -165,7 +165,9 @@ export function desiredTexts(
 
 export const desiredLabels = (input: Partial<Record<string, string>>): DesiredTranslation[] =>
   desiredTexts(
-    Object.fromEntries(Object.entries(input).map(([language, name]) => [language, { name: name ?? '' }])),
+    Object.fromEntries(
+      Object.entries(input).map(([language, name]) => [language, { name: name ?? '' }]),
+    ),
     ['name'],
   );
 
@@ -241,7 +243,8 @@ export function planReplace<R extends { deletedAt: Date | null }, I>(
   // Live rows win over soft-deleted ones with the same key.
   for (const row of rows) {
     const existing = byKey.get(rowKey(row));
-    if (!existing || (existing.deletedAt !== null && row.deletedAt === null)) byKey.set(rowKey(row), row);
+    if (!existing || (existing.deletedAt !== null && row.deletedAt === null))
+      byKey.set(rowKey(row), row);
   }
   const kept = new Set<R>();
   const update: [R, I][] = [];

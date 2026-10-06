@@ -1,0 +1,294 @@
+{
+  "devices": {
+    "title": "Geräte & Stationen",
+    "description": "Kassen, Handgeräte und Küchenbildschirme, Küchenstationen und Drucker dieses Standorts.",
+    "noLocation": "Wählen Sie oben zuerst einen Standort.",
+    "readOnly": "Nur Ansicht: Für Änderungen braucht es die Berechtigung «Standort, Geräte und Tische verwalten».",
+    "tabTerminals": "Kassen & Geräte",
+    "tabStations": "Küchenstationen",
+    "tabPrinters": "Drucker"
+  },
+  "terminals": {
+    "title": "Kassen & Geräte",
+    "hint": "Jedes Gerät wird einmal mit einem Kopplungscode verbunden. Deaktivieren entkoppelt es sofort.",
+    "new": "Neues Gerät",
+    "edit": "Gerät bearbeiten",
+    "empty": "Noch keine Geräte. Legen Sie mindestens eine Kasse an.",
+    "type": "Typ",
+    "types": {
+      "pos": "Kasse",
+      "handheld": "Handgerät",
+      "kds": "Küchenbildschirm (KDS)"
+    },
+    "prefix": "Präfix",
+    "prefixLabel": "Präfix für Bestellnummern ohne Internet",
+    "prefixHint": "1–4 Grossbuchstaben oder Ziffern, z. B. K1. Pro Standort eindeutig, damit offline vergebene Bestellnummern nie doppelt sind.",
+    "prefixTaken": "Dieses Präfix verwendet bereits ein anderes Gerät dieses Standorts.",
+    "station": "Küchenstation",
+    "stationHint": "Für Küchenbildschirme: welche Station das Gerät anzeigt.",
+    "receiptPrinter": "Bondrucker",
+    "receiptPrinterHint": "Druckt die Belege dieses Geräts.",
+    "pairing": "Kopplung",
+    "paired": "Gekoppelt",
+    "notPaired": "Nicht gekoppelt",
+    "codePending": "Code offen bis {time}",
+    "lastSeen": "Zuletzt aktiv",
+    "never": "Nie",
+    "pair": "Kopplungscode erzeugen",
+    "pairingTitle": "Kopplungscode für {name}",
+    "pairingInstruction": "Auf dem Gerät eingeben: Kasse oder Küchenbildschirm auf dem Gerät öffnen und diesen Code beim Koppeln eintippen.",
+    "pairingValidUntil": "Gültig bis {time} (15 Minuten)",
+    "pairingRemaining": "noch {remaining}",
+    "pairingExpired": "Der Code ist abgelaufen.",
+    "pairingOnce": "Der Code wird nur jetzt angezeigt und gilt für eine Kopplung. Ein neuer Code ersetzt den bisherigen; ist das Gerät schon gekoppelt, ersetzt die neue Kopplung die alte.",
+    "pairingNew": "Neuen Code erzeugen",
+    "pairingDone": "Fertig",
+    "reactivateFirst": "Aktivieren Sie das Gerät, bevor Sie es koppeln.",
+    "deactivate": "Gerät deaktivieren",
+    "deactivateTitle": "{name} deaktivieren?",
+    "deactivateText": "Das Gerät wird sofort entkoppelt und kann nicht mehr arbeiten, bis es wieder aktiviert und neu gekoppelt ist. Bestellungen und Belege bleiben erhalten.",
+    "deactivated": "Gerät deaktiviert und entkoppelt.",
+    "activate": "Gerät aktivieren",
+    "activateTitle": "{name} wieder aktivieren?",
+    "activateText": "Danach muss das Gerät mit einem neuen Kopplungscode verbunden werden.",
+    "activated": "Gerät aktiviert."
+  },
+  "stations": {
+    "title": "Küchenstationen",
+    "hint": "Jedes Produkt geht an eine Station; ihre Bons erscheinen dort auf dem Küchenbildschirm oder Drucker.",
+    "new": "Neue Station",
+    "edit": "Station bearbeiten",
+    "empty": "Noch keine Küchenstationen.",
+    "alertAfter": "Alarm nach",
+    "alertAfterLabel": "Verspätungsalarm nach (Minuten)",
+    "alertAfterHint": "Leer lassen für den Standard des Standorts ({minutes} Min.).",
+    "minutes": "{minutes} Min.",
+    "standard": "Standard ({value})",
+    "language": "Küchensprache",
+    "languageHint": "Sprache der Bons dieser Station.",
+    "printer": "Drucker",
+    "printerHint": "Optional: druckt die Bons dieser Station.",
+    "inUse": "Die Station wird noch von Produkten oder Küchenbildschirmen verwendet. Ordnen Sie diese zuerst neu zu oder deaktivieren Sie die Station."
+  },
+  "printers": {
+    "title": "Drucker",
+    "hint": "Netzwerkdrucker für Belege und Küchenbons.",
+    "testNote": "Der Testdruck kommt mit dem Standort-Hub (Phase 3).",
+    "new": "Neuer Drucker",
+    "edit": "Drucker bearbeiten",
+    "empty": "Noch keine Drucker.",
+    "kind": "Art",
+    "kinds": {
+      "receipt": "Bondrucker",
+      "kitchen": "Küchendrucker"
+    },
+    "protocol": "Protokoll",
+    "protocols": {
+      "escpos": "ESC/POS (Netzwerk)",
+      "epson_epos": "Epson ePOS",
+      "star_cloudprnt": "Star CloudPRNT"
+    },
+    "host": "IP-Adresse oder Hostname",
+    "hostHint": "z. B. 192.168.1.50",
+    "port": "Port",
+    "address": "Adresse",
+    "paperWidth": "Papierbreite",
+    "paperWidthValue": "{mm} mm",
+    "cashDrawer": "Kassenschublade",
+    "cashDrawerLabel": "Kassenschublade angeschlossen",
+    "inUse": "Stationen oder Geräte drucken noch auf diesem Drucker. Ordnen Sie sie zuerst einem anderen Drucker zu."
+  },
+  "users": {
+    "title": "Mitarbeitende",
+    "description": "Zugang zur Kasse mit PIN und zum Backoffice mit E-Mail und Passwort.",
+    "tabUsers": "Mitarbeitende",
+    "tabRoles": "Rollen & Berechtigungen",
+    "readOnly": "Nur Ansicht: Für Änderungen braucht es die Berechtigung «Mitarbeitende, Rollen und API-Schlüssel verwalten».",
+    "new": "Neue Person",
+    "edit": "Person bearbeiten",
+    "created": "Person angelegt.",
+    "empty": "Noch keine Mitarbeitenden.",
+    "you": "Sie",
+    "name": "Name",
+    "email": "E-Mail",
+    "emailHint": "Für die Anmeldung im Backoffice.",
+    "emailTaken": "Diese E-Mail wird bereits verwendet.",
+    "password": "Passwort",
+    "passwordHint": "Optional. Nur für den Backoffice-Zugang nötig; mindestens 10 Zeichen.",
+    "passwordNeedsEmail": "Für den Backoffice-Zugang braucht es auch eine E-Mail.",
+    "pin": "PIN",
+    "pinHint": "Optional. 4–6 Ziffern zum Entsperren der Kasse.",
+    "pinInvalid": "Die PIN besteht aus 4 bis 6 Ziffern.",
+    "pinTaken": "PIN bereits vergeben",
+    "uiLanguage": "Sprache der Oberfläche",
+    "roles": "Rollen",
+    "rolesHint": "Die Rollen gelten an allen gewählten Standorten.",
+    "pickRole": "Bitte mindestens eine Rolle wählen.",
+    "locations": "Standorte",
+    "allLocations": "Alle",
+    "pickLocation": "Bitte mindestens einen Standort wählen.",
+    "pinSet": "PIN",
+    "twoFactor": "2FA",
+    "lastLogin": "Letzte Anmeldung",
+    "never": "Nie",
+    "setPin": "PIN setzen",
+    "setPinTitle": "PIN für {name} setzen",
+    "setPinHint": "4–6 Ziffern. Die PIN identifiziert die Person an der Kasse und muss in der Organisation eindeutig sein.",
+    "newPin": "Neue PIN",
+    "pinSaved": "PIN gespeichert.",
+    "setPassword": "Passwort setzen",
+    "setPasswordTitle": "Passwort für {name} setzen",
+    "newPassword": "Neues Passwort",
+    "newPasswordHint": "Mindestens 10 Zeichen.",
+    "confirmPassword": "Passwort wiederholen",
+    "mismatch": "Die Passwörter stimmen nicht überein.",
+    "passwordSaved": "Passwort gespeichert.",
+    "noEmailWarning": "Diese Person hat keine E-Mail. Ohne E-Mail ist keine Anmeldung im Backoffice möglich.",
+    "deactivate": "Person deaktivieren",
+    "deactivateTitle": "{name} deaktivieren?",
+    "deactivateText": "Die Person kann sich nicht mehr anmelden und die Kasse nicht mehr entsperren. Ihre Daten und das Protokoll bleiben erhalten.",
+    "deactivated": "Person deaktiviert.",
+    "activate": "Person aktivieren",
+    "activateTitle": "{name} wieder aktivieren?",
+    "activateText": "Die Person kann sich wieder anmelden und mit ihrer PIN arbeiten.",
+    "activated": "Person aktiviert.",
+    "cannotDeactivateSelf": "Sie können sich nicht selbst deaktivieren.",
+    "lastAdmin": "Die Organisation braucht mindestens eine aktive Person mit der Rolle Administrator."
+  },
+  "roles": {
+    "names": {
+      "admin": "Administrator",
+      "manager": "Geschäftsführung",
+      "cashier": "Kasse",
+      "waiter": "Service",
+      "kitchen": "Küche"
+    },
+    "hint": "Die Berechtigungen gelten für alle Personen mit dieser Rolle. Jede Änderung wird protokolliert.",
+    "choose": "Rolle wählen",
+    "count": "{count} von {total}",
+    "adminLocked": "Die Rolle Administrator hat immer alle Berechtigungen und lässt sich nicht ändern.",
+    "unsaved": "Nicht gespeichert",
+    "reset": "Änderungen verwerfen",
+    "defaults": "Standard wiederherstellen",
+    "saved": "Berechtigungen gespeichert.",
+    "groupAll": "Alle in «{group}»"
+  },
+  "permissionGroups": {
+    "orders": "Bestellungen",
+    "payments": "Zahlungen & Belege",
+    "cash": "Kasse & Tagesabschluss",
+    "kitchen": "Küche & Katalog",
+    "guests": "Reservationen & Gäste",
+    "admin": "Verwaltung",
+    "other": "Weitere"
+  },
+  "permissions": {
+    "order": {
+      "create": "Bestellungen aufnehmen",
+      "void_item": "Positionen stornieren",
+      "void": "Ganze Bestellungen stornieren",
+      "discount": "Rabatte gewähren",
+      "reopen": "Abgeschlossene Bestellungen wieder öffnen",
+      "transfer": "Bestellungen auf einen anderen Tisch übertragen"
+    },
+    "payment": {
+      "take": "Zahlungen entgegennehmen",
+      "refund": "Rückerstattungen ausführen"
+    },
+    "receipt": {
+      "reprint": "Belege erneut drucken"
+    },
+    "cash": {
+      "open_drawer": "Kassenschublade ohne Verkauf öffnen",
+      "movement": "Bareinlagen und -entnahmen buchen"
+    },
+    "shift": {
+      "open": "Kassenschicht eröffnen",
+      "close": "Kassenschicht abschliessen"
+    },
+    "day": {
+      "close": "Tagesabschluss durchführen"
+    },
+    "kitchen": {
+      "operate": "Küchenbildschirm bedienen"
+    },
+    "catalog": {
+      "sold_out": "Produkte als ausverkauft markieren",
+      "manage": "Katalog bearbeiten",
+      "price_change": "Preise ändern"
+    },
+    "tax": {
+      "manage": "MWST-Einstellungen verwalten"
+    },
+    "reservation": {
+      "checkin": "Reservationen einchecken",
+      "manage": "Reservationen verwalten"
+    },
+    "customer": {
+      "manage": "Gästedaten verwalten",
+      "anonymize": "Gästedaten anonymisieren"
+    },
+    "location": {
+      "manage": "Standort, Geräte und Tische verwalten"
+    },
+    "user": {
+      "manage": "Mitarbeitende, Rollen und API-Schlüssel verwalten"
+    },
+    "report": {
+      "view": "Berichte ansehen"
+    },
+    "audit": {
+      "view": "Protokoll ansehen"
+    },
+    "sync": {
+      "resolve_conflicts": "Synchronisationskonflikte lösen"
+    },
+    "support": {
+      "grant_access": "DINOLABS-Support Zugang gewähren"
+    },
+    "approval": {
+      "grant": "Aktionen mit PIN freigeben (Führungsperson)"
+    }
+  },
+  "apiKeys": {
+    "title": "API-Schlüssel",
+    "description": "Für die Website und andere Apps (z. B. Zitas). Ein Schlüssel gilt für die ganze Organisation.",
+    "listTitle": "Schlüssel",
+    "new": "Neuer Schlüssel",
+    "empty": "Noch keine API-Schlüssel.",
+    "name": "Bezeichnung",
+    "nameHint": "Wofür der Schlüssel verwendet wird, z. B. «Website».",
+    "prefix": "Präfix",
+    "scopes": "Berechtigungen",
+    "scopesHint": "Nur so viel wie nötig.",
+    "pickScope": "Bitte mindestens eine Berechtigung wählen.",
+    "created": "Erstellt",
+    "lastUsed": "Zuletzt verwendet",
+    "never": "Nie",
+    "statusActive": "Aktiv",
+    "statusRevoked": "Widerrufen",
+    "statusExpired": "Abgelaufen",
+    "revoke": "Widerrufen",
+    "revokeTitle": "Schlüssel «{name}» widerrufen?",
+    "revokeText": "Apps mit diesem Schlüssel erhalten sofort keinen Zugriff mehr. Das lässt sich nicht rückgängig machen.",
+    "revoked": "Schlüssel widerrufen.",
+    "keyTitle": "Neuer Schlüssel «{name}»",
+    "keyWarningTitle": "Nur jetzt sichtbar",
+    "keyWarning": "Kopieren Sie den Schlüssel und bewahren Sie ihn sicher auf, z. B. in einem Passwort-Manager. Danach ist nur noch das Präfix sichtbar. Geht er verloren, widerrufen Sie ihn und erstellen einen neuen.",
+    "keyLabel": "API-Schlüssel",
+    "keyDone": "Ich habe den Schlüssel gespeichert",
+    "copyFailed": "Kopieren nicht möglich. Bitte den Schlüssel markieren und von Hand kopieren.",
+    "scopeNames": {
+      "catalog_read": "Katalog lesen",
+      "catalog_write": "Katalog bearbeiten",
+      "customers_write": "Gäste verwalten",
+      "reservations_write": "Reservationen verwalten"
+    },
+    "scopeDescriptions": {
+      "catalog_read": "Produkte, Kategorien, Preise und Menü abrufen.",
+      "catalog_write": "Produkte und Preise ändern und Ausverkauftes melden.",
+      "customers_write": "Gästedaten anlegen und ändern.",
+      "reservations_write": "Reservationen anlegen und ändern."
+    }
+  }
+}

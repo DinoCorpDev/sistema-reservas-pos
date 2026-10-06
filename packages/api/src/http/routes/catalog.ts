@@ -26,15 +26,19 @@ import {
 import * as service from '../../services/catalog';
 import type { ServiceDeps } from '../../services/shared';
 import { actorOf, type ApiApp, type ApiContext } from '../env';
-import { AUTHENTICATED, ERROR_RESPONSES, jsonBody, jsonResponse, NoContent, UuidParam } from '../schemas';
+import {
+  AUTHENTICATED,
+  ERROR_RESPONSES,
+  jsonBody,
+  jsonResponse,
+  NoContent,
+  UuidParam,
+} from '../schemas';
 
 // Input schemas come from @pos/core as plain Zod: never call `.openapi()` on them.
 
 const TranslationsSchema = z
-  .record(
-    z.string(),
-    z.object({ name: z.string().optional(), description: z.string().optional() }),
-  )
+  .record(z.string(), z.object({ name: z.string().optional(), description: z.string().optional() }))
   .openapi('CatalogTranslations', { example: { fr: { name: 'Menu du jour' } } });
 
 const LabelsSchema = z.record(z.string(), z.string()).openapi({ example: { fr: 'Menu du jour' } });
@@ -71,7 +75,10 @@ const productBase = {
   sku: z.string().nullable(),
   name: z.string(),
   description: z.string().nullable(),
-  basePriceRappen: z.number().int().openapi({ description: 'Gross price in rappen, MWST included' }),
+  basePriceRappen: z
+    .number()
+    .int()
+    .openapi({ description: 'Gross price in rappen, MWST included' }),
   defaultCourse: z.number().int(),
   imageUrl: z.string().nullable(),
   requiresOrigin: z.boolean(),
@@ -116,7 +123,12 @@ const ProductSchema = z
     modifierGroupIds: z.array(z.uuid()),
     allergens: z.array(AllergenSchema),
     origins: z.array(
-      z.object({ id: z.uuid(), kind: z.string(), species: z.string().nullable(), country: z.string() }),
+      z.object({
+        id: z.uuid(),
+        kind: z.string(),
+        species: z.string().nullable(),
+        country: z.string(),
+      }),
     ),
     translations: TranslationsSchema,
     availability: z.array(
@@ -143,7 +155,9 @@ const ProductSchema = z
     locationSettings: ProductLocationSettingsSchema.nullable().openapi({
       description: 'The product at the caller’s current location; null without a location',
     }),
-    stationIds: z.array(z.uuid()).openapi({ description: 'Kitchen stations at the current location' }),
+    stationIds: z
+      .array(z.uuid())
+      .openapi({ description: 'Kitchen stations at the current location' }),
     publication: PublicationSchema,
   })
   .openapi('Product');
@@ -181,12 +195,22 @@ const MenuProductSchema = z
     description: z.string().nullable(),
     imageUrl: z.string().nullable(),
     defaultCourse: z.number().int(),
-    priceRappen: z.number().int().openapi({ description: 'Resolved gross price of the default variant' }),
+    priceRappen: z
+      .number()
+      .int()
+      .openapi({ description: 'Resolved gross price of the default variant' }),
     variants: z.array(
-      z.object({ id: z.uuid(), name: z.string(), priceRappen: z.number().int(), isDefault: z.boolean() }),
+      z.object({
+        id: z.uuid(),
+        name: z.string(),
+        priceRappen: z.number().int(),
+        isDefault: z.boolean(),
+      }),
     ),
     allergens: z.array(AllergenSchema),
-    origins: z.array(z.object({ kind: z.string(), species: z.string().nullable(), country: z.string() })),
+    origins: z.array(
+      z.object({ kind: z.string(), species: z.string().nullable(), country: z.string() }),
+    ),
     modifierGroups: z.array(
       z.object({
         id: z.uuid(),
@@ -278,7 +302,8 @@ export function registerCatalogRoutes(app: ApiApp) {
       request: { body: jsonBody(createCategorySchema) },
       responses: { 201: jsonResponse(CategorySchema, 'Created category'), ...ERROR_RESPONSES },
     }),
-    async (c) => c.json(await service.createCategory(deps(c), actorOf(c), c.req.valid('json')), 201),
+    async (c) =>
+      c.json(await service.createCategory(deps(c), actorOf(c), c.req.valid('json')), 201),
   );
 
   app.openapi(
@@ -294,7 +319,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     }),
     async (c) =>
       c.json(
-        await service.updateCategory(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.updateCategory(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -346,9 +376,13 @@ export function registerCatalogRoutes(app: ApiApp) {
       tags,
       security,
       summary: 'List products (RF-B01)',
-      description: 'Filter by category or by a search on name and SKU; inactive products only on request.',
+      description:
+        'Filter by category or by a search on name and SKU; inactive products only on request.',
       request: { query: listProductsQuerySchema },
-      responses: { 200: jsonResponse(z.array(ProductSummarySchema), 'Products'), ...ERROR_RESPONSES },
+      responses: {
+        200: jsonResponse(z.array(ProductSummarySchema), 'Products'),
+        ...ERROR_RESPONSES,
+      },
     }),
     async (c) => c.json(await service.listProducts(deps(c), actorOf(c), c.req.valid('query')), 200),
   );
@@ -360,7 +394,8 @@ export function registerCatalogRoutes(app: ApiApp) {
       tags,
       security,
       summary: 'Create a product (RF-B01, RF-B12)',
-      description: 'Starts unpublished on QR and web until allergens (and origin) are complete (RN-18).',
+      description:
+        'Starts unpublished on QR and web until allergens (and origin) are complete (RN-18).',
       request: { body: jsonBody(createProductSchema) },
       responses: { 201: jsonResponse(ProductSchema, 'Created product'), ...ERROR_RESPONSES },
     }),
@@ -374,12 +409,14 @@ export function registerCatalogRoutes(app: ApiApp) {
       tags,
       security,
       summary: 'Get the full product',
-      description: 'Variants, modifiers, allergens, origin, translations, availability, channel prices, the ' +
+      description:
+        'Variants, modifiers, allergens, origin, translations, availability, channel prices, the ' +
         'settings and stations at the current location, and the publication check (RN-18).',
       request: { params: UuidParam },
       responses: { 200: jsonResponse(ProductSchema, 'Product'), ...ERROR_RESPONSES },
     }),
-    async (c) => c.json(await service.getProduct(deps(c), actorOf(c), c.req.valid('param').id), 200),
+    async (c) =>
+      c.json(await service.getProduct(deps(c), actorOf(c), c.req.valid('param').id), 200),
   );
 
   app.openapi(
@@ -398,7 +435,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     }),
     async (c) =>
       c.json(
-        await service.updateProduct(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.updateProduct(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -426,7 +468,8 @@ export function registerCatalogRoutes(app: ApiApp) {
       tags,
       security,
       summary: 'Duplicate a product (RF-B18)',
-      description: 'Copies variants, allergens, origin, translations, modifier groups, channel prices, ' +
+      description:
+        'Copies variants, allergens, origin, translations, modifier groups, channel prices, ' +
         'availability and station routes. The copy is inactive and named "… (Kopie)".',
       request: { params: UuidParam },
       responses: { 201: jsonResponse(ProductSchema, 'The copy'), ...ERROR_RESPONSES },
@@ -447,7 +490,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     ),
     async (c) =>
       c.json(
-        await service.replaceVariants(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceVariants(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -461,7 +509,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     ),
     async (c) =>
       c.json(
-        await service.replaceAllergens(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceAllergens(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -474,7 +527,15 @@ export function registerCatalogRoutes(app: ApiApp) {
       'Country as ISO 3166-1 alpha-2. Required to publish when the product requires origin (RN-18).',
     ),
     async (c) =>
-      c.json(await service.replaceOrigins(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')), 200),
+      c.json(
+        await service.replaceOrigins(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
+        200,
+      ),
   );
 
   app.openapi(
@@ -487,7 +548,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     ),
     async (c) =>
       c.json(
-        await service.replaceProductTranslations(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceProductTranslations(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -501,7 +567,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     ),
     async (c) =>
       c.json(
-        await service.replaceProductModifierGroups(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceProductModifierGroups(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -516,7 +587,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     ),
     async (c) =>
       c.json(
-        await service.replaceAvailability(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceAvailability(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -530,7 +606,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     ),
     async (c) =>
       c.json(
-        await service.replaceChannelPrices(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceChannelPrices(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -544,7 +625,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     ),
     async (c) =>
       c.json(
-        await service.replaceProductStations(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceProductStations(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -583,7 +669,12 @@ export function registerCatalogRoutes(app: ApiApp) {
     }),
     async (c) =>
       c.json(
-        await service.markSoldOut(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.markSoldOut(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -611,7 +702,10 @@ export function registerCatalogRoutes(app: ApiApp) {
       tags,
       security,
       summary: 'List modifier groups with their modifiers (RF-B02)',
-      responses: { 200: jsonResponse(z.array(ModifierGroupSchema), 'Modifier groups'), ...ERROR_RESPONSES },
+      responses: {
+        200: jsonResponse(z.array(ModifierGroupSchema), 'Modifier groups'),
+        ...ERROR_RESPONSES,
+      },
     }),
     async (c) => c.json(await service.listModifierGroups(deps(c), actorOf(c)), 200),
   );
@@ -625,7 +719,10 @@ export function registerCatalogRoutes(app: ApiApp) {
       summary: 'Create a modifier group (RF-B02)',
       description: 'Mandatory when minSelect > 0; minSelect must not exceed maxSelect.',
       request: { body: jsonBody(createModifierGroupSchema) },
-      responses: { 201: jsonResponse(ModifierGroupSchema, 'Created modifier group'), ...ERROR_RESPONSES },
+      responses: {
+        201: jsonResponse(ModifierGroupSchema, 'Created modifier group'),
+        ...ERROR_RESPONSES,
+      },
     }),
     async (c) =>
       c.json(await service.createModifierGroup(deps(c), actorOf(c), c.req.valid('json')), 201),
@@ -653,7 +750,10 @@ export function registerCatalogRoutes(app: ApiApp) {
       security,
       summary: 'Update a modifier group',
       request: { params: UuidParam, body: jsonBody(updateModifierGroupSchema) },
-      responses: { 200: jsonResponse(ModifierGroupSchema, 'Updated modifier group'), ...ERROR_RESPONSES },
+      responses: {
+        200: jsonResponse(ModifierGroupSchema, 'Updated modifier group'),
+        ...ERROR_RESPONSES,
+      },
     }),
     async (c) =>
       c.json(
@@ -690,13 +790,19 @@ export function registerCatalogRoutes(app: ApiApp) {
       tags,
       security,
       summary: 'Replace the modifiers of a group (RF-B02, RF-B05)',
-      description: 'With surcharge, allergens and translations. A changed surcharge needs catalog.price_change.',
+      description:
+        'With surcharge, allergens and translations. A changed surcharge needs catalog.price_change.',
       request: { params: UuidParam, body: jsonBody(replaceModifiersSchema) },
       responses: { 200: jsonResponse(ModifierGroupSchema, 'Modifier group'), ...ERROR_RESPONSES },
     }),
     async (c) =>
       c.json(
-        await service.replaceModifiers(deps(c), actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.replaceModifiers(
+          deps(c),
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );

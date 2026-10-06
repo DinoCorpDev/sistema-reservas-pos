@@ -19,7 +19,12 @@ import { asc, eq, isNull, or } from 'drizzle-orm';
 import type { z } from 'zod';
 import { type Actor, requireLocationId } from '../../actor';
 import type { ServiceDeps } from '../shared';
-import { asContentLanguage, assertCatalogRead, loadActorLocation, loadTranslations } from './common';
+import {
+  asContentLanguage,
+  assertCatalogRead,
+  loadActorLocation,
+  loadTranslations,
+} from './common';
 
 function groupBy<T>(rows: readonly T[], key: (row: T) => string): Map<string, T[]> {
   const map = new Map<string, T[]>();
@@ -43,7 +48,11 @@ const allergenDtos = (rows: readonly { allergen: string; presence: string }[] = 
  * (RF-B04), allergens and origin (RF-B05, RF-B06) and whether it can be ordered right now and why
  * not (RN-17). QR and web only show products that may be published (RN-18).
  */
-export async function getMenu(deps: ServiceDeps, actor: Actor, query: z.output<typeof menuQuerySchema>) {
+export async function getMenu(
+  deps: ServiceDeps,
+  actor: Actor,
+  query: z.output<typeof menuQuerySchema>,
+) {
   assertCatalogRead(actor);
   const locationId = requireLocationId(actor);
   const { db } = deps;
@@ -87,9 +96,19 @@ export async function getMenu(deps: ServiceDeps, actor: Actor, query: z.output<t
     db
       .select()
       .from(s.productVariants)
-      .where(inOrg(s.productVariants, actor, eq(s.productVariants.isActive, true), notDeleted(s.productVariants)))
+      .where(
+        inOrg(
+          s.productVariants,
+          actor,
+          eq(s.productVariants.isActive, true),
+          notDeleted(s.productVariants),
+        ),
+      )
       .orderBy(asc(s.productVariants.sortOrder)),
-    db.select().from(s.productAllergens).where(inOrg(s.productAllergens, actor, notDeleted(s.productAllergens))),
+    db
+      .select()
+      .from(s.productAllergens)
+      .where(inOrg(s.productAllergens, actor, notDeleted(s.productAllergens))),
     db
       .select()
       .from(s.productOrigins)
@@ -103,13 +122,23 @@ export async function getMenu(deps: ServiceDeps, actor: Actor, query: z.output<t
     db
       .select()
       .from(s.modifierGroups)
-      .where(inOrg(s.modifierGroups, actor, eq(s.modifierGroups.isActive, true), notDeleted(s.modifierGroups))),
+      .where(
+        inOrg(
+          s.modifierGroups,
+          actor,
+          eq(s.modifierGroups.isActive, true),
+          notDeleted(s.modifierGroups),
+        ),
+      ),
     db
       .select()
       .from(s.modifiers)
       .where(inOrg(s.modifiers, actor, eq(s.modifiers.isActive, true), notDeleted(s.modifiers)))
       .orderBy(asc(s.modifiers.sortOrder), asc(s.modifiers.name)),
-    db.select().from(s.modifierAllergens).where(inOrg(s.modifierAllergens, actor, notDeleted(s.modifierAllergens))),
+    db
+      .select()
+      .from(s.modifierAllergens)
+      .where(inOrg(s.modifierAllergens, actor, notDeleted(s.modifierAllergens))),
     db
       .select()
       .from(s.availabilityRules)
@@ -117,7 +146,10 @@ export async function getMenu(deps: ServiceDeps, actor: Actor, query: z.output<t
         inOrg(
           s.availabilityRules,
           actor,
-          or(isNull(s.availabilityRules.locationId), eq(s.availabilityRules.locationId, locationId)),
+          or(
+            isNull(s.availabilityRules.locationId),
+            eq(s.availabilityRules.locationId, locationId),
+          ),
           notDeleted(s.availabilityRules),
         ),
       ),
@@ -214,7 +246,8 @@ export async function getMenu(deps: ServiceDeps, actor: Actor, query: z.output<t
     const priceOf = (variant: { id: string; priceRappen: number } | null) =>
       resolvePrice({
         basePriceRappen: rappen(product.basePriceRappen),
-        locationPriceRappen: setting?.priceRappen == null ? null : rappen(setting.priceRappen),
+        locationPriceRappen:
+          setting && setting.priceRappen !== null ? rappen(setting.priceRappen) : null,
         variant: variant ? { id: variant.id, priceRappen: rappen(variant.priceRappen) } : null,
         channelPrices,
         channel,
@@ -261,8 +294,14 @@ export async function getMenu(deps: ServiceDeps, actor: Actor, query: z.output<t
         isDefault: v.id === defaultVariant?.id,
       })),
       allergens: allergenDtos(allergensOf.get(product.id)),
-      origins: (originsOf.get(product.id) ?? []).map((o) => ({ kind: o.kind, species: o.species, country: o.country })),
-      modifierGroups: (linksOf.get(product.id) ?? []).flatMap((l) => modifierGroupDto(l.modifierGroupId)),
+      origins: (originsOf.get(product.id) ?? []).map((o) => ({
+        kind: o.kind,
+        species: o.species,
+        country: o.country,
+      })),
+      modifierGroups: (linksOf.get(product.id) ?? []).flatMap((l) =>
+        modifierGroupDto(l.modifierGroupId),
+      ),
       orderable: orderability.orderable,
       reason: orderability.orderable ? null : orderability.reason,
     };

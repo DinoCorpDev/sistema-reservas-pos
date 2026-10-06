@@ -18,9 +18,7 @@ const localTime = z
   .regex(/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/, 'Expected HH:MM or HH:MM:SS');
 const uniqueBy = <T>(items: readonly T[], key: (item: T) => string) =>
   new Set(items.map(key)).size === items.length;
-const uniqueIds = z
-  .array(z.uuid())
-  .refine((ids) => uniqueBy(ids, (id) => id), 'Duplicate ids');
+const uniqueIds = z.array(z.uuid()).refine((ids) => uniqueBy(ids, (id) => id), 'Duplicate ids');
 
 export const ALLERGEN_PRESENCES = ['contains', 'may_contain'] as const;
 export type AllergenPresence = (typeof ALLERGEN_PRESENCES)[number];
@@ -119,7 +117,14 @@ export const replaceVariantsSchema = z.object({
     .array(productVariantInputSchema)
     .max(50)
     .refine((v) => v.filter((variant) => variant.isDefault).length <= 1, 'Only one default variant')
-    .refine((v) => uniqueBy(v.filter((x) => x.id), (x) => x.id!), 'Duplicate variant ids'),
+    .refine(
+      (v) =>
+        uniqueBy(
+          v.filter((x) => x.id),
+          (x) => x.id!,
+        ),
+      'Duplicate variant ids',
+    ),
 });
 
 export const allergenEntrySchema = z.object({
@@ -149,7 +154,14 @@ export const replaceOriginsSchema = z.object({
   origins: z
     .array(productOriginInputSchema)
     .max(10)
-    .refine((o) => uniqueBy(o.filter((x) => x.id), (x) => x.id!), 'Duplicate origin ids'),
+    .refine(
+      (o) =>
+        uniqueBy(
+          o.filter((x) => x.id),
+          (x) => x.id!,
+        ),
+      'Duplicate origin ids',
+    ),
 });
 
 /** Modifier groups of the product, in display order (RF-B02). */
@@ -186,7 +198,14 @@ export const replaceAvailabilitySchema = z.object({
   rules: z
     .array(availabilityRuleInputSchema)
     .max(20)
-    .refine((r) => uniqueBy(r.filter((x) => x.id), (x) => x.id!), 'Duplicate rule ids'),
+    .refine(
+      (r) =>
+        uniqueBy(
+          r.filter((x) => x.id),
+          (x) => x.id!,
+        ),
+      'Duplicate rule ids',
+    ),
 });
 
 /** Price per channel, optionally per location and variant (RF-B04). */
@@ -265,7 +284,14 @@ export const replaceModifiersSchema = z.object({
   modifiers: z
     .array(modifierInputSchema)
     .max(50)
-    .refine((m) => uniqueBy(m.filter((x) => x.id), (x) => x.id!), 'Duplicate modifier ids'),
+    .refine(
+      (m) =>
+        uniqueBy(
+          m.filter((x) => x.id),
+          (x) => x.id!,
+        ),
+      'Duplicate modifier ids',
+    ),
 });
 
 // ── Menu (RF-B15, RF-E06, RF-F14) ───────────────────────────────────────────
