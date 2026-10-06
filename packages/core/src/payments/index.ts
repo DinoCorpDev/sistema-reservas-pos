@@ -3,3 +3,4 @@
  * sale and refunds linked to the original payment. Phase 2.
  */
 export * from './constants';
+export * from './settlement';

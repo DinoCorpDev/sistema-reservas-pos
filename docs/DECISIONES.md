@@ -79,6 +79,44 @@ En el restaurante demo, la cerveza sin alcohol (≤ 0,5 % vol.) usa la categorí
 - **Decisión.** MySQL local se levanta con `pnpm mysql:start` (`scripts/dev-mysql.ps1`): usa los binarios de Laragon solo para leerlos, pero datos, configuración y logs van en `.data/mysql` dentro del repo, en `127.0.0.1:3310`, para no chocar con Laragon. Los navegadores de Playwright van en `.cache/ms-playwright` (`PLAYWRIGHT_BROWSERS_PATH` en `.env`; `pnpm e2e:install`). El store de pnpm ya está en `D:\.pnpm-store`. `.data/` y `.cache/` están en `.gitignore`. Las bases de prueba que se habían creado en el MySQL de Laragon (en C:) se borraron.
 - **Toca.** DEC-002, `.env.example`, `CLAUDE.md`.
 
+## Decisiones de la Fase 1 (Core)
+
+### DEC-014 · API v1 con Hono + zod-openapi, en una capa de aplicación propia
+
+- `packages/api` contiene los **casos de uso** (services) y la API REST v1. La API se escribe con Hono y `@hono/zod-openapi`: valida con Zod y genera OpenAPI 3.1 en `/api/v1/openapi.json`, con la documentación en `/api/v1/docs`.
+- Next.js la monta en `apps/web/src/app/api/v1/[[...route]]` y el hub podrá montar las mismas rutas (PA-01, PA-02).
+- El backoffice (Server Actions) llama **los mismos casos de uso** con el mismo actor y los mismos permisos que la API (RNF-10).
+- Los errores tienen siempre la forma `{ error: { code, message, details } }`. Un recurso de otra organización responde 404, nunca 403.
+- Los esquemas Zod de entrada viven en `@pos/core`. Nunca se llama `.openapi()` sobre ellos, porque Zod 4 fija los métodos por instancia.
+
+### DEC-015 · El PIN solo identifica al usuario (HMAC por organización) y se verifica con argon2id
+
+- RF-A06 pide que el usuario "solo se identifique". Por eso el POS no muestra lista de nombres: `users.pin_lookup = HMAC-SHA256(organizations.pin_key, PIN)` encuentra al usuario en O(1) y, con un índice único, garantiza que el PIN no se repita dentro de la organización. Después se verifica el hash argon2id.
+- El terminal emparejado recibe `pin_key` y los hashes para desbloquear sin internet (`GET /terminals/offline-credentials`). Un PIN de 4-6 dígitos no resiste fuerza bruta si alguien obtiene esos datos; la protección real es tener el dispositivo y el bloqueo por intentos.
+- El bloqueo (RNF-10) se cuenta por terminal con eventos de auditoría (`terminal.pin_failed` desde el último éxito, `terminal.unlocked` o `approval.granted`, dentro de `pinLockMinutes`). Vive en la base, así que funciona con varias instancias. Cada intento bloquea la fila del terminal (`FOR UPDATE`) para que los intentos simultáneos no salten el límite. Los campos `users.failed_pin_attempts` y `users.locked_until` ya no se usan y se pueden eliminar más adelante.
+- La aprobación de un gerente es un token de un solo uso, válido 60 s y ligado a una acción concreta. Su control de uso único vive en memoria y pasa a un almacén compartido en la Fase 6.
+
+### DEC-016 · Redondeo de la MWST por línea, mitad hacia arriba
+
+- El impuesto de cada línea se extrae y se redondea al rappen (`round(bruto × tasa / (100 % + tasa))`, mitad hacia arriba, simétrico en negativos) y queda congelado en la línea (RN-04). El recibo y los reportes suman las líneas por tasa, así que el recibo siempre coincide con lo guardado.
+- La diferencia frente a calcular el impuesto sobre el total de cada tasa es de, como máximo, unos pocos rappen por recibo. **Una fiduciaria suiza debe validar este criterio antes del piloto** (riesgo de la sección 20).
+
+### DEC-017 · El alta de restaurantes la hace soporte; no hay registro público
+
+- Lo hace la consola `/support`, con el staff de DINOLABS en `platform_staff` (Flujo 7). Se crean la organización, la sede, la plantilla suiza de roles y MWST y la cuenta del dueño, con una contraseña temporal que se muestra una sola vez y se cambia en el primer acceso.
+- Soporte entra a una organización solo con un permiso del dueño, con vencimiento, y cada acción queda auditada con el staff que la hizo (RF-A10).
+
+### DEC-018 · Lo que necesita el hub pasa a las Fases 2 y 3
+
+- La impresión de prueba (RF-F17) necesita llegar a la impresora en la LAN, y eso lo hace el hub (Fase 3). En la Fase 1 queda la configuración de impresoras.
+- La propagación de cambios a los terminales en menos de 1 minuto (RF-F23) se cumple con la sincronización de la Fase 2. El outbox ya registra los eventos que la alimentarán.
+
+### DEC-019 · next-intl sin plugin y Auth.js v5 beta
+
+- La interfaz se traduce con next-intl y el idioma no va en la URL: sale de la preferencia del usuario, de una cookie antes de iniciar sesión o del navegador. El alemán es el catálogo base: si falta una clave en otro idioma, se muestra en alemán.
+- El plugin de next-intl carga `@swc/core`, cuyo binario nativo escribe una caché en C: (DEC-013). Por eso el alias `next-intl/config` se configura a mano en `next.config.ts`.
+- Auth.js v5 sigue en beta (`5.0.0-beta.32`, fijado). Las sesiones son JWT; el cambio de sede u organización se vuelve a validar contra la base en el callback y nunca se confía en lo que manda el cliente.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                               | Antes de | Quién decide |

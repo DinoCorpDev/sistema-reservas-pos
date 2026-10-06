@@ -32,8 +32,9 @@ describe('schema invariants', () => {
     },
   );
 
+  const outsideTenants = new Set(tablesIn('root', 'platform'));
   it.each(
-    allTables.filter((t) => nameOf(t) !== 'organizations').map((t) => [nameOf(t), t] as const),
+    allTables.filter((t) => !outsideTenants.has(t)).map((t) => [nameOf(t), t] as const),
   )('%s is scoped to an organization (PA-09, RNF-12)', (_name, table) => {
     const org = column(table, 'organization_id');
     expect(org?.notNull).toBe(true);
@@ -75,7 +76,11 @@ describe('schema invariants', () => {
     }
   });
 
-  it.each(tablesIn('root', 'config', 'master', 'operational').map((t) => [nameOf(t), t] as const))(
+  it.each(
+    tablesIn('root', 'platform', 'config', 'master', 'operational').map(
+      (t) => [nameOf(t), t] as const,
+    ),
+  )(
     '%s supports soft delete and server timestamps (nothing is deleted)',
     (_name, table) => {
       expect(column(table, 'deleted_at')).toBeDefined();

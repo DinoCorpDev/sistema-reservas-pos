@@ -1,0 +1,32 @@
+{
+  "name": "@pos/api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Application layer of the Core POS: use cases (services) and the public REST API v1 (Hono + OpenAPI)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --exclude \"**/*.int.test.ts\"",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
+  },
+  "dependencies": {
+    "@hono/zod-openapi": "^1.6.3",
+    "@pos/core": "workspace:*",
+    "@pos/db": "workspace:*",
+    "@scalar/hono-api-reference": "^0.12.10",
+    "drizzle-orm": "catalog:",
+    "hono": "^4.13.13",
+    "jose": "^6.2.12",
+    "otplib": "^13.5.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@pos/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

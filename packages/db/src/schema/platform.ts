@@ -28,6 +28,8 @@ export const auditEvents = mysqlTable(
     userId: uuid('user_id'),
     authorizedByUserId: uuid('authorized_by_user_id'),
     terminalId: uuid('terminal_id'),
+    /** DINOLABS support staff member who acted inside the organization (RF-A10). */
+    supportStaffId: uuid('support_staff_id'),
     reason: text('reason'),
     before: json('before'),
     after: json('after'),
@@ -41,6 +43,8 @@ export const auditEvents = mysqlTable(
     index('idx_audit_events_org_time').on(t.organizationId, t.occurredAt),
     index('idx_audit_events_entity').on(t.organizationId, t.entityType, t.entityId),
     index('idx_audit_events_user').on(t.organizationId, t.userId),
+    // PIN lockout counts recent failures per terminal (RNF-10).
+    index('idx_audit_events_terminal').on(t.organizationId, t.terminalId, t.occurredAt),
   ],
 );
 

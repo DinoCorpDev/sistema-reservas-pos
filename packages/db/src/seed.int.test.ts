@@ -2,22 +2,20 @@ import { newId } from '@pos/core';
 import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createDb, type Database } from './client';
-import { loadRootEnv, requireEnv } from './env';
 import * as s from './schema';
 import { seedDemoRestaurant } from './seed/demo';
+import { testDatabaseUrl } from './testing';
 
 /**
- * Integration against a real MySQL (requires `pnpm db:setup`). Checks that the demo restaurant
- * seed is complete and that the append-only tables reject changes.
+ * Integration against a real MySQL test database (see src/testing.ts). Checks that the demo
+ * restaurant seed is complete and that the append-only tables reject changes.
  */
-loadRootEnv();
-
 let db: Database;
 let close: () => Promise<void>;
 let organizationId: string;
 
 beforeAll(async () => {
-  const connection = createDb(requireEnv('DATABASE_URL'), { connectionLimit: 2 });
+  const connection = createDb(testDatabaseUrl(), { connectionLimit: 2 });
   db = connection.db;
   close = () => connection.pool.end();
   const result = await seedDemoRestaurant(db);

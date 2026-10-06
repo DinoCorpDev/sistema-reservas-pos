@@ -4,3 +4,4 @@
  * The use cases arrive in Phase 2.
  */
 export * from './constants';
+export * from './channel';

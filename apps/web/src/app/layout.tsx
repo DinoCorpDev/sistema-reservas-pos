@@ -1,4 +1,7 @@
+import { Toaster } from '@pos/ui/toaster';
 import type { Metadata, Viewport } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import './globals.css';
 
@@ -17,11 +20,17 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-// The actual per-user and per-customer language arrives with next-intl in Phase 1 (RF-A08).
-export default function RootLayout({ children }: { children: ReactNode }) {
+/** The UI language is the user's own (RF-A08), resolved in src/i18n/request.ts. */
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const locale = await getLocale();
   return (
-    <html lang="de">
-      <body className="min-h-dvh">{children}</body>
+    <html lang={locale}>
+      <body className="min-h-dvh">
+        <NextIntlClientProvider>
+          {children}
+          <Toaster />
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }

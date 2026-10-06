@@ -15,17 +15,29 @@ export const users = mysqlTable(
     email: varchar('email', { length: 254 }),
     passwordHash: varchar('password_hash', { length: 255 }),
     pinHash: varchar('pin_hash', { length: 255 }),
+    /**
+     * HMAC-SHA256 of the PIN with the organization's `pin_key` (DEC-015): identifies the user from
+     * the PIN alone and makes PINs unique within the organization.
+     */
+    pinLookup: char('pin_lookup', { length: 64 }),
     /** The user's UI language, independent of the location and the customer (RF-A08). */
     uiLanguage: char('ui_language', { length: 2 }).notNull().default('de'),
     failedPinAttempts: int('failed_pin_attempts').notNull().default(0),
     lockedUntil: utcDatetime('locked_until'),
     twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
+    /** Base32 TOTP secret for backoffice 2FA (RF-A07). */
+    totpSecret: varchar('totp_secret', { length: 64 }),
+    /** Set when support creates the account with a temporary password. */
+    mustChangePassword: boolean('must_change_password').notNull().default(false),
     lastLoginAt: utcDatetime('last_login_at'),
     isActive: boolean('is_active').notNull().default(true),
     deactivatedAt: utcDatetime('deactivated_at'),
     ...timestamps(),
   },
-  (t) => [uniqueIndex('uq_users_email').on(t.email)],
+  (t) => [
+    uniqueIndex('uq_users_email').on(t.email),
+    uniqueIndex('uq_users_org_pin_lookup').on(t.organizationId, t.pinLookup),
+  ],
 );
 
 /** Locations where a user works (RF-A04: multiple locations). */

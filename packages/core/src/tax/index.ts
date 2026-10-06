@@ -4,3 +4,5 @@
  * The calculation and its exhaustive tests are the gate of Phase 1.
  */
 export * from './constants';
+export * from './calculation';
+export * from './commands';

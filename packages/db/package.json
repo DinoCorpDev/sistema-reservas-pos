@@ -6,12 +6,14 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./schema": "./src/schema/index.ts"
+    "./schema": "./src/schema/index.ts",
+    "./testing": "./src/testing.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude \"**/*.int.test.ts\"",
-    "test:integration": "vitest run int.test",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "outbox:work": "tsx src/scripts/outbox-worker.ts",
     "db:generate": "drizzle-kit generate",
     "db:create": "tsx src/scripts/create.ts",
     "db:migrate": "tsx src/scripts/migrate.ts",

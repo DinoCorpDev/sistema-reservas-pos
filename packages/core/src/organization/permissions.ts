@@ -40,6 +40,9 @@ export const PERMISSIONS = [
   'report.view',
   'audit.view',
   'sync.resolve_conflicts',
+  'support.grant_access',
+  // approvals: authorize actions above the location thresholds with PIN (RN-15)
+  'approval.grant',
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
@@ -55,6 +58,7 @@ const MANAGER_PERMISSIONS: readonly Permission[] = PERMISSIONS.filter(
       'location.manage',
       'user.manage',
       'customer.anonymize',
+      'support.grant_access',
     ].includes(permission),
 );
 

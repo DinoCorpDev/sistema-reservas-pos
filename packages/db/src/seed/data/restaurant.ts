@@ -1,12 +1,4 @@
-import type {
-  ConsumptionType,
-  PrinterKind,
-  RoleKey,
-  TaxCategoryKey,
-  TaxRateCode,
-  TerminalType,
-  UiLanguage,
-} from '@pos/core';
+import type { PrinterKind, RoleKey, TerminalType, UiLanguage } from '@pos/core';
 import type { OpeningHours } from '../../schema';
 import type { StationKey } from './catalog';
 
@@ -106,14 +98,6 @@ export const DEMO_TERMINALS: {
   { name: 'KDS Bar', type: 'kds', prefix: 'D2', station: 'bar' },
 ];
 
-export const DEMO_ROLE_NAMES: Record<RoleKey, string> = {
-  admin: 'Administrator',
-  manager: 'Geschäftsführung',
-  cashier: 'Kasse',
-  waiter: 'Service',
-  kitchen: 'Küche',
-};
-
 /**
  * TEST users. The PINs and the password are development values; never used in
  * production. The backoffice password can be overridden with SEED_ADMIN_PASSWORD.
@@ -172,40 +156,11 @@ export const DEMO_CONSENT_TEXT =
   'Ich bin einverstanden, dass Demo Gastro AG meine Kontaktdaten für Reservationen und Belege speichert (revDSG).';
 
 /**
- * Swiss MWST template as DATA (RN-02): rates in force since 2024 plus the previous ones,
- * so validity periods can be tested. Edited from the backoffice (RF-B13).
+ * DINOLABS support account of the development database (platform level, RF-A10). TEST value only;
+ * can be overridden with SEED_SUPPORT_PASSWORD.
  */
-export const SWISS_TAX_CATEGORIES: { key: TaxCategoryKey; name: string }[] = [
-  { key: 'food', name: 'Speisen' },
-  { key: 'non_alcoholic_beverage', name: 'Alkoholfreie Getränke' },
-  { key: 'alcoholic_beverage', name: 'Alkoholische Getränke' },
-  { key: 'accommodation', name: 'Beherbergung' },
-  { key: 'other', name: 'Übrige' },
-];
-
-export const SWISS_TAX_RATES: {
-  code: TaxRateCode;
-  rateBp: number;
-  validFrom: string;
-  validTo: string | null;
-}[] = [
-  { code: 'normal', rateBp: 770, validFrom: '2018-01-01', validTo: '2023-12-31' },
-  { code: 'reduced', rateBp: 250, validFrom: '2018-01-01', validTo: '2023-12-31' },
-  { code: 'accommodation', rateBp: 370, validFrom: '2018-01-01', validTo: '2023-12-31' },
-  { code: 'normal', rateBp: 810, validFrom: '2024-01-01', validTo: null },
-  { code: 'reduced', rateBp: 260, validFrom: '2024-01-01', validTo: null },
-  { code: 'accommodation', rateBp: 380, validFrom: '2024-01-01', validTo: null },
-];
-
-/** RN-03: on premise, normal rate; food and soft drinks for takeaway or delivery, reduced; alcohol always normal. */
-export const SWISS_TAX_RULES: Record<TaxCategoryKey, Record<ConsumptionType, TaxRateCode>> = {
-  food: { on_premise: 'normal', takeaway: 'reduced', delivery: 'reduced' },
-  non_alcoholic_beverage: { on_premise: 'normal', takeaway: 'reduced', delivery: 'reduced' },
-  alcoholic_beverage: { on_premise: 'normal', takeaway: 'normal', delivery: 'normal' },
-  accommodation: {
-    on_premise: 'accommodation',
-    takeaway: 'accommodation',
-    delivery: 'accommodation',
-  },
-  other: { on_premise: 'normal', takeaway: 'normal', delivery: 'normal' },
+export const DEMO_SUPPORT_STAFF = {
+  email: 'support@dinolabs.test',
+  displayName: 'DINOLABS Support',
+  password: process.env.SEED_SUPPORT_PASSWORD ?? 'support-dinolabs-2026',
 };

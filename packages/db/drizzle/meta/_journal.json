@@ -15,6 +15,20 @@
       "when": 1791318921975,
       "tag": "0001_append_only_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1791323031888,
+      "tag": "0002_phase1_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1791326143424,
+      "tag": "0003_audit_support_staff",
+      "breakpoints": true
     }
   ]
 }

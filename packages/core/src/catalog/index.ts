@@ -4,3 +4,5 @@
  * Phase 1 adds the use cases; only the vocabulary lives here.
  */
 export * from './constants';
+export * from './rules';
+export * from './commands';

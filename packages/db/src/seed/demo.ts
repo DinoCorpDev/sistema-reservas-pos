@@ -1,18 +1,16 @@
 import { randomBytes } from 'node:crypto';
-import { hash } from '@node-rs/argon2';
 import {
   DEFAULT_LOCATION_SETTINGS,
-  DEFAULT_ROLE_PERMISSIONS,
   newId,
   parseChf,
-  ROLE_KEYS,
   type ContentLanguage,
-  type RoleKey,
   type TranslatableEntity,
 } from '@pos/core';
 import { eq } from 'drizzle-orm';
 import type { Database } from '../client';
 import * as s from '../schema';
+import { hashPassword, pinLookup } from '../security';
+import { applyOrganizationTemplate, newPinKey } from '../templates/organization';
 import {
   SEED_CATEGORIES,
   SEED_MODIFIER_GROUPS,
@@ -29,13 +27,10 @@ import {
   DEMO_LOCATION,
   DEMO_ORGANIZATION,
   DEMO_PRINTERS,
-  DEMO_ROLE_NAMES,
   DEMO_STATIONS,
+  DEMO_SUPPORT_STAFF,
   DEMO_TERMINALS,
   DEMO_USERS,
-  SWISS_TAX_CATEGORIES,
-  SWISS_TAX_RATES,
-  SWISS_TAX_RULES,
 } from './data/restaurant';
 
 export interface SeedResult {
@@ -68,19 +63,34 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
   }
 
   // Hash outside the transaction: argon2 is deliberately slow.
-  const [backofficePasswordHash, ...pinHashes] = await Promise.all([
-    hash(DEMO_BACKOFFICE_PASSWORD),
-    ...DEMO_USERS.map((user) => hash(user.pin)),
+  const [backofficePasswordHash, supportPasswordHash, ...pinHashes] = await Promise.all([
+    hashPassword(DEMO_BACKOFFICE_PASSWORD),
+    hashPassword(DEMO_SUPPORT_STAFF.password),
+    ...DEMO_USERS.map((user) => hashPassword(user.pin)),
   ]);
 
   const organizationId = newId();
   const locationId = newId();
+  const pinKey = newPinKey();
   const org = { organizationId };
   const loc = { organizationId, locationId };
 
   await db.transaction(async (tx) => {
+    // ── DINOLABS support account (platform level, RF-A10) ─────────────────
+    const [staff] = await tx
+      .select({ id: s.platformStaff.id })
+      .from(s.platformStaff)
+      .where(eq(s.platformStaff.email, DEMO_SUPPORT_STAFF.email));
+    if (!staff) {
+      await tx.insert(s.platformStaff).values({
+        email: DEMO_SUPPORT_STAFF.email,
+        displayName: DEMO_SUPPORT_STAFF.displayName,
+        passwordHash: supportPasswordHash!,
+      });
+    }
+
     // ── Organization and location ──────────────────────────────────────────
-    await tx.insert(s.organizations).values({ id: organizationId, ...DEMO_ORGANIZATION });
+    await tx.insert(s.organizations).values({ id: organizationId, ...DEMO_ORGANIZATION, pinKey });
     await tx.insert(s.locations).values({
       id: locationId,
       ...org,
@@ -155,20 +165,8 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
       })),
     );
 
-    // ── Roles, permissions and users ───────────────────────────────────────
-    const roleIds = new Map<RoleKey, string>();
-    for (const key of ROLE_KEYS) {
-      const roleId = newId();
-      roleIds.set(key, roleId);
-      await tx
-        .insert(s.roles)
-        .values({ id: roleId, ...org, key, name: DEMO_ROLE_NAMES[key], isSystem: true });
-      await tx
-        .insert(s.rolePermissions)
-        .values(
-          DEFAULT_ROLE_PERMISSIONS[key].map((permission) => ({ ...org, roleId, permission })),
-        );
-    }
+    // ── Roles, permissions and MWST from the organization template ────────
+    const { roleIds, taxCategoryIds } = await applyOrganizationTemplate(tx, organizationId, 'de');
 
     for (const [index, user] of DEMO_USERS.entries()) {
       const userId = newId();
@@ -179,33 +177,14 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
         email: user.email ?? null,
         passwordHash: user.email ? backofficePasswordHash : null,
         pinHash: pinHashes[index],
+        pinLookup: pinLookup(pinKey, user.pin),
         uiLanguage: user.uiLanguage,
       });
       await tx.insert(s.userLocations).values({ ...org, userId, locationId });
       await tx
         .insert(s.userRoles)
-        .values(user.roles.map((role) => ({ ...org, userId, roleId: roleIds.get(role)! })));
+        .values(user.roles.map((role) => ({ ...org, userId, roleId: roleIds[role] })));
     }
-
-    // ── MWST: categories, rates and rules as dated data ──────────────────
-    const taxCategoryIds = new Map<string, string>();
-    for (const category of SWISS_TAX_CATEGORIES) {
-      const id = newId();
-      taxCategoryIds.set(category.key, id);
-      await tx.insert(s.taxCategories).values({ id, ...org, ...category });
-    }
-    await tx.insert(s.taxRates).values(SWISS_TAX_RATES.map((rate) => ({ ...org, ...rate })));
-    await tx.insert(s.taxRules).values(
-      Object.entries(SWISS_TAX_RULES).flatMap(([categoryKey, byConsumption]) =>
-        Object.entries(byConsumption).map(([consumptionType, rateCode]) => ({
-          ...org,
-          taxCategoryId: taxCategoryIds.get(categoryKey)!,
-          consumptionType,
-          rateCode,
-          validFrom: '2018-01-01',
-        })),
-      ),
-    );
 
     // ── Catalog ────────────────────────────────────────────────────────────
     const translationRows: TranslationRow[] = [];
@@ -273,7 +252,7 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
         id: productId,
         ...org,
         categoryId: categoryIds.get(product.category)!,
-        taxCategoryId: taxCategoryIds.get(product.taxCategory)!,
+        taxCategoryId: taxCategoryIds[product.taxCategory],
         sku: product.key.toUpperCase(),
         name: product.name,
         description: product.description?.de ?? null,

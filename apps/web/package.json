@@ -13,14 +13,24 @@
     "e2e:install": "node scripts/playwright.mjs install chromium"
   },
   "dependencies": {
+    "@node-rs/argon2": "catalog:",
+    "@pos/api": "workspace:*",
     "@pos/core": "workspace:*",
     "@pos/db": "workspace:*",
     "@pos/ui": "workspace:*",
     "drizzle-orm": "catalog:",
+    "hono": "^4.13.13",
+    "lucide-react": "^1.52.0",
+    "mysql2": "catalog:",
     "next": "catalog:",
+    "next-auth": "5.0.0-beta.32",
+    "next-intl": "^4.14.9",
+    "otplib": "^13.5.0",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "sonner": "^2.0.8",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

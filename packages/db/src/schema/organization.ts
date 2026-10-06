@@ -29,6 +29,11 @@ export const organizations = mysqlTable(
     status: varchar('status', { length: 16 }).notNull().default('active'),
     /** Training organization with fictitious data (RF-F22); never mixed with the real one. */
     isTraining: boolean('is_training').notNull().default(false),
+    /**
+     * Secret HMAC key that turns a PIN into `users.pin_lookup` (DEC-015). Paired terminals receive
+     * it to unlock offline (RF-A06). Hex, 32 bytes.
+     */
+    pinKey: char('pin_key', { length: 64 }),
     ...timestamps(),
   },
   (t) => [uniqueIndex('uq_organizations_slug').on(t.slug)],
@@ -160,9 +165,19 @@ export const terminals = mysqlTable(
     receiptPrinterId: uuid('receipt_printer_id').references(() => printers.id),
     appVersion: varchar('app_version', { length: 32 }),
     lastSeenAt: utcDatetime('last_seen_at'),
+    /** SHA-256 of the one-time pairing code shown in the backoffice (valid 15 minutes). */
+    pairingCodeHash: char('pairing_code_hash', { length: 64 }),
+    pairingExpiresAt: utcDatetime('pairing_expires_at'),
+    /** SHA-256 of the device token the paired terminal sends with every request. */
+    deviceTokenHash: char('device_token_hash', { length: 64 }),
+    pairedAt: utcDatetime('paired_at'),
     isActive: boolean('is_active').notNull().default(true),
     deactivatedAt: utcDatetime('deactivated_at'),
     ...timestamps(),
   },
-  (t) => [uniqueIndex('uq_terminals_location_prefix').on(t.locationId, t.orderNumberPrefix)],
+  (t) => [
+    uniqueIndex('uq_terminals_location_prefix').on(t.locationId, t.orderNumberPrefix),
+    uniqueIndex('uq_terminals_pairing_code').on(t.pairingCodeHash),
+    uniqueIndex('uq_terminals_device_token').on(t.deviceTokenHash),
+  ],
 );

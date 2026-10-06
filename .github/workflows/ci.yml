@@ -14,6 +14,8 @@ env:
   # Cloud and hub databases share one MySQL service in CI.
   DATABASE_URL: mysql://root:pos@127.0.0.1:3306/pos_cloud
   HUB_DATABASE_URL: mysql://root:pos@127.0.0.1:3306/pos_hub
+  # Test-only secret for Auth.js sessions and POS tokens in CI.
+  AUTH_SECRET: ci-only-secret-not-for-production-0123456789abcdef
 
 jobs:
   verify:

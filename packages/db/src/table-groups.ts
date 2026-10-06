@@ -7,6 +7,8 @@ import * as s from './schema';
 export const TABLE_GROUPS = {
   /** Multi-tenant root. */
   root: [s.organizations],
+  /** DINOLABS platform level, outside every organization (support staff). */
+  platform: [s.platformStaff],
   /** Location configuration: FK, soft delete, required `location_id` (except `locations`). */
   config: [s.locations, s.areas, s.diningTables, s.terminals, s.kitchenStations, s.printers],
   /** Organization master data: FK, soft delete; `location_id` only when applicable. */
@@ -35,6 +37,8 @@ export const TABLE_GROUPS = {
     s.productStationRoutes,
     s.customers,
     s.consents,
+    s.apiKeys,
+    s.supportAccessGrants,
   ],
   /** Syncable daily operations: required org + location, no hard FKs, soft delete, version. */
   operational: [
