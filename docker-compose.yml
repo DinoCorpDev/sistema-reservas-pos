@@ -1,0 +1,52 @@
+# Local MySQL for the cloud and the venue hub (DEC-002). Laragon works too: just point .env at it.
+#   docker compose up -d
+#   DATABASE_URL=mysql://root:pos@127.0.0.1:3306/pos_cloud
+#   HUB_DATABASE_URL=mysql://root:pos@127.0.0.1:3307/pos_hub
+name: sistema-reservas-pos
+
+services:
+  mysql-cloud:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: pos
+      MYSQL_DATABASE: pos_cloud
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-cloud-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-ppos']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mysql-hub:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: pos
+      MYSQL_DATABASE: pos_hub
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql-hub-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-ppos']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  mysql-cloud-data:
+  mysql-hub-data:
