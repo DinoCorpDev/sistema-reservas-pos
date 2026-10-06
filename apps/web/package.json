@@ -2,14 +2,15 @@
   "name": "@pos/web",
   "version": "0.0.0",
   "private": true,
-  "description": "App Next.js: POS (/pos), cocina (/kds), backoffice (/backoffice), menú QR (/qr) y API pública (/api/v1)",
+  "description": "Next.js app: POS (/pos), kitchen (/kds), backoffice (/backoffice), QR menu (/qr) and public API (/api/v1)",
   "type": "module",
   "scripts": {
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
     "typecheck": "next typegen && tsc --noEmit",
-    "e2e": "playwright test"
+    "e2e": "node scripts/playwright.mjs test",
+    "e2e:install": "node scripts/playwright.mjs install chromium"
   },
   "dependencies": {
     "@pos/core": "workspace:*",

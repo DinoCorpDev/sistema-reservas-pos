@@ -1,7 +1,7 @@
 {
   "name": "sistema-reservas-pos",
   "private": true,
-  "description": "Sistema Reservas POS — Core POS offline-first para restaurantes en Suiza (DINOLABS)",
+  "description": "Sistema Reservas POS — offline-first Core POS for restaurants in Switzerland (DINOLABS)",
   "packageManager": "pnpm@10.34.6",
   "engines": {
     "node": ">=22.12"
@@ -21,7 +21,11 @@
     "db:generate": "pnpm --filter @pos/db run db:generate",
     "db:migrate": "pnpm --filter @pos/db run db:migrate",
     "db:seed": "pnpm --filter @pos/db run db:seed",
-    "db:setup": "pnpm --filter @pos/db run db:setup"
+    "db:setup": "pnpm --filter @pos/db run db:setup",
+    "e2e:install": "pnpm --filter @pos/web run e2e:install",
+    "mysql:start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-mysql.ps1 start",
+    "mysql:stop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-mysql.ps1 stop",
+    "mysql:status": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-mysql.ps1 status"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

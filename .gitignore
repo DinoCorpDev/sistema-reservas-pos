@@ -1,4 +1,4 @@
-# dependencias
+# dependencies
 node_modules/
 .pnpm-store/
 
@@ -12,8 +12,11 @@ next-env.d.ts
 # turbo / caches
 .turbo/
 .eslintcache
+# local Playwright browsers (PLAYWRIGHT_BROWSERS_PATH) and local MySQL data (scripts/dev-mysql.ps1)
+.cache/
+.data/
 
-# entorno (nunca subir secretos)
+# environment (never commit secrets)
 .env
 .env.*
 !.env.example
@@ -24,7 +27,7 @@ playwright-report/
 test-results/
 blob-report/
 
-# sistema
+# system
 .DS_Store
 Thumbs.db
 *.log

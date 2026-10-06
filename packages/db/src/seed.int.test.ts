@@ -7,8 +7,8 @@ import * as s from './schema';
 import { seedDemoRestaurant } from './seed/demo';
 
 /**
- * Integración contra MySQL real (requiere `pnpm db:setup`). Verifica que el seed del restaurante
- * demo quedó completo y que las tablas append-only rechazan cambios.
+ * Integration against a real MySQL (requires `pnpm db:setup`). Checks that the demo restaurant
+ * seed is complete and that the append-only tables reject changes.
  */
 loadRootEnv();
 
@@ -158,7 +158,10 @@ describe('append-only tables (RN-10)', () => {
         });
         await tx.update(s.auditEvents).set({ reason: 'tampered' }).where(eq(s.auditEvents.id, id));
       }),
-    ).rejects.toThrow(/append-only/);
+    ).rejects.toMatchObject({
+      // Drizzle wraps the driver error; the trigger's SIGNAL message is in `cause`.
+      cause: { message: expect.stringMatching(/audit_events is append-only/) },
+    });
     const leftovers = await db.select().from(s.auditEvents).where(eq(s.auditEvents.id, id));
     expect(leftovers).toHaveLength(0);
   });

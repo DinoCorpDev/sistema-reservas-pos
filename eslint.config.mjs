@@ -17,6 +17,8 @@ export default tseslint.config(
       '**/playwright-report/**',
       '**/test-results/**',
       '**/next-env.d.ts',
+      '.cache/**',
+      '.data/**',
       'packages/db/drizzle/**',
     ],
   },
@@ -38,7 +40,7 @@ export default tseslint.config(
     },
   },
   {
-    // PA-01 / principio 1: el dominio es puro. packages/core no conoce frameworks, ORM ni red.
+    // PA-01 / principle 1: the domain is pure. packages/core knows no frameworks, ORM or network.
     files: ['packages/core/**/*.ts'],
     rules: {
       'no-restricted-imports': [
@@ -62,7 +64,7 @@ export default tseslint.config(
                 '@pos/db',
                 '@pos/ui',
               ],
-              message: 'packages/core es dominio puro: sin frameworks, ORM, red ni UI (PA-01).',
+              message: 'packages/core is pure domain: no frameworks, ORM, network or UI (PA-01).',
             },
           ],
         },
