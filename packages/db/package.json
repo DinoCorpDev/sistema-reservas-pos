@@ -1,0 +1,36 @@
+{
+  "name": "@pos/db",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Esquema Drizzle (MySQL 8), migraciones versionadas, cliente y seed del Core POS",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --exclude \"**/*.int.test.ts\"",
+    "test:integration": "vitest run int.test",
+    "db:generate": "drizzle-kit generate",
+    "db:create": "tsx src/scripts/create.ts",
+    "db:migrate": "tsx src/scripts/migrate.ts",
+    "db:seed": "tsx src/scripts/seed.ts",
+    "db:setup": "tsx src/scripts/setup.ts",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "catalog:",
+    "@pos/core": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "mysql2": "catalog:"
+  },
+  "devDependencies": {
+    "@pos/config": "workspace:*",
+    "@types/node": "catalog:",
+    "drizzle-kit": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
