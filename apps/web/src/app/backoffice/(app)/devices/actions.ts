@@ -27,7 +27,11 @@ const done = <T>(value: T) => {
 export async function createTerminal(input: unknown) {
   return runAction(async () => {
     const t = await getTranslations('terminals');
-    const work = people.createTerminal(deps(), await currentActor(), createTerminalSchema.parse(input));
+    const work = people.createTerminal(
+      deps(),
+      await currentActor(),
+      createTerminalSchema.parse(input),
+    );
     return done(await explainConflict(work, { fields: { orderNumberPrefix: t('prefixTaken') } }));
   });
 }
@@ -94,14 +98,21 @@ export async function deleteKitchenStation(id: string) {
 
 export async function createPrinter(input: unknown) {
   return runAction(async () =>
-    done(await people.createPrinter(deps(), await currentActor(), createPrinterSchema.parse(input))),
+    done(
+      await people.createPrinter(deps(), await currentActor(), createPrinterSchema.parse(input)),
+    ),
   );
 }
 
 export async function updatePrinter(id: string, input: unknown) {
   return runAction(async () =>
     done(
-      await people.updatePrinter(deps(), await currentActor(), id, updatePrinterSchema.parse(input)),
+      await people.updatePrinter(
+        deps(),
+        await currentActor(),
+        id,
+        updatePrinterSchema.parse(input),
+      ),
     ),
   );
 }

@@ -1,5 +1,3 @@
-import type { people } from '@pos/api';
-
 /** Select value for "no station / no printer": Radix Select items cannot have an empty value. */
 export const NONE = 'none';
 
@@ -13,9 +11,3 @@ export function selectable<T extends { id: string; isActive: boolean }>(
 ): T[] {
   return items.filter((item) => item.isActive || item.id === current);
 }
-
-export type DevicesData = {
-  terminals: people.TerminalDto[];
-  stations: people.KitchenStationDto[];
-  printers: people.PrinterDto[];
-};

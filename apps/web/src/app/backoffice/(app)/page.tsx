@@ -24,7 +24,10 @@ export default async function OverviewPage() {
   return (
     <>
       <PageHeader title={t('title')} />
-      <SetupChecklist checklist={checklist} canActivate={actor.permissions.has('location.manage')} />
+      <SetupChecklist
+        checklist={checklist}
+        canActivate={actor.permissions.has('location.manage')}
+      />
     </>
   );
 }

@@ -681,16 +681,15 @@ describe('DINOLABS support (RF-A10, Flujo 7)', () => {
 
     const response = await api.request('GET', '/platform/organizations', { headers: platform });
     expect(response.status).toBe(200);
-    const list =
-      await json<
-        {
-          id: string;
-          slug: string;
-          locationsCount: number;
-          primaryLocationId: string | null;
-          supportGrantExpiresAt: string | null;
-        }[]
-      >(response);
+    const list = await json<
+      {
+        id: string;
+        slug: string;
+        locationsCount: number;
+        primaryLocationId: string | null;
+        supportGrantExpiresAt: string | null;
+      }[]
+    >(response);
     expect(list.find((o) => o.id === demo.organizationId)).toMatchObject({
       slug: 'demo-gastro',
       locationsCount: 1,

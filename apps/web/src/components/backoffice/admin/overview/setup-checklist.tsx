@@ -4,7 +4,14 @@ import type { admin } from '@pos/api';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@pos/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@pos/ui/card';
 import { ChevronRightIcon, CircleAlertIcon, CircleCheckIcon, ShieldCheckIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -81,7 +88,9 @@ export function SetupChecklist({
                 <CircleAlertIcon className="size-6 shrink-0 text-warning" aria-hidden />
               )}
               <span className="sr-only">{check.done ? to('checkDone') : to('checkOpen')}</span>
-              <span className={check.done ? 'min-w-0 flex-1 text-muted-foreground' : 'min-w-0 flex-1'}>
+              <span
+                className={check.done ? 'min-w-0 flex-1 text-muted-foreground' : 'min-w-0 flex-1'}
+              >
                 {t(`items.${check.key}`)}
               </span>
               {!check.done && check.missing ? (

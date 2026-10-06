@@ -38,7 +38,7 @@
     "pairingTitle": "Kopplungscode für {name}",
     "pairingInstruction": "Auf dem Gerät eingeben: Kasse oder Küchenbildschirm auf dem Gerät öffnen und diesen Code beim Koppeln eintippen.",
     "pairingValidUntil": "Gültig bis {time} (15 Minuten)",
-    "pairingRemaining": "noch {remaining}",
+    "pairingRemaining": "Noch {remaining} gültig",
     "pairingExpired": "Der Code ist abgelaufen.",
     "pairingOnce": "Der Code wird nur jetzt angezeigt und gilt für eine Kopplung. Ein neuer Code ersetzt den bisherigen; ist das Gerät schon gekoppelt, ersetzt die neue Kopplung die alte.",
     "pairingNew": "Neuen Code erzeugen",
@@ -103,7 +103,6 @@
     "description": "Zugang zur Kasse mit PIN und zum Backoffice mit E-Mail und Passwort.",
     "tabUsers": "Mitarbeitende",
     "tabRoles": "Rollen & Berechtigungen",
-    "readOnly": "Nur Ansicht: Für Änderungen braucht es die Berechtigung «Mitarbeitende, Rollen und API-Schlüssel verwalten».",
     "new": "Neue Person",
     "edit": "Person bearbeiten",
     "created": "Person angelegt.",
@@ -170,8 +169,7 @@
     "unsaved": "Nicht gespeichert",
     "reset": "Änderungen verwerfen",
     "defaults": "Standard wiederherstellen",
-    "saved": "Berechtigungen gespeichert.",
-    "groupAll": "Alle in «{group}»"
+    "saved": "Berechtigungen gespeichert."
   },
   "permissionGroups": {
     "orders": "Bestellungen",

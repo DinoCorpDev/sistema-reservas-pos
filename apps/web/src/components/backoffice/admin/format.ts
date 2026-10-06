@@ -1,3 +1,5 @@
+import { localMoment } from '@pos/core';
+
 /**
  * Swiss formats for the administration screens (dates `dd.MM.yyyy`, times in Zürich, rates with a
  * decimal comma). Pure functions with an explicit time zone, so server and client render the same.
@@ -98,8 +100,7 @@ function zurichParts(at: Date) {
 
 /** Today's calendar date in Zürich, `YYYY-MM-DD`. */
 export function todayInZurich(now: Date = new Date()): string {
-  const { year, month, day } = zurichParts(now);
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  return localMoment(now, TIME_ZONE).date;
 }
 
 /** Offset of Zürich local time from UTC at an instant, in milliseconds. */
@@ -124,6 +125,19 @@ export function addDays(date: string, days: number): string {
   day.setUTCDate(day.getUTCDate() + days);
   return day.toISOString().slice(0, 10);
 }
+
+/** Swiss E.164 numbers in the usual groups: `+41791234567` → `+41 79 123 45 67`. */
+export function formatPhone(phone: string | null | undefined): string {
+  if (!phone) return '';
+  const swiss = /^\+41(\d{2})(\d{3})(\d{2})(\d{2})$/.exec(phone);
+  return swiss ? `+41 ${swiss[1]} ${swiss[2]} ${swiss[3]} ${swiss[4]}` : phone;
+}
+
+/** `Anna Muster`, or the fallback for a guest without a name (or an anonymized one). */
+export const customerName = (
+  customer: { firstName: string | null; lastName: string | null },
+  fallback: string,
+) => [customer.firstName, customer.lastName].filter(Boolean).join(' ') || fallback;
 
 /** First block of a UUID, for compact display of ids without a name. */
 export const shortId = (id: string) => id.slice(0, 8);
