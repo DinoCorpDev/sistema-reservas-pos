@@ -5,3 +5,4 @@
 export * from './constants';
 export * from './permissions';
 export * from './settings';
+export * from './uid';
