@@ -24,7 +24,7 @@ declare module 'next-auth' {
       id: string;
       organizationId: string | null;
       locationId: string | null;
-      /** Null for DINOLABS support: their UI follows the login-page choice or the browser. */
+      /** Null for DINOLABS support: their UI follows the language picker, else Spanish (DEC-020). */
       uiLanguage: string | null;
       mustChangePassword: boolean;
     } & DefaultSession['user'];

@@ -19,6 +19,16 @@ const OWNER = {
 const saved = (page: Page, text = 'Gespeichert') =>
   expect(page.getByText(text, { exact: true }).first()).toBeVisible();
 
+/**
+ * Saves the open product tab and waits for ITS confirmation: the toast of the previous save may
+ * still be on screen, and navigating away before the save lands would lose it.
+ */
+async function saveTab(page: Page) {
+  await expect(page.getByText('Gespeichert', { exact: true })).toHaveCount(0, { timeout: 15_000 });
+  await page.getByRole('tabpanel').getByRole('button', { name: 'Speichern' }).first().click();
+  await saved(page);
+}
+
 async function signIn(page: Page, path: string, email: string, password: string) {
   await page.goto(path);
   await page.getByLabel('E-Mail').fill(email);
@@ -30,35 +40,37 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
   test.setTimeout(240_000);
 
   // ── 1. DINOLABS support creates the restaurant (Flujo 7.1, DEC-017) ──────
+  // The sign-in page follows the browser (de-CH); the console is in Spanish (DEC-020).
   await signIn(page, '/support/login', DEMO_SUPPORT_STAFF.email, DEMO_SUPPORT_STAFF.password);
   await expect(page).toHaveURL(/\/support$/);
-  await page.getByRole('button', { name: 'Neues Restaurant' }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  await page.getByRole('button', { name: 'Nuevo restaurante' }).click();
   const wizard = page.getByRole('dialog');
 
-  await wizard.getByLabel('Name der Organisation').fill('Gasthaus Bären');
-  await wizard.getByLabel('Firma (Rechtsträger)').fill('Gasthaus Bären GmbH');
-  await wizard.getByRole('button', { name: 'Weiter' }).click();
+  await wizard.getByLabel('Nombre de la organización').fill('Gasthaus Bären');
+  await wizard.getByLabel('Razón social (entidad legal)').fill('Gasthaus Bären GmbH');
+  await wizard.getByRole('button', { name: 'Siguiente' }).click();
 
-  await wizard.getByLabel('Name des Standorts').fill('Gasthaus Bären Bern');
-  await wizard.getByLabel('Firma des Standorts').fill('Gasthaus Bären GmbH');
-  await wizard.getByLabel('Strasse und Nr.').fill('Marktgasse 10');
-  await wizard.getByLabel('PLZ').fill('3011');
-  await wizard.getByLabel('Ort', { exact: true }).fill('Bern');
-  await wizard.getByLabel('Kanton').fill('BE');
+  await wizard.getByLabel('Nombre de la sede').fill('Gasthaus Bären Bern');
+  await wizard.getByLabel('Razón social de la sede').fill('Gasthaus Bären GmbH');
+  await wizard.getByLabel('Calle y número').fill('Marktgasse 10');
+  await wizard.getByLabel('Código postal').fill('3011');
+  await wizard.getByLabel('Ciudad', { exact: true }).fill('Bern');
+  await wizard.getByLabel('Cantón').fill('BE');
   await wizard.getByPlaceholder('CHE-123.456.789').fill('CHE-109.322.551');
-  await wizard.getByRole('checkbox', { name: 'Französisch' }).check();
-  await wizard.getByRole('button', { name: 'Weiter' }).click();
+  await wizard.getByRole('checkbox', { name: 'Francés' }).check();
+  await wizard.getByRole('button', { name: 'Siguiente' }).click();
 
-  await wizard.getByLabel('Name', { exact: true }).fill(OWNER.name);
-  await wizard.getByLabel('E-Mail für die Anmeldung').fill(OWNER.email);
-  await wizard.getByRole('button', { name: 'Weiter' }).click();
-  await wizard.getByRole('button', { name: 'Restaurant anlegen' }).click();
+  await wizard.getByLabel('Nombre', { exact: true }).fill(OWNER.name);
+  await wizard.getByLabel('Correo electrónico para iniciar sesión').fill(OWNER.email);
+  await wizard.getByRole('button', { name: 'Siguiente' }).click();
+  await wizard.getByRole('button', { name: 'Crear restaurante' }).click();
 
-  await expect(wizard.getByRole('heading', { name: 'Restaurant angelegt' })).toBeVisible();
+  await expect(wizard.getByRole('heading', { name: 'Restaurante creado' })).toBeVisible();
   const temporaryPassword = (await wizard.locator('code').first().innerText()).trim();
   expect(temporaryPassword.length).toBeGreaterThanOrEqual(12);
-  await wizard.getByRole('button', { name: 'Fertig' }).click();
-  await page.getByRole('button', { name: 'Abmelden' }).click();
+  await wizard.getByRole('button', { name: 'Listo' }).click();
+  await page.getByRole('button', { name: 'Cerrar sesión' }).click();
   await expect(page).toHaveURL(/\/support\/login$/);
 
   // ── 2. The owner signs in and must choose her own password ───────────────
@@ -135,18 +147,15 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
     .getByRole('radio', { name: 'Enthält', exact: true })
     .click();
   await page.getByRole('checkbox', { name: 'Allergene geprüft und vollständig' }).check();
-  await page.getByRole('tabpanel').getByRole('button', { name: 'Speichern' }).first().click();
-  await saved(page);
+  await saveTab(page);
 
   await page.getByRole('tab', { name: 'Übersetzungen' }).click();
   await page.locator('#product-translation-fr-name').fill('Rösti bernois');
-  await page.getByRole('tabpanel').getByRole('button', { name: 'Speichern' }).first().click();
-  await saved(page);
+  await saveTab(page);
 
   await page.getByRole('tab', { name: 'Stationen' }).click();
   await page.getByRole('checkbox', { name: 'Küche' }).check();
-  await page.getByRole('tabpanel').getByRole('button', { name: 'Speichern' }).first().click();
-  await saved(page);
+  await saveTab(page);
 
   // ── 7. The checklist is complete; the owner activates operation (RF-A11) ─
   await page.goto('/backoffice');

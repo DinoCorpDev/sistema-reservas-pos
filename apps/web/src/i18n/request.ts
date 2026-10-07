@@ -11,11 +11,12 @@ import { isUiLocale, type UiLocale } from './locales';
  * No locale in the URL: the backoffice and the POS are not indexed.
  */
 async function resolveLocale(): Promise<UiLocale> {
-  const session = await auth();
-  if (session?.user?.uiLanguage && isUiLocale(session.user.uiLanguage))
-    return session.user.uiLanguage;
+  const user = (await auth())?.user;
+  if (user?.uiLanguage && isUiLocale(user.uiLanguage)) return user.uiLanguage;
   const cookieLocale = (await cookies()).get('NEXT_LOCALE')?.value;
   if (cookieLocale && isUiLocale(cookieLocale)) return cookieLocale;
+  // DINOLABS support works in Spanish unless they pick another language (DEC-020).
+  if (user?.kind === 'support') return 'es';
   const accepted = (await headers()).get('accept-language') ?? '';
   for (const part of accepted.split(',')) {
     const candidate = part.trim().slice(0, 2).toLowerCase();
