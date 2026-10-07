@@ -1,0 +1,9 @@
+{
+  "extends": "@pos/config/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "lib": ["esnext", "webworker"],
+    "types": []
+  },
+  "include": ["./*.ts"]
+}

@@ -1,0 +1,52 @@
+{
+  "pos": {
+    "keypad": {
+      "label": "Tastierino numerico",
+      "clear": "Cancella",
+      "backspace": "Cancella l’ultima cifra"
+    },
+    "status": {
+      "standalone": "Offline",
+      "hub": "Locale (hub)",
+      "cloud": "Online",
+      "pending": "In sospeso: {count}",
+      "rejected": "{count, plural, one {# operazione rifiutata} other {# operazioni rifiutate}}"
+    },
+    "pairing": {
+      "title": "Abbina dispositivo",
+      "description": "Inserisca il codice di abbinamento del backoffice (Dispositivi → Codice di abbinamento). Per farlo, il dispositivo ha bisogno di Internet una sola volta.",
+      "code": "Codice di abbinamento",
+      "pair": "Abbina",
+      "pairing": "Abbinamento…",
+      "invalidCode": "Il codice è errato o scaduto.",
+      "failed": "Abbinamento non riuscito. Verifichi la connessione e riprovi."
+    },
+    "pin": {
+      "title": "Inserisca il PIN",
+      "entered": "{count, plural, one {# cifra inserita} other {# cifre inserite}}",
+      "unlock": "Sblocca",
+      "checking": "Verifica in corso…",
+      "wrong": "PIN errato. {attemptsLeft, plural, one {Resta # tentativo} other {Restano # tentativi}}.",
+      "locked": "Troppi tentativi errati. Bloccato per {minutes, plural, one {# minuto} other {# minuti}}.",
+      "invalid": "Il PIN è composto da 4 a 6 cifre.",
+      "noCredentials": "Questo dispositivo non ha ancora i dati di accesso. Lo colleghi una volta a Internet."
+    },
+    "approval": {
+      "title": "Autorizzazione di una persona responsabile",
+      "aboveThreshold": "Questa azione supera la soglia della sede. Una persona responsabile la autorizza con il suo PIN.",
+      "missingPermission": "Non dispone dell’autorizzazione per questa azione. Una persona responsabile la autorizza con il suo PIN.",
+      "approve": "Autorizza",
+      "refused": "PIN errato o senza autorizzazione per questa azione."
+    },
+    "shell": {
+      "navigation": "Cassa",
+      "floor": "Tavoli",
+      "orders": "Ordini",
+      "bar": "Banco",
+      "takeaway": "Da asporto",
+      "lock": "Blocca",
+      "updateAvailable": "È pronta una nuova versione della cassa.",
+      "updateNow": "Aggiorna ora"
+    }
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "posOrder": {
+    "common": {
+      "close": "Chiudi",
+      "cancel": "Annulla",
+      "save": "Salva",
+      "back": "Indietro",
+      "minus": "Meno",
+      "plus": "Più",
+      "minutes": "{minutes} min",
+      "guests": "{count, plural, one {# coperto} other {# coperti}}",
+      "table": "Tavolo {label}",
+      "tableJoined": "Tavolo {label} + {joined}",
+      "orderNumber": "Ordine {number}",
+      "seat": "Posto {seat}",
+      "course": "Portata {course}",
+      "unknownUser": "Sconosciuto"
+    },
+    "errors": {
+      "generic": "Non ha funzionato. Riprovi.",
+      "line": {
+        "NOT_ORDERABLE": "Questo prodotto al momento non può essere ordinato.",
+        "UNKNOWN_VARIANT": "Questa variante non esiste più.",
+        "INVALID_MODIFIERS": "La scelta delle opzioni non è valida.",
+        "INVALID_QUANTITY": "La quantità non è valida.",
+        "INVALID_COURSE": "La portata non è valida."
+      }
+    },
+    "channel": {
+      "table": "Tavolo",
+      "bar": "Banco",
+      "takeaway": "Da asporto",
+      "qr": "Ordine QR",
+      "web": "Ordine online",
+      "delivery": "Consegna"
+    },
+    "tableState": {
+      "free": "Libero",
+      "reserved": "Riservato",
+      "occupied": "Occupato",
+      "awaiting_order": "In attesa dell’ordine",
+      "in_kitchen": "In cucina",
+      "ready": "Pronto",
+      "awaiting_payment": "In attesa del pagamento"
+    },
+    "itemStatus": {
+      "pending": "Non inviato",
+      "sent": "Inviato",
+      "preparing": "In preparazione",
+      "ready": "Pronto",
+      "served": "Servito",
+      "voided": "Stornato"
+    },
+    "paymentStatus": {
+      "unpaid": "Non pagato",
+      "partial": "Pagato in parte",
+      "paid": "Pagato",
+      "refunded": "Rimborsato"
+    },
+    "orderStatus": {
+      "open": "Aperto",
+      "closed": "Chiuso",
+      "voided": "Stornato"
+    },
+    "voidReason": {
+      "entry_error": "Errore di inserimento",
+      "guest_changed_mind": "Il cliente rinuncia",
+      "kitchen_error": "Errore della cucina",
+      "quality": "Difetto di qualità",
+      "not_available": "Non disponibile",
+      "other": "Altro motivo"
+    },
+    "discountReason": {
+      "staff": "Personale",
+      "courtesy": "Gesto di cortesia",
+      "promotion": "Promozione",
+      "other": "Altro motivo"
+    },
+    "unavailable": {
+      "inactive": "Non attivo",
+      "inactive_at_location": "Non in offerta qui",
+      "sold_out": "86 · Esaurito",
+      "not_available_now": "Non disponibile ora",
+      "not_available_on_channel": "Non per questo canale"
+    },
+    "floor": {
+      "empty": "Ancora nessun tavolo configurato. Banco e asporto funzionano comunque.",
+      "areas": "Zone",
+      "legend": "Legenda",
+      "table": "Tavolo {label}",
+      "joinedTo": "Unito al tavolo {label}",
+      "sinceSent": "{minutes, plural, one {# minuto} other {# minuti}} dall’ultimo invio",
+      "chooseDescription": "A questo tavolo sono aperti più ordini, che vengono pagati separatamente.",
+      "newOrder": "Nuovo ordine"
+    },
+    "openTable": {
+      "title": "Apri tavolo {label}",
+      "waiter": "Cameriere: {name}",
+      "guests": "Coperti",
+      "open": "Apri"
+    },
+    "orders": {
+      "title": "Ordini",
+      "mine": "I miei tavoli",
+      "open": "Tutti aperti",
+      "closed": "Chiusi oggi",
+      "details": "Ordine chiuso",
+      "orderTitle": "Ordine {number} · {place}",
+      "selectClosed": "Selezioni un ordine per copie dello scontrino, rimborsi o per riaprirlo.",
+      "emptyMine": "Non ha ordini aperti.",
+      "emptyOpen": "Nessun ordine aperto.",
+      "emptyClosed": "Oggi non è ancora stato chiuso nessun ordine.",
+      "number": "N.",
+      "place": "Tavolo / canale",
+      "waiter": "Cameriere",
+      "total": "Totale",
+      "balance": "Da pagare",
+      "balanceShort": "Da pagare",
+      "sinceSent": "Dall’invio",
+      "closedAt": "Ora"
+    },
+    "order": {
+      "backToFloor": "Torna alla pianta della sala",
+      "floorShort": "Pianta sala",
+      "number": "Ordine",
+      "waiter": "Cameriere: {name}",
+      "notFound": "Questo ordine non esiste su questo dispositivo.",
+      "mergedBanner": "Questo ordine è stato unito all’ordine {number}.",
+      "voidedBanner": "Questo ordine è stornato.",
+      "closedBanner": "Questo ordine è chiuso.",
+      "toOrders": "Agli ordini",
+      "menu": "Menu",
+      "ticketTab": "Comanda ({count}) · {total}"
+    },
+    "menu": {
+      "title": "Menu",
+      "categories": "Categorie",
+      "empty": "Nessun prodotto disponibile per questo canale.",
+      "options": "Opzioni"
+    },
+    "product": {
+      "variant": "Variante",
+      "chooseExactly": "Sceglierne {count}",
+      "chooseRange": "Sceglierne da {min} a {max}",
+      "chooseOptional": "Facoltativo",
+      "chooseUpTo": "Facoltativo, fino a {max}",
+      "quantity": "Quantità",
+      "note": "Nota",
+      "notePlaceholder": "p. es. senza cipolla",
+      "seat": "Posto",
+      "course": "Portata",
+      "total": "Totale {amount}",
+      "add": "Aggiungi"
+    },
+    "ticket": {
+      "title": "Comanda",
+      "empty": "Ancora nessun articolo. Tocchi un prodotto.",
+      "course": "Portata {course}",
+      "lineActions": "Modifica articolo",
+      "note": "Nota: {note}",
+      "lineDiscount": "Sconto: {label}",
+      "subtotal": "Subtotale",
+      "lineDiscounts": "Sconti sugli articoli",
+      "orderDiscount": "Sconto sull’ordine: {label}",
+      "removeDiscount": "Rimuovi sconto",
+      "total": "Totale",
+      "tax": "IVA incl.",
+      "paid": "Pagato",
+      "balance": "Da pagare"
+    },
+    "line": {
+      "discount": "Sconto",
+      "removeDiscount": "Rimuovi sconto",
+      "serve": "Segna come servito",
+      "void": "Storna",
+      "voidSentHint": "L’articolo è già in cucina: la cucina lo vedrà barrato."
+    },
+    "discount": {
+      "base": "Importo scontabile: {amount}",
+      "nothingToDiscount": "Non c’è alcun importo da scontare.",
+      "presets": "Sconti frequenti",
+      "custom": "Sconto personalizzato",
+      "kind": "Tipo di sconto",
+      "percent": "Percentuale",
+      "amount": "Importo",
+      "valuePercent": "Sconto in %",
+      "valueAmount": "Sconto in CHF",
+      "invalidPercent": "Inserisca un valore da 0.01 a 100.",
+      "invalidAmount": "Inserisca un importo maggiore di 0, p. es. 5.50.",
+      "reason": "Motivo",
+      "note": "Osservazione",
+      "noteRequired": "Descriva il motivo.",
+      "apply": "Concedi sconto",
+      "approvalHint": "Oltre la soglia della sede, una persona responsabile autorizza lo sconto con il suo PIN."
+    },
+    "void": {
+      "reason": "Motivo",
+      "quantity": "Quantità",
+      "note": "Osservazione",
+      "noteRequired": "Descriva il motivo.",
+      "confirm": "Storna"
+    },
+    "actions": {
+      "more": "Altro",
+      "send": "Invia",
+      "sendCourse": "Invia portata {course}",
+      "served": "Servito",
+      "handedOver": "Consegnato",
+      "pay": "Incassa",
+      "sendFirst": "Prima invii tutto in cucina, poi incassi."
+    },
+    "more": {
+      "title": "Altre azioni",
+      "discount": "Sconto sull’ordine",
+      "guests": "Modifica coperti",
+      "waiter": "Cambia cameriere",
+      "move": "Cambia tavolo",
+      "join": "Unisci o separa tavoli",
+      "newOrderAtTable": "Altro ordine al tavolo",
+      "transfer": "Trasferisci articoli",
+      "merge": "Unisci a un altro ordine",
+      "split": "Dividi il conto",
+      "toTakeaway": "Da asporto",
+      "toOnPremise": "Consumazione sul posto",
+      "cancel": "Storna ordine",
+      "paidHint": "Questo ordine ha già dei pagamenti: non è più possibile trasferire, unire, dividere o stornare.",
+      "noTransferPermission": "Non dispone dell’autorizzazione per trasferire, unire e dividere.",
+      "channelPaidHint": "Dopo un pagamento il canale non può più essere cambiato.",
+      "moveDescription": "Selezioni il nuovo tavolo. Articoli e pagamenti vengono spostati insieme.",
+      "joinDescription": "I tavoli uniti fanno parte di questo ordine. Tocchi di nuovo un tavolo per separarlo.",
+      "noOtherOrders": "Non c’è nessun altro ordine aperto.",
+      "transferItems": "Articoli",
+      "transferTarget": "Nell’ordine",
+      "transferConfirm": "Trasferisci",
+      "mergeDescription": "Tutti gli articoli di questo ordine passano all’ordine selezionato. Un eventuale sconto su questo ordine decade.",
+      "mergeTarget": "Unisci a",
+      "mergeConfirm": "Unisci",
+      "splitDescription": "Gli articoli selezionati passano in un nuovo ordine, pagato separatamente.",
+      "splitBySeat": "Per posto",
+      "splitItems": "Articoli per il nuovo ordine",
+      "splitKeepOne": "Almeno un articolo deve restare in questo ordine.",
+      "splitConfirm": "Dividi",
+      "splitDone": "L’ordine {number} è stato creato.",
+      "payNew": "Incassa il nuovo ordine",
+      "openNew": "Apri il nuovo ordine",
+      "stayHere": "Resta qui",
+      "channelDescription": "Da «{from}» a «{to}»: l’IVA di tutti gli articoli viene ricalcolata.",
+      "channelConfirm": "Passa a «{to}»",
+      "cancelDescription": "Tutti gli articoli vengono stornati. Nulla viene eliminato; il motivo resta nel registro."
+    }
+  }
+}

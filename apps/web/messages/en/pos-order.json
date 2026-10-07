@@ -1,0 +1,252 @@
+{
+  "posOrder": {
+    "common": {
+      "close": "Close",
+      "cancel": "Cancel",
+      "save": "Save",
+      "back": "Back",
+      "minus": "Minus",
+      "plus": "Plus",
+      "minutes": "{minutes} min",
+      "guests": "{count, plural, one {# guest} other {# guests}}",
+      "table": "Table {label}",
+      "tableJoined": "Table {label} + {joined}",
+      "orderNumber": "Order {number}",
+      "seat": "Seat {seat}",
+      "course": "Course {course}",
+      "unknownUser": "Unknown"
+    },
+    "errors": {
+      "generic": "That didn’t work. Please try again.",
+      "line": {
+        "NOT_ORDERABLE": "This product can’t be ordered right now.",
+        "UNKNOWN_VARIANT": "This variant no longer exists.",
+        "INVALID_MODIFIERS": "The selected options aren’t valid.",
+        "INVALID_QUANTITY": "The quantity isn’t valid.",
+        "INVALID_COURSE": "The course isn’t valid."
+      }
+    },
+    "channel": {
+      "table": "Table",
+      "bar": "Bar",
+      "takeaway": "Takeaway",
+      "qr": "QR order",
+      "web": "Online order",
+      "delivery": "Delivery"
+    },
+    "tableState": {
+      "free": "Free",
+      "reserved": "Reserved",
+      "occupied": "Occupied",
+      "awaiting_order": "Awaiting order",
+      "in_kitchen": "In the kitchen",
+      "ready": "Ready",
+      "awaiting_payment": "Awaiting payment"
+    },
+    "itemStatus": {
+      "pending": "Not sent",
+      "sent": "Sent",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "served": "Served",
+      "voided": "Voided"
+    },
+    "paymentStatus": {
+      "unpaid": "Unpaid",
+      "partial": "Partly paid",
+      "paid": "Paid",
+      "refunded": "Refunded"
+    },
+    "orderStatus": {
+      "open": "Open",
+      "closed": "Closed",
+      "voided": "Voided"
+    },
+    "voidReason": {
+      "entry_error": "Entry error",
+      "guest_changed_mind": "Guest changed their mind",
+      "kitchen_error": "Kitchen error",
+      "quality": "Quality issue",
+      "not_available": "Not available",
+      "other": "Other reason"
+    },
+    "discountReason": {
+      "staff": "Staff",
+      "courtesy": "Goodwill",
+      "promotion": "Promotion",
+      "other": "Other reason"
+    },
+    "unavailable": {
+      "inactive": "Inactive",
+      "inactive_at_location": "Not offered here",
+      "sold_out": "86 · Sold out",
+      "not_available_now": "Not available now",
+      "not_available_on_channel": "Not for this channel"
+    },
+    "floor": {
+      "empty": "No tables set up yet. Bar and takeaway still work.",
+      "areas": "Areas",
+      "legend": "Legend",
+      "table": "Table {label}",
+      "joinedTo": "Joined to table {label}",
+      "sinceSent": "{minutes, plural, one {# minute} other {# minutes}} since last sent",
+      "chooseDescription": "Several orders are open at this table and are paid separately.",
+      "newOrder": "New order"
+    },
+    "openTable": {
+      "title": "Open table {label}",
+      "waiter": "Server: {name}",
+      "guests": "Guests",
+      "open": "Open"
+    },
+    "orders": {
+      "title": "Orders",
+      "mine": "My tables",
+      "open": "All open",
+      "closed": "Closed today",
+      "details": "Closed order",
+      "orderTitle": "Order {number} · {place}",
+      "selectClosed": "Choose an order for receipt copies, refunds or to reopen it.",
+      "emptyMine": "You have no open orders.",
+      "emptyOpen": "No open orders.",
+      "emptyClosed": "No orders have been closed today yet.",
+      "number": "No.",
+      "place": "Table / channel",
+      "waiter": "Server",
+      "total": "Total",
+      "balance": "Balance due",
+      "balanceShort": "Due",
+      "sinceSent": "Since sent",
+      "closedAt": "Time"
+    },
+    "order": {
+      "backToFloor": "Back to floor plan",
+      "floorShort": "Floor plan",
+      "number": "Order",
+      "waiter": "Server: {name}",
+      "notFound": "This order doesn’t exist on this device.",
+      "mergedBanner": "This order was merged into order {number}.",
+      "voidedBanner": "This order has been voided.",
+      "closedBanner": "This order is closed.",
+      "toOrders": "Go to orders",
+      "menu": "Menu",
+      "ticketTab": "Ticket ({count}) · {total}"
+    },
+    "menu": {
+      "title": "Menu",
+      "categories": "Categories",
+      "empty": "No products are available for this channel.",
+      "options": "Options"
+    },
+    "product": {
+      "variant": "Variant",
+      "chooseExactly": "Choose {count}",
+      "chooseRange": "Choose {min} to {max}",
+      "chooseOptional": "Optional",
+      "chooseUpTo": "Optional, up to {max}",
+      "quantity": "Quantity",
+      "note": "Note",
+      "notePlaceholder": "e.g. no onions",
+      "seat": "Seat",
+      "course": "Course",
+      "total": "Total {amount}",
+      "add": "Add"
+    },
+    "ticket": {
+      "title": "Ticket",
+      "empty": "No items yet. Tap a product.",
+      "course": "Course {course}",
+      "lineActions": "Edit item",
+      "note": "Note: {note}",
+      "lineDiscount": "Discount: {label}",
+      "subtotal": "Subtotal",
+      "lineDiscounts": "Item discounts",
+      "orderDiscount": "Order discount: {label}",
+      "removeDiscount": "Remove discount",
+      "total": "Total",
+      "tax": "incl. VAT",
+      "paid": "Paid",
+      "balance": "Balance due"
+    },
+    "line": {
+      "discount": "Discount",
+      "removeDiscount": "Remove discount",
+      "serve": "Mark as served",
+      "void": "Void",
+      "voidSentHint": "The item is already in the kitchen: the kitchen will see it crossed out."
+    },
+    "discount": {
+      "base": "Discountable amount: {amount}",
+      "nothingToDiscount": "There’s no amount that can be discounted.",
+      "presets": "Common discounts",
+      "custom": "Custom discount",
+      "kind": "Discount type",
+      "percent": "Percentage",
+      "amount": "Amount",
+      "valuePercent": "Discount in %",
+      "valueAmount": "Discount in CHF",
+      "invalidPercent": "Enter a value from 0.01 to 100.",
+      "invalidAmount": "Enter an amount greater than 0, e.g. 5.50.",
+      "reason": "Reason",
+      "note": "Comment",
+      "noteRequired": "Please describe the reason.",
+      "apply": "Grant discount",
+      "approvalHint": "Above the location’s threshold, a manager approves the discount with their PIN."
+    },
+    "void": {
+      "reason": "Reason",
+      "quantity": "Quantity",
+      "note": "Comment",
+      "noteRequired": "Please describe the reason.",
+      "confirm": "Void"
+    },
+    "actions": {
+      "more": "More",
+      "send": "Send",
+      "sendCourse": "Send course {course}",
+      "served": "Served",
+      "handedOver": "Handed over",
+      "pay": "Pay",
+      "sendFirst": "Send everything to the kitchen first, then take payment."
+    },
+    "more": {
+      "title": "More actions",
+      "discount": "Order discount",
+      "guests": "Change number of guests",
+      "waiter": "Change server",
+      "move": "Change table",
+      "join": "Join or separate tables",
+      "newOrderAtTable": "Another order at this table",
+      "transfer": "Transfer items",
+      "merge": "Merge with another order",
+      "split": "Split bill",
+      "toTakeaway": "Takeaway",
+      "toOnPremise": "Eat in",
+      "cancel": "Void order",
+      "paidHint": "This order already has payments: transferring, merging, splitting and voiding are no longer possible.",
+      "noTransferPermission": "You don’t have permission to transfer, merge or split.",
+      "channelPaidHint": "After a payment, the channel can no longer be changed.",
+      "moveDescription": "Choose the new table. Items and payments move with it.",
+      "joinDescription": "Joined tables belong to this order. Tap a table again to separate it.",
+      "noOtherOrders": "There are no other open orders.",
+      "transferItems": "Items",
+      "transferTarget": "To order",
+      "transferConfirm": "Transfer",
+      "mergeDescription": "All items in this order move to the selected order. Any discount on this order is dropped.",
+      "mergeTarget": "Merge with",
+      "mergeConfirm": "Merge",
+      "splitDescription": "The selected items go into a new order that is paid separately.",
+      "splitBySeat": "By seat",
+      "splitItems": "Items for the new order",
+      "splitKeepOne": "At least one item must stay in this order.",
+      "splitConfirm": "Split",
+      "splitDone": "Order {number} has been created.",
+      "payNew": "Take payment for new order",
+      "openNew": "Open new order",
+      "stayHere": "Stay here",
+      "channelDescription": "From {from} to {to}: VAT on all items is recalculated.",
+      "channelConfirm": "Switch to {to}",
+      "cancelDescription": "All items are voided. Nothing is deleted; the reason stays in the audit log."
+    }
+  }
+}

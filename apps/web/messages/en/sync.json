@@ -1,0 +1,156 @@
+{
+  "syncConflicts": {
+    "title": "Sync conflicts",
+    "description": "Operations recorded without a connection that break a rule. They were not blocked: check each case, correct it at the POS register if needed and mark it as resolved.",
+    "noPermission": "You don’t have permission to view sync conflicts.",
+    "noLocation": "Choose a location at the top to see its conflicts.",
+    "showResolved": "Show resolved",
+    "empty": "No open conflicts. Everything is in sync.",
+    "openCount": "{count, plural, one {# open conflict} other {# open conflicts}}",
+    "deviceTime": "Device time",
+    "receivedAt": "Received {time}",
+    "operation": "Operation",
+    "order": "Order",
+    "noOrder": "No order",
+    "person": "Person",
+    "unknownPerson": "Unknown",
+    "terminal": "Device {name}",
+    "whatToDo": "What to do",
+    "resolve": "Mark as resolved",
+    "resolvedBadge": "Resolved",
+    "resolvedBy": "Resolved on {date} by {person}",
+    "resolveTitle": "Mark conflict as resolved",
+    "resolveText": "Record what you did. The note is saved in the audit log.",
+    "note": "Note",
+    "notePlaceholder": "e.g. refunded difference of CHF 12.50 in cash",
+    "noteRequired": "Please enter a note (500 characters max).",
+    "resolved": "Conflict marked as resolved.",
+    "hints": {
+      "payment": "Payment {amount} ({method})",
+      "refund": "Refund {amount} ({method})",
+      "opened": "Order no. {number}",
+      "split": "New order no. {number}"
+    },
+    "methods": {
+      "cash": "Cash",
+      "card": "Card",
+      "twint": "TWINT",
+      "online": "Online",
+      "voucher": "Voucher"
+    },
+    "operations": {
+      "order": {
+        "open": "Order opened",
+        "update": "Order changed",
+        "change_channel": "Channel changed",
+        "merge": "Orders merged",
+        "split": "Order split",
+        "reopen": "Order reopened",
+        "void": "Order voided"
+      },
+      "items": {
+        "add": "Items added",
+        "send": "Sent to kitchen",
+        "serve": "Marked as served",
+        "transfer": "Items transferred"
+      },
+      "item": {
+        "update": "Item changed",
+        "void": "Item voided"
+      },
+      "discount": {
+        "apply": "Discount granted",
+        "remove": "Discount removed"
+      },
+      "payment": {
+        "record": "Payment"
+      },
+      "refund": {
+        "record": "Refund"
+      },
+      "receipt": {
+        "reprint": "Receipt reprinted"
+      },
+      "terminal": {
+        "unlocked": "Device unlocked with PIN",
+        "pin_failed": "Wrong PIN entered"
+      }
+    },
+    "unknownCode": {
+      "what": "A rule violation was detected during sync.",
+      "todo": "Check the operation and the order at the POS register."
+    },
+    "codes": {
+      "overpayment": {
+        "label": "Overpayment",
+        "what": "The order was paid twice or overpaid, for example at two POS registers while there was no connection. The payment was accepted anyway.",
+        "todo": "Check the amount and refund the difference at the POS register."
+      },
+      "payment_on_closed_order": {
+        "label": "Payment after closing",
+        "what": "A payment came in for an order that was already paid or closed. The payment was accepted anyway.",
+        "todo": "Find out whether the guest paid twice and, if necessary, refund the amount at the POS register."
+      },
+      "refund_exceeds_payment": {
+        "label": "Refund too high",
+        "what": "More was refunded than had been paid with this payment. The refund was accepted anyway.",
+        "todo": "Compare the payment and the refund, recount the cash register and clear up the difference with the person responsible."
+      },
+      "source_has_payments": {
+        "label": "Order with payments",
+        "what": "Items were to be transferred or orders merged or split, but the order already had payments. The operation was not carried out.",
+        "todo": "Check the orders at the POS register and repeat the operation if it is still needed."
+      },
+      "order_not_found": {
+        "label": "Unknown order",
+        "what": "The operation concerns an order the system doesn’t know. It had no effect.",
+        "todo": "Usually the order still arrives from another device; the operation is then applied automatically. If it is still missing, check that all POS registers are connected."
+      },
+      "order_state": {
+        "label": "Order no longer open",
+        "what": "The operation concerned an order that was already paid, closed or voided. A void was accepted anyway; other changes had no effect.",
+        "todo": "Check the order. If something was voided after payment, refund the amount at the POS register; otherwise repeat the operation if it is still needed."
+      },
+      "item_not_found": {
+        "label": "Unknown item",
+        "what": "The operation concerns an item the system doesn’t know. It had no effect.",
+        "todo": "If the item arrives later, the operation is applied automatically. If it is still missing, check the order at the POS register."
+      },
+      "item_state": {
+        "label": "Item can no longer be changed",
+        "what": "An item was to be changed although its status no longer allowed it, for example the quantity after it was sent to the kitchen. The operation had no effect.",
+        "todo": "Check the order at the POS register and correct it if needed, for example with a void."
+      },
+      "implicit_reopen": {
+        "label": "Order reopened",
+        "what": "Items were added to an order that was already closed. The order was therefore reopened automatically.",
+        "todo": "Check whether the new items still need to be paid, then take payment for them or void them."
+      },
+      "approval_invalid": {
+        "label": "Invalid approval",
+        "what": "The operation was approved by someone who didn’t have permission to do so. It was accepted anyway because it has already happened.",
+        "todo": "Check whether the operation was in order and, if needed, adjust the permissions under “Staff”."
+      },
+      "user_inactive": {
+        "label": "Person deactivated",
+        "what": "The operation was recorded with the PIN of a person who was deactivated at the time. It was accepted anyway.",
+        "todo": "Find out who was using the device and check the operation. Connect the POS registers so they load the current staff list."
+      },
+      "duplicate_number": {
+        "label": "Duplicate number",
+        "what": "An order, receipt or copy number was assigned twice. It was saved with a suffix; nothing was lost.",
+        "todo": "Usually there is nothing to do. Note that the saved number may differ from the one on the printed receipt."
+      },
+      "clock_skew": {
+        "label": "Device clock wrong",
+        "what": "The device clock was more than 5 minutes fast. The time of the operation was corrected to the server time.",
+        "todo": "Check the device’s date and time and turn on automatic time setting."
+      },
+      "invalid": {
+        "label": "Invalid operation",
+        "what": "The operation was incomplete or belonged to another location. It was not accepted.",
+        "todo": "Check with the person at the device what was meant to be recorded and re-enter it if needed. If this happens often, contact support."
+      }
+    }
+  }
+}

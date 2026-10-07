@@ -69,6 +69,7 @@
     "tax": "TVA",
     "customers": "Clients",
     "audit": "Journal",
+    "syncConflicts": "Conflits",
     "settings": "Paramètres",
     "supportAccess": "Accès support",
     "apiKeys": "Clés API",

@@ -69,6 +69,7 @@
     "tax": "IVA",
     "customers": "Clienti",
     "audit": "Registro",
+    "syncConflicts": "Conflitti",
     "settings": "Impostazioni",
     "supportAccess": "Accesso supporto",
     "apiKeys": "Chiavi API",

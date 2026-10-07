@@ -1,0 +1,118 @@
+import {
+  applyOperations,
+  DEFAULT_LOCATION_SETTINGS,
+  type FoldContext,
+  foldOperations,
+  type Operation,
+  operationOrderIds,
+  type Permission,
+  sortsAfter,
+} from '@pos/core';
+import { type OperationRow, posDb } from './db';
+import { getPos, usePos } from './store';
+
+/**
+ * The order engine on the device (DEC-021): the same fold as the cloud, over every operation the
+ * device knows. A new local operation is applied incrementally (RNF-06: < 200 ms per item); an
+ * operation that arrives late from another device makes it refold from scratch.
+ */
+
+const known = new Map<string, Operation>();
+
+function context(): FoldContext {
+  const { bootstrap, credentials } = getPos();
+  const permissions = new Map<string, ReadonlySet<Permission>>(
+    (credentials?.users ?? []).map((user) => [user.id, new Set(user.permissions as Permission[])]),
+  );
+  return {
+    settings: bootstrap?.location.settings ?? DEFAULT_LOCATION_SETTINGS,
+    // Without credentials yet, nothing can be checked locally; the cloud re-validates anyway.
+    permissionsOf: credentials ? (userId) => permissions.get(userId) ?? null : undefined,
+  };
+}
+
+function publish(fold = getPos().fold): void {
+  usePos.setState((state) => ({ fold, foldVersion: state.foldVersion + 1 }));
+}
+
+/** Folds every stored operation (at start, after pruning, or when the context changed). */
+export async function refold(): Promise<void> {
+  const rows = await posDb.ops.toArray();
+  known.clear();
+  for (const row of rows) if (!row.rejected) known.set(row.id, row.op);
+  publish(foldOperations([...known.values()], context()));
+}
+
+/** Applies new operations to the in-memory state; refolds when one sorts before the last. */
+function absorb(ops: readonly Operation[]): void {
+  const fresh = ops.filter((op) => !known.has(op.id));
+  if (fresh.length === 0) return;
+  for (const op of fresh) known.set(op.id, op);
+  const { fold } = getPos();
+  if (fresh.every((op) => sortsAfter(fold, op))) {
+    applyOperations(fold, fresh, context());
+    publish(fold);
+  } else {
+    publish(foldOperations([...known.values()], context()));
+  }
+}
+
+/**
+ * Records an operation made on this device: stored first (so nothing is lost if the tablet
+ * restarts), then applied. Returns once both are done.
+ */
+export async function dispatch(op: Operation): Promise<void> {
+  const row: OperationRow = {
+    id: op.id,
+    hlc: op.hlc,
+    op,
+    own: 1,
+    cloudAcked: 0,
+    ackedBy: [],
+    conflicts: [],
+    rejected: 0,
+  };
+  await posDb.ops.put(row);
+  absorb([op]);
+  usePos.setState((state) => ({ sync: { ...state.sync, pending: state.sync.pending + 1 } }));
+}
+
+/** Operations received from a node (pull): stored and applied. */
+export async function ingest(rows: readonly OperationRow[]): Promise<void> {
+  if (rows.length === 0) return;
+  await posDb.ops.bulkPut([...rows]);
+  absorb(rows.filter((row) => !row.rejected).map((row) => row.op));
+}
+
+/** True when the operation is already known (pull of an operation made here). */
+export const isKnown = (id: string) => known.has(id);
+
+/** Hours a closed order stays on the device for refunds, copies and reopening (§4). */
+const KEEP_CLOSED_HOURS = 36;
+
+/**
+ * Drops from the device the operations of orders closed or voided long ago, once the cloud has
+ * all of them (docs/SYNC.md §13). The cloud keeps them; older corrections need a connection.
+ */
+export async function prune(now = Date.now()): Promise<number> {
+  const { fold } = getPos();
+  const limit = now - KEEP_CLOSED_HOURS * 3_600_000;
+  const finished = new Set(
+    [...fold.orders.values()]
+      .filter((order) => {
+        const end = order.closedAt ?? order.voidedAt;
+        return order.status !== 'open' && end !== null && Date.parse(end) < limit;
+      })
+      .map((order) => order.id),
+  );
+  if (finished.size === 0) return 0;
+  const rows = await posDb.ops.toArray();
+  const removable = rows.filter((row) => {
+    const orders = operationOrderIds(row.op);
+    return row.cloudAcked === 1 && orders.length > 0 && orders.every((id) => finished.has(id));
+  });
+  if (removable.length === 0) return 0;
+  await posDb.ops.bulkDelete(removable.map((row) => row.id));
+  await refold();
+  return removable.length;
+}

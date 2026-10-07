@@ -2,6 +2,7 @@
 
 import { cn } from '@pos/ui/utils';
 import {
+  CloudAlertIcon,
   ContactIcon,
   FolderTreeIcon,
   KeyRoundIcon,
@@ -57,6 +58,12 @@ const SECTIONS: NavItem[][] = [
       permission: 'customer.manage',
     },
     { href: '/backoffice/audit', key: 'audit', icon: ScrollTextIcon, permission: 'audit.view' },
+    {
+      href: '/backoffice/sync-conflicts',
+      key: 'syncConflicts',
+      icon: CloudAlertIcon,
+      permission: 'sync.resolve_conflicts',
+    },
   ],
   [
     {

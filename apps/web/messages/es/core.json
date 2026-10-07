@@ -69,6 +69,7 @@
     "tax": "IVA (MWST)",
     "customers": "Clientes",
     "audit": "Registro de auditoría",
+    "syncConflicts": "Conflictos",
     "settings": "Ajustes",
     "supportAccess": "Acceso de soporte",
     "apiKeys": "Claves de API",

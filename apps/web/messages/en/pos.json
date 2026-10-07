@@ -1,0 +1,52 @@
+{
+  "pos": {
+    "keypad": {
+      "label": "Number pad",
+      "clear": "Clear",
+      "backspace": "Delete last digit"
+    },
+    "status": {
+      "standalone": "Offline",
+      "hub": "Local (hub)",
+      "cloud": "Online",
+      "pending": "Pending: {count}",
+      "rejected": "{count, plural, one {# operation rejected} other {# operations rejected}}"
+    },
+    "pairing": {
+      "title": "Pair device",
+      "description": "Enter the pairing code from the backoffice (Devices → Pairing code). The device needs internet access once for this.",
+      "code": "Pairing code",
+      "pair": "Pair",
+      "pairing": "Pairing…",
+      "invalidCode": "The code is wrong or has expired.",
+      "failed": "Pairing failed. Check the connection and try again."
+    },
+    "pin": {
+      "title": "Enter PIN",
+      "entered": "{count, plural, one {# digit entered} other {# digits entered}}",
+      "unlock": "Unlock",
+      "checking": "Checking…",
+      "wrong": "Wrong PIN. {attemptsLeft, plural, one {# attempt} other {# attempts}} left.",
+      "locked": "Too many wrong attempts. Locked for {minutes, plural, one {# minute} other {# minutes}}.",
+      "invalid": "The PIN has 4 to 6 digits.",
+      "noCredentials": "This device has no access data yet. Connect it to the internet once."
+    },
+    "approval": {
+      "title": "Manager approval",
+      "aboveThreshold": "This action is above the location’s threshold. A manager approves it with their PIN.",
+      "missingPermission": "You don’t have permission for this action. A manager approves it with their PIN.",
+      "approve": "Approve",
+      "refused": "Wrong PIN, or no permission for this action."
+    },
+    "shell": {
+      "navigation": "POS",
+      "floor": "Tables",
+      "orders": "Orders",
+      "bar": "Bar",
+      "takeaway": "Takeaway",
+      "lock": "Lock",
+      "updateAvailable": "A new version of the POS is ready.",
+      "updateNow": "Update now"
+    }
+  }
+}

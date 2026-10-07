@@ -1,0 +1,252 @@
+{
+  "posOrder": {
+    "common": {
+      "close": "Schliessen",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "back": "Zurück",
+      "minus": "Minus",
+      "plus": "Plus",
+      "minutes": "{minutes} min",
+      "guests": "{count, plural, one {# Gast} other {# Gäste}}",
+      "table": "Tisch {label}",
+      "tableJoined": "Tisch {label} + {joined}",
+      "orderNumber": "Bestellung {number}",
+      "seat": "Platz {seat}",
+      "course": "Gang {course}",
+      "unknownUser": "Unbekannt"
+    },
+    "errors": {
+      "generic": "Das hat nicht geklappt. Bitte versuchen Sie es noch einmal.",
+      "line": {
+        "NOT_ORDERABLE": "Dieses Produkt kann gerade nicht bestellt werden.",
+        "UNKNOWN_VARIANT": "Diese Variante gibt es nicht mehr.",
+        "INVALID_MODIFIERS": "Die Auswahl der Optionen ist nicht gültig.",
+        "INVALID_QUANTITY": "Die Menge ist nicht gültig.",
+        "INVALID_COURSE": "Der Gang ist nicht gültig."
+      }
+    },
+    "channel": {
+      "table": "Tisch",
+      "bar": "Theke",
+      "takeaway": "Take-away",
+      "qr": "QR-Bestellung",
+      "web": "Online-Bestellung",
+      "delivery": "Lieferung"
+    },
+    "tableState": {
+      "free": "Frei",
+      "reserved": "Reserviert",
+      "occupied": "Besetzt",
+      "awaiting_order": "Wartet auf Bestellung",
+      "in_kitchen": "In der Küche",
+      "ready": "Bereit",
+      "awaiting_payment": "Wartet auf Zahlung"
+    },
+    "itemStatus": {
+      "pending": "Nicht gesendet",
+      "sent": "Gesendet",
+      "preparing": "In Zubereitung",
+      "ready": "Bereit",
+      "served": "Serviert",
+      "voided": "Storniert"
+    },
+    "paymentStatus": {
+      "unpaid": "Nicht bezahlt",
+      "partial": "Teilweise bezahlt",
+      "paid": "Bezahlt",
+      "refunded": "Zurückerstattet"
+    },
+    "orderStatus": {
+      "open": "Offen",
+      "closed": "Abgeschlossen",
+      "voided": "Storniert"
+    },
+    "voidReason": {
+      "entry_error": "Fehleingabe",
+      "guest_changed_mind": "Gast verzichtet",
+      "kitchen_error": "Fehler der Küche",
+      "quality": "Qualitätsmangel",
+      "not_available": "Nicht verfügbar",
+      "other": "Anderer Grund"
+    },
+    "discountReason": {
+      "staff": "Personal",
+      "courtesy": "Kulanz",
+      "promotion": "Aktion",
+      "other": "Anderer Grund"
+    },
+    "unavailable": {
+      "inactive": "Nicht aktiv",
+      "inactive_at_location": "Hier nicht im Angebot",
+      "sold_out": "86 · Ausverkauft",
+      "not_available_now": "Jetzt nicht erhältlich",
+      "not_available_on_channel": "Nicht für diesen Kanal"
+    },
+    "floor": {
+      "empty": "Noch keine Tische eingerichtet. Theke und Take-away funktionieren trotzdem.",
+      "areas": "Bereiche",
+      "legend": "Legende",
+      "table": "Tisch {label}",
+      "joinedTo": "Verbunden mit Tisch {label}",
+      "sinceSent": "{minutes, plural, one {# Minute} other {# Minuten}} seit dem letzten Senden",
+      "chooseDescription": "An diesem Tisch sind mehrere Bestellungen offen, die getrennt bezahlt werden.",
+      "newOrder": "Neue Bestellung"
+    },
+    "openTable": {
+      "title": "Tisch {label} öffnen",
+      "waiter": "Bedienung: {name}",
+      "guests": "Gäste",
+      "open": "Öffnen"
+    },
+    "orders": {
+      "title": "Bestellungen",
+      "mine": "Meine Tische",
+      "open": "Alle offenen",
+      "closed": "Heute abgeschlossen",
+      "details": "Abgeschlossene Bestellung",
+      "orderTitle": "Bestellung {number} · {place}",
+      "selectClosed": "Wählen Sie eine Bestellung für Belegkopien, Rückerstattungen oder zum Wiedereröffnen.",
+      "emptyMine": "Sie haben keine offenen Bestellungen.",
+      "emptyOpen": "Keine offenen Bestellungen.",
+      "emptyClosed": "Heute wurde noch keine Bestellung abgeschlossen.",
+      "number": "Nr.",
+      "place": "Tisch / Kanal",
+      "waiter": "Bedienung",
+      "total": "Total",
+      "balance": "Offen",
+      "balanceShort": "Offen",
+      "sinceSent": "Seit Senden",
+      "closedAt": "Zeit"
+    },
+    "order": {
+      "backToFloor": "Zurück zum Tischplan",
+      "floorShort": "Tischplan",
+      "number": "Bestellung",
+      "waiter": "Bedienung: {name}",
+      "notFound": "Diese Bestellung gibt es auf diesem Gerät nicht.",
+      "mergedBanner": "Diese Bestellung wurde in Bestellung {number} zusammengeführt.",
+      "voidedBanner": "Diese Bestellung ist storniert.",
+      "closedBanner": "Diese Bestellung ist abgeschlossen.",
+      "toOrders": "Zu den Bestellungen",
+      "menu": "Karte",
+      "ticketTab": "Bon ({count}) · {total}"
+    },
+    "menu": {
+      "title": "Speisekarte",
+      "categories": "Kategorien",
+      "empty": "Für diesen Kanal sind keine Produkte verfügbar.",
+      "options": "Optionen"
+    },
+    "product": {
+      "variant": "Variante",
+      "chooseExactly": "Bitte {count} wählen",
+      "chooseRange": "{min} bis {max} wählen",
+      "chooseOptional": "Optional",
+      "chooseUpTo": "Optional, bis zu {max}",
+      "quantity": "Menge",
+      "note": "Notiz",
+      "notePlaceholder": "z. B. ohne Zwiebeln",
+      "seat": "Platz",
+      "course": "Gang",
+      "total": "Total {amount}",
+      "add": "Hinzufügen"
+    },
+    "ticket": {
+      "title": "Bon",
+      "empty": "Noch keine Positionen. Tippen Sie auf ein Produkt.",
+      "course": "Gang {course}",
+      "lineActions": "Position bearbeiten",
+      "note": "Notiz: {note}",
+      "lineDiscount": "Rabatt: {label}",
+      "subtotal": "Zwischensumme",
+      "lineDiscounts": "Rabatte auf Positionen",
+      "orderDiscount": "Rabatt auf Bestellung: {label}",
+      "removeDiscount": "Rabatt entfernen",
+      "total": "Total",
+      "tax": "inkl. MWST",
+      "paid": "Bezahlt",
+      "balance": "Offen"
+    },
+    "line": {
+      "discount": "Rabatt",
+      "removeDiscount": "Rabatt entfernen",
+      "serve": "Als serviert markieren",
+      "void": "Stornieren",
+      "voidSentHint": "Die Position ist schon in der Küche: Die Küche sieht sie durchgestrichen."
+    },
+    "discount": {
+      "base": "Rabattierbarer Betrag: {amount}",
+      "nothingToDiscount": "Es gibt keinen Betrag, der rabattiert werden kann.",
+      "presets": "Häufige Rabatte",
+      "custom": "Eigener Rabatt",
+      "kind": "Art des Rabatts",
+      "percent": "Prozent",
+      "amount": "Betrag",
+      "valuePercent": "Rabatt in %",
+      "valueAmount": "Rabatt in CHF",
+      "invalidPercent": "Geben Sie einen Wert von 0.01 bis 100 ein.",
+      "invalidAmount": "Geben Sie einen Betrag grösser als 0 ein, z. B. 5.50.",
+      "reason": "Grund",
+      "note": "Bemerkung",
+      "noteRequired": "Bitte beschreiben Sie den Grund.",
+      "apply": "Rabatt gewähren",
+      "approvalHint": "Über dem Grenzwert des Standorts gibt eine Führungsperson den Rabatt mit ihrer PIN frei."
+    },
+    "void": {
+      "reason": "Grund",
+      "quantity": "Menge",
+      "note": "Bemerkung",
+      "noteRequired": "Bitte beschreiben Sie den Grund.",
+      "confirm": "Stornieren"
+    },
+    "actions": {
+      "more": "Mehr",
+      "send": "Senden",
+      "sendCourse": "Gang {course} schicken",
+      "served": "Serviert",
+      "handedOver": "Ausgegeben",
+      "pay": "Bezahlen",
+      "sendFirst": "Zuerst alles an die Küche senden, dann bezahlen."
+    },
+    "more": {
+      "title": "Weitere Aktionen",
+      "discount": "Rabatt auf Bestellung",
+      "guests": "Gäste ändern",
+      "waiter": "Bedienung wechseln",
+      "move": "Tisch wechseln",
+      "join": "Tische verbinden oder trennen",
+      "newOrderAtTable": "Weitere Bestellung am Tisch",
+      "transfer": "Positionen übertragen",
+      "merge": "Mit anderer Bestellung zusammenführen",
+      "split": "Rechnung teilen",
+      "toTakeaway": "Zum Mitnehmen (Take-away)",
+      "toOnPremise": "Im Lokal essen",
+      "cancel": "Bestellung stornieren",
+      "paidHint": "Diese Bestellung hat bereits Zahlungen: Übertragen, Zusammenführen, Teilen und Stornieren sind nicht mehr möglich.",
+      "noTransferPermission": "Für Übertragen, Zusammenführen und Teilen fehlt Ihnen die Berechtigung.",
+      "channelPaidHint": "Nach einer Zahlung kann der Kanal nicht mehr gewechselt werden.",
+      "moveDescription": "Wählen Sie den neuen Tisch. Positionen und Zahlungen ziehen mit.",
+      "joinDescription": "Verbundene Tische gehören zu dieser Bestellung. Tippen Sie erneut, um einen Tisch zu trennen.",
+      "noOtherOrders": "Es gibt keine andere offene Bestellung.",
+      "transferItems": "Positionen",
+      "transferTarget": "In Bestellung",
+      "transferConfirm": "Übertragen",
+      "mergeDescription": "Alle Positionen dieser Bestellung gehen in die gewählte Bestellung. Ein Rabatt auf diese Bestellung fällt weg.",
+      "mergeTarget": "Zusammenführen mit",
+      "mergeConfirm": "Zusammenführen",
+      "splitDescription": "Die gewählten Positionen kommen in eine neue Bestellung, die separat bezahlt wird.",
+      "splitBySeat": "Nach Platz",
+      "splitItems": "Positionen für die neue Bestellung",
+      "splitKeepOne": "Mindestens eine Position muss in dieser Bestellung bleiben.",
+      "splitConfirm": "Teilen",
+      "splitDone": "Bestellung {number} wurde erstellt.",
+      "payNew": "Neue Bestellung bezahlen",
+      "openNew": "Neue Bestellung öffnen",
+      "stayHere": "Hier bleiben",
+      "channelDescription": "Von {from} zu {to}: Die MWST aller Positionen wird neu berechnet.",
+      "channelConfirm": "Zu {to} wechseln",
+      "cancelDescription": "Alle Positionen werden storniert. Nichts wird gelöscht; der Grund bleibt im Protokoll."
+    }
+  }
+}

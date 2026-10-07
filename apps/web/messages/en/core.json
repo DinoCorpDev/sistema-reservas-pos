@@ -69,6 +69,7 @@
     "tax": "VAT (MWST)",
     "customers": "Guests",
     "audit": "Audit log",
+    "syncConflicts": "Conflicts",
     "settings": "Settings",
     "supportAccess": "Support access",
     "apiKeys": "API keys",

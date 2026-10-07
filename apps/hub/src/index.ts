@@ -1,7 +1,22 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { createPool } from '@pos/db';
+import { createApiApp, resolveTerminal } from '@pos/api';
+import { createDb } from '@pos/db';
+import { cloudFetcher, cloudJson } from './cloud';
+import { syncConfig } from './config-sync';
+import { startCloudLink } from './node';
 import { startHub } from './server';
+import { StateFile } from './state';
+
+/**
+ * The LAN hub of a location (docs/SYNC.md §11, DEC-028). Configuration by environment:
+ * - HUB_DATABASE_URL: its own MySQL (same schema as the cloud).
+ * - HUB_CLOUD_URL: the cloud (default http://localhost:3000).
+ * - HUB_PAIRING_CODE: on the first start, a pairing code of a terminal of type `hub`.
+ * - HUB_STATE_FILE: where the device token and cursors are kept (default .hub-state.json).
+ * - HUB_AUTHORITY=false for a standby hub that must not number orders (§11.4).
+ * - HUB_ALLOWED_ORIGINS: comma-separated origins of the POS (default any).
+ */
 
 // In development the monorepo root .env is used; at the location, the service's variables.
 const rootEnv = resolve(process.cwd(), '../../.env');
@@ -11,23 +26,88 @@ if (existsSync(rootEnv)) {
 
 const port = Number(process.env.HUB_PORT ?? 4100);
 const databaseUrl = process.env.HUB_DATABASE_URL;
-const pool = databaseUrl ? createPool(databaseUrl, { connectionLimit: 5 }) : null;
+if (!databaseUrl) {
+  console.error('HUB_DATABASE_URL is required');
+  process.exit(1);
+}
+const cloudUrl = process.env.HUB_CLOUD_URL ?? 'http://localhost:3000';
+const state = new StateFile(
+  process.env.HUB_STATE_FILE ?? resolve(process.cwd(), '.hub-state.json'),
+);
+const authority = process.env.HUB_AUTHORITY !== 'false';
+const cloud = cloudFetcher(cloudUrl, () => state.value.deviceToken);
 
-const hub = await startHub({
-  port,
-  pingDatabase: pool
-    ? async () => {
-        await pool.query('SELECT 1');
-      }
-    : null,
+if (!state.value.deviceToken) {
+  const code = process.env.HUB_PAIRING_CODE;
+  if (!code) {
+    // Not paired yet (e.g. `pnpm dev` on a laptop): only /health, so the rest keeps running.
+    console.warn(
+      'The hub is not paired: create a terminal of type "hub" in the backoffice and start the hub with HUB_PAIRING_CODE=<code>. Serving /health only.',
+    );
+    const idle = await startHub({ port, pingDatabase: null });
+    console.log(`Hub (unpaired) listening on http://0.0.0.0:${idle.port}`);
+    await new Promise(() => undefined);
+  }
+  const paired = await cloudJson<{
+    deviceToken: string;
+    organizationId: string;
+    location: { id: string };
+  }>(cloud, '/terminals/pair', { method: 'POST', body: { code } });
+  state.update({
+    deviceToken: paired.deviceToken,
+    organizationId: paired.organizationId,
+    locationId: paired.location.id,
+  });
+  console.log('Hub paired with the cloud.');
+}
+
+const { db, pool } = createDb(databaseUrl, { connectionLimit: 8 });
+try {
+  await syncConfig(db, cloud);
+} catch (error) {
+  // Without internet the hub starts with the configuration it already has.
+  console.warn('Cloud not reachable at start; using the stored configuration.', String(error));
+}
+
+const scope = { organizationId: state.value.organizationId!, locationId: state.value.locationId! };
+const api = createApiApp({
+  db,
+  modules: 'sync',
+  node: { kind: 'hub', authority, configVersion: () => state.value.cloudConfigVersion },
 });
 
-console.log(`Hub listening on http://0.0.0.0:${hub.port} (WebSocket /ws)`);
+let link: ReturnType<typeof startCloudLink> | null = null;
+const hub = await startHub({
+  port,
+  pingDatabase: async () => {
+    await pool.query('SELECT 1');
+  },
+  api,
+  onPushed: () => link?.kick(),
+  allowedOrigins: process.env.HUB_ALLOWED_ORIGINS?.split(',').map((o) => o.trim()),
+  realtime: {
+    authority,
+    authenticate: async (token) => {
+      try {
+        const terminal = await resolveTerminal(db, token);
+        return terminal.locationId === scope.locationId;
+      } catch {
+        return false;
+      }
+    },
+  },
+});
+link = startCloudLink({ db, cloud, scope, state, broadcast: hub.broadcast });
+
+console.log(
+  `Hub listening on http://0.0.0.0:${hub.port} (WebSocket /ws), cloud ${cloudUrl}, ${authority ? 'numbering authority' : 'standby'}`,
+);
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.on(signal, async () => {
+    link?.stop();
     await hub.close();
-    await pool?.end();
+    await pool.end();
     process.exit(0);
   });
 }

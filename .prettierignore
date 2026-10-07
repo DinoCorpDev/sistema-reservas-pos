@@ -10,5 +10,8 @@ coverage
 playwright-report
 test-results
 packages/db/drizzle
+apps/web/public/sw.js
+apps/web/public/sw.js.map
+apps/web/public/swe-worker-*.js
 docs/requerimientos.txt
 docs/PROMPT_MAESTRO_POS.md

@@ -1,0 +1,52 @@
+{
+  "pos": {
+    "keypad": {
+      "label": "Zifferntastatur",
+      "clear": "Löschen",
+      "backspace": "Letzte Ziffer löschen"
+    },
+    "status": {
+      "standalone": "Offline",
+      "hub": "Lokal (Hub)",
+      "cloud": "Online",
+      "pending": "Ausstehend: {count}",
+      "rejected": "{count, plural, one {# Vorgang abgelehnt} other {# Vorgänge abgelehnt}}"
+    },
+    "pairing": {
+      "title": "Gerät koppeln",
+      "description": "Geben Sie den Kopplungscode aus dem Backoffice ein (Geräte → Kopplungscode). Dafür braucht das Gerät einmal Internet.",
+      "code": "Kopplungscode",
+      "pair": "Koppeln",
+      "pairing": "Wird gekoppelt…",
+      "invalidCode": "Der Code ist falsch oder abgelaufen.",
+      "failed": "Koppeln nicht möglich. Prüfen Sie die Verbindung und versuchen Sie es erneut."
+    },
+    "pin": {
+      "title": "PIN eingeben",
+      "entered": "{count, plural, one {# Ziffer eingegeben} other {# Ziffern eingegeben}}",
+      "unlock": "Entsperren",
+      "checking": "Wird geprüft…",
+      "wrong": "Falsche PIN. Noch {attemptsLeft, plural, one {# Versuch} other {# Versuche}}.",
+      "locked": "Zu viele falsche Versuche. Gesperrt für {minutes, plural, one {# Minute} other {# Minuten}}.",
+      "invalid": "Die PIN hat 4 bis 6 Ziffern.",
+      "noCredentials": "Dieses Gerät hat noch keine Zugangsdaten. Verbinden Sie es einmal mit dem Internet."
+    },
+    "approval": {
+      "title": "Freigabe durch Führungsperson",
+      "aboveThreshold": "Diese Aktion liegt über dem Grenzwert des Standorts. Eine Führungsperson gibt sie mit ihrer PIN frei.",
+      "missingPermission": "Für diese Aktion fehlt Ihnen die Berechtigung. Eine Führungsperson gibt sie mit ihrer PIN frei.",
+      "approve": "Freigeben",
+      "refused": "PIN falsch oder ohne Berechtigung für diese Aktion."
+    },
+    "shell": {
+      "navigation": "Kasse",
+      "floor": "Tische",
+      "orders": "Bestellungen",
+      "bar": "Theke",
+      "takeaway": "Take-away",
+      "lock": "Sperren",
+      "updateAvailable": "Eine neue Version der Kasse ist bereit.",
+      "updateNow": "Jetzt aktualisieren"
+    }
+  }
+}

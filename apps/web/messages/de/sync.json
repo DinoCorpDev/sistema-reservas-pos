@@ -1,0 +1,156 @@
+{
+  "syncConflicts": {
+    "title": "Synchronisationskonflikte",
+    "description": "Vorgänge, die ohne Verbindung erfasst wurden und gegen eine Regel verstossen. Sie wurden nicht blockiert: Prüfen Sie jeden Fall, korrigieren Sie ihn bei Bedarf in der Kasse und markieren Sie ihn als erledigt.",
+    "noPermission": "Für die Synchronisationskonflikte fehlt Ihnen die Berechtigung.",
+    "noLocation": "Wählen Sie oben einen Standort, um seine Konflikte zu sehen.",
+    "showResolved": "Erledigte anzeigen",
+    "empty": "Keine offenen Konflikte. Alles synchronisiert.",
+    "openCount": "{count, plural, one {# offener Konflikt} other {# offene Konflikte}}",
+    "deviceTime": "Zeit auf dem Gerät",
+    "receivedAt": "Empfangen {time}",
+    "operation": "Vorgang",
+    "order": "Bestellung",
+    "noOrder": "Ohne Bestellung",
+    "person": "Person",
+    "unknownPerson": "Unbekannt",
+    "terminal": "Gerät {name}",
+    "whatToDo": "Was tun",
+    "resolve": "Erledigt",
+    "resolvedBadge": "Erledigt",
+    "resolvedBy": "Erledigt am {date} von {person}",
+    "resolveTitle": "Konflikt als erledigt markieren",
+    "resolveText": "Halten Sie fest, was Sie unternommen haben. Die Notiz wird im Protokoll gespeichert.",
+    "note": "Notiz",
+    "notePlaceholder": "z. B. Differenz von CHF 12.50 bar zurückerstattet",
+    "noteRequired": "Bitte geben Sie eine Notiz ein (höchstens 500 Zeichen).",
+    "resolved": "Konflikt als erledigt markiert.",
+    "hints": {
+      "payment": "Zahlung {amount} ({method})",
+      "refund": "Rückerstattung {amount} ({method})",
+      "opened": "Bestellung Nr. {number}",
+      "split": "Neue Bestellung Nr. {number}"
+    },
+    "methods": {
+      "cash": "Bar",
+      "card": "Karte",
+      "twint": "TWINT",
+      "online": "Online",
+      "voucher": "Gutschein"
+    },
+    "operations": {
+      "order": {
+        "open": "Bestellung eröffnet",
+        "update": "Bestellung geändert",
+        "change_channel": "Kanal geändert",
+        "merge": "Bestellungen zusammengelegt",
+        "split": "Bestellung geteilt",
+        "reopen": "Bestellung wieder geöffnet",
+        "void": "Bestellung storniert"
+      },
+      "items": {
+        "add": "Positionen hinzugefügt",
+        "send": "An die Küche gesendet",
+        "serve": "Als serviert markiert",
+        "transfer": "Positionen umgebucht"
+      },
+      "item": {
+        "update": "Position geändert",
+        "void": "Position storniert"
+      },
+      "discount": {
+        "apply": "Rabatt gewährt",
+        "remove": "Rabatt entfernt"
+      },
+      "payment": {
+        "record": "Zahlung"
+      },
+      "refund": {
+        "record": "Rückerstattung"
+      },
+      "receipt": {
+        "reprint": "Beleg erneut gedruckt"
+      },
+      "terminal": {
+        "unlocked": "Gerät mit PIN entsperrt",
+        "pin_failed": "Falsche PIN eingegeben"
+      }
+    },
+    "unknownCode": {
+      "what": "Bei der Synchronisation wurde eine Regelverletzung festgestellt.",
+      "todo": "Prüfen Sie den Vorgang und die Bestellung in der Kasse."
+    },
+    "codes": {
+      "overpayment": {
+        "label": "Überzahlung",
+        "what": "Die Bestellung wurde doppelt oder zu viel bezahlt, zum Beispiel an zwei Kassen, während keine Verbindung bestand. Die Zahlung wurde trotzdem übernommen.",
+        "todo": "Prüfen Sie den Betrag und erstatten Sie die Differenz in der Kasse zurück."
+      },
+      "payment_on_closed_order": {
+        "label": "Zahlung nach Abschluss",
+        "what": "Eine Zahlung ist bei einer Bestellung eingegangen, die bereits bezahlt oder abgeschlossen war. Die Zahlung wurde trotzdem übernommen.",
+        "todo": "Klären Sie, ob der Gast doppelt bezahlt hat, und erstatten Sie den Betrag wenn nötig in der Kasse zurück."
+      },
+      "refund_exceeds_payment": {
+        "label": "Rückerstattung zu hoch",
+        "what": "Es wurde mehr zurückerstattet, als mit dieser Zahlung bezahlt worden war. Die Rückerstattung wurde trotzdem übernommen.",
+        "todo": "Vergleichen Sie Zahlung und Rückerstattung, zählen Sie die Kasse nach und klären Sie die Differenz mit der verantwortlichen Person."
+      },
+      "source_has_payments": {
+        "label": "Bestellung mit Zahlungen",
+        "what": "Positionen sollten umgebucht oder Bestellungen zusammengelegt oder geteilt werden, aber die Bestellung hatte bereits Zahlungen. Der Vorgang wurde nicht ausgeführt.",
+        "todo": "Prüfen Sie die Bestellungen in der Kasse und wiederholen Sie den Vorgang, falls er noch nötig ist."
+      },
+      "order_not_found": {
+        "label": "Bestellung unbekannt",
+        "what": "Der Vorgang betrifft eine Bestellung, die das System nicht kennt. Er hatte keine Wirkung.",
+        "todo": "Meist trifft die Bestellung von einem anderen Gerät noch ein; dann wird der Vorgang automatisch nachgeholt. Fehlt sie weiterhin, prüfen Sie, ob alle Kassen verbunden sind."
+      },
+      "order_state": {
+        "label": "Bestellung nicht mehr offen",
+        "what": "Der Vorgang betraf eine Bestellung, die bereits bezahlt, abgeschlossen oder storniert war. Eine Stornierung wurde trotzdem übernommen, andere Änderungen hatten keine Wirkung.",
+        "todo": "Prüfen Sie die Bestellung. Wurde nach dem Bezahlen etwas storniert, erstatten Sie den Betrag in der Kasse zurück; sonst wiederholen Sie den Vorgang, falls er noch nötig ist."
+      },
+      "item_not_found": {
+        "label": "Position unbekannt",
+        "what": "Der Vorgang betrifft eine Position, die das System nicht kennt. Er hatte keine Wirkung.",
+        "todo": "Trifft die Position später noch ein, wird der Vorgang automatisch nachgeholt. Fehlt sie weiterhin, prüfen Sie die Bestellung in der Kasse."
+      },
+      "item_state": {
+        "label": "Position nicht mehr änderbar",
+        "what": "Eine Position sollte geändert werden, obwohl das in ihrem Zustand nicht mehr ging, zum Beispiel die Menge nach dem Senden an die Küche. Der Vorgang hatte keine Wirkung.",
+        "todo": "Prüfen Sie die Bestellung in der Kasse und korrigieren Sie sie bei Bedarf, zum Beispiel mit einer Stornierung."
+      },
+      "implicit_reopen": {
+        "label": "Bestellung wieder geöffnet",
+        "what": "Zu einer bereits abgeschlossenen Bestellung wurden Positionen hinzugefügt. Die Bestellung wurde dadurch automatisch wieder geöffnet.",
+        "todo": "Prüfen Sie, ob die neuen Positionen noch bezahlt werden müssen, und kassieren oder stornieren Sie sie."
+      },
+      "approval_invalid": {
+        "label": "Freigabe ungültig",
+        "what": "Der Vorgang wurde von einer Person freigegeben, die dafür keine Berechtigung hatte. Er wurde trotzdem übernommen, weil er bereits stattgefunden hat.",
+        "todo": "Prüfen Sie, ob der Vorgang in Ordnung war, und passen Sie bei Bedarf die Berechtigungen unter «Mitarbeitende» an."
+      },
+      "user_inactive": {
+        "label": "Person deaktiviert",
+        "what": "Der Vorgang wurde mit der PIN einer Person erfasst, die zu diesem Zeitpunkt deaktiviert war. Er wurde trotzdem übernommen.",
+        "todo": "Klären Sie, wer das Gerät bedient hat, und prüfen Sie den Vorgang. Verbinden Sie die Kassen, damit sie die aktuelle Liste der Mitarbeitenden laden."
+      },
+      "duplicate_number": {
+        "label": "Nummer doppelt vergeben",
+        "what": "Eine Bestell-, Beleg- oder Kopienummer wurde doppelt vergeben. Sie wurde mit einem Zusatz gespeichert, es ging nichts verloren.",
+        "todo": "In der Regel ist nichts zu tun. Beachten Sie, dass die gespeicherte Nummer vom gedruckten Bon abweichen kann."
+      },
+      "clock_skew": {
+        "label": "Uhr des Geräts falsch",
+        "what": "Die Uhr des Geräts ging mehr als 5 Minuten vor. Die Zeit des Vorgangs wurde auf die Serverzeit korrigiert.",
+        "todo": "Prüfen Sie Datum und Uhrzeit des Geräts und aktivieren Sie die automatische Zeiteinstellung."
+      },
+      "invalid": {
+        "label": "Ungültiger Vorgang",
+        "what": "Der Vorgang war unvollständig oder gehörte zu einem anderen Standort. Er wurde nicht übernommen.",
+        "todo": "Klären Sie mit der Person am Gerät, was erfasst werden sollte, und erfassen Sie es bei Bedarf neu. Tritt das öfter auf, wenden Sie sich an den Support."
+      }
+    }
+  }
+}

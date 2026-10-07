@@ -12,7 +12,6 @@ test.describe('Smoke', () => {
   });
 
   for (const [path, heading] of [
-    ['/pos', 'Kasse & Service'],
     ['/kds', 'Küche (KDS)'],
     ['/qr/demo-table', 'Menü'],
   ] as const) {
@@ -21,6 +20,12 @@ test.describe('Smoke', () => {
       await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible();
     });
   }
+
+  test('/pos asks a new device to pair', async ({ page }) => {
+    await page.goto('/pos');
+    await expect(page.getByText('Gerät koppeln')).toBeVisible();
+    await expect(page.getByLabel('Kopplungscode')).toBeVisible();
+  });
 
   test('the backoffice requires signing in', async ({ page }) => {
     await page.goto('/backoffice');

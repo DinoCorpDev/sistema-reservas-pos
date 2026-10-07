@@ -1,0 +1,156 @@
+{
+  "syncConflicts": {
+    "title": "Conflitti di sincronizzazione",
+    "description": "Operazioni registrate senza connessione che violano una regola. Non sono state bloccate: verifichi ogni caso, se necessario lo corregga alla cassa e lo segni come risolto.",
+    "noPermission": "Non dispone dell’autorizzazione per i conflitti di sincronizzazione.",
+    "noLocation": "Selezioni una sede in alto per vederne i conflitti.",
+    "showResolved": "Mostra risolti",
+    "empty": "Nessun conflitto aperto. Tutto sincronizzato.",
+    "openCount": "{count, plural, one {# conflitto aperto} other {# conflitti aperti}}",
+    "deviceTime": "Ora sul dispositivo",
+    "receivedAt": "Ricevuto il {time}",
+    "operation": "Operazione",
+    "order": "Ordine",
+    "noOrder": "Senza ordine",
+    "person": "Persona",
+    "unknownPerson": "Sconosciuta",
+    "terminal": "Dispositivo {name}",
+    "whatToDo": "Cosa fare",
+    "resolve": "Segna come risolto",
+    "resolvedBadge": "Risolto",
+    "resolvedBy": "Risolto il {date} da {person}",
+    "resolveTitle": "Segna il conflitto come risolto",
+    "resolveText": "Annoti cosa ha fatto. La nota viene salvata nel registro.",
+    "note": "Nota",
+    "notePlaceholder": "p. es. differenza di CHF 12.50 rimborsata in contanti",
+    "noteRequired": "Inserisca una nota (al massimo 500 caratteri).",
+    "resolved": "Conflitto segnato come risolto.",
+    "hints": {
+      "payment": "Pagamento {amount} ({method})",
+      "refund": "Rimborso {amount} ({method})",
+      "opened": "Ordine n. {number}",
+      "split": "Nuovo ordine n. {number}"
+    },
+    "methods": {
+      "cash": "Contanti",
+      "card": "Carta",
+      "twint": "TWINT",
+      "online": "Online",
+      "voucher": "Buono"
+    },
+    "operations": {
+      "order": {
+        "open": "Ordine aperto",
+        "update": "Ordine modificato",
+        "change_channel": "Canale cambiato",
+        "merge": "Ordini uniti",
+        "split": "Ordine diviso",
+        "reopen": "Ordine riaperto",
+        "void": "Ordine stornato"
+      },
+      "items": {
+        "add": "Articoli aggiunti",
+        "send": "Inviato in cucina",
+        "serve": "Segnato come servito",
+        "transfer": "Articoli trasferiti"
+      },
+      "item": {
+        "update": "Articolo modificato",
+        "void": "Articolo stornato"
+      },
+      "discount": {
+        "apply": "Sconto concesso",
+        "remove": "Sconto rimosso"
+      },
+      "payment": {
+        "record": "Pagamento"
+      },
+      "refund": {
+        "record": "Rimborso"
+      },
+      "receipt": {
+        "reprint": "Scontrino ristampato"
+      },
+      "terminal": {
+        "unlocked": "Dispositivo sbloccato con PIN",
+        "pin_failed": "PIN errato inserito"
+      }
+    },
+    "unknownCode": {
+      "what": "Durante la sincronizzazione è stata rilevata la violazione di una regola.",
+      "todo": "Verifichi l’operazione e l’ordine alla cassa."
+    },
+    "codes": {
+      "overpayment": {
+        "label": "Pagamento in eccesso",
+        "what": "L’ordine è stato pagato due volte o in eccesso, per esempio a due casse mentre non c’era connessione. Il pagamento è stato comunque accettato.",
+        "todo": "Verifichi l’importo e rimborsi la differenza alla cassa."
+      },
+      "payment_on_closed_order": {
+        "label": "Pagamento dopo la chiusura",
+        "what": "È arrivato un pagamento per un ordine già pagato o chiuso. Il pagamento è stato comunque accettato.",
+        "todo": "Chiarisca se il cliente ha pagato due volte e, se necessario, rimborsi l’importo alla cassa."
+      },
+      "refund_exceeds_payment": {
+        "label": "Rimborso troppo alto",
+        "what": "È stato rimborsato più di quanto pagato con questo pagamento. Il rimborso è stato comunque accettato.",
+        "todo": "Confronti pagamento e rimborso, riconti la cassa e chiarisca la differenza con la persona responsabile."
+      },
+      "source_has_payments": {
+        "label": "Ordine con pagamenti",
+        "what": "Si dovevano trasferire articoli oppure unire o dividere ordini, ma l’ordine aveva già dei pagamenti. L’operazione non è stata eseguita.",
+        "todo": "Verifichi gli ordini alla cassa e ripeta l’operazione se è ancora necessaria."
+      },
+      "order_not_found": {
+        "label": "Ordine sconosciuto",
+        "what": "L’operazione riguarda un ordine che il sistema non conosce. Non ha avuto alcun effetto.",
+        "todo": "Di solito l’ordine arriva ancora da un altro dispositivo; in tal caso l’operazione viene recuperata automaticamente. Se continua a mancare, verifichi che tutte le casse siano collegate."
+      },
+      "order_state": {
+        "label": "Ordine non più aperto",
+        "what": "L’operazione riguardava un ordine già pagato, chiuso o stornato. Uno storno è stato comunque accettato, le altre modifiche non hanno avuto effetto.",
+        "todo": "Verifichi l’ordine. Se dopo il pagamento è stato stornato qualcosa, rimborsi l’importo alla cassa; altrimenti ripeta l’operazione se è ancora necessaria."
+      },
+      "item_not_found": {
+        "label": "Articolo sconosciuto",
+        "what": "L’operazione riguarda un articolo che il sistema non conosce. Non ha avuto alcun effetto.",
+        "todo": "Se l’articolo arriva in seguito, l’operazione viene recuperata automaticamente. Se continua a mancare, verifichi l’ordine alla cassa."
+      },
+      "item_state": {
+        "label": "Articolo non più modificabile",
+        "what": "Si doveva modificare un articolo anche se il suo stato non lo permetteva più, per esempio la quantità dopo l’invio in cucina. L’operazione non ha avuto effetto.",
+        "todo": "Verifichi l’ordine alla cassa e, se necessario, lo corregga, per esempio con uno storno."
+      },
+      "implicit_reopen": {
+        "label": "Ordine riaperto",
+        "what": "Sono stati aggiunti articoli a un ordine già chiuso. L’ordine è stato quindi riaperto automaticamente.",
+        "todo": "Verifichi se i nuovi articoli devono ancora essere pagati e li incassi o li storni."
+      },
+      "approval_invalid": {
+        "label": "Autorizzazione non valida",
+        "what": "L’operazione è stata autorizzata da una persona che non ne aveva il diritto. È stata comunque accettata perché è già avvenuta.",
+        "todo": "Verifichi se l’operazione era corretta e, se necessario, adegui le autorizzazioni in «Personale»."
+      },
+      "user_inactive": {
+        "label": "Persona disattivata",
+        "what": "L’operazione è stata registrata con il PIN di una persona che in quel momento era disattivata. È stata comunque accettata.",
+        "todo": "Chiarisca chi utilizzava il dispositivo e verifichi l’operazione. Colleghi le casse affinché carichino l’elenco aggiornato del personale."
+      },
+      "duplicate_number": {
+        "label": "Numero assegnato due volte",
+        "what": "Un numero d’ordine, di scontrino o di copia è stato assegnato due volte. È stato salvato con un’aggiunta; non è andato perso nulla.",
+        "todo": "Di norma non c’è nulla da fare. Tenga presente che il numero salvato può differire da quello stampato sullo scontrino."
+      },
+      "clock_skew": {
+        "label": "Orologio del dispositivo errato",
+        "what": "L’orologio del dispositivo era avanti di più di 5 minuti. L’ora dell’operazione è stata corretta sull’ora del server.",
+        "todo": "Verifichi data e ora del dispositivo e attivi l’impostazione automatica dell’ora."
+      },
+      "invalid": {
+        "label": "Operazione non valida",
+        "what": "L’operazione era incompleta o apparteneva a un’altra sede. Non è stata accettata.",
+        "todo": "Chiarisca con la persona al dispositivo cosa doveva essere registrato e, se necessario, lo registri di nuovo. Se succede spesso, si rivolga al supporto."
+      }
+    }
+  }
+}

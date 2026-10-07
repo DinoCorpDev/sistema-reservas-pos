@@ -1,0 +1,156 @@
+{
+  "syncConflicts": {
+    "title": "Conflictos de sincronización",
+    "description": "Operaciones registradas sin conexión que incumplen una regla. No se bloquearon: revise cada caso, corríjalo en la caja si es necesario y márquelo como resuelto.",
+    "noPermission": "No tiene permiso para ver los conflictos de sincronización.",
+    "noLocation": "Seleccione una sede arriba para ver sus conflictos.",
+    "showResolved": "Mostrar resueltos",
+    "empty": "No hay conflictos pendientes. Todo está sincronizado.",
+    "openCount": "{count, plural, one {# conflicto pendiente} other {# conflictos pendientes}}",
+    "deviceTime": "Hora en el dispositivo",
+    "receivedAt": "Recibido el {time}",
+    "operation": "Operación",
+    "order": "Pedido",
+    "noOrder": "Sin pedido",
+    "person": "Persona",
+    "unknownPerson": "Desconocida",
+    "terminal": "Dispositivo {name}",
+    "whatToDo": "Qué hacer",
+    "resolve": "Marcar como resuelto",
+    "resolvedBadge": "Resuelto",
+    "resolvedBy": "Resuelto el {date} por {person}",
+    "resolveTitle": "Marcar el conflicto como resuelto",
+    "resolveText": "Anote qué hizo. La nota se guarda en el registro de auditoría.",
+    "note": "Nota",
+    "notePlaceholder": "p. ej. diferencia de CHF 12.50 reembolsada en efectivo",
+    "noteRequired": "Ingrese una nota (máximo 500 caracteres).",
+    "resolved": "Conflicto marcado como resuelto.",
+    "hints": {
+      "payment": "Pago {amount} ({method})",
+      "refund": "Reembolso {amount} ({method})",
+      "opened": "Pedido n.º {number}",
+      "split": "Nuevo pedido n.º {number}"
+    },
+    "methods": {
+      "cash": "Efectivo",
+      "card": "Tarjeta",
+      "twint": "TWINT",
+      "online": "En línea",
+      "voucher": "Vale"
+    },
+    "operations": {
+      "order": {
+        "open": "Pedido abierto",
+        "update": "Pedido modificado",
+        "change_channel": "Canal cambiado",
+        "merge": "Pedidos fusionados",
+        "split": "Pedido dividido",
+        "reopen": "Pedido reabierto",
+        "void": "Pedido anulado"
+      },
+      "items": {
+        "add": "Ítems agregados",
+        "send": "Enviado a cocina",
+        "serve": "Marcado como servido",
+        "transfer": "Ítems transferidos"
+      },
+      "item": {
+        "update": "Ítem modificado",
+        "void": "Ítem anulado"
+      },
+      "discount": {
+        "apply": "Descuento aplicado",
+        "remove": "Descuento quitado"
+      },
+      "payment": {
+        "record": "Pago"
+      },
+      "refund": {
+        "record": "Reembolso"
+      },
+      "receipt": {
+        "reprint": "Recibo reimpreso"
+      },
+      "terminal": {
+        "unlocked": "Dispositivo desbloqueado con PIN",
+        "pin_failed": "PIN incorrecto ingresado"
+      }
+    },
+    "unknownCode": {
+      "what": "Durante la sincronización se detectó el incumplimiento de una regla.",
+      "todo": "Revise la operación y el pedido en la caja."
+    },
+    "codes": {
+      "overpayment": {
+        "label": "Pago excesivo",
+        "what": "El pedido se pagó dos veces o de más, por ejemplo en dos cajas mientras no había conexión. El pago se aceptó de todos modos.",
+        "todo": "Revise el monto y reembolse la diferencia en la caja."
+      },
+      "payment_on_closed_order": {
+        "label": "Pago después del cierre",
+        "what": "Llegó un pago para un pedido que ya estaba pagado o cerrado. El pago se aceptó de todos modos.",
+        "todo": "Aclare si el cliente pagó dos veces y, si es necesario, reembolse el monto en la caja."
+      },
+      "refund_exceeds_payment": {
+        "label": "Reembolso demasiado alto",
+        "what": "Se reembolsó más de lo que se había pagado con este pago. El reembolso se aceptó de todos modos.",
+        "todo": "Compare el pago y el reembolso, vuelva a contar la caja y aclare la diferencia con el gerente."
+      },
+      "source_has_payments": {
+        "label": "Pedido con pagos",
+        "what": "Se iban a transferir ítems o a fusionar o dividir pedidos, pero el pedido ya tenía pagos. La operación no se realizó.",
+        "todo": "Revise los pedidos en la caja y repita la operación si todavía es necesaria."
+      },
+      "order_not_found": {
+        "label": "Pedido desconocido",
+        "what": "La operación se refiere a un pedido que el sistema no conoce. No tuvo ningún efecto.",
+        "todo": "Por lo general, el pedido todavía llega desde otro dispositivo; entonces la operación se aplica automáticamente. Si sigue faltando, revise que todas las cajas estén conectadas."
+      },
+      "order_state": {
+        "label": "Pedido ya no abierto",
+        "what": "La operación se refería a un pedido que ya estaba pagado, cerrado o anulado. Una anulación se aceptó de todos modos; los demás cambios no tuvieron efecto.",
+        "todo": "Revise el pedido. Si se anuló algo después del pago, reembolse el monto en la caja; si no, repita la operación si todavía es necesaria."
+      },
+      "item_not_found": {
+        "label": "Ítem desconocido",
+        "what": "La operación se refiere a un ítem que el sistema no conoce. No tuvo ningún efecto.",
+        "todo": "Si el ítem llega más tarde, la operación se aplica automáticamente. Si sigue faltando, revise el pedido en la caja."
+      },
+      "item_state": {
+        "label": "Ítem ya no modificable",
+        "what": "Se intentó modificar un ítem aunque su estado ya no lo permitía, por ejemplo la cantidad después de enviarlo a la cocina. La operación no tuvo efecto.",
+        "todo": "Revise el pedido en la caja y corríjalo si es necesario, por ejemplo con una anulación."
+      },
+      "implicit_reopen": {
+        "label": "Pedido reabierto",
+        "what": "Se agregaron ítems a un pedido que ya estaba cerrado. Por eso el pedido se reabrió automáticamente.",
+        "todo": "Revise si los nuevos ítems todavía deben pagarse y cóbrelos o anúlelos."
+      },
+      "approval_invalid": {
+        "label": "Autorización no válida",
+        "what": "La operación fue autorizada por una persona que no tenía permiso para ello. Se aceptó de todos modos porque ya ocurrió.",
+        "todo": "Revise si la operación era correcta y, si es necesario, ajuste los permisos en «Personal»."
+      },
+      "user_inactive": {
+        "label": "Persona desactivada",
+        "what": "La operación se registró con el PIN de una persona que en ese momento estaba desactivada. Se aceptó de todos modos.",
+        "todo": "Aclare quién estaba usando el dispositivo y revise la operación. Conecte las cajas para que carguen la lista actual del personal."
+      },
+      "duplicate_number": {
+        "label": "Número duplicado",
+        "what": "Un número de pedido, de recibo o de copia se asignó dos veces. Se guardó con un sufijo; no se perdió nada.",
+        "todo": "Por lo general no hay que hacer nada. Tenga en cuenta que el número guardado puede ser distinto del impreso en el recibo."
+      },
+      "clock_skew": {
+        "label": "Reloj del dispositivo incorrecto",
+        "what": "El reloj del dispositivo estaba adelantado más de 5 minutos. La hora de la operación se corrigió según la hora del servidor.",
+        "todo": "Revise la fecha y la hora del dispositivo y active el ajuste automático de la hora."
+      },
+      "invalid": {
+        "label": "Operación no válida",
+        "what": "La operación estaba incompleta o pertenecía a otra sede. No se aceptó.",
+        "todo": "Aclare con la persona del dispositivo qué se quería registrar y, si es necesario, vuelva a registrarlo. Si ocurre con frecuencia, comuníquese con soporte."
+      }
+    }
+  }
+}

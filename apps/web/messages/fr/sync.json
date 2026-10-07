@@ -1,0 +1,156 @@
+{
+  "syncConflicts": {
+    "title": "Conflits de synchronisation",
+    "description": "Opérations saisies hors connexion qui enfreignent une règle. Elles n’ont pas été bloquées : vérifiez chaque cas, corrigez-le si nécessaire à la caisse et marquez-le comme traité.",
+    "noPermission": "Vous n’avez pas l’autorisation de consulter les conflits de synchronisation.",
+    "noLocation": "Choisissez un établissement en haut pour voir ses conflits.",
+    "showResolved": "Afficher les cas traités",
+    "empty": "Aucun conflit en suspens. Tout est synchronisé.",
+    "openCount": "{count, plural, one {# conflit en suspens} other {# conflits en suspens}}",
+    "deviceTime": "Heure sur l’appareil",
+    "receivedAt": "Reçu le {time}",
+    "operation": "Opération",
+    "order": "Commande",
+    "noOrder": "Sans commande",
+    "person": "Personne",
+    "unknownPerson": "Inconnue",
+    "terminal": "Appareil {name}",
+    "whatToDo": "Que faire",
+    "resolve": "Marquer comme traité",
+    "resolvedBadge": "Traité",
+    "resolvedBy": "Traité le {date} par {person}",
+    "resolveTitle": "Marquer le conflit comme traité",
+    "resolveText": "Notez ce que vous avez fait. La note est enregistrée dans le journal.",
+    "note": "Note",
+    "notePlaceholder": "p. ex. différence de CHF 12.50 remboursée en espèces",
+    "noteRequired": "Veuillez saisir une note (500 caractères au maximum).",
+    "resolved": "Conflit marqué comme traité.",
+    "hints": {
+      "payment": "Paiement {amount} ({method})",
+      "refund": "Remboursement {amount} ({method})",
+      "opened": "Commande n° {number}",
+      "split": "Nouvelle commande n° {number}"
+    },
+    "methods": {
+      "cash": "Espèces",
+      "card": "Carte",
+      "twint": "TWINT",
+      "online": "En ligne",
+      "voucher": "Bon"
+    },
+    "operations": {
+      "order": {
+        "open": "Commande ouverte",
+        "update": "Commande modifiée",
+        "change_channel": "Canal modifié",
+        "merge": "Commandes fusionnées",
+        "split": "Commande divisée",
+        "reopen": "Commande rouverte",
+        "void": "Commande annulée"
+      },
+      "items": {
+        "add": "Articles ajoutés",
+        "send": "Envoyé en cuisine",
+        "serve": "Marqué comme servi",
+        "transfer": "Articles transférés"
+      },
+      "item": {
+        "update": "Article modifié",
+        "void": "Article annulé"
+      },
+      "discount": {
+        "apply": "Rabais accordé",
+        "remove": "Rabais retiré"
+      },
+      "payment": {
+        "record": "Paiement"
+      },
+      "refund": {
+        "record": "Remboursement"
+      },
+      "receipt": {
+        "reprint": "Ticket réimprimé"
+      },
+      "terminal": {
+        "unlocked": "Appareil déverrouillé avec PIN",
+        "pin_failed": "PIN incorrect saisi"
+      }
+    },
+    "unknownCode": {
+      "what": "Une infraction à une règle a été constatée lors de la synchronisation.",
+      "todo": "Vérifiez l’opération et la commande à la caisse."
+    },
+    "codes": {
+      "overpayment": {
+        "label": "Paiement excédentaire",
+        "what": "La commande a été payée deux fois ou en trop, par exemple à deux caisses pendant une coupure de connexion. Le paiement a tout de même été pris en compte.",
+        "todo": "Vérifiez le montant et remboursez la différence à la caisse."
+      },
+      "payment_on_closed_order": {
+        "label": "Paiement après clôture",
+        "what": "Un paiement a été reçu pour une commande déjà payée ou clôturée. Le paiement a tout de même été pris en compte.",
+        "todo": "Vérifiez si le client a payé deux fois et, si nécessaire, remboursez le montant à la caisse."
+      },
+      "refund_exceeds_payment": {
+        "label": "Remboursement trop élevé",
+        "what": "Le montant remboursé dépasse ce qui avait été payé avec ce paiement. Le remboursement a tout de même été pris en compte.",
+        "todo": "Comparez le paiement et le remboursement, recomptez la caisse et clarifiez la différence avec la personne responsable."
+      },
+      "source_has_payments": {
+        "label": "Commande avec paiements",
+        "what": "Des articles devaient être transférés ou des commandes fusionnées ou divisées, mais la commande avait déjà des paiements. L’opération n’a pas été effectuée.",
+        "todo": "Vérifiez les commandes à la caisse et répétez l’opération si elle est encore nécessaire."
+      },
+      "order_not_found": {
+        "label": "Commande inconnue",
+        "what": "L’opération concerne une commande que le système ne connaît pas. Elle n’a eu aucun effet.",
+        "todo": "Le plus souvent, la commande arrive encore depuis un autre appareil ; l’opération est alors rattrapée automatiquement. Si elle manque toujours, vérifiez que toutes les caisses sont connectées."
+      },
+      "order_state": {
+        "label": "Commande plus ouverte",
+        "what": "L’opération concernait une commande déjà payée, clôturée ou annulée. Une annulation a tout de même été prise en compte ; les autres modifications n’ont eu aucun effet.",
+        "todo": "Vérifiez la commande. Si quelque chose a été annulé après le paiement, remboursez le montant à la caisse ; sinon, répétez l’opération si elle est encore nécessaire."
+      },
+      "item_not_found": {
+        "label": "Article inconnu",
+        "what": "L’opération concerne un article que le système ne connaît pas. Elle n’a eu aucun effet.",
+        "todo": "Si l’article arrive plus tard, l’opération est rattrapée automatiquement. S’il manque toujours, vérifiez la commande à la caisse."
+      },
+      "item_state": {
+        "label": "Article plus modifiable",
+        "what": "Un article devait être modifié alors que son état ne le permettait plus, par exemple la quantité après l’envoi en cuisine. L’opération n’a eu aucun effet.",
+        "todo": "Vérifiez la commande à la caisse et corrigez-la si nécessaire, par exemple avec une annulation."
+      },
+      "implicit_reopen": {
+        "label": "Commande rouverte",
+        "what": "Des articles ont été ajoutés à une commande déjà clôturée. La commande a donc été rouverte automatiquement.",
+        "todo": "Vérifiez si les nouveaux articles doivent encore être payés, puis encaissez-les ou annulez-les."
+      },
+      "approval_invalid": {
+        "label": "Validation non valide",
+        "what": "L’opération a été validée par une personne qui n’avait pas l’autorisation nécessaire. Elle a tout de même été prise en compte, car elle a déjà eu lieu.",
+        "todo": "Vérifiez si l’opération était correcte et, si nécessaire, adaptez les autorisations sous «Personnel»."
+      },
+      "user_inactive": {
+        "label": "Personne désactivée",
+        "what": "L’opération a été saisie avec le PIN d’une personne désactivée à ce moment-là. Elle a tout de même été prise en compte.",
+        "todo": "Clarifiez qui utilisait l’appareil et vérifiez l’opération. Connectez les caisses pour qu’elles chargent la liste actuelle du personnel."
+      },
+      "duplicate_number": {
+        "label": "Numéro attribué deux fois",
+        "what": "Un numéro de commande, de ticket ou de copie a été attribué deux fois. Il a été enregistré avec un suffixe ; rien n’a été perdu.",
+        "todo": "En général, il n’y a rien à faire. Notez que le numéro enregistré peut différer de celui du ticket imprimé."
+      },
+      "clock_skew": {
+        "label": "Horloge de l’appareil incorrecte",
+        "what": "L’horloge de l’appareil avançait de plus de 5 minutes. L’heure de l’opération a été corrigée selon l’heure du serveur.",
+        "todo": "Vérifiez la date et l’heure de l’appareil et activez le réglage automatique de l’heure."
+      },
+      "invalid": {
+        "label": "Opération non valide",
+        "what": "L’opération était incomplète ou appartenait à un autre établissement. Elle n’a pas été prise en compte.",
+        "todo": "Clarifiez avec la personne à l’appareil ce qui devait être saisi et saisissez-le à nouveau si nécessaire. Si cela se produit souvent, contactez le support."
+      }
+    }
+  }
+}

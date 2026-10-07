@@ -1,0 +1,252 @@
+{
+  "posOrder": {
+    "common": {
+      "close": "Fermer",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "back": "Retour",
+      "minus": "Moins",
+      "plus": "Plus",
+      "minutes": "{minutes} min",
+      "guests": "{count, plural, one {# couvert} other {# couverts}}",
+      "table": "Table {label}",
+      "tableJoined": "Table {label} + {joined}",
+      "orderNumber": "Commande {number}",
+      "seat": "Place {seat}",
+      "course": "Plat {course}",
+      "unknownUser": "Inconnu"
+    },
+    "errors": {
+      "generic": "Cela n’a pas fonctionné. Veuillez réessayer.",
+      "line": {
+        "NOT_ORDERABLE": "Ce produit ne peut pas être commandé pour le moment.",
+        "UNKNOWN_VARIANT": "Cette variante n’existe plus.",
+        "INVALID_MODIFIERS": "Le choix des options n’est pas valide.",
+        "INVALID_QUANTITY": "La quantité n’est pas valide.",
+        "INVALID_COURSE": "Le plat choisi n’est pas valide."
+      }
+    },
+    "channel": {
+      "table": "Table",
+      "bar": "Bar",
+      "takeaway": "À l’emporter",
+      "qr": "Commande QR",
+      "web": "Commande en ligne",
+      "delivery": "Livraison"
+    },
+    "tableState": {
+      "free": "Libre",
+      "reserved": "Réservée",
+      "occupied": "Occupée",
+      "awaiting_order": "Attend la commande",
+      "in_kitchen": "En cuisine",
+      "ready": "Prête",
+      "awaiting_payment": "Attend le paiement"
+    },
+    "itemStatus": {
+      "pending": "Non envoyé",
+      "sent": "Envoyé",
+      "preparing": "En préparation",
+      "ready": "Prêt",
+      "served": "Servi",
+      "voided": "Annulé"
+    },
+    "paymentStatus": {
+      "unpaid": "Non payée",
+      "partial": "Partiellement payée",
+      "paid": "Payée",
+      "refunded": "Remboursée"
+    },
+    "orderStatus": {
+      "open": "Ouverte",
+      "closed": "Clôturée",
+      "voided": "Annulée"
+    },
+    "voidReason": {
+      "entry_error": "Erreur de saisie",
+      "guest_changed_mind": "Le client renonce",
+      "kitchen_error": "Erreur de la cuisine",
+      "quality": "Défaut de qualité",
+      "not_available": "Non disponible",
+      "other": "Autre motif"
+    },
+    "discountReason": {
+      "staff": "Personnel",
+      "courtesy": "Geste commercial",
+      "promotion": "Promotion",
+      "other": "Autre motif"
+    },
+    "unavailable": {
+      "inactive": "Inactif",
+      "inactive_at_location": "Pas proposé ici",
+      "sold_out": "86 · Épuisé",
+      "not_available_now": "Pas disponible maintenant",
+      "not_available_on_channel": "Pas pour ce canal"
+    },
+    "floor": {
+      "empty": "Aucune table configurée pour l’instant. Le bar et la vente à l’emporter fonctionnent quand même.",
+      "areas": "Zones",
+      "legend": "Légende",
+      "table": "Table {label}",
+      "joinedTo": "Jointe à la table {label}",
+      "sinceSent": "{minutes, plural, one {# minute} other {# minutes}} depuis le dernier envoi",
+      "chooseDescription": "Plusieurs commandes sont ouvertes à cette table et sont payées séparément.",
+      "newOrder": "Nouvelle commande"
+    },
+    "openTable": {
+      "title": "Ouvrir la table {label}",
+      "waiter": "Serveur : {name}",
+      "guests": "Couverts",
+      "open": "Ouvrir"
+    },
+    "orders": {
+      "title": "Commandes",
+      "mine": "Mes tables",
+      "open": "Toutes en cours",
+      "closed": "Clôturées aujourd’hui",
+      "details": "Commande clôturée",
+      "orderTitle": "Commande {number} · {place}",
+      "selectClosed": "Choisissez une commande pour des copies de ticket, des remboursements ou pour la rouvrir.",
+      "emptyMine": "Vous n’avez aucune commande ouverte.",
+      "emptyOpen": "Aucune commande ouverte.",
+      "emptyClosed": "Aucune commande n’a encore été clôturée aujourd’hui.",
+      "number": "N°",
+      "place": "Table / canal",
+      "waiter": "Serveur",
+      "total": "Total",
+      "balance": "À payer",
+      "balanceShort": "À payer",
+      "sinceSent": "Depuis l’envoi",
+      "closedAt": "Heure"
+    },
+    "order": {
+      "backToFloor": "Retour au plan de salle",
+      "floorShort": "Plan de salle",
+      "number": "Commande",
+      "waiter": "Serveur : {name}",
+      "notFound": "Cette commande n’existe pas sur cet appareil.",
+      "mergedBanner": "Cette commande a été fusionnée dans la commande {number}.",
+      "voidedBanner": "Cette commande est annulée.",
+      "closedBanner": "Cette commande est clôturée.",
+      "toOrders": "Vers les commandes",
+      "menu": "Carte",
+      "ticketTab": "Commande ({count}) · {total}"
+    },
+    "menu": {
+      "title": "Carte",
+      "categories": "Catégories",
+      "empty": "Aucun produit n’est disponible pour ce canal.",
+      "options": "Options"
+    },
+    "product": {
+      "variant": "Variante",
+      "chooseExactly": "Choisir {count}",
+      "chooseRange": "Choisir de {min} à {max}",
+      "chooseOptional": "Facultatif",
+      "chooseUpTo": "Facultatif, jusqu’à {max}",
+      "quantity": "Quantité",
+      "note": "Note",
+      "notePlaceholder": "p. ex. sans oignons",
+      "seat": "Place",
+      "course": "Plat",
+      "total": "Total {amount}",
+      "add": "Ajouter"
+    },
+    "ticket": {
+      "title": "Commande",
+      "empty": "Aucun article pour l’instant. Touchez un produit.",
+      "course": "Plat {course}",
+      "lineActions": "Modifier l’article",
+      "note": "Note : {note}",
+      "lineDiscount": "Rabais : {label}",
+      "subtotal": "Sous-total",
+      "lineDiscounts": "Rabais sur les articles",
+      "orderDiscount": "Rabais sur la commande : {label}",
+      "removeDiscount": "Retirer le rabais",
+      "total": "Total",
+      "tax": "TVA incl.",
+      "paid": "Payé",
+      "balance": "À payer"
+    },
+    "line": {
+      "discount": "Rabais",
+      "removeDiscount": "Retirer le rabais",
+      "serve": "Marquer comme servi",
+      "void": "Annuler l’article",
+      "voidSentHint": "L’article est déjà en cuisine : la cuisine le verra barré."
+    },
+    "discount": {
+      "base": "Montant pouvant bénéficier d’un rabais : {amount}",
+      "nothingToDiscount": "Il n’y a aucun montant auquel appliquer un rabais.",
+      "presets": "Rabais fréquents",
+      "custom": "Rabais personnalisé",
+      "kind": "Type de rabais",
+      "percent": "Pourcentage",
+      "amount": "Montant",
+      "valuePercent": "Rabais en %",
+      "valueAmount": "Rabais en CHF",
+      "invalidPercent": "Saisissez une valeur de 0.01 à 100.",
+      "invalidAmount": "Saisissez un montant supérieur à 0, p. ex. 5.50.",
+      "reason": "Motif",
+      "note": "Remarque",
+      "noteRequired": "Veuillez décrire le motif.",
+      "apply": "Accorder le rabais",
+      "approvalHint": "Au-delà du seuil de l’établissement, une personne responsable valide le rabais avec son PIN."
+    },
+    "void": {
+      "reason": "Motif",
+      "quantity": "Quantité",
+      "note": "Remarque",
+      "noteRequired": "Veuillez décrire le motif.",
+      "confirm": "Confirmer l’annulation"
+    },
+    "actions": {
+      "more": "Plus",
+      "send": "Envoyer",
+      "sendCourse": "Envoyer le plat {course}",
+      "served": "Servi",
+      "handedOver": "Remis",
+      "pay": "Encaisser",
+      "sendFirst": "Envoyez d’abord tout en cuisine, puis encaissez."
+    },
+    "more": {
+      "title": "Autres actions",
+      "discount": "Rabais sur la commande",
+      "guests": "Modifier les couverts",
+      "waiter": "Changer de serveur",
+      "move": "Changer de table",
+      "join": "Joindre ou séparer des tables",
+      "newOrderAtTable": "Autre commande à la table",
+      "transfer": "Transférer des articles",
+      "merge": "Fusionner avec une autre commande",
+      "split": "Diviser l’addition",
+      "toTakeaway": "À l’emporter",
+      "toOnPremise": "Manger sur place",
+      "cancel": "Annuler la commande",
+      "paidHint": "Cette commande a déjà des paiements : transférer, fusionner, diviser et annuler ne sont plus possibles.",
+      "noTransferPermission": "Vous n’avez pas l’autorisation de transférer, fusionner et diviser.",
+      "channelPaidHint": "Après un paiement, le canal ne peut plus être changé.",
+      "moveDescription": "Choisissez la nouvelle table. Les articles et les paiements suivent.",
+      "joinDescription": "Les tables jointes font partie de cette commande. Touchez de nouveau une table pour la séparer.",
+      "noOtherOrders": "Il n’y a aucune autre commande ouverte.",
+      "transferItems": "Articles",
+      "transferTarget": "Vers la commande",
+      "transferConfirm": "Transférer",
+      "mergeDescription": "Tous les articles de cette commande passent dans la commande choisie. Un rabais sur cette commande est supprimé.",
+      "mergeTarget": "Fusionner avec",
+      "mergeConfirm": "Fusionner",
+      "splitDescription": "Les articles choisis passent dans une nouvelle commande, payée séparément.",
+      "splitBySeat": "Par place",
+      "splitItems": "Articles pour la nouvelle commande",
+      "splitKeepOne": "Au moins un article doit rester dans cette commande.",
+      "splitConfirm": "Diviser",
+      "splitDone": "La commande {number} a été créée.",
+      "payNew": "Encaisser la nouvelle commande",
+      "openNew": "Ouvrir la nouvelle commande",
+      "stayHere": "Rester ici",
+      "channelDescription": "De «{from}» à «{to}» : la TVA de tous les articles est recalculée.",
+      "channelConfirm": "Passer à «{to}»",
+      "cancelDescription": "Tous les articles sont annulés. Rien n’est supprimé ; le motif reste dans le journal."
+    }
+  }
+}

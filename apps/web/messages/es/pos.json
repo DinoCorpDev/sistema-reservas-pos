@@ -1,0 +1,52 @@
+{
+  "pos": {
+    "keypad": {
+      "label": "Teclado numérico",
+      "clear": "Borrar",
+      "backspace": "Borrar el último dígito"
+    },
+    "status": {
+      "standalone": "Sin conexión",
+      "hub": "Local (hub)",
+      "cloud": "En línea",
+      "pending": "Pendientes: {count}",
+      "rejected": "{count, plural, one {# operación rechazada} other {# operaciones rechazadas}}"
+    },
+    "pairing": {
+      "title": "Vincular dispositivo",
+      "description": "Ingrese el código de vinculación del backoffice (Dispositivos → Código de vinculación). Para esto, el dispositivo necesita internet una sola vez.",
+      "code": "Código de vinculación",
+      "pair": "Vincular",
+      "pairing": "Vinculando…",
+      "invalidCode": "El código es incorrecto o ha vencido.",
+      "failed": "No se pudo vincular. Revise la conexión e inténtelo de nuevo."
+    },
+    "pin": {
+      "title": "Ingrese su PIN",
+      "entered": "{count, plural, one {# dígito ingresado} other {# dígitos ingresados}}",
+      "unlock": "Desbloquear",
+      "checking": "Verificando…",
+      "wrong": "PIN incorrecto. {attemptsLeft, plural, one {Queda # intento} other {Quedan # intentos}}.",
+      "locked": "Demasiados intentos fallidos. Bloqueado durante {minutes, plural, one {# minuto} other {# minutos}}.",
+      "invalid": "El PIN debe tener de 4 a 6 dígitos.",
+      "noCredentials": "Este dispositivo todavía no tiene datos de acceso. Conéctelo una vez a internet."
+    },
+    "approval": {
+      "title": "Autorización de un gerente",
+      "aboveThreshold": "Esta acción supera el límite de la sede. Un gerente la autoriza con su PIN.",
+      "missingPermission": "No tiene permiso para esta acción. Un gerente la autoriza con su PIN.",
+      "approve": "Autorizar",
+      "refused": "PIN incorrecto o sin permiso para esta acción."
+    },
+    "shell": {
+      "navigation": "Caja",
+      "floor": "Mesas",
+      "orders": "Pedidos",
+      "bar": "Barra",
+      "takeaway": "Para llevar",
+      "lock": "Bloquear",
+      "updateAvailable": "Una nueva versión de la caja está lista.",
+      "updateNow": "Actualizar ahora"
+    }
+  }
+}

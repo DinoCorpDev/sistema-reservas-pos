@@ -20,6 +20,9 @@ export default tseslint.config(
       '.cache/**',
       '.data/**',
       'packages/db/drizzle/**',
+      // Service worker bundled by Serwist at build time (source: apps/web/src/sw/sw.ts).
+      'apps/web/public/sw.js',
+      'apps/web/public/swe-worker-*.js',
     ],
   },
   js.configs.recommended,
@@ -67,6 +70,35 @@ export default tseslint.config(
               message: 'packages/core is pure domain: no frameworks, ORM, network or UI (PA-01).',
             },
           ],
+        },
+      ],
+    },
+  },
+  {
+    // DEC-021: the order engine is deterministic. Clock readings and new ids come frozen in the
+    // operations; the fold never creates them, so every node reaches the same state.
+    files: [
+      'packages/core/src/orders/{reducer,state,totals,groups}.ts',
+      'packages/core/src/tables/state.ts',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.object.name='Date'][callee.property.name='now']",
+          message: 'The fold never reads the clock: use the operation deviceAt (DEC-021).',
+        },
+        {
+          selector: "NewExpression[callee.name='Date']",
+          message: 'The fold never reads the clock: use the operation deviceAt (DEC-021).',
+        },
+        {
+          selector: "CallExpression[callee.name='newId']",
+          message: 'The fold never creates ids: they come frozen in the payload (DEC-021).',
+        },
+        {
+          selector: "CallExpression[callee.object.name='Math'][callee.property.name='random']",
+          message: 'The fold is deterministic (DEC-021).',
         },
       ],
     },

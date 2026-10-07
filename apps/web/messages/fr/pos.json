@@ -1,0 +1,52 @@
+{
+  "pos": {
+    "keypad": {
+      "label": "Pavé numérique",
+      "clear": "Effacer",
+      "backspace": "Effacer le dernier chiffre"
+    },
+    "status": {
+      "standalone": "Hors ligne",
+      "hub": "Local (hub)",
+      "cloud": "En ligne",
+      "pending": "En attente : {count}",
+      "rejected": "{count, plural, one {# opération refusée} other {# opérations refusées}}"
+    },
+    "pairing": {
+      "title": "Appairer l’appareil",
+      "description": "Saisissez le code d’appairage du backoffice (Appareils → Code d’appairage). Pour cela, l’appareil a besoin d’Internet une seule fois.",
+      "code": "Code d’appairage",
+      "pair": "Appairer",
+      "pairing": "Appairage…",
+      "invalidCode": "Le code est incorrect ou a expiré.",
+      "failed": "Appairage impossible. Vérifiez la connexion et réessayez."
+    },
+    "pin": {
+      "title": "Saisir le PIN",
+      "entered": "{count, plural, one {# chiffre saisi} other {# chiffres saisis}}",
+      "unlock": "Déverrouiller",
+      "checking": "Vérification…",
+      "wrong": "PIN incorrect. Il reste {attemptsLeft, plural, one {# essai} other {# essais}}.",
+      "locked": "Trop d’essais erronés. Bloqué pendant {minutes, plural, one {# minute} other {# minutes}}.",
+      "invalid": "Le PIN comporte 4 à 6 chiffres.",
+      "noCredentials": "Cet appareil n’a pas encore de données d’accès. Connectez-le une fois à Internet."
+    },
+    "approval": {
+      "title": "Validation par une personne responsable",
+      "aboveThreshold": "Cette action dépasse le seuil de l’établissement. Une personne responsable la valide avec son PIN.",
+      "missingPermission": "Vous n’avez pas l’autorisation pour cette action. Une personne responsable la valide avec son PIN.",
+      "approve": "Valider",
+      "refused": "PIN incorrect ou sans autorisation pour cette action."
+    },
+    "shell": {
+      "navigation": "Caisse",
+      "floor": "Tables",
+      "orders": "Commandes",
+      "bar": "Bar",
+      "takeaway": "À l’emporter",
+      "lock": "Verrouiller",
+      "updateAvailable": "Une nouvelle version de la caisse est prête.",
+      "updateNow": "Mettre à jour"
+    }
+  }
+}

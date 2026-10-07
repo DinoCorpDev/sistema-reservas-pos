@@ -69,6 +69,7 @@
     "tax": "MWST",
     "customers": "Gäste",
     "audit": "Protokoll",
+    "syncConflicts": "Konflikte",
     "settings": "Einstellungen",
     "supportAccess": "Support-Zugang",
     "apiKeys": "API-Schlüssel",
