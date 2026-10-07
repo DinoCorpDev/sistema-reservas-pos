@@ -33,13 +33,14 @@ describe('schema invariants', () => {
   );
 
   const outsideTenants = new Set(tablesIn('root', 'platform'));
-  it.each(
-    allTables.filter((t) => !outsideTenants.has(t)).map((t) => [nameOf(t), t] as const),
-  )('%s is scoped to an organization (PA-09, RNF-12)', (_name, table) => {
-    const org = column(table, 'organization_id');
-    expect(org?.notNull).toBe(true);
-    expect(org?.getSQLType()).toBe('binary(16)');
-  });
+  it.each(allTables.filter((t) => !outsideTenants.has(t)).map((t) => [nameOf(t), t] as const))(
+    '%s is scoped to an organization (PA-09, RNF-12)',
+    (_name, table) => {
+      const org = column(table, 'organization_id');
+      expect(org?.notNull).toBe(true);
+      expect(org?.getSQLType()).toBe('binary(16)');
+    },
+  );
 
   const locationScoped = [
     ...tablesIn('config').filter((t) => nameOf(t) !== 'locations'),
@@ -80,14 +81,11 @@ describe('schema invariants', () => {
     tablesIn('root', 'platform', 'config', 'master', 'operational').map(
       (t) => [nameOf(t), t] as const,
     ),
-  )(
-    '%s supports soft delete and server timestamps (nothing is deleted)',
-    (_name, table) => {
-      expect(column(table, 'deleted_at')).toBeDefined();
-      expect(column(table, 'created_at')?.notNull).toBe(true);
-      expect(column(table, 'updated_at')?.notNull).toBe(true);
-    },
-  );
+  )('%s supports soft delete and server timestamps (nothing is deleted)', (_name, table) => {
+    expect(column(table, 'deleted_at')).toBeDefined();
+    expect(column(table, 'created_at')?.notNull).toBe(true);
+    expect(column(table, 'updated_at')?.notNull).toBe(true);
+  });
 
   it.each(tablesIn('operational').map((t) => [nameOf(t), t] as const))(
     '%s is sync-ready: version, device time and no hard foreign keys',

@@ -22,7 +22,8 @@ export function createTestApi() {
   const sessions = new Map<string, BackofficeSession>();
   const app = createApiApp({
     db,
-    resolveSession: async (request) => sessions.get(request.headers.get('x-test-session') ?? '') ?? null,
+    resolveSession: async (request) =>
+      sessions.get(request.headers.get('x-test-session') ?? '') ?? null,
   });
 
   /** Headers that sign the request in as this backoffice session. */
@@ -32,7 +33,11 @@ export function createTestApi() {
     return { 'x-test-session': key };
   };
 
-  const request = (method: string, path: string, init: { headers?: Record<string, string>; body?: unknown } = {}) =>
+  const request = (
+    method: string,
+    path: string,
+    init: { headers?: Record<string, string>; body?: unknown } = {},
+  ) =>
     app.request(`/api/v1${path}`, {
       method,
       headers: { 'content-type': 'application/json', ...init.headers },
@@ -50,9 +55,15 @@ export interface DemoContext {
 
 /** Ids of the seeded "Restaurant Demo Zürich" and its users. */
 export async function loadDemo(db: Database): Promise<DemoContext> {
-  const [org] = await db.select().from(s.organizations).where(eq(s.organizations.slug, 'demo-gastro'));
+  const [org] = await db
+    .select()
+    .from(s.organizations)
+    .where(eq(s.organizations.slug, 'demo-gastro'));
   if (!org) throw new Error('Demo organization missing: the test database setup did not run');
-  const [location] = await db.select().from(s.locations).where(eq(s.locations.organizationId, org.id));
+  const [location] = await db
+    .select()
+    .from(s.locations)
+    .where(eq(s.locations.organizationId, org.id));
   const users = await db.select().from(s.users).where(eq(s.users.organizationId, org.id));
   const byName = (name: string) => {
     const user = users.find((u) => u.displayName === name);
@@ -74,7 +85,10 @@ export async function loadDemo(db: Database): Promise<DemoContext> {
 }
 
 /** Backoffice session of a demo user at the demo location. */
-export const demoSession = (demo: DemoContext, user: keyof DemoContext['users']): BackofficeSession => ({
+export const demoSession = (
+  demo: DemoContext,
+  user: keyof DemoContext['users'],
+): BackofficeSession => ({
   kind: 'user',
   userId: demo.users[user].id,
   organizationId: demo.organizationId,

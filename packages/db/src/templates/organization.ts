@@ -19,10 +19,34 @@ import * as s from '../schema';
  */
 
 export const ROLE_NAMES: Record<ContentLanguage, Record<RoleKey, string>> = {
-  de: { admin: 'Administrator', manager: 'Geschäftsführung', cashier: 'Kasse', waiter: 'Service', kitchen: 'Küche' },
-  fr: { admin: 'Administrateur', manager: 'Gérance', cashier: 'Caisse', waiter: 'Service', kitchen: 'Cuisine' },
-  it: { admin: 'Amministratore', manager: 'Gerenza', cashier: 'Cassa', waiter: 'Servizio', kitchen: 'Cucina' },
-  en: { admin: 'Administrator', manager: 'Manager', cashier: 'Cashier', waiter: 'Service', kitchen: 'Kitchen' },
+  de: {
+    admin: 'Administrator',
+    manager: 'Geschäftsführung',
+    cashier: 'Kasse',
+    waiter: 'Service',
+    kitchen: 'Küche',
+  },
+  fr: {
+    admin: 'Administrateur',
+    manager: 'Gérance',
+    cashier: 'Caisse',
+    waiter: 'Service',
+    kitchen: 'Cuisine',
+  },
+  it: {
+    admin: 'Amministratore',
+    manager: 'Gerenza',
+    cashier: 'Cassa',
+    waiter: 'Servizio',
+    kitchen: 'Cucina',
+  },
+  en: {
+    admin: 'Administrator',
+    manager: 'Manager',
+    cashier: 'Cashier',
+    waiter: 'Service',
+    kitchen: 'Kitchen',
+  },
 };
 
 export const SWISS_TAX_CATEGORY_NAMES: Record<ContentLanguage, Record<TaxCategoryKey, string>> = {
@@ -107,29 +131,37 @@ export async function applyOrganizationTemplate(
   for (const key of ROLE_KEYS) {
     const roleId = newId();
     roleIds[key] = roleId;
-    await tx.insert(s.roles).values({ id: roleId, ...org, key, name: ROLE_NAMES[language][key], isSystem: true });
+    await tx
+      .insert(s.roles)
+      .values({ id: roleId, ...org, key, name: ROLE_NAMES[language][key], isSystem: true });
     await tx
       .insert(s.rolePermissions)
       .values(DEFAULT_ROLE_PERMISSIONS[key].map((permission) => ({ ...org, roleId, permission })));
   }
 
   const taxCategoryIds = {} as Record<TaxCategoryKey, string>;
-  for (const [key, name] of Object.entries(SWISS_TAX_CATEGORY_NAMES[language]) as [TaxCategoryKey, string][]) {
+  for (const [key, name] of Object.entries(SWISS_TAX_CATEGORY_NAMES[language]) as [
+    TaxCategoryKey,
+    string,
+  ][]) {
     const id = newId();
     taxCategoryIds[key] = id;
     await tx.insert(s.taxCategories).values({ id, ...org, key, name });
   }
   await tx.insert(s.taxRates).values(SWISS_TAX_RATES.map((rate) => ({ ...org, ...rate })));
   await tx.insert(s.taxRules).values(
-    (Object.entries(SWISS_TAX_RULES) as [TaxCategoryKey, Record<ConsumptionType, TaxRateCode>][]).flatMap(
-      ([categoryKey, byConsumption]) =>
-        (Object.entries(byConsumption) as [ConsumptionType, TaxRateCode][]).map(([consumptionType, rateCode]) => ({
+    (
+      Object.entries(SWISS_TAX_RULES) as [TaxCategoryKey, Record<ConsumptionType, TaxRateCode>][]
+    ).flatMap(([categoryKey, byConsumption]) =>
+      (Object.entries(byConsumption) as [ConsumptionType, TaxRateCode][]).map(
+        ([consumptionType, rateCode]) => ({
           ...org,
           taxCategoryId: taxCategoryIds[categoryKey],
           consumptionType,
           rateCode,
           validFrom: SWISS_RULES_VALID_FROM,
-        })),
+        }),
+      ),
     ),
   );
   return { roleIds, taxCategoryIds };

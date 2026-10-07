@@ -21,14 +21,34 @@ export function LoginForm({
     <form action={formAction} className="grid gap-4">
       {state.error ? <Alert variant="destructive">{t(state.error as 'invalid')}</Alert> : null}
       <Field label={t('email')} htmlFor="email">
-        <Input id="email" name="email" type="email" autoComplete="username" required defaultValue={state.email} />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="username"
+          required
+          defaultValue={state.email}
+        />
       </Field>
       <Field label={t('password')} htmlFor="password">
-        <Input id="password" name="password" type="password" autoComplete="current-password" required />
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+        />
       </Field>
       {askTotp ? (
         <Field label={t('totp')} htmlFor="totp" hint={t('totpHint')}>
-          <Input id="totp" name="totp" inputMode="numeric" autoComplete="one-time-code" autoFocus required />
+          <Input
+            id="totp"
+            name="totp"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            autoFocus
+            required
+          />
         </Field>
       ) : null}
       <Button type="submit" size="lg" disabled={pending}>

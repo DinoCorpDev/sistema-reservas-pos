@@ -8,7 +8,8 @@ export interface ServiceDeps {
 
 export type ServiceFn<I, O> = (deps: ServiceDeps, actor: Actor, input: I) => Promise<O>;
 
-export const iso = (value: Date | null | undefined): string | null => (value ? value.toISOString() : null);
+export const iso = (value: Date | null | undefined): string | null =>
+  value ? value.toISOString() : null;
 
 /** Keeps only the keys whose value changed, for compact audit records. */
 export function changedFields<T extends Record<string, unknown>>(

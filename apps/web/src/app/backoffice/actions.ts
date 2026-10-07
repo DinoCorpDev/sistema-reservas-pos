@@ -20,12 +20,18 @@ export async function setUiLanguage(language: string) {
   const actor = await currentActor();
   if (actor.kind === 'user') await account.setOwnLanguage(deps(), actor, language);
   await updateSession({ uiLanguage: language } as never);
-  (await cookies()).set('NEXT_LOCALE', language, { path: '/', maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' });
+  (await cookies()).set('NEXT_LOCALE', language, {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+  });
   revalidatePath('/', 'layout');
 }
 
+/** Signs out; support staff go back to their own login page. */
 export async function logout() {
-  await signOut({ redirectTo: '/login' });
+  const actor = await currentActor().catch(() => null);
+  await signOut({ redirectTo: actor?.kind === 'support' ? '/support/login' : '/login' });
 }
 
 /** Support staff leave the organization and return to the console (RF-A10). */

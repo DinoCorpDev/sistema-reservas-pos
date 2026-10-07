@@ -3,6 +3,9 @@ import { createDb } from './client';
 import { createDatabase, migrateDatabase } from './ops';
 import { seedDemoRestaurant } from './seed/demo';
 
+// Development/test credentials of the seed, for E2E tests (never valid in production).
+export { DEMO_BACKOFFICE_PASSWORD, DEMO_SUPPORT_STAFF, DEMO_USERS } from './seed/data/restaurant';
+
 /**
  * Integration tests run against their own database (`<DATABASE_URL name>_test`), recreated,
  * migrated and seeded once per run. The development database is never touched, which matters

@@ -2,7 +2,14 @@
 
 import type { LocationDto } from '@pos/api';
 import { Button } from '@pos/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@pos/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@pos/ui/card';
 import { Input, Textarea } from '@pos/ui/input';
 import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
@@ -40,7 +47,9 @@ export function LocationForm({ location, canEdit }: { location: LocationDto; can
   const toggleLanguage = (code: string, checked: boolean) =>
     setForm((f) => ({
       ...f,
-      languages: checked ? [...new Set([...f.languages, code])] : f.languages.filter((l) => l !== code),
+      languages: checked
+        ? [...new Set([...f.languages, code])]
+        : f.languages.filter((l) => l !== code),
     }));
 
   const submit = (event: React.FormEvent) => {
@@ -56,7 +65,11 @@ export function LocationForm({ location, canEdit }: { location: LocationDto; can
     });
   };
 
-  const text = (key: keyof typeof form, label: string, props: React.ComponentProps<typeof Input> = {}) => (
+  const text = (
+    key: keyof typeof form,
+    label: string,
+    props: React.ComponentProps<typeof Input> = {},
+  ) => (
     <Field label={label} htmlFor={`loc-${key}`} error={fieldErrors[key]}>
       <Input
         id={`loc-${key}`}
@@ -81,11 +94,20 @@ export function LocationForm({ location, canEdit }: { location: LocationDto; can
           {text('legalName', t('legalName'), { required: true })}
           {text('street', t('street'), { required: true })}
           <div className="grid grid-cols-[7rem_1fr_5rem] gap-3">
-            {text('postalCode', t('postalCode'), { required: true, inputMode: 'numeric', maxLength: 4 })}
+            {text('postalCode', t('postalCode'), {
+              required: true,
+              inputMode: 'numeric',
+              maxLength: 4,
+            })}
             {text('city', t('city'), { required: true })}
             {text('canton', t('canton'), { maxLength: 2 })}
           </div>
-          <Field label={t('vatUid')} htmlFor="loc-vatUid" hint={t('vatUidHint')} error={fieldErrors.vatUid}>
+          <Field
+            label={t('vatUid')}
+            htmlFor="loc-vatUid"
+            hint={t('vatUidHint')}
+            error={fieldErrors.vatUid}
+          >
             <Input
               id="loc-vatUid"
               value={form.vatUid}
@@ -148,13 +170,25 @@ export function LocationForm({ location, canEdit }: { location: LocationDto; can
                 </div>
               ))}
             </div>
-            {fieldErrors.languages ? <p className="text-sm text-destructive">{fieldErrors.languages}</p> : null}
+            {fieldErrors.languages ? (
+              <p className="text-sm text-destructive">{fieldErrors.languages}</p>
+            ) : null}
           </fieldset>
           <Field label={t('receiptHeader')} htmlFor="loc-receiptHeader">
-            <Textarea id="loc-receiptHeader" value={form.receiptHeader} onChange={set('receiptHeader')} disabled={!canEdit} />
+            <Textarea
+              id="loc-receiptHeader"
+              value={form.receiptHeader}
+              onChange={set('receiptHeader')}
+              disabled={!canEdit}
+            />
           </Field>
           <Field label={t('receiptFooter')} htmlFor="loc-receiptFooter">
-            <Textarea id="loc-receiptFooter" value={form.receiptFooter} onChange={set('receiptFooter')} disabled={!canEdit} />
+            <Textarea
+              id="loc-receiptFooter"
+              value={form.receiptFooter}
+              onChange={set('receiptFooter')}
+              disabled={!canEdit}
+            />
           </Field>
         </CardContent>
         {canEdit ? (

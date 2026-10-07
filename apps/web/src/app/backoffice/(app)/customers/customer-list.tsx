@@ -113,58 +113,58 @@ export function CustomerList({
         </Button>
       </div>
 
-      <Card className="p-0">
-        {customers.length === 0 ? (
-          <p className="p-5 text-muted-foreground">{search ? t('noResults') : t('empty')}</p>
-        ) : (
-          <Table className="[&_td]:py-1.5">
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('name')}</TableHead>
-                <TableHead>{t('phone')}</TableHead>
-                <TableHead>{t('email')}</TableHead>
-                <TableHead>{t('language')}</TableHead>
-                <TableHead>{t('createdAt')}</TableHead>
-                <TableHead className="text-right">
-                  <span className="sr-only">{tc('actions')}</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {customers.map((customer) => (
-                <TableRow key={customer.id}>
-                  <TableCell className="font-medium">
-                    <Link
-                      href={`/backoffice/customers/${customer.id}`}
-                      className="underline-offset-4 hover:underline"
-                    >
-                      {customerName(customer, t('noName'))}
+      {customers.length === 0 ? (
+        <Card>
+          <p className="text-muted-foreground">{search ? t('noResults') : t('empty')}</p>
+        </Card>
+      ) : (
+        <Table className="[&_td]:py-1.5">
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('name')}</TableHead>
+              <TableHead>{t('phone')}</TableHead>
+              <TableHead>{t('email')}</TableHead>
+              <TableHead>{t('language')}</TableHead>
+              <TableHead>{t('createdAt')}</TableHead>
+              <TableHead className="text-right">
+                <span className="sr-only">{tc('actions')}</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {customers.map((customer) => (
+              <TableRow key={customer.id}>
+                <TableCell className="font-medium">
+                  <Link
+                    href={`/backoffice/customers/${customer.id}`}
+                    className="underline-offset-4 hover:underline"
+                  >
+                    {customerName(customer, t('noName'))}
+                  </Link>
+                  {customer.tags.length > 0 ? (
+                    <span className="block text-xs text-muted-foreground">
+                      {customer.tags.join(', ')}
+                    </span>
+                  ) : null}
+                </TableCell>
+                <TableCell className="whitespace-nowrap tabular-nums">
+                  {formatPhone(customer.phone) || '—'}
+                </TableCell>
+                <TableCell>{customer.email ?? '—'}</TableCell>
+                <TableCell>{customer.language ? tl(customer.language) : '—'}</TableCell>
+                <TableCell className="tabular-nums">{formatDate(customer.createdAt)}</TableCell>
+                <TableCell className="text-right">
+                  <Button asChild variant="ghost" size="icon" aria-label={t('open')}>
+                    <Link href={`/backoffice/customers/${customer.id}`}>
+                      <ChevronRightIcon />
                     </Link>
-                    {customer.tags.length > 0 ? (
-                      <span className="block text-xs text-muted-foreground">
-                        {customer.tags.join(', ')}
-                      </span>
-                    ) : null}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap tabular-nums">
-                    {formatPhone(customer.phone) || '—'}
-                  </TableCell>
-                  <TableCell>{customer.email ?? '—'}</TableCell>
-                  <TableCell>{customer.language ? tl(customer.language) : '—'}</TableCell>
-                  <TableCell className="tabular-nums">{formatDate(customer.createdAt)}</TableCell>
-                  <TableCell className="text-right">
-                    <Button asChild variant="ghost" size="icon" aria-label={t('open')}>
-                      <Link href={`/backoffice/customers/${customer.id}`}>
-                        <ChevronRightIcon />
-                      </Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </Card>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
       {customers.length >= limit ? (
         <p className="text-sm text-muted-foreground">{t('resultsLimited', { count: limit })}</p>
       ) : null}

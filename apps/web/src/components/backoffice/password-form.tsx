@@ -44,7 +44,12 @@ export function PasswordForm({ onDone }: { onDone?: () => void }) {
           onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
         />
       </Field>
-      <Field label={t('newPassword')} htmlFor="pw-new" hint={t('newPasswordHint')} error={fieldErrors.newPassword}>
+      <Field
+        label={t('newPassword')}
+        htmlFor="pw-new"
+        hint={t('newPasswordHint')}
+        error={fieldErrors.newPassword}
+      >
         <Input
           id="pw-new"
           type="password"
@@ -55,7 +60,11 @@ export function PasswordForm({ onDone }: { onDone?: () => void }) {
           onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
         />
       </Field>
-      <Field label={t('confirmPassword')} htmlFor="pw-confirm" error={mismatch ? t('mismatch') : undefined}>
+      <Field
+        label={t('confirmPassword')}
+        htmlFor="pw-confirm"
+        error={mismatch ? t('mismatch') : undefined}
+      >
         <Input
           id="pw-confirm"
           type="password"

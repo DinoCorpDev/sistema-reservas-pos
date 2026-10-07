@@ -29,7 +29,10 @@ export default async function LoginPage() {
           <LoginForm action={loginUser} />
         </CardContent>
       </Card>
-      <Link href="/support/login" className="text-center text-sm text-muted-foreground underline-offset-4 hover:underline">
+      <Link
+        href="/support/login"
+        className="text-center text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
         {t('auth.supportLink')}
       </Link>
     </main>

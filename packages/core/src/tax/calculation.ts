@@ -99,7 +99,10 @@ export function resolveTaxRate(input: {
     throw new TaxError('NO_RATE', `No ${rateCode} tax rate valid on ${saleDate}`);
   }
   if (rates.length > 1) {
-    throw new TaxError('AMBIGUOUS_RATE', `${rates.length} overlapping ${rateCode} rates on ${saleDate}`);
+    throw new TaxError(
+      'AMBIGUOUS_RATE',
+      `${rates.length} overlapping ${rateCode} rates on ${saleDate}`,
+    );
   }
   const rateBp = rates[0]!.rateBp;
   assertRateBp(rateBp);
@@ -198,7 +201,12 @@ export interface TaxSummaryLine {
  * amounts, so the receipt always matches the stored lines. Sorted by rate, highest first.
  */
 export function summarizeByRate(
-  lines: readonly { taxRateCode: TaxRateCode; taxRateBp: BasisPoints; lineTotalRappen: Rappen; taxRappen: Rappen }[],
+  lines: readonly {
+    taxRateCode: TaxRateCode;
+    taxRateBp: BasisPoints;
+    lineTotalRappen: Rappen;
+    taxRappen: Rappen;
+  }[],
 ): TaxSummaryLine[] {
   const byKey = new Map<string, TaxSummaryLine>();
   for (const line of lines) {
@@ -215,7 +223,9 @@ export function summarizeByRate(
     current.netRappen = subtractRappen(current.grossRappen, current.taxRappen);
     byKey.set(key, current);
   }
-  return [...byKey.values()].sort((a, b) => b.rateBp - a.rateBp || a.rateCode.localeCompare(b.rateCode));
+  return [...byKey.values()].sort(
+    (a, b) => b.rateBp - a.rateBp || a.rateCode.localeCompare(b.rateCode),
+  );
 }
 
 /**
@@ -256,5 +266,8 @@ export function splitEvenly(total: Rappen, parts: number): Rappen[] {
   if (!Number.isInteger(parts) || parts <= 0) {
     throw new TaxError('INVALID', `parts must be a positive integer, got ${parts}`);
   }
-  return allocate(total, Array.from({ length: parts }, () => 1));
+  return allocate(
+    total,
+    Array.from({ length: parts }, () => 1),
+  );
 }

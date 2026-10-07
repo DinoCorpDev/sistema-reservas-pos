@@ -36,7 +36,13 @@ export async function resolveApiKeyActor(
   const [row] = await db
     .select()
     .from(s.apiKeys)
-    .where(and(eq(s.apiKeys.keyHash, sha256Hex(key)), isNull(s.apiKeys.revokedAt), isNull(s.apiKeys.deletedAt)));
+    .where(
+      and(
+        eq(s.apiKeys.keyHash, sha256Hex(key)),
+        isNull(s.apiKeys.revokedAt),
+        isNull(s.apiKeys.deletedAt),
+      ),
+    );
   if (!row || (row.expiresAt && row.expiresAt <= new Date())) {
     throw new ApiError('UNAUTHENTICATED', 'Invalid or revoked API key');
   }
@@ -44,7 +50,9 @@ export async function resolveApiKeyActor(
     const [location] = await db
       .select({ id: s.locations.id })
       .from(s.locations)
-      .where(and(eq(s.locations.id, locationId), eq(s.locations.organizationId, row.organizationId)));
+      .where(
+        and(eq(s.locations.id, locationId), eq(s.locations.organizationId, row.organizationId)),
+      );
     if (!location) throw new ApiError('NOT_FOUND', 'Location not found');
   }
   await db.update(s.apiKeys).set({ lastUsedAt: new Date() }).where(eq(s.apiKeys.id, row.id));
@@ -52,7 +60,8 @@ export async function resolveApiKeyActor(
   const scopes = new Set(row.scopes);
   const permissions = new Set<Permission>();
   for (const scope of scopes) {
-    for (const permission of API_KEY_SCOPES[scope as ApiKeyScope] ?? []) permissions.add(permission);
+    for (const permission of API_KEY_SCOPES[scope as ApiKeyScope] ?? [])
+      permissions.add(permission);
   }
   return {
     kind: 'api_key',

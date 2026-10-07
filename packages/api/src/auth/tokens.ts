@@ -41,7 +41,12 @@ export async function signPosSession(claims: PosSessionClaims): Promise<string> 
 export async function verifyPosSession(token: string): Promise<PosSessionClaims> {
   try {
     const { payload } = await jwtVerify(token, secretKey(), { issuer: ISSUER, audience: 'pos' });
-    const { sub, org, loc, trm } = payload as { sub?: string; org?: string; loc?: string; trm?: string };
+    const { sub, org, loc, trm } = payload as {
+      sub?: string;
+      org?: string;
+      loc?: string;
+      trm?: string;
+    };
     if (!sub || !org || !loc || !trm) throw new Error('incomplete token');
     return { userId: sub, organizationId: org, locationId: loc, terminalId: trm };
   } catch {
@@ -81,7 +86,10 @@ export async function signApproval(claims: ApprovalClaims): Promise<string> {
 
 export async function verifyApproval(token: string): Promise<ApprovalClaims & { jti: string }> {
   try {
-    const { payload } = await jwtVerify(token, secretKey(), { issuer: ISSUER, audience: 'approval' });
+    const { payload } = await jwtVerify(token, secretKey(), {
+      issuer: ISSUER,
+      audience: 'approval',
+    });
     const p = payload as {
       sub?: string;
       org?: string;

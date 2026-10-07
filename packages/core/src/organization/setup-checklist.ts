@@ -91,9 +91,13 @@ export function computeSetupChecklist(snapshot: SetupSnapshot): SetupChecklist {
   const checks: SetupCheck[] = [
     {
       key: 'location_details',
-      done: [location.name, location.legalName, location.street, location.postalCode, location.city].every(
-        filled,
-      ),
+      done: [
+        location.name,
+        location.legalName,
+        location.street,
+        location.postalCode,
+        location.city,
+      ].every(filled),
     },
     { key: 'vat_uid', done: !!location.vatUid && isValidSwissUid(location.vatUid) },
     // RF-B07: at least the location language plus one more.

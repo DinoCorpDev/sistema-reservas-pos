@@ -313,9 +313,9 @@ function TerminalForm({
         />
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label={t('type')}>
+        <Field label={t('type')} htmlFor="terminal-type">
           <Select value={form.type} onValueChange={(type) => setForm({ ...form, type })}>
-            <SelectTrigger>
+            <SelectTrigger id="terminal-type">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -354,12 +354,17 @@ function TerminalForm({
           />
         </Field>
       </div>
-      <Field label={t('station')} hint={t('stationHint')} error={errors.kitchenStationId}>
+      <Field
+        label={t('station')}
+        htmlFor="terminal-station"
+        hint={t('stationHint')}
+        error={errors.kitchenStationId}
+      >
         <Select
           value={form.kitchenStationId}
           onValueChange={(kitchenStationId) => setForm({ ...form, kitchenStationId })}
         >
-          <SelectTrigger>
+          <SelectTrigger id="terminal-station">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -374,6 +379,7 @@ function TerminalForm({
       </Field>
       <Field
         label={t('receiptPrinter')}
+        htmlFor="terminal-printer"
         hint={t('receiptPrinterHint')}
         error={errors.receiptPrinterId}
       >
@@ -381,7 +387,7 @@ function TerminalForm({
           value={form.receiptPrinterId}
           onValueChange={(receiptPrinterId) => setForm({ ...form, receiptPrinterId })}
         >
-          <SelectTrigger>
+          <SelectTrigger id="terminal-printer">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

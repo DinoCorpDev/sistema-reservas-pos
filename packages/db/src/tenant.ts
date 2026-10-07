@@ -41,7 +41,11 @@ export function inOrg(table: OrgTable, ctx: TenantContext, ...conditions: (SQL |
 }
 
 /** WHERE organization_id = … AND location_id = ctx.locationId [AND …conditions]. */
-export function inLocation(table: LocTable, ctx: TenantContext, ...conditions: (SQL | undefined)[]) {
+export function inLocation(
+  table: LocTable,
+  ctx: TenantContext,
+  ...conditions: (SQL | undefined)[]
+) {
   return and(
     eq(table.organizationId, ctx.organizationId),
     eq(table.locationId, requireLocation(ctx)),

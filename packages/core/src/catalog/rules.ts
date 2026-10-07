@@ -161,7 +161,9 @@ export function checkPublishable(product: {
   const issues: PublicationIssue[] = [];
   if (!product.allergensComplete) issues.push('allergens_missing');
   const declared = product.origins.filter(
-    (o) => (ORIGIN_KINDS as readonly string[]).includes(o.kind as OriginKind) && /^[A-Z]{2}$/.test(o.country),
+    (o) =>
+      (ORIGIN_KINDS as readonly string[]).includes(o.kind as OriginKind) &&
+      /^[A-Z]{2}$/.test(o.country),
   );
   if (product.requiresOrigin && declared.length === 0) issues.push('origin_missing');
   return { publishable: issues.length === 0, issues };

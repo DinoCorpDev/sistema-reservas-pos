@@ -8,7 +8,11 @@ import { Field } from '@pos/ui/label';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { confirmTwoFactor, disableTwoFactor, startTwoFactor } from '@/app/backoffice/account-actions';
+import {
+  confirmTwoFactor,
+  disableTwoFactor,
+  startTwoFactor,
+} from '@/app/backoffice/account-actions';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 
 /** Two-factor sign-in with an authenticator app (RF-A07). */
@@ -37,7 +41,9 @@ export function TwoFactorCard({ enabled }: { enabled: boolean }) {
     <Card>
       <CardHeader className="flex-row items-center justify-between gap-2">
         <CardTitle>{t('twoFactorTitle')}</CardTitle>
-        <Badge variant={enabled ? 'success' : 'secondary'}>{enabled ? t('twoFactorOn') : t('twoFactorOff')}</Badge>
+        <Badge variant={enabled ? 'success' : 'secondary'}>
+          {enabled ? t('twoFactorOn') : t('twoFactorOff')}
+        </Badge>
       </CardHeader>
       <CardContent>
         {enabled ? (
@@ -48,7 +54,11 @@ export function TwoFactorCard({ enabled }: { enabled: boolean }) {
               void disable.run(password);
             }}
           >
-            <Field label={t('currentPassword')} htmlFor="tfa-password" error={disable.fieldErrors.currentPassword}>
+            <Field
+              label={t('currentPassword')}
+              htmlFor="tfa-password"
+              error={disable.fieldErrors.currentPassword}
+            >
               <Input
                 id="tfa-password"
                 type="password"
@@ -73,7 +83,9 @@ export function TwoFactorCard({ enabled }: { enabled: boolean }) {
           >
             <p className="text-sm text-muted-foreground">{t('twoFactorScan')}</p>
             <Field label={t('twoFactorSecret')}>
-              <code className="rounded-md bg-muted px-3 py-2 font-mono text-sm break-all select-all">{setup.secret}</code>
+              <code className="rounded-md bg-muted px-3 py-2 font-mono text-sm break-all select-all">
+                {setup.secret}
+              </code>
             </Field>
             <Field label={tc('confirm')} htmlFor="tfa-code" error={confirm.fieldErrors.token}>
               <Input

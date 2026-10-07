@@ -2,7 +2,14 @@
 
 import { type ReactNode, useState } from 'react';
 import { Button, type ButtonProps } from './button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './dialog';
 
 /**
  * Button that asks before running a destructive or irreversible action (remove, deactivate,

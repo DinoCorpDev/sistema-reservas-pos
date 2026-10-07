@@ -2,7 +2,12 @@ import { type BackofficeSession, hasActiveSupportGrant } from '@pos/api';
 import NextAuth, { CredentialsSignin, type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
-import { checkStaffCredentials, checkUserCredentials, userWorksAt } from './server/credentials';
+import {
+  checkStaffCredentials,
+  checkUserCredentials,
+  locationBelongs,
+  userWorksAt,
+} from './server/credentials';
 import { getDb } from './server/db';
 
 /**
@@ -19,7 +24,8 @@ declare module 'next-auth' {
       id: string;
       organizationId: string | null;
       locationId: string | null;
-      uiLanguage: string;
+      /** Null for DINOLABS support: their UI follows the login-page choice or the browser. */
+      uiLanguage: string | null;
       mustChangePassword: boolean;
     } & DefaultSession['user'];
   }
@@ -27,7 +33,7 @@ declare module 'next-auth' {
     kind?: 'user' | 'support';
     organizationId?: string | null;
     locationId?: string | null;
-    uiLanguage?: string;
+    uiLanguage?: string | null;
     mustChangePassword?: boolean;
   }
 }
@@ -47,7 +53,13 @@ const credentialsSchema = z.object({
 
 const SESSION_HOURS = 12;
 
-export const { handlers, auth, signIn, signOut, unstable_update: updateSession } = NextAuth({
+export const {
+  handlers,
+  auth,
+  signIn,
+  signOut,
+  unstable_update: updateSession,
+} = NextAuth({
   trustHost: true,
   session: { strategy: 'jwt', maxAge: SESSION_HOURS * 60 * 60 },
   pages: { signIn: '/login' },
@@ -86,7 +98,7 @@ export const { handlers, auth, signIn, signOut, unstable_update: updateSession }
           kind: 'support',
           organizationId: null,
           locationId: null,
-          uiLanguage: 'es',
+          uiLanguage: null,
           mustChangePassword: false,
         };
       },
@@ -99,11 +111,16 @@ export const { handlers, auth, signIn, signOut, unstable_update: updateSession }
         token.uid = user.id;
         token.org = user.organizationId ?? null;
         token.loc = user.locationId ?? null;
-        token.lang = user.uiLanguage ?? 'de';
+        token.lang = user.uiLanguage ?? null;
         token.mcp = user.mustChangePassword ?? false;
       }
       if (trigger === 'update' && session && typeof session === 'object') {
-        const patch = session as { locationId?: string; organizationId?: string | null; uiLanguage?: string; mustChangePassword?: false };
+        const patch = session as {
+          locationId?: string;
+          organizationId?: string | null;
+          uiLanguage?: string;
+          mustChangePassword?: false;
+        };
         const uid = token.uid as string;
         if (token.kind === 'user') {
           if (patch.locationId && (await userWorksAt(uid, token.org as string, patch.locationId))) {
@@ -116,12 +133,22 @@ export const { handlers, auth, signIn, signOut, unstable_update: updateSession }
             (await hasActiveSupportGrant(getDb(), patch.organizationId, uid));
           if (allowed) {
             token.org = patch.organizationId;
-            token.loc = patch.locationId ?? null;
+            token.loc =
+              patch.organizationId &&
+              patch.locationId &&
+              (await locationBelongs(patch.organizationId, patch.locationId))
+                ? patch.locationId
+                : null;
           }
-        } else if (patch.locationId && token.org) {
+        } else if (
+          patch.locationId &&
+          token.org &&
+          (await locationBelongs(token.org as string, patch.locationId))
+        ) {
           token.loc = patch.locationId;
         }
-        if (patch.uiLanguage && /^(de|fr|it|en|es)$/.test(patch.uiLanguage)) token.lang = patch.uiLanguage;
+        if (patch.uiLanguage && /^(de|fr|it|en|es)$/.test(patch.uiLanguage))
+          token.lang = patch.uiLanguage;
         if (patch.mustChangePassword === false) token.mcp = false;
       }
       return token;
@@ -133,7 +160,7 @@ export const { handlers, auth, signIn, signOut, unstable_update: updateSession }
         id: token.uid as string,
         organizationId: (token.org as string | null) ?? null,
         locationId: (token.loc as string | null) ?? null,
-        uiLanguage: (token.lang as string) ?? 'de',
+        uiLanguage: (token.lang as string | null) ?? null,
         mustChangePassword: Boolean(token.mcp),
       };
       return session;
@@ -147,8 +174,18 @@ export async function backofficeSession(): Promise<BackofficeSession | null> {
   const user = session?.user;
   if (!user?.id) return null;
   if (user.kind === 'support') {
-    return { kind: 'support', staffId: user.id, organizationId: user.organizationId, locationId: user.locationId };
+    return {
+      kind: 'support',
+      staffId: user.id,
+      organizationId: user.organizationId,
+      locationId: user.locationId,
+    };
   }
   if (!user.organizationId) return null;
-  return { kind: 'user', userId: user.id, organizationId: user.organizationId, locationId: user.locationId };
+  return {
+    kind: 'user',
+    userId: user.id,
+    organizationId: user.organizationId,
+    locationId: user.locationId,
+  };
 }

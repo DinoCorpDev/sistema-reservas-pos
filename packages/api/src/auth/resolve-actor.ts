@@ -31,7 +31,12 @@ export interface ResolveInput {
 
 async function userActor(
   db: Database,
-  base: { organizationId: string; userId: string; locationId: string | null; terminalId?: string | null },
+  base: {
+    organizationId: string;
+    userId: string;
+    locationId: string | null;
+    terminalId?: string | null;
+  },
   requestId: string,
 ): Promise<Actor> {
   const permissions = await loadUserPermissions(db, base);
@@ -67,7 +72,11 @@ export async function hasActiveSupportGrant(db: Database, organizationId: string
   return !!grant;
 }
 
-async function sessionActor(db: Database, session: BackofficeSession, input: ResolveInput): Promise<Actor> {
+async function sessionActor(
+  db: Database,
+  session: BackofficeSession,
+  input: ResolveInput,
+): Promise<Actor> {
   if (session.kind === 'user') {
     return userActor(
       db,
@@ -83,14 +92,19 @@ async function sessionActor(db: Database, session: BackofficeSession, input: Res
     throw new ApiError('FORBIDDEN', 'Support staff must open an organization first');
   }
   if (!(await hasActiveSupportGrant(db, session.organizationId, session.staffId))) {
-    throw new ApiError('FORBIDDEN', 'The owner has not granted support access to this organization');
+    throw new ApiError(
+      'FORBIDDEN',
+      'The owner has not granted support access to this organization',
+    );
   }
   const locationId = input.locationHeader ?? session.locationId;
   if (locationId) {
     const [location] = await db
       .select({ id: s.locations.id })
       .from(s.locations)
-      .where(and(eq(s.locations.id, locationId), eq(s.locations.organizationId, session.organizationId)));
+      .where(
+        and(eq(s.locations.id, locationId), eq(s.locations.organizationId, session.organizationId)),
+      );
     if (!location) throw new ApiError('NOT_FOUND', 'Location not found');
   }
   return {
@@ -109,7 +123,9 @@ export async function resolveTerminal(db: Database, deviceToken: string) {
   const [terminal] = await db
     .select()
     .from(s.terminals)
-    .where(and(eq(s.terminals.deviceTokenHash, sha256Hex(deviceToken)), isNull(s.terminals.deletedAt)));
+    .where(
+      and(eq(s.terminals.deviceTokenHash, sha256Hex(deviceToken)), isNull(s.terminals.deletedAt)),
+    );
   if (!terminal || !terminal.isActive) {
     throw new ApiError('UNAUTHENTICATED', 'Unknown or deactivated terminal');
   }

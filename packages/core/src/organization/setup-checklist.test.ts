@@ -19,7 +19,12 @@ const ready: SetupSnapshot = {
   activeReceiptPrinters: 1,
   managersWithPin: 2,
   tax: { categoriesInUse: 3, categoriesResolvable: 3 },
-  catalog: { activeProducts: 30, unroutedProducts: 0, unpublishableProducts: 0, untranslatedProducts: 0 },
+  catalog: {
+    activeProducts: 30,
+    unroutedProducts: 0,
+    unpublishableProducts: 0,
+    untranslatedProducts: 0,
+  },
 };
 
 describe('RF-A11 · setup checklist', () => {
@@ -41,7 +46,12 @@ describe('RF-A11 · setup checklist', () => {
       activeReceiptPrinters: 0,
       managersWithPin: 0,
       tax: { categoriesInUse: 0, categoriesResolvable: 0 },
-      catalog: { activeProducts: 0, unroutedProducts: 0, unpublishableProducts: 0, untranslatedProducts: 0 },
+      catalog: {
+        activeProducts: 0,
+        unroutedProducts: 0,
+        unpublishableProducts: 0,
+        untranslatedProducts: 0,
+      },
     };
     const checklist = computeSetupChecklist(empty);
     expect(checklist.complete).toBe(false);
@@ -62,13 +72,26 @@ describe('RF-A11 · setup checklist', () => {
     const checklist = computeSetupChecklist({
       ...ready,
       tax: { categoriesInUse: 3, categoriesResolvable: 2 },
-      catalog: { activeProducts: 30, unroutedProducts: 2, unpublishableProducts: 4, untranslatedProducts: 1 },
+      catalog: {
+        activeProducts: 30,
+        unroutedProducts: 2,
+        unpublishableProducts: 4,
+        untranslatedProducts: 1,
+      },
     });
     const byKey = Object.fromEntries(checklist.checks.map((c) => [c.key, c]));
     expect(byKey.tax_rules).toEqual({ key: 'tax_rules', done: false, missing: 1 });
     expect(byKey.product_routing).toEqual({ key: 'product_routing', done: false, missing: 2 });
-    expect(byKey.product_publication).toEqual({ key: 'product_publication', done: false, missing: 4 });
-    expect(byKey.product_translations).toEqual({ key: 'product_translations', done: false, missing: 1 });
+    expect(byKey.product_publication).toEqual({
+      key: 'product_publication',
+      done: false,
+      missing: 4,
+    });
+    expect(byKey.product_translations).toEqual({
+      key: 'product_translations',
+      done: false,
+      missing: 1,
+    });
   });
 
   it('requires a valid Swiss UID and complete address', () => {

@@ -386,12 +386,12 @@ function UserForm({
             </Field>
           </>
         ) : null}
-        <Field label={t('uiLanguage')} error={error('uiLanguage')}>
+        <Field label={t('uiLanguage')} htmlFor="user-language" error={error('uiLanguage')}>
           <Select
             value={form.uiLanguage}
             onValueChange={(uiLanguage) => setForm({ ...form, uiLanguage })}
           >
-            <SelectTrigger>
+            <SelectTrigger id="user-language">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

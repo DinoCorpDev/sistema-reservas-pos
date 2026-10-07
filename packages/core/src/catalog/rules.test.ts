@@ -15,7 +15,12 @@ const LOC = 'loc-zh';
 const OTHER_LOC = 'loc-be';
 
 describe('resolvePrice (RF-B01, RF-B04)', () => {
-  const base = { basePriceRappen: rappen(2450), channelPrices: [], channel: 'table' as const, locationId: LOC };
+  const base = {
+    basePriceRappen: rappen(2450),
+    channelPrices: [],
+    channel: 'table' as const,
+    locationId: LOC,
+  };
 
   it('uses the catalog price by default and the location price when set', () => {
     expect(resolvePrice(base)).toBe(2450);
@@ -28,23 +33,44 @@ describe('resolvePrice (RF-B01, RF-B04)', () => {
 
   it('prefers a location-specific channel price over an organization-wide one', () => {
     const channelPrices = [
-      { channel: 'takeaway' as const, locationId: null, variantId: null, priceRappen: rappen(1950) },
+      {
+        channel: 'takeaway' as const,
+        locationId: null,
+        variantId: null,
+        priceRappen: rappen(1950),
+      },
       { channel: 'takeaway' as const, locationId: LOC, variantId: null, priceRappen: rappen(1900) },
-      { channel: 'takeaway' as const, locationId: OTHER_LOC, variantId: null, priceRappen: rappen(1800) },
+      {
+        channel: 'takeaway' as const,
+        locationId: OTHER_LOC,
+        variantId: null,
+        priceRappen: rappen(1800),
+      },
     ];
     expect(resolvePrice({ ...base, channel: 'takeaway', channelPrices })).toBe(1900);
-    expect(resolvePrice({ ...base, channel: 'takeaway', channelPrices, locationId: 'loc-x' })).toBe(1950);
+    expect(resolvePrice({ ...base, channel: 'takeaway', channelPrices, locationId: 'loc-x' })).toBe(
+      1950,
+    );
     expect(resolvePrice({ ...base, channel: 'table', channelPrices })).toBe(2450);
   });
 
   it('matches channel prices to the exact variant', () => {
     const channelPrices = [
-      { channel: 'takeaway' as const, locationId: null, variantId: 'v5dl', priceRappen: rappen(700) },
+      {
+        channel: 'takeaway' as const,
+        locationId: null,
+        variantId: 'v5dl',
+        priceRappen: rappen(700),
+      },
     ];
     const variant3dl = { id: 'v3dl', priceRappen: rappen(550) };
     const variant5dl = { id: 'v5dl', priceRappen: rappen(750) };
-    expect(resolvePrice({ ...base, channel: 'takeaway', channelPrices, variant: variant5dl })).toBe(700);
-    expect(resolvePrice({ ...base, channel: 'takeaway', channelPrices, variant: variant3dl })).toBe(550);
+    expect(resolvePrice({ ...base, channel: 'takeaway', channelPrices, variant: variant5dl })).toBe(
+      700,
+    );
+    expect(resolvePrice({ ...base, channel: 'takeaway', channelPrices, variant: variant3dl })).toBe(
+      550,
+    );
   });
 });
 
@@ -103,7 +129,13 @@ describe('RN-17 · only orderable when active, not sold out and available', () =
   });
 
   it('applies category rules and ignores rules of other locations', () => {
-    const breakfastCategory = { ...lunchOnWeekdays, productId: null, categoryId: 'mains', startTime: '07:00', endTime: '10:00' };
+    const breakfastCategory = {
+      ...lunchOnWeekdays,
+      productId: null,
+      categoryId: 'mains',
+      startTime: '07:00',
+      endTime: '10:00',
+    };
     expect(check({ rules: [breakfastCategory] })).toMatchObject({ reason: 'not_available_now' });
     expect(check({ rules: [{ ...breakfastCategory, locationId: OTHER_LOC }] })).toEqual({
       orderable: true,
@@ -128,13 +160,19 @@ describe('RN-17 · only orderable when active, not sold out and available', () =
   });
 
   it('blocks inactive and sold-out products (RF-B09)', () => {
-    expect(check({ product: { ...product, isActive: false } })).toMatchObject({ reason: 'inactive' });
+    expect(check({ product: { ...product, isActive: false } })).toMatchObject({
+      reason: 'inactive',
+    });
     expect(
       check({ locationSetting: { isActive: false, soldOutAt: null, soldOutUntil: null } }),
     ).toMatchObject({ reason: 'inactive_at_location' });
     expect(
       check({
-        locationSetting: { isActive: true, soldOutAt: new Date('2026-10-06T09:00:00Z'), soldOutUntil: null },
+        locationSetting: {
+          isActive: true,
+          soldOutAt: new Date('2026-10-06T09:00:00Z'),
+          soldOutUntil: null,
+        },
       }),
     ).toMatchObject({ reason: 'sold_out' });
   });
@@ -158,14 +196,18 @@ describe('RN-17 · only orderable when active, not sold out and available', () =
 
 describe('RN-18 · no publication without allergens and origin', () => {
   it('blocks products whose allergens are not confirmed', () => {
-    expect(checkPublishable({ allergensComplete: false, requiresOrigin: false, origins: [] })).toEqual({
+    expect(
+      checkPublishable({ allergensComplete: false, requiresOrigin: false, origins: [] }),
+    ).toEqual({
       publishable: false,
       issues: ['allergens_missing'],
     });
   });
 
   it('blocks meat, poultry and fish without a declared origin', () => {
-    expect(checkPublishable({ allergensComplete: true, requiresOrigin: true, origins: [] })).toEqual({
+    expect(
+      checkPublishable({ allergensComplete: true, requiresOrigin: true, origins: [] }),
+    ).toEqual({
       publishable: false,
       issues: ['origin_missing'],
     });
@@ -189,7 +231,9 @@ describe('RN-18 · no publication without allergens and origin', () => {
   });
 
   it('publishes a confirmed product with zero allergens', () => {
-    expect(checkPublishable({ allergensComplete: true, requiresOrigin: false, origins: [] }).publishable).toBe(true);
+    expect(
+      checkPublishable({ allergensComplete: true, requiresOrigin: false, origins: [] }).publishable,
+    ).toBe(true);
   });
 });
 
@@ -200,7 +244,9 @@ describe('validateModifierSelection (RF-B02)', () => {
   ];
 
   it('accepts a valid selection', () => {
-    expect(validateModifierSelection(groups, [{ modifierId: 'medium' }, { modifierId: 'cheese' }])).toEqual([]);
+    expect(
+      validateModifierSelection(groups, [{ modifierId: 'medium' }, { modifierId: 'cheese' }]),
+    ).toEqual([]);
   });
 
   it('requires mandatory groups and enforces the maximum', () => {
@@ -217,9 +263,9 @@ describe('validateModifierSelection (RF-B02)', () => {
   });
 
   it('rejects modifiers that do not belong to the product', () => {
-    expect(validateModifierSelection(groups, [{ modifierId: 'medium' }, { modifierId: 'oat-milk' }])).toEqual([
-      { code: 'unknown_modifier', modifierId: 'oat-milk' },
-    ]);
+    expect(
+      validateModifierSelection(groups, [{ modifierId: 'medium' }, { modifierId: 'oat-milk' }]),
+    ).toEqual([{ code: 'unknown_modifier', modifierId: 'oat-milk' }]);
   });
 });
 
@@ -228,6 +274,8 @@ describe('translate (RF-B07)', () => {
     const texts = { de: 'Tagesmenü', fr: 'Menu du jour', it: '' };
     expect(translate(texts, 'Tagesmenü', 'fr', 'de')).toBe('Menu du jour');
     expect(translate(texts, 'Tagesmenü', 'it', 'de')).toBe('Tagesmenü');
-    expect(translate({ fr: 'Menu du jour' }, 'Tagesmenü (catalog)', 'en', 'de')).toBe('Tagesmenü (catalog)');
+    expect(translate({ fr: 'Menu du jour' }, 'Tagesmenü (catalog)', 'en', 'de')).toBe(
+      'Tagesmenü (catalog)',
+    );
   });
 });

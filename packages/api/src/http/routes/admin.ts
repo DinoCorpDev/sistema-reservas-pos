@@ -223,6 +223,10 @@ const PlatformOrganizationSchema = z
     createdAt: z.string(),
     locationsCount: z.number().int(),
     supportGrantExpiresAt: z.string().nullable(),
+    primaryLocationId: z
+      .uuid()
+      .nullable()
+      .openapi({ description: 'Oldest location; opened by the console' }),
   })
   .openapi('PlatformOrganization');
 

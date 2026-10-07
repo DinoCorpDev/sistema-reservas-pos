@@ -581,43 +581,6 @@ describe('audit query (RF-F11, RF-F12)', () => {
 });
 
 describe('setup checklist (RF-A11, Phase 1 gate)', () => {
-  it('reports the demo location as complete and lets the owner activate it', async () => {
-    const response = await api.request('GET', '/setup-checklist', { headers: waiter });
-    expect(response.status).toBe(200);
-    const checklist = await json<Checklist>(response);
-    expect(checklist.checks.filter((c) => !c.done)).toEqual([]);
-    expect(checklist).toMatchObject({ complete: true, done: 14, total: 14 });
-
-    const forbidden = await api.request('POST', '/setup-checklist/activate', { headers: waiter });
-    expect(forbidden.status).toBe(403);
-
-    const activated = await api.request('POST', '/setup-checklist/activate', { headers: admin });
-    expect(activated.status).toBe(200);
-    const body = await json<Checklist>(activated);
-    expect(body.operationActivatedAt).not.toBeNull();
-
-    const [location] = await api.db
-      .select()
-      .from(s.locations)
-      .where(eq(s.locations.id, demo.locationId));
-    expect(location!.setupCompletedAt?.toISOString()).toBe(body.operationActivatedAt);
-    const audits = await api.db
-      .select()
-      .from(s.auditEvents)
-      .where(
-        and(
-          eq(s.auditEvents.entityId, demo.locationId),
-          eq(s.auditEvents.action, 'operation.activated'),
-        ),
-      );
-    expect(audits).toHaveLength(1);
-
-    const again = await json<Checklist>(
-      await api.request('POST', '/setup-checklist/activate', { headers: admin }),
-    );
-    expect(again.operationActivatedAt).toBe(body.operationActivatedAt);
-  });
-
   it('lists what a fresh organization is missing and refuses to activate it', async () => {
     const checklist = await json<Checklist>(
       await api.request('GET', '/setup-checklist', { headers: otherAdmin }),
@@ -645,8 +608,74 @@ describe('setup checklist (RF-A11, Phase 1 gate)', () => {
       .where(eq(s.locations.id, other.locationId));
     expect(location!.setupCompletedAt).toBeNull();
   });
-});
 
+  // Self-contained (does not depend on the demo data other test files change): the whole
+  // setup of a new restaurant through the API, without code, until operation is activated.
+  it('reaches 100 % through the API alone and lets the owner activate operation', async () => {
+    const call = async <T = { id: string }>(method: string, path: string, body?: unknown) => {
+      const response = await api.request(method, path, { headers: otherAdmin, body });
+      expect(response.status, `${method} ${path}`).toBeLessThan(300);
+      return (response.status === 204 ? null : await response.json()) as T;
+    };
+
+    await call('PATCH', `/locations/${other.locationId}`, { vatUid: 'CHE-116.281.710' });
+    const area = await call('POST', '/areas', { name: 'Saal' });
+    await call('POST', '/tables', { areaId: area.id, label: '1' });
+    const station = await call('POST', '/kitchen-stations', { name: 'Küche' });
+    await call('POST', '/printers', { name: 'Bondrucker', kind: 'receipt', host: '10.0.0.5' });
+    await call('POST', '/terminals', { name: 'Kasse 1', type: 'pos', orderNumberPrefix: 'K1' });
+
+    const tax = await call<TaxOverview>('GET', '/tax');
+    const food = tax.categories.find((c) => c.key === 'food')!;
+    const category = await call('POST', '/catalog/categories', { name: 'Hauptgerichte' });
+    const product = await call('POST', '/catalog/products', {
+      categoryId: category.id,
+      taxCategoryId: food.id,
+      name: 'Rösti mit Spiegelei',
+      basePriceRappen: 2450,
+    });
+    await call('PUT', `/catalog/products/${product.id}/allergens`, {
+      allergens: [
+        { allergen: 'milk', presence: 'contains' },
+        { allergen: 'eggs', presence: 'contains' },
+      ],
+      confirmed: true,
+    });
+    await call('PUT', `/catalog/products/${product.id}/translations`, {
+      fr: { name: 'Rösti avec œuf au plat' },
+    });
+    await call('PUT', `/catalog/products/${product.id}/stations`, { stationIds: [station.id] });
+
+    const checklist = await call<Checklist>('GET', '/setup-checklist');
+    expect(checklist.checks.filter((c) => !c.done)).toEqual([]);
+    expect(checklist).toMatchObject({ complete: true, done: 14, total: 14 });
+
+    // Activation needs location.manage (a waiter of another organization cannot either).
+    const forbidden = await api.request('POST', '/setup-checklist/activate', { headers: waiter });
+    expect(forbidden.status).toBe(403);
+
+    const activated = await call<Checklist>('POST', '/setup-checklist/activate');
+    expect(activated.operationActivatedAt).not.toBeNull();
+    const [location] = await api.db
+      .select()
+      .from(s.locations)
+      .where(eq(s.locations.id, other.locationId));
+    expect(location!.setupCompletedAt?.toISOString()).toBe(activated.operationActivatedAt);
+    const audits = await api.db
+      .select()
+      .from(s.auditEvents)
+      .where(
+        and(
+          eq(s.auditEvents.entityId, other.locationId),
+          eq(s.auditEvents.action, 'operation.activated'),
+        ),
+      );
+    expect(audits).toHaveLength(1);
+
+    const again = await call<Checklist>('POST', '/setup-checklist/activate');
+    expect(again.operationActivatedAt).toBe(activated.operationActivatedAt);
+  });
+});
 describe('DINOLABS support (RF-A10, Flujo 7)', () => {
   const onboarding = (email: string, name = 'Café du Lac') => ({
     organization: { name, legalName: `${name} SA`, defaultLanguage: 'fr' },

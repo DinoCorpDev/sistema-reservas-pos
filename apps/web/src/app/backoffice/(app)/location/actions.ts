@@ -9,7 +9,12 @@ import { currentActor, deps } from '@/server/actor';
 export async function saveLocation(id: string, input: unknown) {
   return runAction(async () => {
     const actor = await currentActor();
-    const location = await locations.updateLocation(deps(), actor, id, updateLocationSchema.parse(input));
+    const location = await locations.updateLocation(
+      deps(),
+      actor,
+      id,
+      updateLocationSchema.parse(input),
+    );
     revalidatePath('/backoffice', 'layout');
     return location;
   });

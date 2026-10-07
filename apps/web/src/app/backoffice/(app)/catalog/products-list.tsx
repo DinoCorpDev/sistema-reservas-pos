@@ -179,7 +179,9 @@ export function ProductsList({
                         {inactiveHere ? (
                           <Badge variant="secondary">{t('inactiveHere')}</Badge>
                         ) : null}
-                        {isSoldOut ? <Badge variant="destructive">{t('soldOutBadge')}</Badge> : null}
+                        {isSoldOut ? (
+                          <Badge variant="destructive">{t('soldOutBadge')}</Badge>
+                        ) : null}
                         {product.publication.issues.map((issue) => (
                           <Badge key={issue} variant="warning">
                             {tp(`issues.${issue}`)}

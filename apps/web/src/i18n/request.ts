@@ -12,7 +12,8 @@ import { isUiLocale, type UiLocale } from './locales';
  */
 async function resolveLocale(): Promise<UiLocale> {
   const session = await auth();
-  if (session?.user?.uiLanguage && isUiLocale(session.user.uiLanguage)) return session.user.uiLanguage;
+  if (session?.user?.uiLanguage && isUiLocale(session.user.uiLanguage))
+    return session.user.uiLanguage;
   const cookieLocale = (await cookies()).get('NEXT_LOCALE')?.value;
   if (cookieLocale && isUiLocale(cookieLocale)) return cookieLocale;
   const accepted = (await headers()).get('accept-language') ?? '';

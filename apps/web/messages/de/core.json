@@ -42,7 +42,7 @@
     "FORBIDDEN": "Dafür fehlt Ihnen die Berechtigung.",
     "APPROVAL_REQUIRED": "Diese Aktion braucht die Freigabe einer Führungsperson mit PIN.",
     "NOT_FOUND": "Nicht gefunden.",
-    "CONFLICT": "Ein Eintrag mit diesen Angaben existiert bereits.",
+    "CONFLICT": "Das geht so nicht: Es gibt einen Konflikt mit bestehenden Daten.",
     "LOCKED": "Gesperrt. Bitte später erneut versuchen.",
     "VALIDATION_FAILED": "Bitte prüfen Sie die markierten Felder.",
     "RULE_VIOLATION": "Diese Aktion ist nach den Geschäftsregeln nicht erlaubt.",

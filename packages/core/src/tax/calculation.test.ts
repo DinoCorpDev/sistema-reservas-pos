@@ -169,7 +169,12 @@ describe('RN-02 · rates are dated data, not constants', () => {
 
 describe('RN-03 · rate from tax category + channel + consumption type', () => {
   it('uses the normal rate for every category consumed on the premises (except lodging)', () => {
-    for (const category of ['food', 'non_alcoholic_beverage', 'alcoholic_beverage', 'other'] as const) {
+    for (const category of [
+      'food',
+      'non_alcoholic_beverage',
+      'alcoholic_beverage',
+      'other',
+    ] as const) {
       expect(resolve(category, 'on_premise').rateCode).toBe('normal');
     }
   });

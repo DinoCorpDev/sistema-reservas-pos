@@ -1,4 +1,8 @@
-import { DEFAULT_CONSUMPTION_BY_CHANNEL, type Channel, type ConsumptionType } from '../shared/channels';
+import {
+  DEFAULT_CONSUMPTION_BY_CHANNEL,
+  type Channel,
+  type ConsumptionType,
+} from '../shared/channels';
 import type { Rappen } from '../shared/money';
 import {
   type IsoDate,

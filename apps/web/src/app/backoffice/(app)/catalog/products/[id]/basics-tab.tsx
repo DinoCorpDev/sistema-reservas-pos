@@ -3,7 +3,14 @@
 import type { admin, catalog } from '@pos/api';
 import { Alert, AlertDescription, AlertTitle } from '@pos/ui/alert';
 import { Button } from '@pos/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@pos/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@pos/ui/card';
 import { Input, Textarea } from '@pos/ui/input';
 import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
@@ -72,9 +79,12 @@ export function BasicsTab({
   const tc = useTranslations('common');
   const tco = useTranslations('courses');
   const { draft, base, dirty, setDraft, reset } = useDraft(basicsOf(product));
-  const save = useServerAction((patch: Record<string, unknown>) => updateProduct(product.id, patch), {
-    onSuccess: (saved) => reset(basicsOf(saved)),
-  });
+  const save = useServerAction(
+    (patch: Record<string, unknown>) => updateProduct(product.id, patch),
+    {
+      onSuccess: (saved) => reset(basicsOf(saved)),
+    },
+  );
   const set = <K extends keyof Basics>(key: K, value: Basics[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
@@ -94,7 +104,11 @@ export function BasicsTab({
     if (Object.keys(patch).length > 0) void save.run(patch);
   };
 
-  const toggle = (key: 'isActive' | 'requiresOrigin' | 'publishQr' | 'publishWeb', label: ReactNode, hint?: ReactNode) => (
+  const toggle = (
+    key: 'isActive' | 'requiresOrigin' | 'publishQr' | 'publishWeb',
+    label: ReactNode,
+    hint?: ReactNode,
+  ) => (
     <div className="flex items-start gap-3">
       <Switch
         id={`basics-${key}`}
@@ -200,7 +214,9 @@ export function BasicsTab({
                   : tb('basePriceHint')
             }
             error={
-              draft.basePriceRappen === null ? tb('priceRequired') : save.fieldErrors.basePriceRappen
+              draft.basePriceRappen === null
+                ? tb('priceRequired')
+                : save.fieldErrors.basePriceRappen
             }
           >
             <ChfInput
@@ -211,7 +227,12 @@ export function BasicsTab({
               onValueChange={(value) => set('basePriceRappen', value)}
             />
           </Field>
-          <Field label={tb('sku')} htmlFor="basics-sku" hint={tb('skuHint')} error={save.fieldErrors.sku}>
+          <Field
+            label={tb('sku')}
+            htmlFor="basics-sku"
+            hint={tb('skuHint')}
+            error={save.fieldErrors.sku}
+          >
             <Input
               id="basics-sku"
               maxLength={64}
@@ -252,7 +273,9 @@ export function BasicsTab({
               min={0}
               value={draft.sortOrder}
               disabled={!canEdit}
-              onChange={(e) => set('sortOrder', Math.max(0, Math.trunc(Number(e.target.value) || 0)))}
+              onChange={(e) =>
+                set('sortOrder', Math.max(0, Math.trunc(Number(e.target.value) || 0)))
+              }
             />
           </Field>
           <div className="grid gap-3 md:col-span-2 md:grid-cols-[1fr_auto] md:items-end">
@@ -333,7 +356,10 @@ export function BasicsTab({
                 {t('discard')}
               </Button>
             ) : null}
-            <Button type="submit" disabled={save.pending || !dirty || draft.basePriceRappen === null}>
+            <Button
+              type="submit"
+              disabled={save.pending || !dirty || draft.basePriceRappen === null}
+            >
               {save.pending ? tc('saving') : tc('save')}
             </Button>
           </CardFooter>

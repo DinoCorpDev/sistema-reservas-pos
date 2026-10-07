@@ -259,12 +259,17 @@ function StationForm({
             onChange={(e) => setForm({ ...form, alertAfterMinutes: e.target.value })}
           />
         </Field>
-        <Field label={t('language')} hint={t('languageHint')} error={errors.language}>
+        <Field
+          label={t('language')}
+          htmlFor="station-language"
+          hint={t('languageHint')}
+          error={errors.language}
+        >
           <Select
             value={form.language}
             onValueChange={(language) => setForm({ ...form, language })}
           >
-            <SelectTrigger>
+            <SelectTrigger id="station-language">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -280,12 +285,17 @@ function StationForm({
           </Select>
         </Field>
       </div>
-      <Field label={t('printer')} hint={t('printerHint')} error={errors.printerId}>
+      <Field
+        label={t('printer')}
+        htmlFor="station-printer"
+        hint={t('printerHint')}
+        error={errors.printerId}
+      >
         <Select
           value={form.printerId}
           onValueChange={(printerId) => setForm({ ...form, printerId })}
         >
-          <SelectTrigger>
+          <SelectTrigger id="station-printer">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

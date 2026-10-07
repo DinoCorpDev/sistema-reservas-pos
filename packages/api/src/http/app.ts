@@ -95,7 +95,8 @@ export function createApiApp(deps: ApiDependencies) {
   app.openAPIRegistry.registerComponent('securitySchemes', 'apiKey', {
     type: 'http',
     scheme: 'bearer',
-    description: 'Organization API key `pos_live_…` (RF-F14). Pick the location with X-Location-Id.',
+    description:
+      'Organization API key `pos_live_…` (RF-F14). Pick the location with X-Location-Id.',
   });
 
   app.doc31('/openapi.json', {
@@ -109,7 +110,10 @@ export function createApiApp(deps: ApiDependencies) {
     },
     servers: [{ url: '/' }],
   });
-  app.get('/docs', Scalar({ url: `${API_BASE_PATH}/openapi.json`, pageTitle: 'Sistema Reservas POS API' }));
+  app.get(
+    '/docs',
+    Scalar({ url: `${API_BASE_PATH}/openapi.json`, pageTitle: 'Sistema Reservas POS API' }),
+  );
 
   return app;
 }

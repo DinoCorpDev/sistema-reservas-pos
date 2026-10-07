@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Phase 0 smoke', () => {
+test.describe('Smoke', () => {
   test('the home page links every operating surface', async ({ page }) => {
     await page.goto('/');
     await expect(
@@ -14,7 +14,6 @@ test.describe('Phase 0 smoke', () => {
   for (const [path, heading] of [
     ['/pos', 'Kasse & Service'],
     ['/kds', 'Küche (KDS)'],
-    ['/backoffice', 'Backoffice'],
     ['/qr/demo-table', 'Menü'],
   ] as const) {
     test(`${path} renders`, async ({ page }) => {
@@ -23,15 +22,24 @@ test.describe('Phase 0 smoke', () => {
     });
   }
 
+  test('the backoffice requires signing in', async ({ page }) => {
+    await page.goto('/backoffice');
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole('heading', { name: 'Anmelden' })).toBeVisible();
+  });
+
   test('touch targets are at least 44 px high (RNF-22)', async ({ page }) => {
-    await page.goto('/pos');
-    const box = await page.getByRole('link', { name: 'Übersicht' }).boundingBox();
+    await page.goto('/login');
+    const box = await page.getByRole('button', { name: 'Anmelden' }).boundingBox();
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
   });
 
-  test('the public API reports a healthy database', async ({ request }) => {
-    const response = await request.get('/api/v1/health');
-    expect(response.status()).toBe(200);
-    expect(await response.json()).toMatchObject({ status: 'ok', checks: { database: 'ok' } });
+  test('the public API reports a healthy database and documents itself', async ({ request }) => {
+    const health = await request.get('/api/v1/health');
+    expect(health.status()).toBe(200);
+    expect(await health.json()).toMatchObject({ status: 'ok', checks: { database: 'ok' } });
+    const doc = await request.get('/api/v1/openapi.json');
+    expect(doc.status()).toBe(200);
+    expect(((await doc.json()) as { openapi: string }).openapi).toBe('3.1.0');
   });
 });

@@ -66,17 +66,24 @@ export function toApiError(error: unknown): ApiError {
   if (error instanceof ZodError) {
     return new ApiError('VALIDATION_FAILED', 'The request is not valid', error.issues);
   }
-  if (error instanceof TaxError || error instanceof OrderRuleError || error instanceof PaymentRuleError) {
+  if (
+    error instanceof TaxError ||
+    error instanceof OrderRuleError ||
+    error instanceof PaymentRuleError
+  ) {
     return new ApiError('RULE_VIOLATION', error.message, { rule: error.code });
   }
   if (error instanceof TenantError) return new ApiError('BAD_REQUEST', error.message);
   // Hono's own errors, e.g. a malformed or empty JSON body.
   if (error instanceof HTTPException) {
-    if (error.status === 401) return new ApiError('UNAUTHENTICATED', error.message || 'Not authenticated');
+    if (error.status === 401)
+      return new ApiError('UNAUTHENTICATED', error.message || 'Not authenticated');
     if (error.status === 403) return new ApiError('FORBIDDEN', error.message || 'Forbidden');
     if (error.status === 404) return new ApiError('NOT_FOUND', error.message || 'Not found');
-    if (error.status < 500) return new ApiError('BAD_REQUEST', error.message || 'Malformed request');
+    if (error.status < 500)
+      return new ApiError('BAD_REQUEST', error.message || 'Malformed request');
   }
-  if (isDuplicateKey(error)) return new ApiError('CONFLICT', 'A record with these values already exists');
+  if (isDuplicateKey(error))
+    return new ApiError('CONFLICT', 'A record with these values already exists');
   return new ApiError('INTERNAL', 'Unexpected error');
 }

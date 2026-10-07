@@ -13,7 +13,10 @@ import type { ServiceDeps } from './shared';
 
 async function loadSelf(deps: ServiceDeps, actor: Actor) {
   const userId = requireUserId(actor);
-  const [user] = await deps.db.select().from(s.users).where(inOrg(s.users, actor, eq(s.users.id, userId)));
+  const [user] = await deps.db
+    .select()
+    .from(s.users)
+    .where(inOrg(s.users, actor, eq(s.users.id, userId)));
   if (!user) throw notFound('User');
   return user;
 }
@@ -30,7 +33,11 @@ export async function getOwnAccount(deps: ServiceDeps, actor: Actor) {
   };
 }
 
-export async function setOwnLanguage(deps: ServiceDeps, actor: Actor, language: string): Promise<UiLanguage> {
+export async function setOwnLanguage(
+  deps: ServiceDeps,
+  actor: Actor,
+  language: string,
+): Promise<UiLanguage> {
   if (!(UI_LANGUAGES as readonly string[]).includes(language)) {
     throw new ApiError('VALIDATION_FAILED', 'Unsupported language', { path: ['uiLanguage'] });
   }
@@ -55,8 +62,16 @@ export async function changeOwnPassword(
   }
   const passwordHash = await hashPassword(input.newPassword);
   await runCommand(deps.db, actor, async (tx, recorder) => {
-    await tx.update(s.users).set({ passwordHash, mustChangePassword: false }).where(eq(s.users.id, user.id));
-    recorder.audit({ action: 'user.password_changed', entityType: 'user', entityId: user.id, locationId: null });
+    await tx
+      .update(s.users)
+      .set({ passwordHash, mustChangePassword: false })
+      .where(eq(s.users.id, user.id));
+    recorder.audit({
+      action: 'user.password_changed',
+      entityType: 'user',
+      entityId: user.id,
+      locationId: null,
+    });
   });
 }
 
@@ -70,19 +85,36 @@ export async function startTwoFactor(deps: ServiceDeps, actor: Actor) {
     .where(eq(s.users.id, user.id));
   return {
     secret,
-    uri: generateURI({ issuer: 'Sistema Reservas POS', label: user.email ?? user.displayName, secret }),
+    uri: generateURI({
+      issuer: 'Sistema Reservas POS',
+      label: user.email ?? user.displayName,
+      secret,
+    }),
   };
 }
 
 /** Step 2 of 2FA: a valid code from the app turns two-factor sign-in on. */
-export async function confirmTwoFactor(deps: ServiceDeps, actor: Actor, token: string): Promise<void> {
+export async function confirmTwoFactor(
+  deps: ServiceDeps,
+  actor: Actor,
+  token: string,
+): Promise<void> {
   const user = await loadSelf(deps, actor);
   if (!user.totpSecret) throw new ApiError('BAD_REQUEST', 'Start the two-factor setup first');
-  const result = await verify({ secret: user.totpSecret, token: token.replace(/\s/g, ''), epochTolerance: 30 });
+  const result = await verify({
+    secret: user.totpSecret,
+    token: token.replace(/\s/g, ''),
+    epochTolerance: 30,
+  });
   if (!result.valid) throw new ApiError('VALIDATION_FAILED', 'Invalid code', { path: ['token'] });
   await runCommand(deps.db, actor, async (tx, recorder) => {
     await tx.update(s.users).set({ twoFactorEnabled: true }).where(eq(s.users.id, user.id));
-    recorder.audit({ action: 'user.two_factor_enabled', entityType: 'user', entityId: user.id, locationId: null });
+    recorder.audit({
+      action: 'user.two_factor_enabled',
+      entityType: 'user',
+      entityId: user.id,
+      locationId: null,
+    });
   });
 }
 
@@ -96,7 +128,15 @@ export async function disableTwoFactor(
     throw new ApiError('FORBIDDEN', 'The current password is wrong', { path: ['currentPassword'] });
   }
   await runCommand(deps.db, actor, async (tx, recorder) => {
-    await tx.update(s.users).set({ twoFactorEnabled: false, totpSecret: null }).where(eq(s.users.id, user.id));
-    recorder.audit({ action: 'user.two_factor_disabled', entityType: 'user', entityId: user.id, locationId: null });
+    await tx
+      .update(s.users)
+      .set({ twoFactorEnabled: false, totpSecret: null })
+      .where(eq(s.users.id, user.id));
+    recorder.audit({
+      action: 'user.two_factor_disabled',
+      entityType: 'user',
+      entityId: user.id,
+      locationId: null,
+    });
   });
 }

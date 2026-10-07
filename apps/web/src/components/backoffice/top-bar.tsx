@@ -55,7 +55,11 @@ export function TopBar({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" disabled={pending || locations.length < 2} aria-label={t('location_switch')}>
+          <Button
+            variant="outline"
+            disabled={pending || locations.length < 2}
+            aria-label={t('location_switch')}
+          >
             <MapPinIcon />
             <span className="max-w-48 truncate">{current?.name ?? '—'}</span>
           </Button>

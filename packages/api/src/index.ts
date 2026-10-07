@@ -5,6 +5,7 @@ export type { BackofficeSession, SessionResolver } from './auth/resolve-actor';
 export { resolveActor, hasActiveSupportGrant } from './auth/resolve-actor';
 export { loadUserPermissions } from './auth/permissions';
 export * from './auth/tokens';
+export { API_KEY_SCOPE_NAMES, type ApiKeyScope } from './auth/api-keys';
 export type { ServiceDeps } from './services/shared';
 export type { AreaDto, LocationDto, TableDto } from './services/locations';
 // Use cases, shared by the REST API and the backoffice Server Actions.

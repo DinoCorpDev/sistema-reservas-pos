@@ -23,7 +23,11 @@ export interface UserIdentity {
 
 async function totpMatches(secret: string, token: string): Promise<boolean> {
   try {
-    const result = await verifyTotp({ secret, token: token.replace(/\s/g, ''), epochTolerance: 30 });
+    const result = await verifyTotp({
+      secret,
+      token: token.replace(/\s/g, ''),
+      epochTolerance: 30,
+    });
     return result.valid;
   } catch {
     return false;
@@ -46,13 +50,20 @@ export async function checkUserCredentials(input: {
   if (!user.isActive) return { ok: false, reason: 'inactive' };
   if (user.twoFactorEnabled && user.totpSecret) {
     if (!input.totp) return { ok: false, reason: 'totp_required' };
-    if (!(await totpMatches(user.totpSecret, input.totp))) return { ok: false, reason: 'totp_invalid' };
+    if (!(await totpMatches(user.totpSecret, input.totp)))
+      return { ok: false, reason: 'totp_invalid' };
   }
   const [firstLocation] = await db
     .select({ locationId: s.userLocations.locationId })
     .from(s.userLocations)
     .innerJoin(s.locations, eq(s.locations.id, s.userLocations.locationId))
-    .where(and(eq(s.userLocations.userId, user.id), isNull(s.userLocations.deletedAt), isNull(s.locations.deletedAt)))
+    .where(
+      and(
+        eq(s.userLocations.userId, user.id),
+        isNull(s.userLocations.deletedAt),
+        isNull(s.locations.deletedAt),
+      ),
+    )
     .orderBy(asc(s.locations.name))
     .limit(1);
   await db.update(s.users).set({ lastLoginAt: new Date() }).where(eq(s.users.id, user.id));
@@ -84,21 +95,52 @@ export async function checkStaffCredentials(input: {
   const [staff] = await db
     .select()
     .from(s.platformStaff)
-    .where(and(eq(s.platformStaff.email, input.email.trim().toLowerCase()), isNull(s.platformStaff.deletedAt)));
+    .where(
+      and(
+        eq(s.platformStaff.email, input.email.trim().toLowerCase()),
+        isNull(s.platformStaff.deletedAt),
+      ),
+    );
   if (!staff || !(await verifyPassword(staff.passwordHash, input.password))) {
     return { ok: false, reason: 'invalid' };
   }
   if (!staff.isActive) return { ok: false, reason: 'inactive' };
   if (staff.totpSecret) {
     if (!input.totp) return { ok: false, reason: 'totp_required' };
-    if (!(await totpMatches(staff.totpSecret, input.totp))) return { ok: false, reason: 'totp_invalid' };
+    if (!(await totpMatches(staff.totpSecret, input.totp)))
+      return { ok: false, reason: 'totp_invalid' };
   }
-  await db.update(s.platformStaff).set({ lastLoginAt: new Date() }).where(eq(s.platformStaff.id, staff.id));
+  await db
+    .update(s.platformStaff)
+    .set({ lastLoginAt: new Date() })
+    .where(eq(s.platformStaff.id, staff.id));
   return { ok: true, value: { staffId: staff.id, displayName: staff.displayName } };
 }
 
+/** The location exists in this organization (support staff switching location, RF-A10). */
+export async function locationBelongs(
+  organizationId: string,
+  locationId: string,
+): Promise<boolean> {
+  const [row] = await getDb()
+    .select({ id: s.locations.id })
+    .from(s.locations)
+    .where(
+      and(
+        eq(s.locations.id, locationId),
+        eq(s.locations.organizationId, organizationId),
+        isNull(s.locations.deletedAt),
+      ),
+    );
+  return !!row;
+}
+
 /** The user still works at this location (used when switching locations). */
-export async function userWorksAt(userId: string, organizationId: string, locationId: string): Promise<boolean> {
+export async function userWorksAt(
+  userId: string,
+  organizationId: string,
+  locationId: string,
+): Promise<boolean> {
   const [row] = await getDb()
     .select({ id: s.userLocations.id })
     .from(s.userLocations)

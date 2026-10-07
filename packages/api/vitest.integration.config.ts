@@ -8,6 +8,8 @@ export default defineConfig({
     fileParallelism: false,
     testTimeout: 30_000,
     hookTimeout: 120_000,
-    env: { AUTH_SECRET: process.env.AUTH_SECRET ?? 'test-secret-for-integration-tests-only-000000' },
+    env: {
+      AUTH_SECRET: process.env.AUTH_SECRET ?? 'test-secret-for-integration-tests-only-000000',
+    },
   },
 });

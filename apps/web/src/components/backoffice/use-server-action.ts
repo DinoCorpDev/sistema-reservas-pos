@@ -24,7 +24,8 @@ export function useServerAction<A extends unknown[], T>(
         const result = await action(...args);
         if (result.ok) {
           setFieldErrors({});
-          if (options.successMessage !== false) toast.success(options.successMessage ?? tCommon('saved'));
+          if (options.successMessage !== false)
+            toast.success(options.successMessage ?? tCommon('saved'));
           options.onSuccess?.(result.data);
         } else {
           setFieldErrors(result.error.fieldErrors);

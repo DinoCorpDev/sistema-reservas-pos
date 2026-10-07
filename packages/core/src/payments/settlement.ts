@@ -63,7 +63,10 @@ export function settleCash(input: {
 }
 
 /** Card, TWINT or any non-cash payment: no rounding, the tip stays outside the sale (RN-07). */
-export function settleNonCash(input: { amountRappen: Rappen; tipRappen?: Rappen }): PaymentBreakdown {
+export function settleNonCash(input: {
+  amountRappen: Rappen;
+  tipRappen?: Rappen;
+}): PaymentBreakdown {
   const tip = input.tipRappen ?? (0 as Rappen);
   assertNonNegative(input.amountRappen, 'amount');
   assertNonNegative(tip, 'tip');

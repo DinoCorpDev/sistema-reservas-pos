@@ -16,13 +16,30 @@ export function ChfInput({
   value: number | null;
   onValueChange: (rappenValue: number | null) => void;
 }) {
-  const display = (v: number | null) => (v === null ? '' : formatChf(rappen(v), { currency: false }));
+  const display = (v: number | null) =>
+    v === null ? '' : formatChf(rappen(v), { currency: false });
   const [text, setText] = useState(display(value));
   const [invalid, setInvalid] = useState(false);
 
   useEffect(() => {
     setText(display(value));
   }, [value]);
+
+  const commit = () => {
+    if (text.trim() === '') {
+      setInvalid(false);
+      return onValueChange(null);
+    }
+    try {
+      const parsed = parseChf(text);
+      if (parsed < 0) throw new MoneyError('negative');
+      setInvalid(false);
+      setText(display(parsed));
+      onValueChange(parsed);
+    } catch {
+      setInvalid(true);
+    }
+  };
 
   return (
     <div className="relative">
@@ -36,20 +53,11 @@ export function ChfInput({
         value={text}
         aria-invalid={invalid || props['aria-invalid']}
         onChange={(event) => setText(event.target.value)}
-        onBlur={() => {
-          if (text.trim() === '') {
-            setInvalid(false);
-            return onValueChange(null);
-          }
-          try {
-            const parsed = parseChf(text);
-            if (parsed < 0) throw new MoneyError('negative');
-            setInvalid(false);
-            setText(display(parsed));
-            onValueChange(parsed);
-          } catch {
-            setInvalid(true);
-          }
+        onBlur={commit}
+        // Enter submits the form: commit the typed amount first.
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') commit();
+          props.onKeyDown?.(event);
         }}
       />
     </div>

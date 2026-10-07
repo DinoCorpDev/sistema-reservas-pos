@@ -11,7 +11,13 @@ const rule = (
   taxCategoryKey: TaxRuleRecord['taxCategoryKey'],
   consumptionType: TaxRuleRecord['consumptionType'],
   rateCode: TaxRuleRecord['rateCode'],
-): TaxRuleRecord => ({ taxCategoryKey, consumptionType, rateCode, validFrom: '2024-01-01', validTo: null });
+): TaxRuleRecord => ({
+  taxCategoryKey,
+  consumptionType,
+  rateCode,
+  validFrom: '2024-01-01',
+  validTo: null,
+});
 const RULES: TaxRuleRecord[] = [
   rule('food', 'on_premise', 'normal'),
   rule('food', 'takeaway', 'reduced'),
@@ -107,7 +113,12 @@ describe('RN-05 · channel change before payment recalculates the rates and is a
 
   it('rejects a no-op change', () => {
     expect(() =>
-      changeOrderChannel(order(), { channel: 'table', saleDate: '2026-10-06', rules: RULES, rates: RATES }),
+      changeOrderChannel(order(), {
+        channel: 'table',
+        saleDate: '2026-10-06',
+        rules: RULES,
+        rates: RATES,
+      }),
     ).toThrow(OrderRuleError);
   });
 });

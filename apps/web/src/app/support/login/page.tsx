@@ -29,7 +29,10 @@ export default async function SupportLoginPage() {
           <LoginForm action={loginStaff} />
         </CardContent>
       </Card>
-      <Link href="/login" className="text-center text-sm text-muted-foreground underline-offset-4 hover:underline">
+      <Link
+        href="/login"
+        className="text-center text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
         {t('auth.backofficeLink')}
       </Link>
     </main>

@@ -37,7 +37,11 @@ export async function publishPending(
         await handler(event);
         await tx
           .update(outboxEvents)
-          .set({ publishedAt: new Date(), attempts: sql`${outboxEvents.attempts} + 1`, lastError: null })
+          .set({
+            publishedAt: new Date(),
+            attempts: sql`${outboxEvents.attempts} + 1`,
+            lastError: null,
+          })
           .where(eq(outboxEvents.id, event.id));
         published += 1;
       } catch (error) {

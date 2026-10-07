@@ -16,9 +16,12 @@ export async function explainPublication<T>(work: Promise<T>): Promise<T> {
     return await work;
   } catch (error) {
     const details = (error instanceof ApiError ? error.details : undefined) as
-      | { rule?: unknown; issues?: unknown }
-      | undefined;
-    if (!(error instanceof ApiError) || error.code !== 'RULE_VIOLATION' || details?.rule !== 'RN-18') {
+      { rule?: unknown; issues?: unknown } | undefined;
+    if (
+      !(error instanceof ApiError) ||
+      error.code !== 'RULE_VIOLATION' ||
+      details?.rule !== 'RN-18'
+    ) {
       throw error;
     }
     const t = await getTranslations('publication');

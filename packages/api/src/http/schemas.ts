@@ -3,7 +3,10 @@ import { z } from '@hono/zod-openapi';
 /** Shared OpenAPI schemas and helpers for the route modules. */
 
 export const UuidParam = z.object({
-  id: z.uuid().openapi({ param: { name: 'id', in: 'path' }, example: '0192f1e2-7a3b-7c4d-8e5f-0123456789ab' }),
+  id: z.uuid().openapi({
+    param: { name: 'id', in: 'path' },
+    example: '0192f1e2-7a3b-7c4d-8e5f-0123456789ab',
+  }),
 });
 
 export const ErrorSchema = z

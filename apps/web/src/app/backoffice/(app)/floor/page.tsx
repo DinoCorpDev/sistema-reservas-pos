@@ -17,7 +17,11 @@ export default async function FloorPage() {
   return (
     <>
       <PageHeader title={t('title')} description={t('seasonal')} />
-      <FloorManager areas={areas} tables={tables} canEdit={actor.permissions.has('location.manage')} />
+      <FloorManager
+        areas={areas}
+        tables={tables}
+        canEdit={actor.permissions.has('location.manage')}
+      />
     </>
   );
 }

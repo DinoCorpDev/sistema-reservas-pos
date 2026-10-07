@@ -83,7 +83,10 @@ export function TextTranslationFields({
   );
 }
 
-/** Short names in FR, IT and EN for nested rows (variants, modifiers, groups). */
+/**
+ * Short names in FR, IT and EN for nested rows (variants, modifiers, groups); the main name is
+ * the catalog text. A German label set through the API is shown too, so it can be seen and cleared.
+ */
 export function LabelFields({
   value,
   onChange,
@@ -96,9 +99,10 @@ export function LabelFields({
   disabled?: boolean;
 }) {
   const tl = useTranslations('languages');
+  const languages = value.de ? (['de', ...LABEL_LANGUAGES] as const) : LABEL_LANGUAGES;
   return (
     <div className="grid gap-4">
-      {LABEL_LANGUAGES.map((language) => (
+      {languages.map((language) => (
         <Field key={language} label={tl(language)} htmlFor={`${idPrefix}-${language}`}>
           <Input
             id={`${idPrefix}-${language}`}

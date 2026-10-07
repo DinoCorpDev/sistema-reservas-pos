@@ -39,7 +39,10 @@ POS para restaurantes en Suiza. El restaurante opera **mesa → pedido → cocin
 
 ## Convenciones del repo
 
-- **Estructura:** `apps/web` (Next.js 15: `/pos`, `/kds`, `/backoffice`, `/qr/[tableCode]`, `/api/v1/*`), `apps/hub` (Hono + ws), `packages/core`, `packages/db`, `packages/ui`, `packages/config`.
+- **Estructura:** `apps/web` (Next.js 15: `/pos`, `/kds`, `/backoffice`, `/support`, `/qr/[tableCode]`, `/api/v1/*`), `apps/hub` (Hono + ws), `packages/core` (dominio puro), `packages/db` (esquema, tenancy, unidad de trabajo, outbox), `packages/api` (casos de uso + API REST v1), `packages/ui`, `packages/config`.
+- **Casos de uso (DEC-014):** toda lógica de aplicación vive en `packages/api/src/services/*`, recibe `(deps, actor, input)` y la usan igual la API REST (`http/routes/*`) y las Server Actions del backoffice (`currentActor()` + `runAction()`). Nunca hay acceso directo a la base desde `apps/web`. Consultas siempre con `inOrg`/`inLocation` + `notDeleted`; los cambios sensibles van dentro de `runCommand` con `recorder.audit`/`recorder.event`. Un recurso de otra organización responde 404.
+- **Zod 4:** los esquemas de entrada viven en `@pos/core/*/commands.ts`. Para un PATCH se usa `patchOf()` (sin `.default()`), nunca `.partial()` de un esquema con valores por defecto. Nunca se llama `.openapi()` sobre esquemas de `@pos/core`.
+- **Textos de la interfaz:** `apps/web/messages/<idioma>/<módulo>.json`. El alemán es la referencia; si falta una clave en otro idioma, se muestra en alemán.
 - **Esquema:** una tabla nueva se clasifica en `packages/db/src/table-groups.ts` y debe pasar `schema.test.ts`. Migraciones solo con `pnpm db:generate` (nunca editar una migración ya aplicada). El SQL a mano va en una migración `--custom`.
 - **Columnas:** `id`/FKs como `uuid()` (`BINARY(16)`), dinero como `rappen('x_rappen')`, tiempos con `utcDatetime()`, y `...timestamps()` y `...syncColumns()` de `packages/db/src/columns.ts`. Estados como `varchar` validados en el dominio (DEC-006). Sin FK en tablas operativas (DEC-007).
 - **Validación:** Zod en toda frontera (API, formularios, mensajes de sync).
@@ -56,10 +59,11 @@ pnpm dev                 # web en :3000 y hub en :4100
 pnpm lint                # ESLint (raíz)
 pnpm typecheck
 pnpm test                # unitarias (Vitest) + verificación de trazabilidad
-pnpm test:integration    # contra MySQL real (requiere db:setup)
+pnpm test:integration    # contra MySQL real, en bases propias que se recrean (`<db>_test`; TEST_DATABASE_URL para aislar)
 pnpm build
 pnpm e2e:install         # una vez: Chromium de Playwright en .cache/ms-playwright (PLAYWRIGHT_BROWSERS_PATH del .env)
-pnpm e2e                 # Playwright (requiere build, MySQL arriba y db:setup)
+pnpm e2e                 # Playwright en :3100 contra su propia base `<db>_e2e` (requiere build y MySQL arriba)
+pnpm --filter @pos/db outbox:work   # publicador del outbox (sin consumidores externos hasta las Fases 2 y 5)
 pnpm check:trace         # TRAZABILIDAD.md cubre todos los IDs del documento con su prioridad
 ```
 

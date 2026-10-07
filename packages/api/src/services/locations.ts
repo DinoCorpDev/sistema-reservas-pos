@@ -65,7 +65,11 @@ export async function listLocations(deps: ServiceDeps, actor: Actor): Promise<Lo
   return rows.map(toLocationDto);
 }
 
-export async function getLocation(deps: ServiceDeps, actor: Actor, id: string): Promise<LocationDto> {
+export async function getLocation(
+  deps: ServiceDeps,
+  actor: Actor,
+  id: string,
+): Promise<LocationDto> {
   return toLocationDto(await loadLocation(deps, actor, id));
 }
 
@@ -79,16 +83,21 @@ export async function updateLocation(
   const current = await loadLocation(deps, actor, id);
   const patch = definedOnly({
     ...input,
-    vatUid: input.vatUid === undefined ? undefined : input.vatUid && formatSwissVatUid(input.vatUid),
+    vatUid:
+      input.vatUid === undefined ? undefined : input.vatUid && formatSwissVatUid(input.vatUid),
     canton: input.canton === undefined ? undefined : (input.canton?.toUpperCase() ?? null),
   });
 
   const languages = patch.languages ?? current.languages;
   const defaultLanguage = patch.defaultLanguage ?? current.defaultLanguage;
   if (!languages.includes(defaultLanguage)) {
-    throw new ApiError('VALIDATION_FAILED', 'The location languages must include the default language', {
-      path: ['languages'],
-    });
+    throw new ApiError(
+      'VALIDATION_FAILED',
+      'The location languages must include the default language',
+      {
+        path: ['languages'],
+      },
+    );
   }
 
   return runCommand(deps.db, { ...actor, locationId: id }, async (tx, recorder) => {
@@ -116,7 +125,10 @@ export async function updateLocationSettings(
   const current = await loadLocation(deps, actor, id);
   const settings = parseLocationSettings(input);
   await runCommand(deps.db, { ...actor, locationId: id }, async (tx, recorder) => {
-    await tx.update(s.locations).set({ settings }).where(inOrg(s.locations, actor, eq(s.locations.id, id)));
+    await tx
+      .update(s.locations)
+      .set({ settings })
+      .where(inOrg(s.locations, actor, eq(s.locations.id, id)));
     recorder.audit({
       action: 'location.settings_changed',
       entityType: 'location',
@@ -181,7 +193,10 @@ export async function updateArea(
 ): Promise<AreaDto> {
   assertPermission(actor, 'location.manage');
   await loadArea(deps, actor, id);
-  await deps.db.update(s.areas).set(definedOnly(input)).where(inLocation(s.areas, actor, eq(s.areas.id, id)));
+  await deps.db
+    .update(s.areas)
+    .set(definedOnly(input))
+    .where(inLocation(s.areas, actor, eq(s.areas.id, id)));
   return toAreaDto(await loadArea(deps, actor, id));
 }
 
@@ -192,10 +207,15 @@ export async function deleteArea(deps: ServiceDeps, actor: Actor, id: string): P
   const tables = await deps.db
     .select({ id: s.diningTables.id })
     .from(s.diningTables)
-    .where(inLocation(s.diningTables, actor, eq(s.diningTables.areaId, id), notDeleted(s.diningTables)))
+    .where(
+      inLocation(s.diningTables, actor, eq(s.diningTables.areaId, id), notDeleted(s.diningTables)),
+    )
     .limit(1);
   if (tables.length > 0) {
-    throw new ApiError('CONFLICT', 'The area still has tables; move or remove them, or deactivate the area');
+    throw new ApiError(
+      'CONFLICT',
+      'The area still has tables; move or remove them, or deactivate the area',
+    );
   }
   await deps.db
     .update(s.areas)
@@ -231,7 +251,9 @@ async function loadTable(deps: ServiceDeps, actor: Actor, id: string) {
   const [row] = await deps.db
     .select()
     .from(s.diningTables)
-    .where(inLocation(s.diningTables, actor, eq(s.diningTables.id, id), notDeleted(s.diningTables)));
+    .where(
+      inLocation(s.diningTables, actor, eq(s.diningTables.id, id), notDeleted(s.diningTables)),
+    );
   if (!row) throw notFound('Table');
   return row;
 }
@@ -277,7 +299,11 @@ export async function updateTable(
 }
 
 /** New QR code for a table, e.g. when a printed code was copied or damaged. */
-export async function regenerateTableQr(deps: ServiceDeps, actor: Actor, id: string): Promise<TableDto> {
+export async function regenerateTableQr(
+  deps: ServiceDeps,
+  actor: Actor,
+  id: string,
+): Promise<TableDto> {
   assertPermission(actor, 'location.manage');
   await loadTable(deps, actor, id);
   await deps.db

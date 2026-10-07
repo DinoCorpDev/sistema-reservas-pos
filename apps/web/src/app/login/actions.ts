@@ -38,5 +38,9 @@ export async function loginStaff(_state: LoginState, formData: FormData) {
 /** Language of the login page before sign-in; afterwards the user's own language applies. */
 export async function setLoginLanguage(language: string) {
   if (!isUiLocale(language)) return;
-  (await cookies()).set('NEXT_LOCALE', language, { path: '/', maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' });
+  (await cookies()).set('NEXT_LOCALE', language, {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+  });
 }

@@ -11,7 +11,14 @@ import {
 } from '@pos/core';
 import * as service from '../../services/locations';
 import { actorOf, type ApiApp } from '../env';
-import { AUTHENTICATED, ERROR_RESPONSES, jsonBody, jsonResponse, NoContent, UuidParam } from '../schemas';
+import {
+  AUTHENTICATED,
+  ERROR_RESPONSES,
+  jsonBody,
+  jsonResponse,
+  NoContent,
+  UuidParam,
+} from '../schemas';
 
 // Schemas from @pos/core are plain Zod: use them as they are, never call `.openapi()` on them
 // (Zod 4 attaches methods per instance, so the OpenAPI extension does not reach them).
@@ -99,7 +106,10 @@ export function registerLocationRoutes(app: ApiApp) {
       responses: { 200: jsonResponse(LocationSchema, 'Location'), ...ERROR_RESPONSES },
     }),
     async (c) =>
-      c.json(await service.getLocation({ db: c.get('db') }, actorOf(c), c.req.valid('param').id), 200),
+      c.json(
+        await service.getLocation({ db: c.get('db') }, actorOf(c), c.req.valid('param').id),
+        200,
+      ),
   );
 
   app.openapi(
@@ -132,9 +142,13 @@ export function registerLocationRoutes(app: ApiApp) {
       tags,
       security,
       summary: 'Replace the operating thresholds of the location (DEC-004)',
-      description: 'Manager approval thresholds, reservation timing, kitchen alert, PIN lockout. Audited.',
+      description:
+        'Manager approval thresholds, reservation timing, kitchen alert, PIN lockout. Audited.',
       request: { params: UuidParam, body: jsonBody(LocationSettingsSchema) },
-      responses: { 200: jsonResponse(LocationSettingsSchema, 'Saved settings'), ...ERROR_RESPONSES },
+      responses: {
+        200: jsonResponse(LocationSettingsSchema, 'Saved settings'),
+        ...ERROR_RESPONSES,
+      },
     }),
     async (c) =>
       c.json(
@@ -173,7 +187,8 @@ export function registerLocationRoutes(app: ApiApp) {
       request: { body: jsonBody(createAreaSchema) },
       responses: { 201: jsonResponse(AreaSchema, 'Created area'), ...ERROR_RESPONSES },
     }),
-    async (c) => c.json(await service.createArea({ db: c.get('db') }, actorOf(c), c.req.valid('json')), 201),
+    async (c) =>
+      c.json(await service.createArea({ db: c.get('db') }, actorOf(c), c.req.valid('json')), 201),
   );
 
   app.openapi(
@@ -188,7 +203,12 @@ export function registerLocationRoutes(app: ApiApp) {
     }),
     async (c) =>
       c.json(
-        await service.updateArea({ db: c.get('db') }, actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.updateArea(
+          { db: c.get('db') },
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -231,7 +251,8 @@ export function registerLocationRoutes(app: ApiApp) {
       request: { body: jsonBody(createTableSchema) },
       responses: { 201: jsonResponse(TableSchema, 'Created table'), ...ERROR_RESPONSES },
     }),
-    async (c) => c.json(await service.createTable({ db: c.get('db') }, actorOf(c), c.req.valid('json')), 201),
+    async (c) =>
+      c.json(await service.createTable({ db: c.get('db') }, actorOf(c), c.req.valid('json')), 201),
   );
 
   app.openapi(
@@ -246,7 +267,12 @@ export function registerLocationRoutes(app: ApiApp) {
     }),
     async (c) =>
       c.json(
-        await service.updateTable({ db: c.get('db') }, actorOf(c), c.req.valid('param').id, c.req.valid('json')),
+        await service.updateTable(
+          { db: c.get('db') },
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
         200,
       ),
   );
@@ -259,10 +285,16 @@ export function registerLocationRoutes(app: ApiApp) {
       security,
       summary: 'Issue a new QR code for the table',
       request: { params: UuidParam },
-      responses: { 200: jsonResponse(TableSchema, 'Table with its new QR code'), ...ERROR_RESPONSES },
+      responses: {
+        200: jsonResponse(TableSchema, 'Table with its new QR code'),
+        ...ERROR_RESPONSES,
+      },
     }),
     async (c) =>
-      c.json(await service.regenerateTableQr({ db: c.get('db') }, actorOf(c), c.req.valid('param').id), 200),
+      c.json(
+        await service.regenerateTableQr({ db: c.get('db') }, actorOf(c), c.req.valid('param').id),
+        200,
+      ),
   );
 
   app.openapi(

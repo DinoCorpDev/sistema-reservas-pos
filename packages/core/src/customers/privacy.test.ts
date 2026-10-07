@@ -6,7 +6,15 @@ describe('RN-23 · anonymization keeps sales, wipes personal data', () => {
     const now = new Date('2026-10-06T12:00:00Z');
     const patch = anonymizedCustomerPatch(now);
     expect(patch.anonymizedAt).toBe(now);
-    for (const field of ['firstName', 'lastName', 'phone', 'email', 'notes', 'declaredAllergies', 'tags'] as const) {
+    for (const field of [
+      'firstName',
+      'lastName',
+      'phone',
+      'email',
+      'notes',
+      'declaredAllergies',
+      'tags',
+    ] as const) {
       expect(patch[field]).toBeNull();
     }
   });

@@ -161,7 +161,12 @@ export async function replaceOrigins(id: string, input: unknown) {
   return runAction(async () =>
     done(
       id,
-      await catalog.replaceOrigins(deps(), await currentActor(), id, replaceOriginsSchema.parse(input)),
+      await catalog.replaceOrigins(
+        deps(),
+        await currentActor(),
+        id,
+        replaceOriginsSchema.parse(input),
+      ),
     ),
   );
 }

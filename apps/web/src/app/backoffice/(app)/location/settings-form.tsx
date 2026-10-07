@@ -2,7 +2,14 @@
 
 import type { LocationSettings } from '@pos/core';
 import { Button } from '@pos/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@pos/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@pos/ui/card';
 import { Input } from '@pos/ui/input';
 import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
@@ -87,7 +94,9 @@ export function SettingsForm({
           <Field label={t('shiftMode')}>
             <Select
               value={form.shiftMode}
-              onValueChange={(value) => setForm((f) => ({ ...f, shiftMode: value as typeof f.shiftMode }))}
+              onValueChange={(value) =>
+                setForm((f) => ({ ...f, shiftMode: value as typeof f.shiftMode }))
+              }
               disabled={!canEdit}
             >
               <SelectTrigger>

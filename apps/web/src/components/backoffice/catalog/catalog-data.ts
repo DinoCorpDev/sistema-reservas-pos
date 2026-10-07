@@ -70,7 +70,9 @@ export function countryName(code: string, locale: string): string {
 
 export type AllergenMap = Partial<Record<Allergen, AllergenPresence>>;
 
-export function allergenMapOf(list: readonly { allergen: string; presence: string }[]): AllergenMap {
+export function allergenMapOf(
+  list: readonly { allergen: string; presence: string }[],
+): AllergenMap {
   const map: AllergenMap = {};
   for (const { allergen, presence } of list) {
     if ((ALLERGENS as readonly string[]).includes(allergen)) {
@@ -89,7 +91,8 @@ export const allergenListOf = (map: AllergenMap) =>
 // ── Translations (RF-B07) ───────────────────────────────────────────────────
 
 export type TextDraft = Record<ContentLanguage, { name: string; description: string }>;
-export type LabelDraft = Record<LabelLanguage, string>;
+/** Short labels; the form shows FR, IT and EN, a German label set through the API is kept. */
+export type LabelDraft = Record<ContentLanguage, string>;
 
 type TranslationMap = Record<string, { name?: string; description?: string } | undefined>;
 
@@ -124,21 +127,29 @@ export function textTranslationsInput(draft: TextDraft, withDescription = true) 
 }
 
 export function labelDraftOf(labels: Record<string, string | undefined> | undefined): LabelDraft {
-  return { fr: labels?.fr ?? '', it: labels?.it ?? '', en: labels?.en ?? '' };
+  const draft = {} as LabelDraft;
+  for (const language of CONTENT_LANGUAGES) draft[language] = labels?.[language] ?? '';
+  return draft;
 }
 
 /** `{ fr: 'Menu du jour' }` for nested rows; empty languages are removed. */
 export function labelsInput(draft: LabelDraft) {
-  const input: Partial<Record<LabelLanguage, string>> = {};
-  for (const language of LABEL_LANGUAGES) {
+  const input: Partial<Record<ContentLanguage, string>> = {};
+  for (const language of CONTENT_LANGUAGES) {
     const value = draft[language].trim();
     if (value) input[language] = value;
   }
   return input;
 }
 
+/** `{ fr: { name } }` for the name-only translations of a modifier group. */
+export const nameTranslationsInput = (draft: LabelDraft) =>
+  Object.fromEntries(
+    Object.entries(labelsInput(draft)).map(([language, name]) => [language, { name }]),
+  );
+
 export const filledLabels = (draft: LabelDraft) =>
-  LABEL_LANGUAGES.filter((language) => draft[language].trim() !== '');
+  CONTENT_LANGUAGES.filter((language) => draft[language].trim() !== '');
 
 // ── Lists ───────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import { admin, ApiError, catalog, locations, people } from '@pos/api';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 import { currentActor, deps } from '@/server/actor';
 import { EDITOR_TABS } from './editor-shared';
@@ -8,11 +8,12 @@ import { ProductEditor } from './product-editor';
 
 export const metadata: Metadata = { title: 'Produkt bearbeiten' };
 
+/** A removed (soft-deleted) or unknown product leads back to the list, also right after "Entfernen". */
 async function loadProduct(...args: Parameters<typeof catalog.getProduct>) {
   try {
     return await catalog.getProduct(...args);
   } catch (error) {
-    if (error instanceof ApiError && error.code === 'NOT_FOUND') notFound();
+    if (error instanceof ApiError && error.code === 'NOT_FOUND') redirect('/backoffice/catalog');
     throw error;
   }
 }

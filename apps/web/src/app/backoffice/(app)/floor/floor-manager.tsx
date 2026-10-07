@@ -30,7 +30,15 @@ type TableDraft = {
   qrMode: string;
 };
 
-export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tables: TableDto[]; canEdit: boolean }) {
+export function FloorManager({
+  areas,
+  tables,
+  canEdit,
+}: {
+  areas: AreaDto[];
+  tables: TableDto[];
+  canEdit: boolean;
+}) {
   const t = useTranslations('floor');
   const tc = useTranslations('common');
   const tq = useTranslations('qrModes');
@@ -40,11 +48,21 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
   const saveArea = useServerAction(
     (draft: AreaDraft) =>
       draft.id
-        ? actions.updateArea(draft.id, { name: draft.name, qrMode: draft.qrMode, sortOrder: draft.sortOrder })
-        : actions.createArea({ name: draft.name, qrMode: draft.qrMode, sortOrder: draft.sortOrder }),
+        ? actions.updateArea(draft.id, {
+            name: draft.name,
+            qrMode: draft.qrMode,
+            sortOrder: draft.sortOrder,
+          })
+        : actions.createArea({
+            name: draft.name,
+            qrMode: draft.qrMode,
+            sortOrder: draft.sortOrder,
+          }),
     { onSuccess: () => setAreaDraft(null) },
   );
-  const toggleArea = useServerAction((id: string, isActive: boolean) => actions.updateArea(id, { isActive }));
+  const toggleArea = useServerAction((id: string, isActive: boolean) =>
+    actions.updateArea(id, { isActive }),
+  );
   const removeArea = useServerAction(actions.deleteArea);
   const saveTable = useServerAction(
     (draft: TableDraft) => {
@@ -59,7 +77,9 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
     },
     { onSuccess: () => setTableDraft(null) },
   );
-  const toggleTable = useServerAction((id: string, isActive: boolean) => actions.updateTable(id, { isActive }));
+  const toggleTable = useServerAction((id: string, isActive: boolean) =>
+    actions.updateTable(id, { isActive }),
+  );
   const renewQr = useServerAction(actions.regenerateQr);
   const removeTable = useServerAction(actions.deleteTable);
 
@@ -69,7 +89,9 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
         <CardHeader className="flex-row flex-wrap items-center justify-between gap-2">
           <CardTitle>{t('areas')}</CardTitle>
           {canEdit ? (
-            <Button onClick={() => setAreaDraft({ name: '', qrMode: 'view', sortOrder: areas.length })}>
+            <Button
+              onClick={() => setAreaDraft({ name: '', qrMode: 'view', sortOrder: areas.length })}
+            >
               <PlusIcon /> {t('newArea')}
             </Button>
           ) : null}
@@ -108,7 +130,12 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
                         size="icon"
                         aria-label={tc('edit')}
                         onClick={() =>
-                          setAreaDraft({ id: area.id, name: area.name, qrMode: area.qrMode, sortOrder: area.sortOrder })
+                          setAreaDraft({
+                            id: area.id,
+                            name: area.name,
+                            qrMode: area.qrMode,
+                            sortOrder: area.sortOrder,
+                          })
                         }
                       >
                         <PencilIcon />
@@ -141,7 +168,13 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
           {canEdit && areas.length > 0 ? (
             <Button
               onClick={() =>
-                setTableDraft({ areaId: areas[0]!.id, label: '', capacity: 4, shape: 'rect', qrMode: INHERIT })
+                setTableDraft({
+                  areaId: areas[0]!.id,
+                  label: '',
+                  capacity: 4,
+                  shape: 'rect',
+                  qrMode: INHERIT,
+                })
               }
             >
               <PlusIcon /> {t('newTable')}
@@ -170,10 +203,19 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
                   <TableCell>{areas.find((a) => a.id === table.areaId)?.name ?? '—'}</TableCell>
                   <TableCell>{table.capacity}</TableCell>
                   <TableCell>
-                    {table.qrMode ? tq(table.qrMode as 'view') : <Badge variant="secondary">{t('qrModeInherit')}</Badge>}
+                    {table.qrMode ? (
+                      tq(table.qrMode as 'view')
+                    ) : (
+                      <Badge variant="secondary">{t('qrModeInherit')}</Badge>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <a href={`/qr/${table.qrCode}`} target="_blank" rel="noreferrer" className="font-mono text-xs underline">
+                    <a
+                      href={`/qr/${table.qrCode}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-mono text-xs underline"
+                    >
                       /qr/{table.qrCode}
                     </a>
                   </TableCell>
@@ -258,7 +300,10 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
                 />
               </Field>
               <Field label={t('qrMode')}>
-                <Select value={areaDraft.qrMode} onValueChange={(qrMode) => setAreaDraft({ ...areaDraft, qrMode })}>
+                <Select
+                  value={areaDraft.qrMode}
+                  onValueChange={(qrMode) => setAreaDraft({ ...areaDraft, qrMode })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -277,7 +322,9 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
                   type="number"
                   min={0}
                   value={areaDraft.sortOrder}
-                  onChange={(e) => setAreaDraft({ ...areaDraft, sortOrder: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setAreaDraft({ ...areaDraft, sortOrder: Number(e.target.value) })
+                  }
                 />
               </Field>
               <DialogFooter>
@@ -317,7 +364,10 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
                 />
               </Field>
               <Field label={t('area')}>
-                <Select value={tableDraft.areaId} onValueChange={(areaId) => setTableDraft({ ...tableDraft, areaId })}>
+                <Select
+                  value={tableDraft.areaId}
+                  onValueChange={(areaId) => setTableDraft({ ...tableDraft, areaId })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -338,11 +388,16 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
                     min={1}
                     max={50}
                     value={tableDraft.capacity}
-                    onChange={(e) => setTableDraft({ ...tableDraft, capacity: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setTableDraft({ ...tableDraft, capacity: Number(e.target.value) })
+                    }
                   />
                 </Field>
                 <Field label={t('shape')}>
-                  <Select value={tableDraft.shape} onValueChange={(shape) => setTableDraft({ ...tableDraft, shape })}>
+                  <Select
+                    value={tableDraft.shape}
+                    onValueChange={(shape) => setTableDraft({ ...tableDraft, shape })}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -354,7 +409,10 @@ export function FloorManager({ areas, tables, canEdit }: { areas: AreaDto[]; tab
                 </Field>
               </div>
               <Field label={t('qrMode')}>
-                <Select value={tableDraft.qrMode} onValueChange={(qrMode) => setTableDraft({ ...tableDraft, qrMode })}>
+                <Select
+                  value={tableDraft.qrMode}
+                  onValueChange={(qrMode) => setTableDraft({ ...tableDraft, qrMode })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

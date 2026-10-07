@@ -35,7 +35,12 @@ const SECTIONS: NavItem[][] = [
   [
     { href: '/backoffice/location', key: 'location', icon: StoreIcon },
     { href: '/backoffice/floor', key: 'floor', icon: LayoutGridIcon },
-    { href: '/backoffice/devices', key: 'devices', icon: MonitorSmartphoneIcon, permission: 'location.manage' },
+    {
+      href: '/backoffice/devices',
+      key: 'devices',
+      icon: MonitorSmartphoneIcon,
+      permission: 'location.manage',
+    },
     { href: '/backoffice/users', key: 'users', icon: UsersIcon, permission: 'user.manage' },
   ],
   [
@@ -45,22 +50,49 @@ const SECTIONS: NavItem[][] = [
     { href: '/backoffice/tax', key: 'tax', icon: PercentIcon },
   ],
   [
-    { href: '/backoffice/customers', key: 'customers', icon: ContactIcon, permission: 'customer.manage' },
+    {
+      href: '/backoffice/customers',
+      key: 'customers',
+      icon: ContactIcon,
+      permission: 'customer.manage',
+    },
     { href: '/backoffice/audit', key: 'audit', icon: ScrollTextIcon, permission: 'audit.view' },
   ],
   [
-    { href: '/backoffice/settings/support', key: 'supportAccess', icon: LifeBuoyIcon, permission: 'support.grant_access' },
-    { href: '/backoffice/settings/api-keys', key: 'apiKeys', icon: KeyRoundIcon, permission: 'user.manage' },
+    {
+      href: '/backoffice/settings/support',
+      key: 'supportAccess',
+      icon: LifeBuoyIcon,
+      permission: 'support.grant_access',
+    },
+    {
+      href: '/backoffice/settings/api-keys',
+      key: 'apiKeys',
+      icon: KeyRoundIcon,
+      permission: 'user.manage',
+    },
     { href: '/backoffice/account', key: 'account', icon: UserCogIcon },
   ],
 ];
 
-export function BackofficeNav({ permissions, onNavigate }: { permissions: string[]; onNavigate?: () => void }) {
+export function BackofficeNav({
+  permissions,
+  onNavigate,
+}: {
+  permissions: string[];
+  onNavigate?: () => void;
+}) {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const allowed = new Set(permissions);
-  const isActive = (href: string) =>
-    href === '/backoffice' || href === '/backoffice/catalog' ? pathname === href : pathname.startsWith(href);
+  const isActive = (href: string) => {
+    if (href === '/backoffice') return pathname === href;
+    // Products live at /backoffice/catalog and /backoffice/catalog/products/[id].
+    if (href === '/backoffice/catalog') {
+      return pathname === href || pathname.startsWith('/backoffice/catalog/products');
+    }
+    return pathname.startsWith(href);
+  };
 
   return (
     <nav className="grid gap-4">

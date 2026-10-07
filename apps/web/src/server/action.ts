@@ -14,8 +14,14 @@ function fieldErrorsOf(details: unknown): Record<string, string> {
   const errors: Record<string, string> = {};
   const issues = Array.isArray(details) ? details : details ? [details] : [];
   for (const issue of issues) {
-    const { path, message } = issue as { path?: (string | number)[]; message?: string };
+    const { path, field, message } = issue as {
+      path?: (string | number)[];
+      field?: string;
+      message?: string;
+    };
     if (path?.length) errors[path.join('.')] = message ?? 'invalid';
+    // Conflicts name the offending field directly (e.g. 409 `{ field: 'pin' }`).
+    else if (field) errors[field] = message ?? 'conflict';
   }
   return errors;
 }
@@ -29,7 +35,11 @@ export async function runAction<T>(work: () => Promise<T>): Promise<ActionResult
     if (apiError.code === 'INTERNAL') console.error('[action]', error);
     return {
       ok: false,
-      error: { code: apiError.code, message: apiError.message, fieldErrors: fieldErrorsOf(apiError.details) },
+      error: {
+        code: apiError.code,
+        message: apiError.message,
+        fieldErrors: fieldErrorsOf(apiError.details),
+      },
     };
   }
 }

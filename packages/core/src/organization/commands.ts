@@ -192,7 +192,10 @@ export const onboardOrganizationSchema = z
       name: text(200),
       legalName: text(200),
       street: text(200),
-      postalCode: z.string().trim().regex(/^\d{4}$/, 'Swiss postal code: 4 digits'),
+      postalCode: z
+        .string()
+        .trim()
+        .regex(/^\d{4}$/, 'Swiss postal code: 4 digits'),
       city: text(100),
       canton: z
         .string()

@@ -29,6 +29,11 @@ import { PricesTab } from './prices-tab';
 import { StationsTab } from './stations-tab';
 import { TranslationsTab } from './translations-tab';
 
+/**
+ * Panels stay mounted while hidden, so unsaved edits in one tab survive a look at another tab.
+ */
+const keepMounted = { forceMount: true, className: 'data-[state=inactive]:hidden' } as const;
+
 /** The product sheet: header with status and actions, one tab per part of the product. */
 export function ProductEditor({
   product,
@@ -150,12 +155,15 @@ export function ProductEditor({
             <TabsTrigger key={value} value={value}>
               {t(`tabs.${value}`)}
               {value === 'allergens' && issues.length > 0 ? (
-                <TriangleAlertIcon className="size-4 text-warning" aria-label={t('needsAttention')} />
+                <TriangleAlertIcon
+                  className="size-4 text-warning"
+                  aria-label={t('needsAttention')}
+                />
               ) : null}
             </TabsTrigger>
           ))}
         </TabsList>
-        <TabsContent value="basics">
+        <TabsContent value="basics" {...keepMounted}>
           <BasicsTab
             product={product}
             permissions={permissions}
@@ -164,7 +172,7 @@ export function ProductEditor({
             onOpenTab={changeTab}
           />
         </TabsContent>
-        <TabsContent value="prices">
+        <TabsContent value="prices" {...keepMounted}>
           <PricesTab
             product={product}
             permissions={permissions}
@@ -172,23 +180,23 @@ export function ProductEditor({
             location={location}
           />
         </TabsContent>
-        <TabsContent value="modifiers">
+        <TabsContent value="modifiers" {...keepMounted}>
           <ModifierGroupsTab
             product={product}
             permissions={permissions}
             modifierGroups={modifierGroups}
           />
         </TabsContent>
-        <TabsContent value="allergens">
+        <TabsContent value="allergens" {...keepMounted}>
           <AllergensTab product={product} permissions={permissions} />
         </TabsContent>
-        <TabsContent value="translations">
+        <TabsContent value="translations" {...keepMounted}>
           <TranslationsTab product={product} permissions={permissions} location={location} />
         </TabsContent>
-        <TabsContent value="availability">
+        <TabsContent value="availability" {...keepMounted}>
           <AvailabilityTab product={product} permissions={permissions} locations={locations} />
         </TabsContent>
-        <TabsContent value="stations">
+        <TabsContent value="stations" {...keepMounted}>
           <StationsTab
             product={product}
             permissions={permissions}

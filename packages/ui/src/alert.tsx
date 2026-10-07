@@ -15,7 +15,11 @@ const alertVariants = cva('relative grid w-full gap-1 rounded-lg border px-4 py-
   defaultVariants: { variant: 'default' },
 });
 
-export function Alert({ className, variant, ...props }: ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
+export function Alert({
+  className,
+  variant,
+  ...props
+}: ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
   return <div role="alert" className={cn(alertVariants({ variant }), className)} {...props} />;
 }
 

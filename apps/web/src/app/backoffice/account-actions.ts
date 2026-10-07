@@ -22,5 +22,7 @@ export async function confirmTwoFactor(token: string) {
 }
 
 export async function disableTwoFactor(currentPassword: string) {
-  return runAction(async () => account.disableTwoFactor(deps(), await currentActor(), { currentPassword }));
+  return runAction(async () =>
+    account.disableTwoFactor(deps(), await currentActor(), { currentPassword }),
+  );
 }

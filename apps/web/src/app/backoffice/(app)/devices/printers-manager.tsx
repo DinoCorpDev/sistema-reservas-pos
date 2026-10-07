@@ -221,9 +221,9 @@ function PrinterForm({
         />
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label={t('kind')} error={errors.kind}>
+        <Field label={t('kind')} htmlFor="printer-kind" error={errors.kind}>
           <Select value={form.kind} onValueChange={(kind) => setForm({ ...form, kind })}>
-            <SelectTrigger>
+            <SelectTrigger id="printer-kind">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -235,12 +235,12 @@ function PrinterForm({
             </SelectContent>
           </Select>
         </Field>
-        <Field label={t('protocol')} error={errors.protocol}>
+        <Field label={t('protocol')} htmlFor="printer-protocol" error={errors.protocol}>
           <Select
             value={form.protocol}
             onValueChange={(protocol) => setForm({ ...form, protocol })}
           >
-            <SelectTrigger>
+            <SelectTrigger id="printer-protocol">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -282,12 +282,12 @@ function PrinterForm({
         </Field>
       </div>
       <div className="grid items-end gap-4 sm:grid-cols-2">
-        <Field label={t('paperWidth')} error={errors.paperWidthMm}>
+        <Field label={t('paperWidth')} htmlFor="printer-paper" error={errors.paperWidthMm}>
           <Select
             value={String(form.paperWidthMm)}
             onValueChange={(value) => setForm({ ...form, paperWidthMm: Number(value) })}
           >
-            <SelectTrigger>
+            <SelectTrigger id="printer-paper">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

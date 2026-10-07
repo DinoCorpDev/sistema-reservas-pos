@@ -25,7 +25,11 @@ export type SensitiveAction =
 export type AuthorizationDecision =
   | { status: 'allowed' }
   /** Ask a manager for their PIN on the same device; the approver needs all `permissions`. */
-  | { status: 'needs_approval'; permissions: Permission[]; reason: 'missing_permission' | 'above_threshold' };
+  | {
+      status: 'needs_approval';
+      permissions: Permission[];
+      reason: 'missing_permission' | 'above_threshold';
+    };
 
 const BASE_PERMISSION: Record<Exclude<SensitiveAction['kind'], 'permission'>, Permission> = {
   discount: 'order.discount',
@@ -60,11 +64,14 @@ export function authorize(
   action: SensitiveAction,
   settings: LocationSettings,
 ): AuthorizationDecision {
-  const permission = action.kind === 'permission' ? action.permission : BASE_PERMISSION[action.kind];
+  const permission =
+    action.kind === 'permission' ? action.permission : BASE_PERMISSION[action.kind];
   if (!actor.permissions.has(permission)) {
     return {
       status: 'needs_approval',
-      permissions: exceedsThreshold(action, settings) ? [permission, 'approval.grant'] : [permission],
+      permissions: exceedsThreshold(action, settings)
+        ? [permission, 'approval.grant']
+        : [permission],
       reason: 'missing_permission',
     };
   }

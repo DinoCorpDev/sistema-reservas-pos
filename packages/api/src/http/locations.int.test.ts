@@ -1,7 +1,13 @@
 import { schema as s } from '@pos/db';
 import { and, eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createOtherOrganization, createTestApi, type DemoContext, demoSession, loadDemo } from '../testing';
+import {
+  createOtherOrganization,
+  createTestApi,
+  type DemoContext,
+  demoSession,
+  loadDemo,
+} from '../testing';
 
 const api = createTestApi();
 let demo: DemoContext;
@@ -34,7 +40,9 @@ describe('API v1 basics', () => {
     expect(response.status).toBe(200);
     const doc = (await response.json()) as { openapi: string; paths: Record<string, unknown> };
     expect(doc.openapi).toBe('3.1.0');
-    expect(Object.keys(doc.paths)).toEqual(expect.arrayContaining(['/api/v1/areas', '/api/v1/locations/{id}']));
+    expect(Object.keys(doc.paths)).toEqual(
+      expect.arrayContaining(['/api/v1/areas', '/api/v1/locations/{id}']),
+    );
   });
 
   it('rejects anonymous calls with the uniform error shape', async () => {
@@ -63,7 +71,12 @@ describe('locations (RF-A02)', () => {
     const audits = await api.db
       .select()
       .from(s.auditEvents)
-      .where(and(eq(s.auditEvents.entityId, demo.locationId), eq(s.auditEvents.action, 'location.updated')));
+      .where(
+        and(
+          eq(s.auditEvents.entityId, demo.locationId),
+          eq(s.auditEvents.action, 'location.updated'),
+        ),
+      );
     expect(audits.at(-1)).toMatchObject({
       userId: demo.users.admin.id,
       before: { vatUid: 'CHE-123.456.788 MWST' },
@@ -124,16 +137,23 @@ describe('areas and tables (RF-A03, RF-C06, RF-E06)', () => {
     const tableBody = (await table.json()) as { id: string; qrCode: string };
     expect(tableBody.qrCode).toMatch(/^[\w-]{12}$/);
 
-    const renewed = await api.request('POST', `/tables/${tableBody.id}/qr-code`, { headers: admin });
+    const renewed = await api.request('POST', `/tables/${tableBody.id}/qr-code`, {
+      headers: admin,
+    });
     expect(((await renewed.json()) as { qrCode: string }).qrCode).not.toBe(tableBody.qrCode);
 
     const blocked = await api.request('DELETE', `/areas/${area.id}`, { headers: admin });
     expect(blocked.status).toBe(409);
 
-    const seasonal = await api.request('PATCH', `/areas/${area.id}`, { headers: admin, body: { isActive: false } });
+    const seasonal = await api.request('PATCH', `/areas/${area.id}`, {
+      headers: admin,
+      body: { isActive: false },
+    });
     expect(await seasonal.json()).toMatchObject({ isActive: false });
 
-    expect((await api.request('DELETE', `/tables/${tableBody.id}`, { headers: admin })).status).toBe(204);
+    expect(
+      (await api.request('DELETE', `/tables/${tableBody.id}`, { headers: admin })).status,
+    ).toBe(204);
     expect((await api.request('DELETE', `/areas/${area.id}`, { headers: admin })).status).toBe(204);
     const after = await api.request('GET', '/areas', { headers: admin });
     expect(((await after.json()) as { id: string }[]).some((a) => a.id === area.id)).toBe(false);
@@ -148,7 +168,10 @@ describe('areas and tables (RF-A03, RF-C06, RF-E06)', () => {
   });
 
   it('rejects duplicate table labels with 409', async () => {
-    const [area] = await api.db.select().from(s.areas).where(eq(s.areas.locationId, demo.locationId));
+    const [area] = await api.db
+      .select()
+      .from(s.areas)
+      .where(eq(s.areas.locationId, demo.locationId));
     const response = await api.request('POST', '/tables', {
       headers: admin,
       body: { areaId: area!.id, label: '1' },
@@ -159,13 +182,21 @@ describe('areas and tables (RF-A03, RF-C06, RF-E06)', () => {
 
 describe('RNF-12 · another organization sees nothing of ours', () => {
   it('cannot read our location', async () => {
-    const response = await api.request('GET', `/locations/${demo.locationId}`, { headers: otherAdmin });
+    const response = await api.request('GET', `/locations/${demo.locationId}`, {
+      headers: otherAdmin,
+    });
     expect(response.status).toBe(404);
   });
 
   it('cannot modify our areas or tables, even with their ids', async () => {
-    const [area] = await api.db.select().from(s.areas).where(eq(s.areas.locationId, demo.locationId));
-    const [table] = await api.db.select().from(s.diningTables).where(eq(s.diningTables.areaId, area!.id));
+    const [area] = await api.db
+      .select()
+      .from(s.areas)
+      .where(eq(s.areas.locationId, demo.locationId));
+    const [table] = await api.db
+      .select()
+      .from(s.diningTables)
+      .where(eq(s.diningTables.areaId, area!.id));
     for (const [method, path, body] of [
       ['PATCH', `/areas/${area!.id}`, { name: 'x' }],
       ['DELETE', `/tables/${table!.id}`, undefined],

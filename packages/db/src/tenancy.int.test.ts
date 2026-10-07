@@ -72,7 +72,10 @@ afterAll(async () => {
 
 describe('RNF-12 · no query crosses organizations', () => {
   it('only lists the tenant’s own rows', async () => {
-    const rows = await db.select({ id: s.products.id }).from(s.products).where(inOrg(s.products, ctxA));
+    const rows = await db
+      .select({ id: s.products.id })
+      .from(s.products)
+      .where(inOrg(s.products, ctxA));
     expect(rows.map((r) => r.id)).toEqual([productA]);
   });
 
@@ -103,11 +106,16 @@ describe('RNF-12 · no query crosses organizations', () => {
     const rows = await db
       .select({ id: s.locations.id })
       .from(s.locations)
-      .where(and(eq(s.locations.organizationId, ctxA.organizationId), eq(s.locations.id, ctxA.locationId!)));
+      .where(
+        and(
+          eq(s.locations.organizationId, ctxA.organizationId),
+          eq(s.locations.id, ctxA.locationId!),
+        ),
+      );
     expect(rows).toHaveLength(1);
-    await expect(async () => inLocation(s.areas, { organizationId: ctxA.organizationId })).rejects.toThrow(
-      /needs a location/,
-    );
+    await expect(async () =>
+      inLocation(s.areas, { organizationId: ctxA.organizationId }),
+    ).rejects.toThrow(/needs a location/);
   });
 
   it('hides soft-deleted rows with notDeleted()', async () => {
@@ -157,7 +165,12 @@ describe('PA-10 · change, audit and event commit together', () => {
     const events = await db
       .select()
       .from(s.outboxEvents)
-      .where(and(eq(s.outboxEvents.aggregateId, productA), eq(s.outboxEvents.type, 'catalog.product_updated')));
+      .where(
+        and(
+          eq(s.outboxEvents.aggregateId, productA),
+          eq(s.outboxEvents.type, 'catalog.product_updated'),
+        ),
+      );
     expect(events).toHaveLength(1);
     expect(events[0]?.publishedAt).toBeNull();
   });
@@ -170,7 +183,11 @@ describe('PA-10 · change, audit and event commit together', () => {
           .update(s.products)
           .set({ basePriceRappen: 9999 })
           .where(inOrg(s.products, ctx, eq(s.products.id, productB)));
-        recorder.audit({ action: 'catalog.price_changed', entityType: 'product', entityId: productB });
+        recorder.audit({
+          action: 'catalog.price_changed',
+          entityType: 'product',
+          entityId: productB,
+        });
         recorder.event({
           type: 'catalog.product_updated',
           aggregateType: 'product',
@@ -185,7 +202,9 @@ describe('PA-10 · change, audit and event commit together', () => {
     expect(
       await db.select().from(s.auditEvents).where(eq(s.auditEvents.requestId, 'test-rollback')),
     ).toHaveLength(0);
-    expect(await db.select().from(s.outboxEvents).where(eq(s.outboxEvents.aggregateId, productB))).toHaveLength(0);
+    expect(
+      await db.select().from(s.outboxEvents).where(eq(s.outboxEvents.aggregateId, productB)),
+    ).toHaveLength(0);
   });
 });
 
@@ -204,13 +223,21 @@ describe('outbox publisher', () => {
     expect(again).toEqual({ published: 0, failed: 0 });
 
     await runCommand(db, ctxB, async (_tx, recorder) => {
-      recorder.event({ type: 'catalog.product_sold_out', aggregateType: 'product', aggregateId: productB, payload: {} });
+      recorder.event({
+        type: 'catalog.product_sold_out',
+        aggregateType: 'product',
+        aggregateId: productB,
+        payload: {},
+      });
     });
     const failing = await publishPending(db, async () => {
       throw new Error('consumer down');
     });
     expect(failing).toEqual({ published: 0, failed: 1 });
-    const [event] = await db.select().from(s.outboxEvents).where(eq(s.outboxEvents.aggregateId, productB));
+    const [event] = await db
+      .select()
+      .from(s.outboxEvents)
+      .where(eq(s.outboxEvents.aggregateId, productB));
     expect(event).toMatchObject({ attempts: 1, lastError: 'consumer down', publishedAt: null });
   });
 });
