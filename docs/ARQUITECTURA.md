@@ -1,6 +1,6 @@
 # Arquitectura · Sistema Reservas POS
 
-Este documento explica cómo está construido el sistema y cómo cumple los 12 principios de arquitectura (PA-01…PA-12) del [documento de requerimientos](requerimientos.txt). Las decisiones puntuales están en [DECISIONES.md](DECISIONES.md); el estado de cada requerimiento, en [TRAZABILIDAD.md](TRAZABILIDAD.md). Las reglas detalladas de sincronización irán en `docs/SYNC.md`, que se escribe antes de la Fase 2.
+Este documento explica cómo está construido el sistema y cómo cumple los 12 principios de arquitectura (PA-01…PA-12) del [documento de requerimientos](requerimientos.txt). Las decisiones puntuales están en [DECISIONES.md](DECISIONES.md); el estado de cada requerimiento, en [TRAZABILIDAD.md](TRAZABILIDAD.md). Las reglas detalladas de sincronización están en [SYNC.md](SYNC.md).
 
 ## 1. Vista general
 
@@ -69,12 +69,15 @@ El sistema siempre opera en el nivel más alto disponible y baja de nivel solo, 
 | **2 · LAN con hub**   | Hay hub, haya o no internet | Las terminales hablan con el hub por WebSocket (`/ws`). El hub es la verdad de la sede: numera (`0042`), rutea tickets a KDS e impresoras y acumula la cola hacia la nube. Meta: un cambio visible en todas las pantallas en < 2 s (RNF-07).   |
 | **3 · Nube**          | Hay internet                | Fuente de verdad global: backoffice, API pública, menú QR, reportes. Los cambios del backoffice llegan a las terminales en < 1 min o al reconectar (RF-F23).                                                                                   |
 
-**Reglas que ya fija el modelo de datos** (el detalle va en `docs/SYNC.md` antes de la Fase 2):
+**Cómo funciona** (el detalle completo está en [SYNC.md](SYNC.md)):
 
-- IDs UUID v7 generados en el dispositivo: un registro creado sin conexión ya tiene su ID final.
-- Toda operación sincronizada lleva `idempotency_key` (índice único en `payments`, `refunds` y `sync_operations`): repetirla no duplica su efecto (RNF-03).
-- Las tablas operativas llevan `version` y `device_updated_at` para resolver conflictos por regla y no por azar (RNF-04): los pagos nunca se pierden, el último cambio por campo gana y lo no resuelto queda en `sync_operations` con estado `conflict` para el gerente (`sync.conflict_detected`).
-- **Relevo del hub (RNF-05):** cada terminal conoce una lista ordenada de hubs de la sede. Si el principal no responde, prueba el siguiente; si no hay ninguno, opera en nivel 1. Cuál dispositivo puede asumir el rol de hub y cómo se reconcilia al volver el principal se define en `docs/SYNC.md`.
+- **Registro de operaciones (DEC-021):** cada acción del POS es una operación inmutable con ID UUID v7 del dispositivo (también su clave de idempotencia), un reloj lógico híbrido y un payload congelado (precios, MWST, IDs nuevos). El estado de las órdenes es el plegado determinista de sus operaciones en orden `(hlc, id)`, con el mismo reductor de `@pos/core` en la terminal, el hub y la nube.
+- **Dónde vive cada cosa:**
+  - **Terminal:** Dexie guarda las operaciones y la configuración, y la terminal pliega todo en memoria.
+  - **Hub:** guarda y reenvía las operaciones, sin proyección.
+  - **Nube:** guarda el registro en `sync_operations` (con `seq` por sede como cursor), repliega el grupo de órdenes afectado y escribe la proyección (`orders`, `order_items`, `payments`…), la auditoría y el outbox en la misma transacción.
+- **Conflictos por regla (RNF-04):** los pagos nunca se pierden, el último cambio por campo gana, y lo que rompe una regla se aplica igual y queda como conflicto para el gerente (página "Konflikte" del backoffice).
+- **Relevo del hub (RNF-05):** cada terminal prueba los hubs de la sede en orden, luego la nube; sin ninguno opera en nivel 1. Toda operación se guarda en cada dispositivo hasta que la nube la confirma, así que si el hub muere nada se pierde.
 
 ## 5. Convenciones de datos
 
@@ -100,25 +103,25 @@ Cada cambio importante escribe una fila en `outbox_events` **dentro de la misma 
 ## 7. Seguridad
 
 - **Backoffice:** Auth.js v5 (correo + contraseña; 2FA para administradores, RF-A07) en la Fase 1.
-- **POS:** PIN de 4-6 dígitos hasheado con argon2id; el hash se cachea en el dispositivo para desbloquear sin internet (RF-A06); bloqueo tras intentos fallidos (`users.failed_pin_attempts`, `locked_until`; RNF-10).
+- **POS:** PIN de 4-6 dígitos hasheado con argon2id. El dispositivo emparejado recibe los hashes y un bucket de 4 bits del lookup (nunca el lookup completo) y verifica el PIN y las aprobaciones de gerente en un Web Worker, con o sin conexión; el bloqueo por intentos se cuenta en la terminal y queda en la auditoría (RF-A06, RNF-10, DEC-023). La nube vuelve a validar los permisos al plegar.
 - **Permisos:** claves fijas en `@pos/core` (`PERMISSIONS`), asignadas por rol en `role_permissions`. Se verifican en el servidor y en el dominio, nunca solo en pantalla (RNF-10). Lo que el rol no permite pide PIN de gerente en el mismo dispositivo (RF-A05, RN-15).
 - **Tarjetas:** el sistema nunca guarda ni ve números de tarjeta (RNF-11); el terminal o el proveedor los manejan.
 - **IA:** interpreta y sugiere; nunca crea, modifica ni anula órdenes, pagos, precios ni impuestos (PA-07, RF-F20). Solo tendrá acceso de lectura a la API.
 
 ## 8. Stack
 
-| Capa             | Elección                                                                                     | Versión fijada                 |
-| ---------------- | -------------------------------------------------------------------------------------------- | ------------------------------ |
-| Monorepo         | pnpm workspaces + Turborepo; versiones centralizadas con `catalog:` en `pnpm-workspace.yaml` | pnpm 10.34, turbo 2.11         |
-| Lenguaje         | TypeScript strict                                                                            | 5.9 (DEC-010)                  |
-| Web              | Next.js App Router + React                                                                   | 15.5 / 19.2                    |
-| UI               | Tailwind CSS v4 + shadcn/ui                                                                  | 4.3                            |
-| Base de datos    | MySQL 8 + Drizzle ORM + mysql2                                                               | Drizzle 0.45, drizzle-kit 0.31 |
-| Hub              | Node.js + Hono + ws                                                                          | Hono 4.13, ws 8.22             |
-| Offline (Fase 2) | PWA con Serwist, Dexie (IndexedDB), Zustand                                                  | —                              |
-| Validación       | Zod en toda frontera; OpenAPI desde Zod (Fase 1)                                             | Zod 4.6                        |
-| i18n (Fase 1)    | next-intl: DE, FR, IT, EN y ES (soporte); formato suizo `CHF 1'234.50`                       | —                              |
-| Tests            | Vitest (unitarias e integración), Playwright (E2E, incluidos escenarios sin red)             | Vitest 5, Playwright 1.63      |
+| Capa          | Elección                                                                                           | Versión fijada                    |
+| ------------- | -------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Monorepo      | pnpm workspaces + Turborepo; versiones centralizadas con `catalog:` en `pnpm-workspace.yaml`       | pnpm 10.34, turbo 2.11            |
+| Lenguaje      | TypeScript strict                                                                                  | 5.9 (DEC-010)                     |
+| Web           | Next.js App Router + React                                                                         | 15.5 / 19.2                       |
+| UI            | Tailwind CSS v4 + shadcn/ui                                                                        | 4.3                               |
+| Base de datos | MySQL 8 + Drizzle ORM + mysql2                                                                     | Drizzle 0.45, drizzle-kit 0.31    |
+| Hub           | Node.js + Hono + ws                                                                                | Hono 4.13, ws 8.22                |
+| Offline       | PWA con Serwist (service worker), Dexie (IndexedDB), Zustand; argon2 en el navegador con hash-wasm | Serwist 9.5, Dexie 4.4, Zustand 5 |
+| Validación    | Zod en toda frontera; OpenAPI desde Zod (Fase 1)                                                   | Zod 4.6                           |
+| i18n (Fase 1) | next-intl: DE, FR, IT, EN y ES (soporte); formato suizo `CHF 1'234.50`                             | —                                 |
+| Tests         | Vitest (unitarias e integración), Playwright (E2E, incluidos escenarios sin red)                   | Vitest 5, Playwright 1.63         |
 
 ## 9. Entornos
 
@@ -131,17 +134,17 @@ Cada cambio importante escribe una fila en `outbox_events` **dentro de la misma 
 
 ## 10. Cómo se cumple cada principio
 
-| PA                                 | Cómo se cumple hoy                                                                                           | Qué falta                                              |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
-| PA-01 Monolito modular + API-first | Un solo repositorio desplegable; módulos en `@pos/core`; ESLint impide que el dominio dependa de frameworks. | Casos de uso y endpoints por módulo (Fase 1+).         |
-| PA-02 Una sola fuente de verdad    | Un único esquema, compartido por la nube y el hub; Zitas solo por API (DEC-001).                             | API pública (Fase 1).                                  |
-| PA-03 Offline-first                | UUID del dispositivo, columnas de sync, hub con WebSocket.                                                   | Dexie, outbox, PWA y E2E sin red (Fase 2).             |
-| PA-04 Pagos desacoplados           | Adaptadores `cash`, `external-terminal` y `online` (stub) como vocabulario; `payments.adapter`.              | Interfaz `PaymentAdapter` e implementaciones (Fase 2). |
-| PA-05 Cocina ≠ pago                | `order_items.prep_status` y `orders.payment_status` separados.                                               | Máquinas de estado y cierre automático (Fase 2).       |
-| PA-06 Nada se borra                | Soft delete obligatorio; triggers append-only.                                                               | Repositorios sin `DELETE` (Fase 1).                    |
-| PA-07 La IA interpreta             | Sin acceso de escritura previsto.                                                                            | Credenciales de solo lectura cuando exista IA.         |
-| PA-08 Dinero en enteros            | Tipo `Rappen`, columnas `int`, tests.                                                                        | Cálculo MWST (Fase 1).                                 |
-| PA-09 Multi-tenant                 | `organization_id` en toda tabla, vigilado por test.                                                          | Helper de repositorio + test de cruce (Fase 1).        |
-| PA-10 Eventos e idempotencia       | `outbox_events`, claves idempotentes únicas, catálogo cerrado de eventos.                                    | Publicador (Fase 1) y protocolo de sync (Fase 2).      |
-| PA-11 Configurable sin código      | Settings por sede validados con Zod; todo el montaje es datos.                                               | Backoffice con lista de verificación (Fase 1).         |
-| PA-12 Datos en Suiza               | Nada acoplado a un proveedor; todo corre con Docker Compose.                                                 | Elegir hosting con región suiza (Fase 6).              |
+| PA                                 | Cómo se cumple hoy                                                                                                                                           | Qué falta                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| PA-01 Monolito modular + API-first | Módulos en `@pos/core`; casos de uso en `packages/api`, usados igual por la API REST v1 y el backoffice; ESLint impide que el dominio dependa de frameworks. | Módulos de cocina, caja, reservas y reportes (Fases 3-5).                |
+| PA-02 Una sola fuente de verdad    | Un único esquema y un único reductor de órdenes, compartidos por la nube, el hub y las terminales; Zitas solo por API (DEC-001).                             | —                                                                        |
+| PA-03 Offline-first                | PWA con service worker, Dexie y registro de operaciones; hub en la LAN; E2E con la red cortada (DEC-021, SYNC.md).                                           | Turnos sin conexión (Fase 4); HTTPS hacia el hub en producción (Fase 6). |
+| PA-04 Pagos desacoplados           | Interfaz `PaymentAdapter` con `cash`, `external-terminal` y `online` (stub); el motor de órdenes solo recibe pagos resueltos.                                | Proveedor online (Fase 5, DEC-003).                                      |
+| PA-05 Cocina ≠ pago                | Estado por ítem y por orden independientes; cierre automático (RN-12) en el reductor.                                                                        | KDS (Fase 3).                                                            |
+| PA-06 Nada se borra                | Soft delete obligatorio; triggers append-only; anulaciones y devoluciones son operaciones nuevas.                                                            | —                                                                        |
+| PA-07 La IA interpreta             | Sin acceso de escritura previsto.                                                                                                                            | Credenciales de solo lectura cuando exista IA.                           |
+| PA-08 Dinero en enteros            | Tipo `Rappen`, columnas `int`; MWST, descuentos, divisiones y redondeo con tests exhaustivos.                                                                | Validación de la fiduciaria (DEC-016, DEC-024).                          |
+| PA-09 Multi-tenant                 | `organization_id` en toda tabla; `inOrg`/`inLocation` en toda consulta; tests de cruce entre organizaciones.                                                 | —                                                                        |
+| PA-10 Eventos e idempotencia       | Outbox en la misma transacción; operaciones idempotentes por ID; propiedad: cualquier orden de llegada da el mismo estado.                                   | Consumidores (webhooks, Fase 5).                                         |
+| PA-11 Configurable sin código      | Montaje completo desde el backoffice con lista de verificación (puerta de la Fase 1).                                                                        | —                                                                        |
+| PA-12 Datos en Suiza               | Nada acoplado a un proveedor; todo corre con Docker Compose.                                                                                                 | Elegir hosting con región suiza (Fase 6).                                |

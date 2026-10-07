@@ -117,13 +117,60 @@ En el restaurante demo, la cerveza sin alcohol (≤ 0,5 % vol.) usa la categorí
 - El plugin de next-intl carga `@swc/core`, cuyo binario nativo escribe una caché en C: (DEC-013). Por eso el alias `next-intl/config` se configura a mano en `next.config.ts`.
 - Auth.js v5 sigue en beta (`5.0.0-beta.32`, fijado). Las sesiones son JWT; el cambio de sede u organización se vuelve a validar contra la base en el callback y nunca se confía en lo que manda el cliente.
 
+### DEC-020 · La consola de soporte está en español por defecto
+
+- El prompt maestro (§7) fija la interfaz de soporte en ES. El staff de DINOLABS no tiene idioma guardado (`platform_staff` no lo tiene): su sesión usa el idioma que elija en el selector (cookie) y, si no eligió ninguno, español. La página de inicio de sesión, antes de saber quién entra, sigue al navegador.
+
+### DEC-021 · El motor de órdenes es un registro de operaciones con plegado determinista
+
+- Cada acción del POS es una **operación inmutable** (UUID v7, que es también la clave de idempotencia) con un payload congelado: IDs nuevos, precios y MWST ya calculados, mesero de la propina. El estado de las órdenes se obtiene **plegando** las operaciones en orden canónico `(hlc, id)` con el mismo reductor puro de `@pos/core` en el dispositivo, en el hub y en la nube. Así los tres llegan al mismo resultado aunque las operaciones lleguen en distinto orden.
+- El estado se guarda por ítem; `orderId` es un atributo del ítem, que cambian transferir, unir y dividir. Un reloj lógico híbrido (HLC) conserva la causalidad entre dispositivos.
+- Las reglas completas de conflicto, numeración y niveles están en `docs/SYNC.md`.
+
+### DEC-022 · Numeración de órdenes con autoridad y prefijo de respaldo
+
+- Solo la autoridad de la sede (el hub si la sede tiene uno; si no, la nube) asigna números sin prefijo (`0042`). Una terminal que no la alcanza usa su prefijo (`K1-0007`) y su propio contador (RN-16).
+- El día de negocio empieza a la hora configurada por la sede (`businessDayStartsAt`, por defecto 04:00): un servicio que pasa de medianoche sigue en el mismo día.
+
+### DEC-023 · El PIN y las aprobaciones del POS se verifican en el dispositivo
+
+- El POS verifica el PIN y la aprobación del gerente siempre en el dispositivo, con o sin conexión: un solo camino de código. El argon2id corre en un Web Worker (hash-wasm).
+- El dispositivo no recibe el `pin_lookup` completo, que con `pin_key` permitiría probar todos los PIN en un segundo; recibe solo un **bucket de 4 bits** del HMAC para elegir los candidatos que verifica con argon2id. El bloqueo por intentos se cuenta en la terminal y se registra en la auditoría con operaciones `terminal.pin_failed` y `terminal.unlocked`.
+- El servidor vuelve a validar los permisos del aprobador al plegar. Si no los tenía, la operación se aplica igual (ya ocurrió en la sala) y queda como conflicto para el gerente. Los endpoints `/terminals/unlock` y `/terminals/approve` (DEC-015) siguen para otros clientes de la API.
+
+### DEC-024 · Un recibo por pago, congelado en el dispositivo
+
+- Cada pago genera su recibo (RN-09). El contenido se arma y congela en el dispositivo en el momento de cobrar, porque es lo que se imprimió, y el servidor lo guarda tal cual (con su hash).
+- Número: `<prefijo de la terminal>-<AAMMDD>-<contador de la terminal>`, único sin coordinación. Una reimpresión dice "KOPIE" con la hora; el número de copia lo asigna el servidor.
+- El recibo de un pago parcial se sostiene solo: el monto se reparte por tasa según el bruto de la orden (mayor resto) y la MWST se extrae por tasa. Un pago único usa las sumas de las líneas (DEC-016). **La fiduciaria debe validar este criterio junto con DEC-016.**
+
+### DEC-025 · Dividir, transferir y unir
+
+- Dividir por ítems o por asiento crea una **orden hija** (`split_from_order_id`) que se paga aparte. Dividir en partes iguales no crea órdenes: son pagos con etiqueta (`split_label`, "1/3") sobre la misma orden.
+- Transferir ítems, unir órdenes y dividir solo se permiten si la orden de origen no tiene pagos, porque un pago no se mueve (RN-14). Si dos terminales sin conexión lo violan, queda como conflicto.
+
+### DEC-026 · Los turnos llegan con la caja (Fase 4)
+
+- La apertura y el cierre de turno, el arqueo y la regla RN-19 ("no se cobra en efectivo sin turno abierto") se construyen en la Fase 4, junto con el resto de la caja. En la Fase 2 los pagos se registran sin turno (`shift_id` nulo) y RNF-02 queda parcial hasta entonces.
+
+### DEC-027 · En la Fase 2 el recibo se imprime con el navegador
+
+- Decidido con Juan. El recibo se muestra en pantalla y se imprime con el diálogo del navegador en formato de 80 mm. En la Fase 3 el hub imprime recibos y comandas por ESC/POS con el mismo contenido congelado.
+
+### DEC-028 · El hub de la Fase 2: guarda, reenvía, numera y avisa
+
+- El hub guarda las operaciones de la sede en `pos_hub`, las reenvía a la nube con las mismas claves de idempotencia, es la autoridad de numeración y avisa por WebSocket a las terminales. No mantiene proyección de órdenes en la Fase 2.
+- Cada dispositivo guarda toda operación que conoce hasta que la nube la confirma y la reenvía al nodo que alcance. Si el hub muere, nada se pierde y no hace falta replicar entre hubs.
+- La PWA vive en HTTPS y el navegador bloquea las conexiones sin cifrar hacia la red local. En producción cada hub tendrá un nombre DNS público que apunta a su IP de la LAN, con un certificado emitido por la nube (ACME DNS-01), automatizado en la Fase 6. Hasta entonces el hub corre en `localhost`. **Juan debe validarlo con hardware real**: routers con protección contra DNS rebinding y el permiso de red local de Chrome.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
-| Decisión                                               | Antes de | Quién decide |
-| ------------------------------------------------------ | -------- | ------------ |
-| Proveedor de hosting en Suiza                          | Fase 6   | Juan y socio |
-| Proveedor de pago online (TWINT y tarjeta en QR/web)   | Fase 5   | Juan y socio |
-| Precio por sede en CHF y qué incluye                   | Piloto   | Juan y socio |
-| Hardware recomendado por sede y quién lo instala       | Fase 6   | Juan y socio |
-| Modelo de soporte del piloto (horario, canal, persona) | Fase 6   | Juan y socio |
-| Nombre comercial definitivo en Suiza                   | Piloto   | Juan y socio |
+| Decisión                                                | Antes de | Quién decide      |
+| ------------------------------------------------------- | -------- | ----------------- |
+| Proveedor de hosting en Suiza                           | Fase 6   | Juan y socio      |
+| Proveedor de pago online (TWINT y tarjeta en QR/web)    | Fase 5   | Juan y socio      |
+| Redondeo a 0,05 de las devoluciones en efectivo (RN-06) | Fase 4   | Juan y fiduciaria |
+| Precio por sede en CHF y qué incluye                    | Piloto   | Juan y socio      |
+| Hardware recomendado por sede y quién lo instala        | Fase 6   | Juan y socio      |
+| Modelo de soporte del piloto (horario, canal, persona)  | Fase 6   | Juan y socio      |
+| Nombre comercial definitivo en Suiza                    | Piloto   | Juan y socio      |
