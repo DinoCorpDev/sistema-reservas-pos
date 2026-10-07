@@ -20,3 +20,21 @@ export type OrderPaymentStatus = (typeof ORDER_PAYMENT_STATUSES)[number];
 /** Discounts per item or per order, as a percentage (bp) or an amount (Rp) (RF-C11). */
 export const DISCOUNT_KINDS = ['percent', 'amount'] as const;
 export type DiscountKind = (typeof DISCOUNT_KINDS)[number];
+
+/** Standard discount reasons; a location can add its own codes as presets (RF-C11). */
+export const STANDARD_DISCOUNT_REASONS = ['staff', 'courtesy', 'promotion', 'other'] as const;
+
+/** Mandatory reason when an item or an order is voided (RF-C10, RN-11). */
+export const VOID_REASONS = [
+  'entry_error',
+  'guest_changed_mind',
+  'kitchen_error',
+  'quality',
+  'not_available',
+  'other',
+] as const;
+export type VoidReason = (typeof VOID_REASONS)[number];
+
+/** Courses are numbered 0…9 (DEC-011): 0 = drinks (go at once), 1 = starters, 2 = mains… */
+export const MIN_COURSE = 0;
+export const MAX_COURSE = 9;

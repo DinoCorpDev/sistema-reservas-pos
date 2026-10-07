@@ -1,4 +1,5 @@
 import type { LocalMoment } from '../catalog/rules';
+import type { IsoDate } from '../tax/calculation';
 
 /**
  * Local wall-clock time of a location (IANA time zone), with `Intl` only: no dependencies.
@@ -88,6 +89,26 @@ export function localMoment(now: Date, timeZone: string): LocalMoment {
 }
 
 const HHMM = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+/** Calendar arithmetic on ISO dates (`2026-10-31` + 1 = `2026-11-01`). */
+export function addDays(date: IsoDate, days: number): IsoDate {
+  const [year, month, day] = date.split('-').map(Number) as [number, number, number];
+  const shifted = new Date(Date.UTC(year, month - 1, day + days));
+  return `${pad(shifted.getUTCFullYear(), 4)}-${pad(shifted.getUTCMonth() + 1)}-${pad(shifted.getUTCDate())}`;
+}
+
+/**
+ * Business date of an instant (DEC-022, RN-16): the location's local date, but a new business
+ * day only starts at `dayStartsAt` (HH:MM). With 04:00, Saturday 01:30 still belongs to Friday,
+ * so a service that runs past midnight keeps its order numbers and its daily closing.
+ */
+export function businessDate(now: Date, timeZone: string, dayStartsAt: string): IsoDate {
+  if (!HHMM.test(dayStartsAt)) {
+    throw new RangeError(`Expected a local time HH:MM, got "${dayStartsAt}"`);
+  }
+  const local = localMoment(now, timeZone);
+  return local.time >= `${dayStartsAt}:00` ? local.date : addDays(local.date, -1);
+}
 
 /**
  * The next instant, strictly after `now`, whose local wall clock in `timeZone` is `hhmm`

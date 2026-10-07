@@ -1,7 +1,13 @@
 /**
- * Orders module: offline-first order engine. Items with variant, modifiers, note,
- * seat and course; voids, discounts, split, transfer and merge; automatic closing.
- * The use cases arrive in Phase 2.
+ * Orders module: the offline-first order engine (DEC-021, docs/SYNC.md). Every POS action is
+ * an operation; the state of the orders is the deterministic fold of their operations.
  */
 export * from './constants';
 export * from './channel';
+export * from './operations';
+export * from './state';
+export * from './totals';
+export * from './reducer';
+export * from './groups';
+export * from './pricing';
+export * from './numbering';

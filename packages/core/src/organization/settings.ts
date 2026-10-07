@@ -1,5 +1,17 @@
 import { z } from 'zod';
 import { SHIFT_MODES } from '../cash/constants';
+import { DISCOUNT_KINDS } from '../orders/constants';
+
+/** A frequent discount shown as a button on the POS (RF-C11). `code` is the reason code. */
+export const discountPresetSchema = z.object({
+  code: z.string().regex(/^[a-z][a-z0-9_]{0,31}$/),
+  /** Own label; the standard codes (staff, courtesy, promotion) are translated by the UI. */
+  label: z.string().trim().max(40).nullable().default(null),
+  kind: z.enum(DISCOUNT_KINDS),
+  /** Basis points for `percent` (1000 = 10 %), rappen for `amount`. */
+  value: z.int().min(1),
+});
+export type DiscountPreset = z.infer<typeof discountPresetSchema>;
 
 /**
  * Operational settings per location (`locations.settings`). The defaults are those of
@@ -7,6 +19,11 @@ import { SHIFT_MODES } from '../cash/constants';
  */
 export const locationSettingsSchema = z.object({
   shiftMode: z.enum(SHIFT_MODES).default('terminal'),
+  /** Local time at which a new business day starts (DEC-022): order numbers and the Z closing. */
+  businessDayStartsAt: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+    .default('04:00'),
   managerApproval: z
     .object({
       /** Discounts above this percentage (in bp: 2000 = 20 %) require a manager PIN (RN-15). */
@@ -44,6 +61,31 @@ export const locationSettingsSchema = z.object({
       /** Failed PIN attempts before the user is locked out on the terminal (RNF-10). */
       maxPinAttempts: z.int().min(3).default(5),
       pinLockMinutes: z.int().min(1).default(5),
+    })
+    .prefault({}),
+  pos: z
+    .object({
+      /** Frequent discounts as buttons (RF-C11); above the threshold they still need a manager. */
+      discountPresets: z
+        .array(discountPresetSchema)
+        .max(8)
+        .default([
+          { code: 'staff', label: null, kind: 'percent', value: 5000 },
+          { code: 'courtesy', label: null, kind: 'percent', value: 10000 },
+          { code: 'promotion', label: null, kind: 'percent', value: 1000 },
+        ]),
+    })
+    .prefault({}),
+  sync: z
+    .object({
+      /**
+       * LAN hubs of the location, in order (docs/SYNC.md §1, §11). The first one numbers orders;
+       * empty = no hub, the cloud numbers them.
+       */
+      hubUrls: z
+        .array(z.url({ protocol: /^(https?|wss?)$/ }))
+        .max(3)
+        .default([]),
     })
     .prefault({}),
 });

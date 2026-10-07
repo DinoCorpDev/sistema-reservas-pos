@@ -1,8 +1,40 @@
 import { describe, expect, it } from 'vitest';
-import { localMoment, nextLocalTime } from './time';
+import { addDays, businessDate, localMoment, nextLocalTime } from './time';
 
 const ZH = 'Europe/Zurich';
 const at = (iso: string) => new Date(iso);
+
+describe('businessDate (DEC-022)', () => {
+  it('keeps the night after midnight in the previous business day', () => {
+    // Saturday 01:30 in Zurich (summer time, UTC+2) still belongs to Friday.
+    expect(businessDate(at('2026-10-02T23:30:00Z'), ZH, '04:00')).toBe('2026-10-02');
+    expect(businessDate(at('2026-10-03T01:59:59Z'), ZH, '04:00')).toBe('2026-10-02');
+    // From 04:00 local it is Saturday.
+    expect(businessDate(at('2026-10-03T02:00:00Z'), ZH, '04:00')).toBe('2026-10-03');
+  });
+
+  it('uses the calendar date when the day starts at midnight', () => {
+    expect(businessDate(at('2026-10-02T22:30:00Z'), ZH, '00:00')).toBe('2026-10-03');
+  });
+
+  it('crosses months, years and the autumn time change', () => {
+    expect(businessDate(at('2027-01-01T01:00:00Z'), ZH, '04:00')).toBe('2026-12-31');
+    // 25 Oct 2026, 02:30 local happens twice; both belong to Saturday 24 Oct.
+    expect(businessDate(at('2026-10-25T00:30:00Z'), ZH, '04:00')).toBe('2026-10-24');
+    expect(businessDate(at('2026-10-25T01:30:00Z'), ZH, '04:00')).toBe('2026-10-24');
+    expect(businessDate(at('2026-10-25T03:00:00Z'), ZH, '04:00')).toBe('2026-10-25');
+  });
+
+  it('rejects a malformed start time', () => {
+    expect(() => businessDate(at('2026-10-02T12:00:00Z'), ZH, '4:00')).toThrow(RangeError);
+  });
+
+  it('adds days across month and year ends', () => {
+    expect(addDays('2026-10-31', 1)).toBe('2026-11-01');
+    expect(addDays('2027-01-01', -1)).toBe('2026-12-31');
+    expect(addDays('2028-02-28', 1)).toBe('2028-02-29');
+  });
+});
 
 describe('localMoment', () => {
   it('converts an instant to the local date, time and ISO weekday', () => {

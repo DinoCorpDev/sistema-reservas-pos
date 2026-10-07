@@ -1,0 +1,906 @@
+import type { AuditAction } from '../audit/constants';
+import { authorize, type SensitiveAction } from '../organization/authorization';
+import type { Permission } from '../organization/permissions';
+import type { LocationSettings } from '../organization/settings';
+import { compareOperations } from '../shared/hlc';
+import { type Rappen, rappen } from '../shared/money';
+import type { ConflictCode } from '../sync/constants';
+import type { Operation, OperationOf } from './operations';
+import {
+  type ConflictRecord,
+  createFoldState,
+  discountsOf,
+  type FoldState,
+  indexAdd,
+  indexMove,
+  itemsOf,
+  type OrderItemState,
+  type OrderState,
+  paymentsOf,
+  refundsOf,
+} from './state';
+import { discountAmount, isReadyToClose, lineGross, recalculateOrder } from './totals';
+
+/**
+ * The order engine (DEC-021, docs/SYNC.md §4-§5): folds operations in canonical order `(hlc, id)`
+ * into the state of the location's orders. The same code runs on the device, the hub and the
+ * cloud, so all of them reach the same state whatever the arrival order.
+ *
+ * Rules of this file: it never reads the clock and never creates ids (everything comes frozen in
+ * the operations), and it never throws on business rules: what happened in the restaurant is
+ * applied and, if it breaks a rule, recorded as a conflict for the manager. Payments in
+ * particular are never lost.
+ */
+
+export interface FoldContext {
+  settings: LocationSettings;
+  /**
+   * Permissions of a user at the location: the database on the server, the offline credentials
+   * on the device. `null` = unknown or inactive user. Without it, authorization is not checked.
+   */
+  permissionsOf?: (userId: string) => ReadonlySet<Permission> | null;
+}
+
+/** Folds a set of operations from scratch (duplicates are ignored). */
+export function foldOperations(ops: readonly Operation[], context: FoldContext): FoldState {
+  const state = createFoldState();
+  applyOperations(state, ops, context);
+  return state;
+}
+
+/** True when `op` sorts after everything already folded, so it can be applied incrementally. */
+export function sortsAfter(state: FoldState, op: Pick<Operation, 'hlc' | 'id'>): boolean {
+  if (state.lastHlc === null || state.lastId === null) return true;
+  return compareOperations({ hlc: state.lastHlc, id: state.lastId }, op) < 0;
+}
+
+/**
+ * Applies operations on top of `state` in canonical order. Callers refold from scratch when an
+ * operation sorts before the last one already applied (see `sortsAfter`).
+ */
+export function applyOperations(
+  state: FoldState,
+  ops: readonly Operation[],
+  context: FoldContext,
+): void {
+  for (const op of [...ops].sort(compareOperations)) applyOperation(state, op, context);
+}
+
+const MAX_MERGE_DEPTH = 20;
+
+/** The order that receives new items: follows merges to the order that absorbed this one. */
+function liveOrder(state: FoldState, orderId: string): OrderState | undefined {
+  let order = state.orders.get(orderId);
+  for (let depth = 0; order?.mergedIntoOrderId && depth < MAX_MERGE_DEPTH; depth += 1) {
+    order = state.orders.get(order.mergedIntoOrderId);
+  }
+  return order;
+}
+
+function newOrder(
+  op: Operation,
+  fields: Pick<
+    OrderState,
+    | 'id'
+    | 'channel'
+    | 'consumptionType'
+    | 'tableId'
+    | 'joinedTableIds'
+    | 'guestCount'
+    | 'waiterUserId'
+    | 'customerName'
+    | 'splitFromOrderId'
+  > & { number: OperationOf<'order.open'>['payload']['number'] },
+): OrderState {
+  const zero = rappen(0);
+  return {
+    id: fields.id,
+    organizationId: op.organizationId,
+    locationId: op.locationId,
+    terminalId: op.terminalId,
+    createdByUserId: op.userId!,
+    businessDate: fields.number.businessDate,
+    orderNumber: fields.number.number,
+    orderNumberPrefix: fields.number.prefix,
+    displayNumber: fields.number.display,
+    channel: fields.channel,
+    consumptionType: fields.consumptionType,
+    tableId: fields.tableId,
+    joinedTableIds: [...fields.joinedTableIds],
+    guestCount: fields.guestCount,
+    waiterUserId: fields.waiterUserId,
+    customerName: fields.customerName,
+    note: null,
+    status: 'open',
+    paymentStatus: 'unpaid',
+    openedAt: op.deviceAt,
+    closedAt: null,
+    voidedAt: null,
+    voidReason: null,
+    reopenedAt: null,
+    mergedIntoOrderId: null,
+    splitFromOrderId: fields.splitFromOrderId,
+    lastSentAt: null,
+    updatedAt: op.deviceAt,
+    version: 0,
+    subtotalRappen: zero,
+    discountTotalRappen: zero,
+    totalRappen: zero,
+    taxTotalRappen: zero,
+    paidRappen: zero,
+    tipTotalRappen: zero,
+    roundingTotalRappen: zero,
+    balanceRappen: zero,
+  };
+}
+
+/** Base of a discount: the line gross, or the order after item discounts. */
+function discountBase(state: FoldState, orderId: string, itemId: string | null): Rappen {
+  if (itemId !== null) {
+    const item = state.items.get(itemId);
+    return item ? lineGross(item) : rappen(0);
+  }
+  let base = 0;
+  const itemDiscounts = new Map(
+    discountsOf(state, orderId)
+      .filter((d) => d.removedAt === null && d.itemId !== null)
+      .map((d) => [d.itemId!, d]),
+  );
+  for (const item of itemsOf(state, orderId)) {
+    if (item.prepStatus === 'voided') continue;
+    const gross = lineGross(item);
+    const discount = itemDiscounts.get(item.id);
+    base += gross - (discount ? discountAmount(discount, gross) : 0);
+  }
+  return rappen(base);
+}
+
+/** What RN-15 / RF-A05 checks for this operation, from the state BEFORE it is applied. */
+function sensitiveActionOf(state: FoldState, op: Operation): SensitiveAction | null {
+  switch (op.type) {
+    case 'terminal.unlocked':
+    case 'terminal.pin_failed':
+      return null;
+    case 'item.void':
+      return {
+        kind: 'void_item',
+        prepStatus: state.items.get(op.payload.itemId)?.prepStatus ?? 'pending',
+      };
+    case 'order.void':
+      return { kind: 'void_order' };
+    case 'order.reopen':
+      return { kind: 'reopen_order' };
+    case 'refund.record':
+      return { kind: 'refund', amountRappen: rappen(op.payload.amountRappen) };
+    case 'discount.apply': {
+      const base = discountBase(state, op.orderId, op.payload.itemId);
+      const amount = discountAmount(op.payload, base);
+      const percentBp = base > 0 ? Math.ceil((amount * 10000) / base) : 0;
+      return { kind: 'discount', percentBp };
+    }
+    case 'items.transfer':
+    case 'order.merge':
+    case 'order.split':
+      return { kind: 'permission', permission: 'order.transfer' };
+    case 'payment.record':
+      return { kind: 'permission', permission: 'payment.take' };
+    case 'receipt.reprint':
+      return { kind: 'permission', permission: 'receipt.reprint' };
+    default:
+      return { kind: 'permission', permission: 'order.create' };
+  }
+}
+
+function authorizationConflict(
+  op: Operation,
+  action: SensitiveAction,
+  context: FoldContext,
+): ConflictCode | null {
+  const permissionsOf = context.permissionsOf;
+  if (!permissionsOf || op.userId === null) return null;
+  const permissions = permissionsOf(op.userId);
+  if (!permissions) return 'user_inactive';
+  const decision = authorize({ userId: op.userId, permissions }, action, context.settings);
+  if (decision.status === 'allowed') return null;
+  if (!op.approval) return 'approval_invalid';
+  const approver = permissionsOf(op.approval.approverUserId);
+  const approved = approver && decision.permissions.every((p) => approver.has(p));
+  return approved ? null : 'approval_invalid';
+}
+
+function applyOperation(state: FoldState, op: Operation, context: FoldContext): void {
+  if (state.outcomes.has(op.id)) return;
+  const conflicts: ConflictRecord[] = [];
+  const touched = new Set<string>();
+  const afterRecalculation: (() => void)[] = [];
+  const flag = (code: ConflictCode, entityId: string | null = null) =>
+    conflicts.push({ opId: op.id, code, entityId });
+  const audit = (
+    action: AuditAction,
+    entityType: string,
+    entityId: string | null,
+    before: unknown,
+    after: unknown,
+    reason: string | null = null,
+  ) =>
+    state.audits.push({
+      opId: op.id,
+      action,
+      entityType,
+      entityId,
+      before,
+      after,
+      reason,
+      userId: op.userId,
+      terminalId: op.terminalId,
+      authorizedByUserId: op.approval?.approverUserId ?? null,
+      occurredAt: op.deviceAt,
+      locationId: op.locationId,
+    });
+
+  const sensitive = sensitiveActionOf(state, op);
+  if (sensitive) {
+    const code = authorizationConflict(op, sensitive, context);
+    if (code) flag(code, op.userId);
+  }
+
+  const moveItem = (item: OrderItemState, toOrderId: string) => {
+    const fromOrderId = item.orderId;
+    indexMove(state.itemsByOrder, fromOrderId, toOrderId, item.id);
+    item.orderId = toOrderId;
+    item.transferredFromOrderId = fromOrderId;
+    // An item discount follows its item.
+    for (const discount of discountsOf(state, fromOrderId)) {
+      if (discount.itemId !== item.id) continue;
+      indexMove(state.discountsByOrder, fromOrderId, toOrderId, discount.id);
+      discount.orderId = toOrderId;
+    }
+    touched.add(fromOrderId).add(toOrderId);
+  };
+
+  const voidItem = (item: OrderItemState, reason: string) => {
+    item.prepStatus = 'voided';
+    item.voidedAt = op.deviceAt;
+    item.voidReason = reason;
+    item.voidedByUserId = op.userId;
+    item.voidAuthorizedByUserId = op.approval?.approverUserId ?? null;
+  };
+
+  switch (op.type) {
+    case 'order.open': {
+      if (state.orders.has(op.orderId)) {
+        flag('invalid', op.orderId);
+        break;
+      }
+      const p = op.payload;
+      state.orders.set(
+        op.orderId,
+        newOrder(op, {
+          id: op.orderId,
+          channel: p.channel,
+          consumptionType: p.consumptionType,
+          tableId: p.tableId,
+          joinedTableIds: [],
+          guestCount: p.guestCount,
+          waiterUserId: p.waiterUserId,
+          customerName: p.customerName,
+          splitFromOrderId: null,
+          number: p.number,
+        }),
+      );
+      touched.add(op.orderId);
+      break;
+    }
+
+    case 'order.update': {
+      const order = state.orders.get(op.orderId);
+      if (!order) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      if (order.status !== 'open') {
+        flag('order_state', op.orderId);
+        break;
+      }
+      // Canonical order makes this "last change per field wins" (RNF-04).
+      const p = op.payload;
+      if (p.guestCount !== undefined) order.guestCount = p.guestCount;
+      if (p.waiterUserId !== undefined) order.waiterUserId = p.waiterUserId;
+      if (p.tableId !== undefined) order.tableId = p.tableId;
+      if (p.joinedTableIds !== undefined) order.joinedTableIds = [...p.joinedTableIds];
+      if (p.customerName !== undefined) order.customerName = p.customerName;
+      if (p.note !== undefined) order.note = p.note;
+      touched.add(order.id);
+      break;
+    }
+
+    case 'order.change_channel': {
+      const order = state.orders.get(op.orderId);
+      if (!order) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      // RN-05: only while nothing has been paid.
+      if (order.status !== 'open' || paymentsOf(state, order.id).length > 0) {
+        flag('order_state', order.id);
+        break;
+      }
+      const rateOf = new Map(op.payload.rates.map((r) => [r.taxCategoryKey, r]));
+      const lines = itemsOf(state, order.id).filter((item) => item.prepStatus !== 'voided');
+      const snapshot = () =>
+        lines.map((l) => ({ id: l.id, taxRateCode: l.taxRateCode, taxRateBp: l.taxRateBp }));
+      const before = {
+        channel: order.channel,
+        consumptionType: order.consumptionType,
+        lines: snapshot(),
+      };
+      for (const line of lines) {
+        const rate = rateOf.get(line.taxCategoryKey);
+        if (!rate) {
+          flag('invalid', line.id);
+          continue;
+        }
+        line.taxRateCode = rate.taxRateCode;
+        line.taxRateBp = rate.taxRateBp;
+      }
+      order.channel = op.payload.channel;
+      order.consumptionType = op.payload.consumptionType;
+      audit('order.channel_changed', 'order', order.id, before, {
+        channel: order.channel,
+        consumptionType: order.consumptionType,
+        lines: snapshot(),
+      });
+      touched.add(order.id);
+      break;
+    }
+
+    case 'items.add': {
+      const order = liveOrder(state, op.orderId);
+      if (!order) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      if (order.status !== 'open') {
+        // Items ordered on another device after the order closed: they happened (SYNC.md §5).
+        order.status = 'open';
+        order.closedAt = null;
+        order.voidedAt = null;
+        order.voidReason = null;
+        flag('implicit_reopen', order.id);
+      }
+      for (const line of op.payload.items) {
+        if (state.items.has(line.itemId)) {
+          flag('invalid', line.itemId);
+          continue;
+        }
+        state.items.set(line.itemId, {
+          id: line.itemId,
+          orderId: order.id,
+          productId: line.productId,
+          variantId: line.variantId,
+          name: line.name,
+          variantName: line.variantName,
+          quantity: line.quantity,
+          unitPriceRappen: rappen(line.unitPriceRappen),
+          modifiers: line.modifiers.map((m) => ({
+            ...m,
+            priceDeltaRappen: rappen(m.priceDeltaRappen),
+          })),
+          taxCategoryKey: line.taxCategoryKey,
+          taxRateCode: line.taxRateCode,
+          taxRateBp: line.taxRateBp,
+          course: line.course,
+          seat: line.seat,
+          note: line.note,
+          stationIds: [...line.stationIds],
+          prepStatus: 'pending',
+          addedAt: op.deviceAt,
+          addedByUserId: op.userId,
+          sentAt: null,
+          servedAt: null,
+          voidedAt: null,
+          voidReason: null,
+          voidedByUserId: null,
+          voidAuthorizedByUserId: null,
+          transferredFromOrderId: null,
+          modifiersRappen: rappen(0),
+          grossRappen: rappen(0),
+          discountRappen: rappen(0),
+          lineTotalRappen: rappen(0),
+          taxRappen: rappen(0),
+        });
+        indexAdd(state.itemsByOrder, order.id, line.itemId);
+      }
+      touched.add(order.id);
+      break;
+    }
+
+    case 'item.update': {
+      const item = state.items.get(op.payload.itemId);
+      if (!item) {
+        flag('item_not_found', op.payload.itemId);
+        break;
+      }
+      // Only what has not reached the kitchen can still change (RF-C08).
+      if (item.prepStatus !== 'pending') {
+        flag('item_state', item.id);
+        break;
+      }
+      const p = op.payload;
+      if (p.quantity !== undefined) item.quantity = p.quantity;
+      if (p.note !== undefined) item.note = p.note;
+      if (p.seat !== undefined) item.seat = p.seat;
+      if (p.course !== undefined) item.course = p.course;
+      touched.add(item.orderId);
+      break;
+    }
+
+    case 'items.send': {
+      for (const itemId of op.payload.itemIds) {
+        const item = state.items.get(itemId);
+        if (!item) {
+          flag('item_not_found', itemId);
+          continue;
+        }
+        if (item.prepStatus !== 'pending') continue;
+        item.prepStatus = 'sent';
+        item.sentAt = op.deviceAt;
+        const order = state.orders.get(item.orderId);
+        if (order) order.lastSentAt = op.deviceAt;
+        touched.add(item.orderId);
+      }
+      break;
+    }
+
+    case 'items.serve': {
+      for (const itemId of op.payload.itemIds) {
+        const item = state.items.get(itemId);
+        if (!item) {
+          flag('item_not_found', itemId);
+          continue;
+        }
+        if (item.prepStatus === 'voided' || item.prepStatus === 'served') continue;
+        item.prepStatus = 'served';
+        item.servedAt = op.deviceAt;
+        touched.add(item.orderId);
+      }
+      break;
+    }
+
+    case 'item.void': {
+      const p = op.payload;
+      const item = state.items.get(p.itemId);
+      if (!item) {
+        flag('item_not_found', p.itemId);
+        break;
+      }
+      if (item.prepStatus === 'voided') break;
+      const order = state.orders.get(item.orderId);
+      // A void on a closed order still happened; the manager settles the difference.
+      if (order && order.status !== 'open') flag('order_state', order.id);
+      const before = { quantity: item.quantity, prepStatus: item.prepStatus };
+      const reason = p.reasonText ? `${p.reason}: ${p.reasonText}` : p.reason;
+      if (p.quantity >= item.quantity) {
+        voidItem(item, p.reason);
+      } else if (state.items.has(p.voidedItemId)) {
+        flag('invalid', p.voidedItemId);
+        break;
+      } else {
+        // Part of the quantity: the voided part becomes its own line, nothing is deleted (RN-11).
+        item.quantity -= p.quantity;
+        const voided: OrderItemState = {
+          ...item,
+          id: p.voidedItemId,
+          quantity: p.quantity,
+          modifiers: item.modifiers.map((m) => ({ ...m })),
+          stationIds: [...item.stationIds],
+        };
+        voidItem(voided, p.reason);
+        state.items.set(voided.id, voided);
+        indexAdd(state.itemsByOrder, voided.orderId, voided.id);
+      }
+      audit(
+        'order.item_voided',
+        'order_item',
+        item.id,
+        before,
+        { voidedQuantity: Math.min(p.quantity, before.quantity) },
+        reason,
+      );
+      touched.add(item.orderId);
+      break;
+    }
+
+    case 'discount.apply': {
+      const p = op.payload;
+      const order = state.orders.get(op.orderId);
+      if (!order) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      if (order.status !== 'open') {
+        flag('order_state', order.id);
+        break;
+      }
+      if (state.discounts.has(p.discountId)) {
+        flag('invalid', p.discountId);
+        break;
+      }
+      if (p.itemId !== null) {
+        const item = state.items.get(p.itemId);
+        if (!item || item.orderId !== order.id || item.prepStatus === 'voided') {
+          flag('item_not_found', p.itemId);
+          break;
+        }
+      }
+      // One discount per line and one per order: a new one replaces the previous.
+      for (const previous of discountsOf(state, order.id)) {
+        if (previous.removedAt === null && previous.itemId === p.itemId) {
+          previous.removedAt = op.deviceAt;
+        }
+      }
+      state.discounts.set(p.discountId, {
+        id: p.discountId,
+        orderId: order.id,
+        itemId: p.itemId,
+        kind: p.kind,
+        value: p.value,
+        reasonCode: p.reasonCode,
+        reasonText: p.reasonText,
+        appliedByUserId: op.userId,
+        authorizedByUserId: op.approval?.approverUserId ?? null,
+        appliedAt: op.deviceAt,
+        removedAt: null,
+        amountRappen: rappen(0),
+      });
+      indexAdd(state.discountsByOrder, order.id, p.discountId);
+      audit(
+        'order.discount_applied',
+        p.itemId === null ? 'order' : 'order_item',
+        p.itemId ?? order.id,
+        null,
+        { discountId: p.discountId, kind: p.kind, value: p.value, reasonCode: p.reasonCode },
+        p.reasonText,
+      );
+      touched.add(order.id);
+      break;
+    }
+
+    case 'discount.remove': {
+      const discount = state.discounts.get(op.payload.discountId);
+      if (!discount) {
+        flag('item_not_found', op.payload.discountId);
+        break;
+      }
+      if (discount.removedAt !== null) break;
+      const order = state.orders.get(discount.orderId);
+      if (order && order.status !== 'open') {
+        flag('order_state', order.id);
+        break;
+      }
+      discount.removedAt = op.deviceAt;
+      audit(
+        'order.discount_removed',
+        'discount',
+        discount.id,
+        { amountRappen: discount.amountRappen },
+        null,
+      );
+      touched.add(discount.orderId);
+      break;
+    }
+
+    case 'payment.record': {
+      const p = op.payload;
+      if (state.payments.has(p.paymentId)) {
+        flag('invalid', p.paymentId);
+        break;
+      }
+      // A payment is never lost or rejected (RNF-04): it is recorded first, then checked.
+      state.payments.set(p.paymentId, {
+        id: p.paymentId,
+        orderId: op.orderId,
+        method: p.method,
+        adapter: p.adapter,
+        amountRappen: rappen(p.amountRappen),
+        tipRappen: rappen(p.tipRappen),
+        tipUserId: p.tipUserId,
+        roundingRappen: rappen(p.roundingRappen),
+        tenderedRappen: p.tenderedRappen === null ? null : rappen(p.tenderedRappen),
+        changeRappen: rappen(p.changeRappen),
+        externalReference: p.externalReference,
+        splitLabel: p.splitLabel,
+        userId: op.userId,
+        terminalId: op.terminalId,
+        completedAt: op.deviceAt,
+        receiptId: p.receipt.receiptId,
+      });
+      indexAdd(state.paymentsByOrder, op.orderId, p.paymentId);
+      if (!state.receipts.has(p.receipt.receiptId)) {
+        state.receipts.set(p.receipt.receiptId, {
+          id: p.receipt.receiptId,
+          orderId: op.orderId,
+          paymentId: p.paymentId,
+          receiptNumber: p.receipt.receiptNumber,
+          language: p.receipt.language,
+          content: p.receipt.content,
+          contentHash: p.receipt.contentHash,
+          customerName: p.receipt.customerName,
+          customerAddress: p.receipt.customerAddress,
+          terminalId: op.terminalId,
+          issuedByUserId: op.userId,
+          issuedAt: op.deviceAt,
+          copyOfReceiptId: null,
+        });
+      }
+      const order = state.orders.get(op.orderId);
+      if (!order) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      if (order.status !== 'open') flag('payment_on_closed_order', order.id);
+      afterRecalculation.push(() => {
+        if (order.paidRappen > order.totalRappen) flag('overpayment', order.id);
+      });
+      touched.add(order.id);
+      break;
+    }
+
+    case 'refund.record': {
+      const p = op.payload;
+      if (state.refunds.has(p.refundId)) {
+        flag('invalid', p.refundId);
+        break;
+      }
+      const payment = state.payments.get(p.paymentId);
+      const orderId = payment?.orderId ?? op.orderId;
+      // Money already handed back: recorded first, then checked (RN-14).
+      state.refunds.set(p.refundId, {
+        id: p.refundId,
+        paymentId: p.paymentId,
+        orderId,
+        method: p.method,
+        adapter: p.adapter,
+        amountRappen: rappen(p.amountRappen),
+        tipRappen: rappen(p.tipRappen),
+        reason: p.reason,
+        externalReference: p.externalReference,
+        userId: op.userId,
+        authorizedByUserId: op.approval?.approverUserId ?? null,
+        terminalId: op.terminalId,
+        refundedAt: op.deviceAt,
+      });
+      indexAdd(state.refundsByOrder, orderId, p.refundId);
+      if (!payment) {
+        flag('item_not_found', p.paymentId);
+      } else {
+        const refunded = refundsOf(state, orderId)
+          .filter((r) => r.paymentId === payment.id)
+          .reduce((sum, r) => sum + r.amountRappen, 0);
+        if (refunded > payment.amountRappen) flag('refund_exceeds_payment', payment.id);
+      }
+      audit(
+        'payment.refunded',
+        'payment',
+        p.paymentId,
+        null,
+        { refundId: p.refundId, amountRappen: p.amountRappen, tipRappen: p.tipRappen },
+        p.reason,
+      );
+      touched.add(orderId);
+      break;
+    }
+
+    case 'receipt.reprint': {
+      const original = state.receipts.get(op.payload.receiptId);
+      if (!original) {
+        flag('item_not_found', op.payload.receiptId);
+        break;
+      }
+      if (state.receipts.has(op.payload.copyId)) break;
+      state.receipts.set(op.payload.copyId, {
+        ...original,
+        id: op.payload.copyId,
+        terminalId: op.terminalId,
+        issuedByUserId: op.userId,
+        issuedAt: op.deviceAt,
+        copyOfReceiptId: original.id,
+      });
+      audit('receipt.reprinted', 'receipt', original.id, null, { copyId: op.payload.copyId });
+      break;
+    }
+
+    case 'items.transfer': {
+      const target = liveOrder(state, op.payload.toOrderId);
+      if (!target) {
+        flag('order_not_found', op.payload.toOrderId);
+        break;
+      }
+      if (target.status !== 'open') {
+        flag('order_state', target.id);
+        break;
+      }
+      const moved: string[] = [];
+      for (const itemId of op.payload.itemIds) {
+        const item = state.items.get(itemId);
+        if (!item) {
+          flag('item_not_found', itemId);
+          continue;
+        }
+        if (item.prepStatus === 'voided' || item.orderId === target.id) continue;
+        // What has been paid stays where it was paid (RN-14, DEC-025).
+        if (paymentsOf(state, item.orderId).length > 0) {
+          flag('source_has_payments', item.orderId);
+          continue;
+        }
+        moved.push(item.id);
+        moveItem(item, target.id);
+      }
+      audit('order.items_transferred', 'order', op.orderId, null, {
+        toOrderId: target.id,
+        itemIds: moved,
+      });
+      break;
+    }
+
+    case 'order.merge': {
+      const source = state.orders.get(op.orderId);
+      const target = liveOrder(state, op.payload.intoOrderId);
+      if (!source || !target) {
+        flag('order_not_found', source ? op.payload.intoOrderId : op.orderId);
+        break;
+      }
+      if (source.id === target.id) {
+        flag('invalid', source.id);
+        break;
+      }
+      if (source.status !== 'open' || target.status !== 'open') {
+        flag('order_state', source.status !== 'open' ? source.id : target.id);
+        break;
+      }
+      if (paymentsOf(state, source.id).length > 0) {
+        flag('source_has_payments', source.id);
+        break;
+      }
+      for (const item of itemsOf(state, source.id)) moveItem(item, target.id);
+      // An order discount belonged to the old order; it does not carry over.
+      for (const discount of discountsOf(state, source.id)) {
+        if (discount.itemId === null && discount.removedAt === null)
+          discount.removedAt = op.deviceAt;
+      }
+      source.status = 'voided';
+      source.voidedAt = op.deviceAt;
+      source.voidReason = 'merged';
+      source.mergedIntoOrderId = target.id;
+      audit('order.merged', 'order', source.id, null, { intoOrderId: target.id });
+      touched.add(source.id).add(target.id);
+      break;
+    }
+
+    case 'order.split': {
+      const p = op.payload;
+      const source = state.orders.get(op.orderId);
+      if (!source) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      if (source.status !== 'open') {
+        flag('order_state', source.id);
+        break;
+      }
+      if (paymentsOf(state, source.id).length > 0) {
+        flag('source_has_payments', source.id);
+        break;
+      }
+      if (state.orders.has(p.newOrderId)) {
+        flag('invalid', p.newOrderId);
+        break;
+      }
+      const child = newOrder(op, {
+        id: p.newOrderId,
+        channel: source.channel,
+        consumptionType: source.consumptionType,
+        tableId: source.tableId,
+        joinedTableIds: source.joinedTableIds,
+        guestCount: null,
+        waiterUserId: source.waiterUserId,
+        customerName: null,
+        splitFromOrderId: source.id,
+        number: p.number,
+      });
+      state.orders.set(child.id, child);
+      const moved: string[] = [];
+      for (const itemId of p.itemIds) {
+        const item = state.items.get(itemId);
+        if (!item || item.orderId !== source.id || item.prepStatus === 'voided') {
+          flag('item_not_found', itemId);
+          continue;
+        }
+        moved.push(item.id);
+        moveItem(item, child.id);
+      }
+      audit('order.split', 'order', source.id, null, { newOrderId: child.id, itemIds: moved });
+      touched.add(source.id).add(child.id);
+      break;
+    }
+
+    case 'order.reopen': {
+      const order = state.orders.get(op.orderId);
+      if (!order) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      if (order.status !== 'closed') {
+        flag('order_state', order.id);
+        break;
+      }
+      order.status = 'open';
+      order.closedAt = null;
+      order.reopenedAt = op.deviceAt;
+      audit(
+        'order.reopened',
+        'order',
+        order.id,
+        { status: 'closed' },
+        { status: 'open' },
+        op.payload.reason,
+      );
+      touched.add(order.id);
+      break;
+    }
+
+    case 'order.void': {
+      const order = state.orders.get(op.orderId);
+      if (!order) {
+        flag('order_not_found', op.orderId);
+        break;
+      }
+      // RN-12: only an order without payments is voided; one with payments is refunded.
+      if (order.status !== 'open' || paymentsOf(state, order.id).length > 0) {
+        flag('order_state', order.id);
+        break;
+      }
+      const reason = op.payload.reasonText
+        ? `${op.payload.reason}: ${op.payload.reasonText}`
+        : op.payload.reason;
+      for (const item of itemsOf(state, order.id)) {
+        if (item.prepStatus !== 'voided') voidItem(item, op.payload.reason);
+      }
+      order.status = 'voided';
+      order.voidedAt = op.deviceAt;
+      order.voidReason = op.payload.reason;
+      audit('order.voided', 'order', order.id, { status: 'open' }, { status: 'voided' }, reason);
+      touched.add(order.id);
+      break;
+    }
+
+    case 'terminal.unlocked':
+      audit('terminal.unlocked', 'terminal', op.terminalId, null, { userId: op.userId });
+      break;
+
+    case 'terminal.pin_failed':
+      audit('terminal.pin_failed', 'terminal', op.terminalId, null, {
+        attempt: op.payload.attempt,
+      });
+      break;
+  }
+
+  for (const orderId of touched) {
+    const order = state.orders.get(orderId);
+    if (!order) continue;
+    recalculateOrder(state, order);
+    order.version += 1;
+    order.updatedAt = op.deviceAt;
+    // RN-12. An explicit reopen leaves the order open until the next change.
+    if (op.type !== 'order.reopen' && isReadyToClose(state, order)) {
+      order.status = 'closed';
+      order.closedAt = op.deviceAt;
+    }
+  }
+  for (const check of afterRecalculation) check();
+
+  state.outcomes.set(op.id, conflicts.length > 0 ? 'conflict' : 'applied');
+  state.conflicts.push(...conflicts);
+  state.lastHlc = op.hlc;
+  state.lastId = op.id;
+}

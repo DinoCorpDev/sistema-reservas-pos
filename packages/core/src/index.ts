@@ -12,6 +12,7 @@ export * from './shared/languages';
 export * from './shared/channels';
 export * from './shared/events';
 export * from './shared/time';
+export * from './shared/hlc';
 
 export * from './organization';
 export * from './catalog';

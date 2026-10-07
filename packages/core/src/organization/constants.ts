@@ -1,5 +1,6 @@
 /** Terminal types of a location (RF-A03). */
-export const TERMINAL_TYPES = ['pos', 'handheld', 'kds'] as const;
+/** `hub` is the LAN hub of the location, paired like a terminal (docs/SYNC.md §11.2). */
+export const TERMINAL_TYPES = ['pos', 'handheld', 'kds', 'hub'] as const;
 export type TerminalType = (typeof TERMINAL_TYPES)[number];
 
 /** Purpose and protocol of network printers (RF-F17). */
