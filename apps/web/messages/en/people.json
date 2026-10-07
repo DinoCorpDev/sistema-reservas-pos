@@ -1,0 +1,292 @@
+{
+  "devices": {
+    "title": "Devices & stations",
+    "description": "POS registers, handhelds and kitchen displays, kitchen stations and printers at this location.",
+    "noLocation": "First choose a location at the top.",
+    "readOnly": "View only: changes require the “Manage location, devices and tables” permission.",
+    "tabTerminals": "POS registers & devices",
+    "tabStations": "Kitchen stations",
+    "tabPrinters": "Printers"
+  },
+  "terminals": {
+    "title": "POS registers & devices",
+    "hint": "Each device is connected once with a pairing code. Deactivating it unpairs it immediately.",
+    "new": "New device",
+    "edit": "Edit device",
+    "empty": "No devices yet. Create at least one POS register.",
+    "type": "Type",
+    "types": {
+      "pos": "POS register",
+      "handheld": "Handheld",
+      "kds": "Kitchen display (KDS)"
+    },
+    "prefix": "Prefix",
+    "prefixLabel": "Prefix for order numbers when offline",
+    "prefixHint": "1–4 capital letters or digits, e.g. K1. Unique per location, so order numbers assigned offline are never duplicated.",
+    "prefixTaken": "Another device at this location already uses this prefix.",
+    "station": "Kitchen station",
+    "stationHint": "For kitchen displays: which station the device shows.",
+    "receiptPrinter": "Receipt printer",
+    "receiptPrinterHint": "Prints this device’s receipts.",
+    "pairing": "Pairing",
+    "paired": "Paired",
+    "notPaired": "Not paired",
+    "codePending": "Code open until {time}",
+    "lastSeen": "Last active",
+    "never": "Never",
+    "pair": "Generate pairing code",
+    "pairingTitle": "Pairing code for {name}",
+    "pairingInstruction": "Enter it on the device: open the POS register or kitchen display on the device and type in this code when pairing.",
+    "pairingValidUntil": "Valid until {time} (15 minutes)",
+    "pairingRemaining": "Valid for another {remaining}",
+    "pairingExpired": "The code has expired.",
+    "pairingOnce": "The code is shown only now and works for a single pairing. A new code replaces the previous one; if the device is already paired, the new pairing replaces the old one.",
+    "pairingNew": "Generate new code",
+    "pairingDone": "Done",
+    "reactivateFirst": "Activate the device before pairing it.",
+    "deactivate": "Deactivate device",
+    "deactivateTitle": "Deactivate {name}?",
+    "deactivateText": "The device is unpaired immediately and can’t be used until it is reactivated and paired again. Orders and receipts are kept.",
+    "deactivated": "Device deactivated and unpaired.",
+    "activate": "Activate device",
+    "activateTitle": "Reactivate {name}?",
+    "activateText": "Afterwards, the device must be connected with a new pairing code.",
+    "activated": "Device activated."
+  },
+  "stations": {
+    "title": "Kitchen stations",
+    "hint": "Every product goes to a station; its tickets appear there on the kitchen display or printer.",
+    "new": "New station",
+    "edit": "Edit station",
+    "empty": "No kitchen stations yet.",
+    "alertAfter": "Alert after",
+    "alertAfterLabel": "Delay alert after (minutes)",
+    "alertAfterHint": "Leave empty to use the location default ({minutes} min).",
+    "minutes": "{minutes} min",
+    "standard": "Default ({value})",
+    "language": "Kitchen language",
+    "languageHint": "Language of this station’s tickets.",
+    "printer": "Printer",
+    "printerHint": "Optional: prints this station’s tickets.",
+    "inUse": "The station is still used by products or kitchen displays. Reassign them first or deactivate the station."
+  },
+  "printers": {
+    "title": "Printers",
+    "hint": "Network printers for receipts and kitchen tickets.",
+    "testNote": "Test printing will come with the location hub (phase 3).",
+    "new": "New printer",
+    "edit": "Edit printer",
+    "empty": "No printers yet.",
+    "kind": "Type",
+    "kinds": {
+      "receipt": "Receipt printer",
+      "kitchen": "Kitchen printer"
+    },
+    "protocol": "Protocol",
+    "protocols": {
+      "escpos": "ESC/POS (network)",
+      "epson_epos": "Epson ePOS",
+      "star_cloudprnt": "Star CloudPRNT"
+    },
+    "host": "IP address or hostname",
+    "hostHint": "e.g. 192.168.1.50",
+    "port": "Port",
+    "address": "Address",
+    "paperWidth": "Paper width",
+    "paperWidthValue": "{mm} mm",
+    "cashDrawer": "Cash drawer",
+    "cashDrawerLabel": "Cash drawer connected",
+    "inUse": "Stations or devices still print to this printer. Assign them to another printer first."
+  },
+  "users": {
+    "title": "Staff",
+    "description": "Access to the POS register with a PIN and to the backoffice with email and password.",
+    "tabUsers": "Staff",
+    "tabRoles": "Roles & permissions",
+    "new": "New person",
+    "edit": "Edit person",
+    "created": "Person created.",
+    "empty": "No staff yet.",
+    "you": "You",
+    "name": "Name",
+    "email": "Email",
+    "emailHint": "For signing in to the backoffice.",
+    "emailTaken": "This email is already in use.",
+    "password": "Password",
+    "passwordHint": "Optional. Only needed for backoffice access; at least 10 characters.",
+    "passwordNeedsEmail": "Backoffice access also requires an email.",
+    "pin": "PIN",
+    "pinHint": "Optional. 4–6 digits to unlock the POS register.",
+    "pinInvalid": "The PIN consists of 4 to 6 digits.",
+    "pinTaken": "PIN already in use",
+    "uiLanguage": "Interface language",
+    "roles": "Roles",
+    "rolesHint": "The roles apply at all selected locations.",
+    "pickRole": "Please choose at least one role.",
+    "locations": "Locations",
+    "allLocations": "All",
+    "pickLocation": "Please choose at least one location.",
+    "pinSet": "PIN",
+    "twoFactor": "2FA",
+    "lastLogin": "Last sign-in",
+    "never": "Never",
+    "setPin": "Set PIN",
+    "setPinTitle": "Set PIN for {name}",
+    "setPinHint": "4–6 digits. The PIN identifies the person at the POS register and must be unique within the organisation.",
+    "newPin": "New PIN",
+    "pinSaved": "PIN saved.",
+    "setPassword": "Set password",
+    "setPasswordTitle": "Set password for {name}",
+    "newPassword": "New password",
+    "newPasswordHint": "At least 10 characters.",
+    "confirmPassword": "Repeat password",
+    "mismatch": "The passwords don’t match.",
+    "passwordSaved": "Password saved.",
+    "noEmailWarning": "This person has no email. Without an email, signing in to the backoffice isn’t possible.",
+    "deactivate": "Deactivate person",
+    "deactivateTitle": "Deactivate {name}?",
+    "deactivateText": "The person can no longer sign in or unlock the POS register. Their data and the audit log are kept.",
+    "deactivated": "Person deactivated.",
+    "activate": "Activate person",
+    "activateTitle": "Reactivate {name}?",
+    "activateText": "The person can sign in again and work with their PIN.",
+    "activated": "Person activated.",
+    "cannotDeactivateSelf": "You can’t deactivate yourself.",
+    "lastAdmin": "The organisation needs at least one active person with the Administrator role."
+  },
+  "roles": {
+    "names": {
+      "admin": "Administrator",
+      "manager": "Management",
+      "cashier": "Cashier",
+      "waiter": "Waitstaff",
+      "kitchen": "Kitchen"
+    },
+    "hint": "Permissions apply to everyone with this role. Every change is logged.",
+    "choose": "Choose role",
+    "count": "{count} of {total}",
+    "adminLocked": "The Administrator role always has all permissions and can’t be changed.",
+    "unsaved": "Not saved",
+    "reset": "Discard changes",
+    "defaults": "Restore defaults",
+    "saved": "Permissions saved."
+  },
+  "permissionGroups": {
+    "orders": "Orders",
+    "payments": "Payments & receipts",
+    "cash": "POS register & end of day",
+    "kitchen": "Kitchen & catalogue",
+    "guests": "Reservations & guests",
+    "admin": "Administration",
+    "other": "Other"
+  },
+  "permissions": {
+    "order": {
+      "create": "Take orders",
+      "void_item": "Void items",
+      "void": "Void entire orders",
+      "discount": "Grant discounts",
+      "reopen": "Reopen closed orders",
+      "transfer": "Transfer orders to another table"
+    },
+    "payment": {
+      "take": "Take payments",
+      "refund": "Issue refunds"
+    },
+    "receipt": {
+      "reprint": "Reprint receipts"
+    },
+    "cash": {
+      "open_drawer": "Open the cash drawer without a sale",
+      "movement": "Record cash deposits and withdrawals"
+    },
+    "shift": {
+      "open": "Open register shift",
+      "close": "Close register shift"
+    },
+    "day": {
+      "close": "Run end-of-day closing"
+    },
+    "kitchen": {
+      "operate": "Operate the kitchen display"
+    },
+    "catalog": {
+      "sold_out": "Mark products as sold out",
+      "manage": "Edit catalogue",
+      "price_change": "Change prices"
+    },
+    "tax": {
+      "manage": "Manage VAT settings"
+    },
+    "reservation": {
+      "checkin": "Check in reservations",
+      "manage": "Manage reservations"
+    },
+    "customer": {
+      "manage": "Manage guest data",
+      "anonymize": "Anonymise guest data"
+    },
+    "location": {
+      "manage": "Manage location, devices and tables"
+    },
+    "user": {
+      "manage": "Manage staff, roles and API keys"
+    },
+    "report": {
+      "view": "View reports"
+    },
+    "audit": {
+      "view": "View audit log"
+    },
+    "sync": {
+      "resolve_conflicts": "Resolve sync conflicts"
+    },
+    "support": {
+      "grant_access": "Grant access to DINOLABS support"
+    },
+    "approval": {
+      "grant": "Approve actions with PIN (manager)"
+    }
+  },
+  "apiKeys": {
+    "title": "API keys",
+    "description": "For the website and other apps (e.g. Zitas). A key applies to the whole organisation.",
+    "listTitle": "Keys",
+    "new": "New key",
+    "empty": "No API keys yet.",
+    "name": "Label",
+    "nameHint": "What the key is used for, e.g. “Website”.",
+    "prefix": "Prefix",
+    "scopes": "Permissions",
+    "scopesHint": "Only as many as necessary.",
+    "pickScope": "Please choose at least one permission.",
+    "created": "Created",
+    "lastUsed": "Last used",
+    "never": "Never",
+    "statusActive": "Active",
+    "statusRevoked": "Revoked",
+    "statusExpired": "Expired",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke key “{name}”?",
+    "revokeText": "Apps using this key lose access immediately. This can’t be undone.",
+    "revoked": "Key revoked.",
+    "keyTitle": "New key “{name}”",
+    "keyWarningTitle": "Visible only now",
+    "keyWarning": "Copy the key and store it securely, e.g. in a password manager. Afterwards only the prefix will be visible. If it gets lost, revoke it and create a new one.",
+    "keyLabel": "API key",
+    "keyDone": "I’ve saved the key",
+    "copyFailed": "Copying isn’t possible. Please select the key and copy it manually.",
+    "scopeNames": {
+      "catalog_read": "Read catalogue",
+      "catalog_write": "Edit catalogue",
+      "customers_write": "Manage guests",
+      "reservations_write": "Manage reservations"
+    },
+    "scopeDescriptions": {
+      "catalog_read": "Retrieve products, categories, prices and menu.",
+      "catalog_write": "Change products and prices and report sold-out items.",
+      "customers_write": "Create and change guest data.",
+      "reservations_write": "Create and change reservations."
+    }
+  }
+}

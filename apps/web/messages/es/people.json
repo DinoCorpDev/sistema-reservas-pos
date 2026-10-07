@@ -1,0 +1,292 @@
+{
+  "devices": {
+    "title": "Dispositivos y estaciones",
+    "description": "Cajas, dispositivos móviles y pantallas de cocina, estaciones de cocina e impresoras de esta sede.",
+    "noLocation": "Primero seleccione una sede arriba.",
+    "readOnly": "Solo lectura: para hacer cambios se necesita el permiso «Gestionar sede, dispositivos y mesas».",
+    "tabTerminals": "Cajas y dispositivos",
+    "tabStations": "Estaciones de cocina",
+    "tabPrinters": "Impresoras"
+  },
+  "terminals": {
+    "title": "Cajas y dispositivos",
+    "hint": "Cada dispositivo se conecta una sola vez con un código de vinculación. Al desactivarlo, se desvincula de inmediato.",
+    "new": "Nuevo dispositivo",
+    "edit": "Editar dispositivo",
+    "empty": "Todavía no hay dispositivos. Cree al menos una caja.",
+    "type": "Tipo",
+    "types": {
+      "pos": "Caja",
+      "handheld": "Dispositivo móvil",
+      "kds": "Pantalla de cocina (KDS)"
+    },
+    "prefix": "Prefijo",
+    "prefixLabel": "Prefijo para números de pedido sin internet",
+    "prefixHint": "De 1 a 4 letras mayúsculas o dígitos, p. ej. K1. Único por sede, para que los números de pedido asignados sin conexión nunca se repitan.",
+    "prefixTaken": "Otro dispositivo de esta sede ya usa este prefijo.",
+    "station": "Estación de cocina",
+    "stationHint": "Para pantallas de cocina: qué estación muestra el dispositivo.",
+    "receiptPrinter": "Impresora de recibos",
+    "receiptPrinterHint": "Imprime los recibos de este dispositivo.",
+    "pairing": "Vinculación",
+    "paired": "Vinculado",
+    "notPaired": "No vinculado",
+    "codePending": "Código vigente hasta {time}",
+    "lastSeen": "Última actividad",
+    "never": "Nunca",
+    "pair": "Generar código de vinculación",
+    "pairingTitle": "Código de vinculación para {name}",
+    "pairingInstruction": "Ingréselo en el dispositivo: abra la caja o la pantalla de cocina en el dispositivo y escriba este código al vincularlo.",
+    "pairingValidUntil": "Válido hasta {time} (15 minutos)",
+    "pairingRemaining": "Válido por {remaining} más",
+    "pairingExpired": "El código ha vencido.",
+    "pairingOnce": "El código solo se muestra ahora y sirve para una sola vinculación. Un código nuevo reemplaza al anterior; si el dispositivo ya está vinculado, la nueva vinculación reemplaza a la anterior.",
+    "pairingNew": "Generar nuevo código",
+    "pairingDone": "Listo",
+    "reactivateFirst": "Active el dispositivo antes de vincularlo.",
+    "deactivate": "Desactivar dispositivo",
+    "deactivateTitle": "¿Desactivar {name}?",
+    "deactivateText": "El dispositivo se desvincula de inmediato y no podrá operar hasta que se vuelva a activar y vincular. Los pedidos y los recibos se conservan.",
+    "deactivated": "Dispositivo desactivado y desvinculado.",
+    "activate": "Activar dispositivo",
+    "activateTitle": "¿Volver a activar {name}?",
+    "activateText": "Después, el dispositivo debe conectarse con un nuevo código de vinculación.",
+    "activated": "Dispositivo activado."
+  },
+  "stations": {
+    "title": "Estaciones de cocina",
+    "hint": "Cada producto va a una estación; sus comandas aparecen allí en la pantalla de cocina o en la impresora.",
+    "new": "Nueva estación",
+    "edit": "Editar estación",
+    "empty": "Todavía no hay estaciones de cocina.",
+    "alertAfter": "Alerta después de",
+    "alertAfterLabel": "Alerta de retraso después de (minutos)",
+    "alertAfterHint": "Déjelo vacío para usar el valor estándar de la sede ({minutes} min).",
+    "minutes": "{minutes} min",
+    "standard": "Estándar ({value})",
+    "language": "Idioma de cocina",
+    "languageHint": "Idioma de las comandas de esta estación.",
+    "printer": "Impresora",
+    "printerHint": "Opcional: imprime las comandas de esta estación.",
+    "inUse": "Todavía hay productos o pantallas de cocina que usan esta estación. Primero reasígnelos o desactive la estación."
+  },
+  "printers": {
+    "title": "Impresoras",
+    "hint": "Impresoras de red para recibos y comandas de cocina.",
+    "testNote": "La impresión de prueba llegará con el hub de la sede (fase 3).",
+    "new": "Nueva impresora",
+    "edit": "Editar impresora",
+    "empty": "Todavía no hay impresoras.",
+    "kind": "Tipo",
+    "kinds": {
+      "receipt": "Impresora de recibos",
+      "kitchen": "Impresora de cocina"
+    },
+    "protocol": "Protocolo",
+    "protocols": {
+      "escpos": "ESC/POS (red)",
+      "epson_epos": "Epson ePOS",
+      "star_cloudprnt": "Star CloudPRNT"
+    },
+    "host": "Dirección IP o nombre de host",
+    "hostHint": "p. ej. 192.168.1.50",
+    "port": "Puerto",
+    "address": "Dirección",
+    "paperWidth": "Ancho del papel",
+    "paperWidthValue": "{mm} mm",
+    "cashDrawer": "Cajón de dinero",
+    "cashDrawerLabel": "Cajón de dinero conectado",
+    "inUse": "Todavía hay estaciones o dispositivos que imprimen en esta impresora. Primero asígnelos a otra impresora."
+  },
+  "users": {
+    "title": "Personal",
+    "description": "Acceso a la caja con PIN y al backoffice con correo electrónico y contraseña.",
+    "tabUsers": "Personal",
+    "tabRoles": "Roles y permisos",
+    "new": "Nueva persona",
+    "edit": "Editar persona",
+    "created": "Persona creada.",
+    "empty": "Todavía no hay personal registrado.",
+    "you": "Usted",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "emailHint": "Para iniciar sesión en el backoffice.",
+    "emailTaken": "Este correo electrónico ya está en uso.",
+    "password": "Contraseña",
+    "passwordHint": "Opcional. Solo es necesaria para el acceso al backoffice; mínimo 10 caracteres.",
+    "passwordNeedsEmail": "El acceso al backoffice también requiere un correo electrónico.",
+    "pin": "PIN",
+    "pinHint": "Opcional. De 4 a 6 dígitos para desbloquear la caja.",
+    "pinInvalid": "El PIN debe tener de 4 a 6 dígitos.",
+    "pinTaken": "PIN ya asignado",
+    "uiLanguage": "Idioma de la interfaz",
+    "roles": "Roles",
+    "rolesHint": "Los roles aplican en todas las sedes seleccionadas.",
+    "pickRole": "Seleccione al menos un rol.",
+    "locations": "Sedes",
+    "allLocations": "Todas",
+    "pickLocation": "Seleccione al menos una sede.",
+    "pinSet": "PIN",
+    "twoFactor": "2FA",
+    "lastLogin": "Último inicio de sesión",
+    "never": "Nunca",
+    "setPin": "Definir PIN",
+    "setPinTitle": "Definir PIN para {name}",
+    "setPinHint": "De 4 a 6 dígitos. El PIN identifica a la persona en la caja y debe ser único en la organización.",
+    "newPin": "Nuevo PIN",
+    "pinSaved": "PIN guardado.",
+    "setPassword": "Definir contraseña",
+    "setPasswordTitle": "Definir contraseña para {name}",
+    "newPassword": "Nueva contraseña",
+    "newPasswordHint": "Mínimo 10 caracteres.",
+    "confirmPassword": "Repita la contraseña",
+    "mismatch": "Las contraseñas no coinciden.",
+    "passwordSaved": "Contraseña guardada.",
+    "noEmailWarning": "Esta persona no tiene correo electrónico. Sin correo no es posible iniciar sesión en el backoffice.",
+    "deactivate": "Desactivar persona",
+    "deactivateTitle": "¿Desactivar a {name}?",
+    "deactivateText": "La persona ya no podrá iniciar sesión ni desbloquear la caja. Sus datos y el registro de auditoría se conservan.",
+    "deactivated": "Persona desactivada.",
+    "activate": "Activar persona",
+    "activateTitle": "¿Volver a activar a {name}?",
+    "activateText": "La persona podrá volver a iniciar sesión y trabajar con su PIN.",
+    "activated": "Persona activada.",
+    "cannotDeactivateSelf": "No puede desactivar su propia cuenta.",
+    "lastAdmin": "La organización necesita al menos una persona activa con el rol Administrador."
+  },
+  "roles": {
+    "names": {
+      "admin": "Administrador",
+      "manager": "Gerencia",
+      "cashier": "Caja",
+      "waiter": "Servicio",
+      "kitchen": "Cocina"
+    },
+    "hint": "Los permisos aplican a todas las personas con este rol. Cada cambio queda registrado.",
+    "choose": "Seleccionar rol",
+    "count": "{count} de {total}",
+    "adminLocked": "El rol Administrador siempre tiene todos los permisos y no se puede modificar.",
+    "unsaved": "Sin guardar",
+    "reset": "Descartar cambios",
+    "defaults": "Restablecer valores estándar",
+    "saved": "Permisos guardados."
+  },
+  "permissionGroups": {
+    "orders": "Pedidos",
+    "payments": "Pagos y recibos",
+    "cash": "Caja y cierre del día",
+    "kitchen": "Cocina y catálogo",
+    "guests": "Reservas y clientes",
+    "admin": "Administración",
+    "other": "Otros"
+  },
+  "permissions": {
+    "order": {
+      "create": "Tomar pedidos",
+      "void_item": "Anular ítems",
+      "void": "Anular pedidos completos",
+      "discount": "Aplicar descuentos",
+      "reopen": "Reabrir pedidos cerrados",
+      "transfer": "Transferir pedidos a otra mesa"
+    },
+    "payment": {
+      "take": "Recibir pagos",
+      "refund": "Hacer reembolsos"
+    },
+    "receipt": {
+      "reprint": "Reimprimir recibos"
+    },
+    "cash": {
+      "open_drawer": "Abrir el cajón de dinero sin venta",
+      "movement": "Registrar ingresos y retiros de efectivo"
+    },
+    "shift": {
+      "open": "Abrir turno de caja",
+      "close": "Cerrar turno de caja"
+    },
+    "day": {
+      "close": "Hacer el cierre del día"
+    },
+    "kitchen": {
+      "operate": "Operar la pantalla de cocina"
+    },
+    "catalog": {
+      "sold_out": "Marcar productos como agotados",
+      "manage": "Editar catálogo",
+      "price_change": "Cambiar precios"
+    },
+    "tax": {
+      "manage": "Gestionar la configuración de IVA"
+    },
+    "reservation": {
+      "checkin": "Registrar la llegada de reservas",
+      "manage": "Gestionar reservas"
+    },
+    "customer": {
+      "manage": "Gestionar datos de clientes",
+      "anonymize": "Anonimizar datos de clientes"
+    },
+    "location": {
+      "manage": "Gestionar sede, dispositivos y mesas"
+    },
+    "user": {
+      "manage": "Gestionar personal, roles y claves de API"
+    },
+    "report": {
+      "view": "Ver reportes"
+    },
+    "audit": {
+      "view": "Ver registro de auditoría"
+    },
+    "sync": {
+      "resolve_conflicts": "Resolver conflictos de sincronización"
+    },
+    "support": {
+      "grant_access": "Otorgar acceso al soporte de DINOLABS"
+    },
+    "approval": {
+      "grant": "Autorizar acciones con PIN (gerente)"
+    }
+  },
+  "apiKeys": {
+    "title": "Claves de API",
+    "description": "Para el sitio web y otras apps (p. ej. Zitas). Una clave aplica para toda la organización.",
+    "listTitle": "Claves",
+    "new": "Nueva clave",
+    "empty": "Todavía no hay claves de API.",
+    "name": "Nombre",
+    "nameHint": "Para qué se usa la clave, p. ej. «Sitio web».",
+    "prefix": "Prefijo",
+    "scopes": "Permisos",
+    "scopesHint": "Solo los necesarios.",
+    "pickScope": "Seleccione al menos un permiso.",
+    "created": "Creada",
+    "lastUsed": "Último uso",
+    "never": "Nunca",
+    "statusActive": "Activa",
+    "statusRevoked": "Revocada",
+    "statusExpired": "Vencida",
+    "revoke": "Revocar",
+    "revokeTitle": "¿Revocar la clave «{name}»?",
+    "revokeText": "Las apps que usan esta clave pierden el acceso de inmediato. Esto no se puede deshacer.",
+    "revoked": "Clave revocada.",
+    "keyTitle": "Nueva clave «{name}»",
+    "keyWarningTitle": "Visible solo ahora",
+    "keyWarning": "Copie la clave y guárdela en un lugar seguro, p. ej. en un gestor de contraseñas. Después solo se verá el prefijo. Si la pierde, revóquela y cree una nueva.",
+    "keyLabel": "Clave de API",
+    "keyDone": "Ya guardé la clave",
+    "copyFailed": "No se pudo copiar. Seleccione la clave y cópiela manualmente.",
+    "scopeNames": {
+      "catalog_read": "Leer catálogo",
+      "catalog_write": "Editar catálogo",
+      "customers_write": "Gestionar clientes",
+      "reservations_write": "Gestionar reservas"
+    },
+    "scopeDescriptions": {
+      "catalog_read": "Consultar productos, categorías, precios y menú.",
+      "catalog_write": "Modificar productos y precios e informar productos agotados.",
+      "customers_write": "Crear y modificar datos de clientes.",
+      "reservations_write": "Crear y modificar reservas."
+    }
+  }
+}
