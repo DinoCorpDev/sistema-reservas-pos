@@ -198,6 +198,19 @@ export async function resolveActor(db: Database, input: ResolveInput): Promise<A
       },
       input.requestId,
     );
+  } else if (input.terminalToken) {
+    // A paired device on its own (sync, bootstrap): no user, no permissions (DEC-023).
+    const terminal = await resolveTerminal(db, input.terminalToken);
+    actor = {
+      kind: 'terminal',
+      organizationId: terminal.organizationId,
+      locationId: terminal.locationId,
+      userId: null,
+      terminalId: terminal.id,
+      terminalType: terminal.type,
+      permissions: new Set(),
+      requestId: input.requestId,
+    };
   } else if (input.session) {
     actor = await sessionActor(db, input.session, input);
   }

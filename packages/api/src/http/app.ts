@@ -4,8 +4,10 @@ import type { Database } from '@pos/db';
 import { Scalar } from '@scalar/hono-api-reference';
 import { resolveActor, type SessionResolver } from '../auth/resolve-actor';
 import { ApiError, toApiError } from '../errors';
+import type { SyncNode } from '../services/sync';
 import type { ApiEnv } from './env';
 import { registerRoutes } from './routes';
+import { registerSyncRoutes } from './routes/sync';
 
 export const API_BASE_PATH = '/api/v1';
 
@@ -25,13 +27,18 @@ export interface ApiDependencies {
   db: Database;
   /** Backoffice session from the web app (Auth.js); absent in tests and on the hub. */
   resolveSession?: SessionResolver;
+  /** Where the API runs (default: cloud). The hub mounts only the sync routes. */
+  node?: SyncNode;
+  modules?: 'all' | 'sync';
 }
 
 /**
- * Public REST API v1 (RF-F14, PA-01): one Hono app mounted by Next.js under /api/v1 and, later,
- * by the location hub. Every route validates its input with Zod and is documented in OpenAPI.
+ * Public REST API v1 (RF-F14, PA-01): one Hono app mounted by Next.js under /api/v1 and by the
+ * location hub (sync routes only, DEC-028). Every route validates its input with Zod and is
+ * documented in OpenAPI.
  */
 export function createApiApp(deps: ApiDependencies) {
+  const node: SyncNode = deps.node ?? { kind: 'cloud' };
   const app = new OpenAPIHono<ApiEnv>({
     defaultHook: (result) => {
       if (!result.success) {
@@ -53,6 +60,7 @@ export function createApiApp(deps: ApiDependencies) {
     const requestId = c.req.header('x-request-id') ?? randomUUID();
     c.set('requestId', requestId);
     c.set('db', deps.db);
+    c.set('node', node);
     c.header('x-request-id', requestId);
     const session = deps.resolveSession ? await deps.resolveSession(c.req.raw) : null;
     c.set('session', session);
@@ -72,7 +80,8 @@ export function createApiApp(deps: ApiDependencies) {
     await next();
   });
 
-  registerRoutes(app);
+  if (deps.modules === 'sync') registerSyncRoutes(app);
+  else registerRoutes(app);
 
   app.openAPIRegistry.registerComponent('securitySchemes', 'session', {
     type: 'apiKey',

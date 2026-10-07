@@ -1,0 +1,153 @@
+import {
+  businessDate,
+  type CatalogSnapshot,
+  type ConsumptionType,
+  type TaxCategoryKey,
+  type TaxRateCode,
+  type TaxRateRecord,
+  type TaxRuleRecord,
+} from '@pos/core';
+import { inLocation, inOrg, notDeleted, schema as s } from '@pos/db';
+import { and, asc, eq, like } from 'drizzle-orm';
+import { type Actor, requireTerminal } from '../../actor';
+import { notFound } from '../../errors';
+import { loadCatalogSnapshot } from '../catalog/snapshot';
+import { listAreas, listTables, toLocationDto } from '../locations';
+import type { ServiceDeps } from '../shared';
+import { configVersion } from '../sync/config-version';
+
+/**
+ * `GET /pos/bootstrap` (docs/SYNC.md §6.4): everything a paired terminal needs to operate
+ * without network: the location with its receipt data and settings, floor, stations, users,
+ * the raw catalog, tax categories with dated rates and rules (RN-02, data, never constants), and
+ * the counters this terminal already used today. The device evaluates prices, availability and
+ * MWST with the same @pos/core functions as the server.
+ */
+export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
+  const { terminalId, locationId } = requireTerminal(actor);
+  const { db } = deps;
+  const [terminal] = await db
+    .select()
+    .from(s.terminals)
+    .where(inLocation(s.terminals, actor, eq(s.terminals.id, terminalId), notDeleted(s.terminals)));
+  if (!terminal) throw notFound('Terminal');
+  const [locationRow] = await db
+    .select()
+    .from(s.locations)
+    .where(inOrg(s.locations, actor, eq(s.locations.id, locationId), notDeleted(s.locations)));
+  if (!locationRow) throw notFound('Location');
+  const location = toLocationDto(locationRow);
+  const [organization] = await db
+    .select({ id: s.organizations.id, name: s.organizations.name })
+    .from(s.organizations)
+    .where(eq(s.organizations.id, actor.organizationId));
+
+  const [areas, tables, stations, users, categories, rates, rules, catalog, version] =
+    await Promise.all([
+      listAreas(deps, actor),
+      listTables(deps, actor),
+      db
+        .select({ id: s.kitchenStations.id, name: s.kitchenStations.name })
+        .from(s.kitchenStations)
+        .where(inLocation(s.kitchenStations, actor, notDeleted(s.kitchenStations)))
+        .orderBy(asc(s.kitchenStations.name)),
+      db
+        .select({ id: s.users.id, displayName: s.users.displayName })
+        .from(s.users)
+        .innerJoin(s.userLocations, eq(s.userLocations.userId, s.users.id))
+        .where(
+          inOrg(
+            s.users,
+            actor,
+            eq(s.users.isActive, true),
+            notDeleted(s.users),
+            eq(s.userLocations.locationId, locationId),
+            notDeleted(s.userLocations),
+          ),
+        )
+        .orderBy(asc(s.users.displayName)),
+      db
+        .select({ id: s.taxCategories.id, key: s.taxCategories.key, name: s.taxCategories.name })
+        .from(s.taxCategories)
+        .where(inOrg(s.taxCategories, actor, notDeleted(s.taxCategories))),
+      db
+        .select()
+        .from(s.taxRates)
+        .where(inOrg(s.taxRates, actor, notDeleted(s.taxRates))),
+      db
+        .select({ rule: s.taxRules, taxCategoryKey: s.taxCategories.key })
+        .from(s.taxRules)
+        .innerJoin(s.taxCategories, eq(s.taxCategories.id, s.taxRules.taxCategoryId))
+        .where(inOrg(s.taxRules, actor, notDeleted(s.taxRules))),
+      loadCatalogSnapshot(db, actor, locationId),
+      configVersion(db, { organizationId: actor.organizationId, locationId }),
+    ]);
+
+  // Counters this terminal already used today, so a reinstalled device never repeats a number
+  // (docs/SYNC.md §8): offline order numbers by prefix and receipt numbers by prefix and day.
+  const today = businessDate(new Date(), location.timezone, location.settings.businessDayStartsAt);
+  const prefix = terminal.orderNumberPrefix;
+  const [orderSequence] = await db
+    .select({ lastNumber: s.orderNumberSequences.lastNumber })
+    .from(s.orderNumberSequences)
+    .where(
+      and(
+        eq(s.orderNumberSequences.locationId, locationId),
+        eq(s.orderNumberSequences.businessDate, today),
+        eq(s.orderNumberSequences.prefix, prefix),
+      ),
+    );
+  const receiptPrefix = `${prefix}-${today.slice(2).replaceAll('-', '')}-`;
+  const receiptNumbers = await db
+    .select({ receiptNumber: s.receipts.receiptNumber })
+    .from(s.receipts)
+    .where(
+      and(
+        eq(s.receipts.locationId, locationId),
+        like(s.receipts.receiptNumber, `${receiptPrefix}%`),
+      ),
+    );
+  const lastReceipt = receiptNumbers.reduce((highest, row) => {
+    const counter = Number.parseInt(row.receiptNumber.slice(receiptPrefix.length), 10);
+    return Number.isFinite(counter) && counter > highest ? counter : highest;
+  }, 0);
+
+  const catalogSnapshot: CatalogSnapshot = catalog;
+  return {
+    configVersion: version,
+    serverTime: new Date().toISOString(),
+    organization: { id: actor.organizationId, name: organization?.name ?? '' },
+    terminal: {
+      id: terminal.id,
+      name: terminal.name,
+      type: terminal.type,
+      orderNumberPrefix: terminal.orderNumberPrefix,
+      receiptPrinterId: terminal.receiptPrinterId,
+      kitchenStationId: terminal.kitchenStationId,
+    },
+    location,
+    areas,
+    tables,
+    stations,
+    users,
+    tax: {
+      categories: categories.map((c) => ({ id: c.id, key: c.key as TaxCategoryKey, name: c.name })),
+      rates: rates.map((r): TaxRateRecord => ({
+        code: r.code as TaxRateCode,
+        rateBp: r.rateBp,
+        validFrom: r.validFrom,
+        validTo: r.validTo,
+      })),
+      rules: rules.map(({ rule, taxCategoryKey }): TaxRuleRecord => ({
+        taxCategoryKey: taxCategoryKey as TaxCategoryKey,
+        consumptionType: rule.consumptionType as ConsumptionType,
+        rateCode: rule.rateCode as TaxRateCode,
+        validFrom: rule.validFrom,
+        validTo: rule.validTo,
+      })),
+    },
+    catalog: catalogSnapshot,
+    counters: { businessDate: today, lastOrderNumber: orderSequence?.lastNumber ?? 0, lastReceipt },
+  };
+}
+export type BootstrapDto = Awaited<ReturnType<typeof getBootstrap>>;

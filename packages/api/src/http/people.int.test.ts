@@ -677,7 +677,14 @@ describe('users and roles (RF-A04, RF-A05, RF-A07, RF-A08, RF-A12)', () => {
     const roles = await json<{ id: string; key: string; permissions: string[] }[]>(
       await api.request('GET', '/roles', { headers: admin }),
     );
-    expect(roles.map((r) => r.key)).toEqual(['admin', 'manager', 'cashier', 'waiter', 'kitchen']);
+    // The predefined roles come first; other test files may add custom roles to the shared DB.
+    expect(roles.map((r) => r.key).slice(0, 5)).toEqual([
+      'admin',
+      'manager',
+      'cashier',
+      'waiter',
+      'kitchen',
+    ]);
     const adminRole = roles.find((r) => r.key === 'admin')!;
     expect(adminRole.permissions).toHaveLength(PERMISSIONS.length);
     const kitchenRole = roles.find((r) => r.key === 'kitchen')!;

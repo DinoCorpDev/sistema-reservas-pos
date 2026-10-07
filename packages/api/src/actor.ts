@@ -22,13 +22,26 @@ export interface Approval {
  * - `user`: backoffice session or POS terminal unlocked with a PIN.
  * - `api_key`: an organization's integration credential (RF-F14).
  * - `support`: DINOLABS staff inside an organization with the owner's grant (RF-A10).
+ * - `terminal`: a paired device (or the LAN hub) identified only by its device token. It has no
+ *   user permissions: it synchronizes operations whose users were authenticated with their PIN
+ *   on the device (docs/SYNC.md §6.1, DEC-023).
  */
 export interface Actor extends TenantContext {
-  kind: 'user' | 'api_key' | 'support';
+  kind: 'user' | 'api_key' | 'support' | 'terminal';
   permissions: ReadonlySet<Permission>;
   /** API key scopes (only for `api_key`). */
   scopes?: ReadonlySet<string>;
+  /** Type of the device (only for `terminal`): pos, handheld, kds or hub. */
+  terminalType?: string;
   approval?: Approval | null;
+}
+
+/** The paired device behind a `terminal` actor; other actors cannot synchronize. */
+export function requireTerminal(actor: Actor): { terminalId: string; locationId: string } {
+  if (actor.kind !== 'terminal' || !actor.terminalId || !actor.locationId) {
+    throw new ApiError('FORBIDDEN', 'Only a paired terminal can synchronize (X-Terminal-Token)');
+  }
+  return { terminalId: actor.terminalId, locationId: actor.locationId };
 }
 
 export function hasPermission(actor: Actor, permission: Permission): boolean {

@@ -14,6 +14,14 @@ export interface AuditRecord {
   reason?: string | null;
   /** Overrides the context's location (null for organization-level changes). */
   locationId?: string | null;
+  /**
+   * Per-record actor and time, for records that come from device operations (docs/SYNC.md §10):
+   * each operation of a sync batch has its own user, terminal, approver and device time.
+   */
+  userId?: string | null;
+  terminalId?: string | null;
+  authorizedByUserId?: string | null;
+  occurredAt?: Date;
 }
 
 export interface EventRecord {
@@ -23,6 +31,9 @@ export interface EventRecord {
   payload: unknown;
   schemaVersion?: number;
   locationId?: string | null;
+  userId?: string | null;
+  terminalId?: string | null;
+  occurredAt?: Date;
 }
 
 export interface CommandRecorder {
@@ -63,15 +74,19 @@ export async function runCommand<T>(
           action: record.action,
           entityType: record.entityType,
           entityId: record.entityId ?? null,
-          userId: ctx.userId ?? null,
-          authorizedByUserId: ctx.authorizedByUserId ?? null,
-          terminalId: ctx.terminalId ?? null,
+          userId: record.userId !== undefined ? record.userId : (ctx.userId ?? null),
+          authorizedByUserId:
+            record.authorizedByUserId !== undefined
+              ? record.authorizedByUserId
+              : (ctx.authorizedByUserId ?? null),
+          terminalId:
+            record.terminalId !== undefined ? record.terminalId : (ctx.terminalId ?? null),
           supportStaffId: ctx.supportStaffId ?? null,
           reason: record.reason ?? null,
           before: record.before ?? null,
           after: record.after ?? null,
           requestId: ctx.requestId ?? null,
-          occurredAt,
+          occurredAt: record.occurredAt ?? occurredAt,
           recordedAt,
         })),
       );
@@ -87,9 +102,10 @@ export async function runCommand<T>(
           aggregateType: record.aggregateType,
           aggregateId: record.aggregateId,
           payload: record.payload ?? {},
-          userId: ctx.userId ?? null,
-          terminalId: ctx.terminalId ?? null,
-          occurredAt,
+          userId: record.userId !== undefined ? record.userId : (ctx.userId ?? null),
+          terminalId:
+            record.terminalId !== undefined ? record.terminalId : (ctx.terminalId ?? null),
+          occurredAt: record.occurredAt ?? occurredAt,
           recordedAt,
         })),
       );

@@ -1,4 +1,5 @@
 import {
+  bigint,
   index,
   int,
   json,
@@ -78,9 +79,11 @@ export const outboxEvents = mysqlTable(
 );
 
 /**
- * Operation made offline, received by the hub or the cloud (RNF-03, RNF-04). The idempotency
- * key makes resending it not duplicate the effect; conflicts stay here for the manager
- * to resolve (`sync.conflict_detected`).
+ * Operation log of the order engine (docs/SYNC.md, DEC-021): every POS operation as received
+ * from a device, the hub or the cloud itself. The id is the device's operation id, which is also
+ * the idempotency key, so resending never duplicates the effect (RNF-03). `seq` is assigned per
+ * location under a lock and is the pull cursor. Conflicts stay here for the manager
+ * (`sync.conflict_detected`, RNF-04).
  */
 export const syncOperations = mysqlTable(
   'sync_operations',
@@ -88,11 +91,20 @@ export const syncOperations = mysqlTable(
     id: primaryId(),
     organizationId: organizationId(),
     locationId: locationId(),
+    /** Per-location sequence, assigned under the location lock (pull cursor). */
+    seq: bigint('seq', { mode: 'number', unsigned: true }).notNull().default(0),
     terminalId: uuid('terminal_id').notNull(),
+    userId: uuid('user_id'),
     idempotencyKey: varchar('idempotency_key', { length: 64 }).notNull(),
     operation: varchar('operation', { length: 64 }).notNull(),
+    schemaVersion: smallint('schema_version').notNull().default(1),
+    /** Hybrid logical clock: canonical fold order `(hlc, id)` (docs/SYNC.md §3). */
+    hlc: varchar('hlc', { length: 18 }).notNull().default(''),
     entityType: varchar('entity_type', { length: 48 }).notNull(),
     entityId: uuid('entity_id').notNull(),
+    /** Second order of a transfer, merge or split: links the group of orders. */
+    relatedEntityId: uuid('related_entity_id'),
+    /** The whole operation as the device sent it. */
     payload: json('payload').notNull(),
     baseVersion: int('base_version'),
     deviceCreatedAt: utcDatetime('device_created_at').notNull(),
@@ -100,11 +112,16 @@ export const syncOperations = mysqlTable(
     appliedAt: utcDatetime('applied_at'),
     status: varchar('status', { length: 16 }).notNull().default('received'),
     conflict: json('conflict'),
+    /** On the hub: when the cloud confirmed it (docs/SYNC.md §11.4). */
+    cloudAckedAt: utcDatetime('cloud_acked_at'),
     resolvedByUserId: uuid('resolved_by_user_id'),
     resolvedAt: utcDatetime('resolved_at'),
   },
   (t) => [
     uniqueIndex('uq_sync_operations_idempotency').on(t.organizationId, t.idempotencyKey),
+    uniqueIndex('uq_sync_operations_seq').on(t.locationId, t.seq),
     index('idx_sync_operations_status').on(t.locationId, t.status),
+    index('idx_sync_operations_entity').on(t.locationId, t.entityId),
+    index('idx_sync_operations_related').on(t.locationId, t.relatedEntityId),
   ],
 );

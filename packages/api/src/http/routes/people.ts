@@ -159,6 +159,10 @@ const OfflineCredentialsSchema = z
         displayName: z.string(),
         uiLanguage: z.string(),
         pinHash: z.string().openapi({ description: 'argon2id hash of the PIN' }),
+        pinBucket: z.number().int().min(0).max(15).openapi({
+          description:
+            'First 4 bits of HMAC(pinKey, PIN): picks the candidates to verify (DEC-023)',
+        }),
         permissions: z.array(z.string().openapi({ enum: [...PERMISSIONS] })),
       }),
     ),

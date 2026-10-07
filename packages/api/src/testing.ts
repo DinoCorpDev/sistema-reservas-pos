@@ -1,4 +1,18 @@
-import { newId } from '@pos/core';
+import {
+  businessDate,
+  buildReceipt,
+  formatHlc,
+  HLC_ZERO,
+  type HlcState,
+  type LineSnapshot,
+  newId,
+  formatReceiptNumber,
+  orderNumber,
+  rappen,
+  receiptContentHash,
+  receiveHlc,
+  tickHlc,
+} from '@pos/core';
 import {
   applyOrganizationTemplate,
   createDb,
@@ -94,6 +108,209 @@ export const demoSession = (
   organizationId: demo.organizationId,
   locationId: demo.locationId,
 });
+
+type TestApi = ReturnType<typeof createTestApi>;
+
+export interface PairedTerminal {
+  id: string;
+  deviceToken: string;
+  prefix: string;
+}
+
+/** Creates a terminal of the demo location as `adminHeaders` and pairs it (RF-A06). */
+export async function pairTerminal(
+  api: Pick<TestApi, 'request'>,
+  adminHeaders: Record<string, string>,
+  options: { prefix: string; type?: 'pos' | 'handheld' | 'hub'; name?: string },
+): Promise<PairedTerminal> {
+  const created = await api.request('POST', '/terminals', {
+    headers: adminHeaders,
+    body: {
+      name: options.name ?? `Test ${options.prefix}`,
+      type: options.type ?? 'pos',
+      orderNumberPrefix: options.prefix,
+    },
+  });
+  if (created.status !== 201) throw new Error(`Terminal not created: ${created.status}`);
+  const { id } = (await created.json()) as { id: string };
+  const issued = await api.request('POST', `/terminals/${id}/pairing-code`, {
+    headers: adminHeaders,
+  });
+  const { code } = (await issued.json()) as { code: string };
+  const paired = await api.request('POST', '/terminals/pair', { body: { code } });
+  if (paired.status !== 200) throw new Error(`Terminal not paired: ${paired.status}`);
+  const { deviceToken } = (await paired.json()) as { deviceToken: string };
+  return { id, deviceToken, prefix: options.prefix };
+}
+
+/** A sold line for sync tests: CHF 24.50 food at 8.1 %. */
+export function testLine(overrides: Partial<LineSnapshot> = {}): LineSnapshot {
+  return {
+    itemId: newId(),
+    productId: newId(),
+    variantId: null,
+    name: 'Berner Rösti',
+    variantName: null,
+    quantity: 1,
+    unitPriceRappen: 2450,
+    modifiers: [],
+    taxCategoryKey: 'food',
+    taxRateCode: 'normal',
+    taxRateBp: 810,
+    course: 1,
+    seat: null,
+    note: null,
+    stationIds: [],
+    ...overrides,
+  };
+}
+
+/**
+ * A paired device that produces real operations (docs/SYNC.md §2): UUID v7 ids, its own hybrid
+ * logical clock, frozen payloads and valid receipts.
+ */
+export class TestDevice {
+  private clock: HlcState = HLC_ZERO;
+  private receipts = 0;
+  /** Business day of the demo location now (it starts at 04:00 in Zurich, DEC-022). */
+  readonly businessDate = businessDate(new Date(), 'Europe/Zurich', '04:00');
+
+  constructor(
+    readonly scope: { organizationId: string; locationId: string },
+    readonly terminal: PairedTerminal,
+    readonly userId: string,
+  ) {}
+
+  get headers(): Record<string, string> {
+    return { 'x-terminal-token': this.terminal.deviceToken };
+  }
+
+  sees(...ops: readonly { hlc: string }[]): this {
+    for (const op of ops) this.clock = receiveHlc(this.clock, op.hlc);
+    return this;
+  }
+
+  op<O extends string | null>(
+    type: string,
+    orderId: O,
+    payload: Record<string, unknown>,
+    options: {
+      userId?: string | null;
+      approval?: { approverUserId: string; permissions: string[] };
+    } = {},
+  ) {
+    this.clock = tickHlc(this.clock, Date.now());
+    return {
+      id: newId(),
+      schemaVersion: 1,
+      hlc: formatHlc(this.clock),
+      deviceAt: new Date(this.clock.physical).toISOString(),
+      organizationId: this.scope.organizationId,
+      locationId: this.scope.locationId,
+      terminalId: this.terminal.id,
+      userId: options.userId === undefined ? this.userId : options.userId,
+      approval: options.approval ?? null,
+      orderId,
+      type,
+      payload,
+    };
+  }
+
+  open(orderId: string = newId(), number = 1, fields: Record<string, unknown> = {}) {
+    return this.op('order.open', orderId, {
+      channel: 'table',
+      consumptionType: 'on_premise',
+      tableId: null,
+      guestCount: 2,
+      waiterUserId: this.userId,
+      customerName: null,
+      number: orderNumber(this.businessDate, number, this.terminal.prefix),
+      ...fields,
+    });
+  }
+
+  async pay(orderId: string, amountRappen: number, fields: Record<string, unknown> = {}) {
+    this.receipts += 1;
+    const receiptNumber = formatReceiptNumber(
+      this.terminal.prefix,
+      this.businessDate,
+      this.receipts,
+    );
+    const content = buildReceipt({
+      language: 'de',
+      location: {
+        name: 'Restaurant Demo Zürich',
+        legalName: null,
+        street: 'Bahnhofstrasse 1',
+        postalCode: '8001',
+        city: 'Zürich',
+        vatUid: 'CHE-123.456.788',
+        header: null,
+        footer: null,
+      },
+      receiptNumber,
+      orderNumber: '0001',
+      tableLabel: null,
+      servedBy: null,
+      timeZone: 'Europe/Zurich',
+      issuedAt: new Date().toISOString(),
+      order: {
+        subtotalRappen: rappen(amountRappen),
+        discountTotalRappen: rappen(0),
+        totalRappen: rappen(amountRappen),
+      },
+      lines: [
+        {
+          name: 'Berner Rösti',
+          variantName: null,
+          quantity: 1,
+          unitPriceRappen: rappen(amountRappen),
+          modifiers: [],
+          discountRappen: rappen(0),
+          lineTotalRappen: rappen(amountRappen),
+          taxRappen: rappen(0),
+          taxRateCode: 'normal',
+          taxRateBp: 810,
+        },
+      ],
+      payment: {
+        method: 'card',
+        amountRappen: rappen(amountRappen),
+        tipRappen: rappen(0),
+        roundingRappen: rappen(0),
+        tenderedRappen: null,
+        changeRappen: rappen(0),
+        splitLabel: null,
+      },
+      paidBeforeRappen: rappen(0),
+      customer: null,
+      customerNameFromRappen: 40000,
+    });
+    return this.op('payment.record', orderId, {
+      paymentId: newId(),
+      method: 'card',
+      adapter: 'external-terminal',
+      amountRappen,
+      tipRappen: 0,
+      tipUserId: null,
+      roundingRappen: 0,
+      tenderedRappen: null,
+      changeRappen: 0,
+      externalReference: null,
+      splitLabel: null,
+      ...fields,
+      receipt: {
+        receiptId: newId(),
+        receiptNumber,
+        language: 'de',
+        content,
+        contentHash: await receiptContentHash(content),
+        customerName: null,
+        customerAddress: null,
+      },
+    });
+  }
+}
 
 /**
  * A second, independent organization with an admin user, for cross-tenant tests (RNF-12).

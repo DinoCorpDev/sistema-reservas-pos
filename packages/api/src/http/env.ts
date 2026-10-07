@@ -4,10 +4,13 @@ import type { Context } from 'hono';
 import type { Actor } from '../actor';
 import type { BackofficeSession } from '../auth/resolve-actor';
 import { ApiError } from '../errors';
+import type { SyncNode } from '../services/sync';
 
 export interface ApiEnv {
   Variables: {
     db: Database;
+    /** Cloud or LAN hub: the sync service projects only in the cloud (DEC-028). */
+    node: SyncNode;
     actor: Actor | null;
     /** Raw backoffice session; platform routes use it to identify support staff (RF-A10). */
     session: BackofficeSession | null;

@@ -2,6 +2,7 @@ import {
   date,
   index,
   int,
+  json,
   mysqlTable,
   smallint,
   text,
@@ -39,6 +40,8 @@ export const orders = mysqlTable(
     channel: varchar('channel', { length: 16 }).notNull(),
     consumptionType: varchar('consumption_type', { length: 16 }).notNull(),
     tableId: uuid('table_id'),
+    /** Tables joined to `table_id` for this order (RF-C03). */
+    joinedTableIds: json('joined_table_ids').$type<string[]>(),
     visitId: uuid('visit_id'),
     customerId: uuid('customer_id'),
     waiterUserId: uuid('waiter_user_id'),

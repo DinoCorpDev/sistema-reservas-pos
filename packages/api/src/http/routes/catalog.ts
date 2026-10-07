@@ -190,11 +190,15 @@ const MenuProductSchema = z
     id: z.uuid(),
     categoryId: z.uuid(),
     taxCategoryId: z.uuid(),
+    taxCategoryKey: z.string().openapi({ description: 'Tax category (food, alcoholic_beverage…)' }),
     sku: z.string().nullable(),
     name: z.string(),
     description: z.string().nullable(),
     imageUrl: z.string().nullable(),
     defaultCourse: z.number().int(),
+    stationIds: z
+      .array(z.uuid())
+      .openapi({ description: 'Kitchen stations the product is routed to (RF-B11)' }),
     priceRappen: z
       .number()
       .int()

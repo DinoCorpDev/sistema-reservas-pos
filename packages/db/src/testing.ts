@@ -34,3 +34,19 @@ export async function setupTestDatabase(): Promise<void> {
 }
 
 export default setupTestDatabase;
+
+/** The hub's test database (`<HUB_DATABASE_URL name>_test`): empty schema, filled by the hub. */
+export function hubTestDatabaseUrl(): string {
+  loadRootEnv();
+  const explicit = process.env.TEST_HUB_DATABASE_URL;
+  if (explicit) return explicit;
+  const url = new URL(requireEnv('HUB_DATABASE_URL'));
+  url.pathname = `${url.pathname.replace(/\/$/, '')}_test`;
+  return url.toString();
+}
+
+export async function setupHubTestDatabase(): Promise<void> {
+  const url = hubTestDatabaseUrl();
+  await createDatabase(url, { reset: true });
+  await migrateDatabase(url);
+}

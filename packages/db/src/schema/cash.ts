@@ -153,3 +153,16 @@ export const orderNumberSequences = mysqlTable(
   },
   (t) => [uniqueIndex('uq_order_number_sequences').on(t.locationId, t.businessDate, t.prefix)],
 );
+
+/**
+ * Number handed out by the location's authority for an order (docs/SYNC.md §6.3). The id is the
+ * order id, so asking twice for the same order returns the same number.
+ */
+export const orderNumberClaims = mysqlTable('order_number_claims', {
+  id: uuid('id').primaryKey(),
+  organizationId: organizationId(),
+  locationId: locationId(),
+  businessDate: date('business_date', { mode: 'string' }).notNull(),
+  orderNumber: int('order_number').notNull(),
+  createdAt: utcDatetime('created_at').notNull(),
+});

@@ -317,14 +317,77 @@ export interface OfflineCredentials {
     displayName: string;
     uiLanguage: string;
     pinHash: string;
+    /**
+     * First 4 bits of the PIN lookup (0-15): enough to pick the 1-2 candidates to verify with
+     * argon2, never the full lookup, which with the key would reveal every PIN (DEC-023).
+     */
+    pinBucket: number;
     permissions: Permission[];
   }[];
 }
 
 /**
+ * Permissions of the active users of a location (same rule as loadUserPermissions, for many
+ * users at once). A user who is inactive or does not work at the location is absent.
+ */
+export async function locationUserPermissions(
+  db: ServiceDeps['db'] | Transaction,
+  scope: { organizationId: string; locationId: string },
+  userIds?: readonly string[],
+): Promise<Map<string, Set<Permission>>> {
+  const byUser = new Map<string, Set<Permission>>();
+  if (userIds && userIds.length === 0) return byUser;
+  const members = await db
+    .select({ id: s.users.id })
+    .from(s.users)
+    .innerJoin(s.userLocations, eq(s.userLocations.userId, s.users.id))
+    .where(
+      inOrg(
+        s.users,
+        scope,
+        eq(s.users.isActive, true),
+        notDeleted(s.users),
+        userIds ? inArray(s.users.id, [...userIds]) : undefined,
+        eq(s.userLocations.organizationId, scope.organizationId),
+        eq(s.userLocations.locationId, scope.locationId),
+        notDeleted(s.userLocations),
+      ),
+    );
+  if (members.length === 0) return byUser;
+  const grants = await db
+    .select({ userId: s.userRoles.userId, permission: s.rolePermissions.permission })
+    .from(s.userRoles)
+    .innerJoin(s.roles, eq(s.roles.id, s.userRoles.roleId))
+    .innerJoin(s.rolePermissions, eq(s.rolePermissions.roleId, s.roles.id))
+    .where(
+      inOrg(
+        s.userRoles,
+        scope,
+        inArray(
+          s.userRoles.userId,
+          members.map((member) => member.id),
+        ),
+        notDeleted(s.userRoles),
+        notDeleted(s.roles),
+        notDeleted(s.rolePermissions),
+        or(isNull(s.userRoles.locationId), eq(s.userRoles.locationId, scope.locationId)),
+      ),
+    );
+  const known = new Set<string>(PERMISSIONS);
+  for (const grant of grants) {
+    if (!known.has(grant.permission)) continue;
+    const set = byUser.get(grant.userId) ?? new Set<Permission>();
+    set.add(grant.permission as Permission);
+    byUser.set(grant.userId, set);
+  }
+  return byUser;
+}
+
+/**
  * The deliberate cache that lets a paired terminal unlock without network: the organization's
- * PIN key and, for every active user of the terminal's location with a PIN, the argon2 hash and
- * the permissions at that location. Only for a valid device token.
+ * PIN key and, for every active user of the terminal's location with a PIN, the argon2 hash, a
+ * 4-bit bucket of the PIN lookup and the permissions at that location. Only for a valid device
+ * token (DEC-015, DEC-023).
  */
 export async function getOfflineCredentials(
   deps: ServiceDeps,
@@ -338,6 +401,7 @@ export async function getOfflineCredentials(
       displayName: s.users.displayName,
       uiLanguage: s.users.uiLanguage,
       pinHash: s.users.pinHash,
+      pinLookup: s.users.pinLookup,
     })
     .from(s.users)
     .innerJoin(s.userLocations, eq(s.userLocations.userId, s.users.id))
@@ -348,41 +412,18 @@ export async function getOfflineCredentials(
         eq(s.users.isActive, true),
         notDeleted(s.users),
         isNotNull(s.users.pinHash),
+        isNotNull(s.users.pinLookup),
         eq(s.userLocations.organizationId, terminal.organizationId),
         eq(s.userLocations.locationId, terminal.locationId),
         notDeleted(s.userLocations),
       ),
     );
   if (users.length === 0) return { pinKey, users: [] };
-
-  // Same rule as loadUserPermissions, for all users at once.
-  const grants = await deps.db
-    .select({ userId: s.userRoles.userId, permission: s.rolePermissions.permission })
-    .from(s.userRoles)
-    .innerJoin(s.roles, eq(s.roles.id, s.userRoles.roleId))
-    .innerJoin(s.rolePermissions, eq(s.rolePermissions.roleId, s.roles.id))
-    .where(
-      inOrg(
-        s.userRoles,
-        terminal,
-        inArray(
-          s.userRoles.userId,
-          users.map((user) => user.id),
-        ),
-        notDeleted(s.userRoles),
-        notDeleted(s.roles),
-        notDeleted(s.rolePermissions),
-        or(isNull(s.userRoles.locationId), eq(s.userRoles.locationId, terminal.locationId)),
-      ),
-    );
-  const byUser = new Map<string, Set<Permission>>();
-  const known = new Set<string>(PERMISSIONS);
-  for (const grant of grants) {
-    if (!known.has(grant.permission)) continue;
-    const set = byUser.get(grant.userId) ?? new Set<Permission>();
-    set.add(grant.permission as Permission);
-    byUser.set(grant.userId, set);
-  }
+  const byUser = await locationUserPermissions(
+    deps.db,
+    terminal,
+    users.map((user) => user.id),
+  );
 
   return {
     pinKey,
@@ -393,6 +434,7 @@ export async function getOfflineCredentials(
         displayName: user.displayName,
         uiLanguage: user.uiLanguage,
         pinHash: user.pinHash!,
+        pinBucket: Number.parseInt(user.pinLookup!.charAt(0), 16),
         permissions: sortedPermissions(byUser.get(user.id)!),
       })),
   };
