@@ -1,0 +1,33 @@
+{
+  "kds": {
+    "tabs": {
+      "open": "Abiertos ({count})",
+      "done": "Terminados"
+    },
+    "noneOpen": "No hay comandas abiertas.",
+    "noneDone": "Nada terminado en las últimas horas.",
+    "noStation": "Esta pantalla de cocina no tiene estación asignada. Asígnala en el backoffice, en Dispositivos y estaciones.",
+    "failed": "No funcionó. Inténtalo de nuevo.",
+    "reprinted": "La comanda se vuelve a imprimir.",
+    "acknowledge": "Visto",
+    "lock": "Bloquear",
+    "printerDown": "Impresora «{printer}» no disponible: {error}",
+    "ticket": {
+      "minutes": "{minutes} min",
+      "start": "Empezar",
+      "ready": "Listo",
+      "served": "Servido",
+      "recall": "Recuperar",
+      "reprint": "Reimprimir comanda",
+      "moved": "Movido a otro pedido",
+      "itemLabel": "{name}: {status}",
+      "status": {
+        "sent": "Nuevo",
+        "preparing": "En preparación",
+        "ready": "Listo",
+        "served": "Servido",
+        "voided": "Anulado"
+      }
+    }
+  }
+}

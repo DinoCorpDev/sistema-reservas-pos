@@ -145,7 +145,8 @@
       "products": "Au moins un produit actif",
       "product_routing": "Chaque produit est attribué à un poste de cuisine",
       "product_publication": "Chaque produit a ses allergènes et, si nécessaire, son origine",
-      "product_translations": "Chaque produit a un nom dans une autre langue"
+      "product_translations": "Chaque produit a un nom dans une autre langue",
+      "station_output": "Chaque poste a un écran de cuisine ou une imprimante"
     }
   },
   "location": {
@@ -183,7 +184,10 @@
     "kitchenAlert": "Alerte cuisine après (minutes)",
     "customerNameFrom": "Nom du client sur le ticket dès (CHF)",
     "maxPinAttempts": "Essais PIN erronés avant blocage",
-    "pinLockMinutes": "Blocage PIN (minutes)"
+    "pinLockMinutes": "Blocage PIN (minutes)",
+    "printMaxDelay": "Ne plus imprimer après (minutes)",
+    "hubUrls": "Adresses des hubs",
+    "hubUrlsHint": "Une adresse par ligne, dans l’ordre. Le premier hub attribue les numéros de commande ; vide = aucun hub."
   },
   "floor": {
     "title": "Zones & tables",

@@ -145,7 +145,8 @@
       "products": "Almeno un prodotto attivo",
       "product_routing": "Ogni prodotto è assegnato a una postazione di cucina",
       "product_publication": "Ogni prodotto ha gli allergeni e, se necessario, la provenienza",
-      "product_translations": "Ogni prodotto ha un nome in un’altra lingua"
+      "product_translations": "Ogni prodotto ha un nome in un’altra lingua",
+      "station_output": "Ogni postazione ha uno schermo cucina o una stampante"
     }
   },
   "location": {
@@ -183,7 +184,10 @@
     "kitchenAlert": "Allarme cucina dopo (minuti)",
     "customerNameFrom": "Nome del cliente sullo scontrino da (CHF)",
     "maxPinAttempts": "Tentativi PIN errati prima del blocco",
-    "pinLockMinutes": "Blocco PIN (minuti)"
+    "pinLockMinutes": "Blocco PIN (minuti)",
+    "printMaxDelay": "Non stampare più dopo (minuti)",
+    "hubUrls": "Indirizzi degli hub",
+    "hubUrlsHint": "Un indirizzo per riga, in ordine. Il primo hub assegna i numeri d’ordine; vuoto = nessun hub."
   },
   "floor": {
     "title": "Zone & tavoli",

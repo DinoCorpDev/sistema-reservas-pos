@@ -145,7 +145,8 @@
       "products": "At least one active product",
       "product_routing": "Every product is assigned to a kitchen station",
       "product_publication": "Every product has allergens and, where required, origin",
-      "product_translations": "Every product has a name in another language"
+      "product_translations": "Every product has a name in another language",
+      "station_output": "Every kitchen station has a kitchen display or a printer"
     }
   },
   "location": {
@@ -183,7 +184,10 @@
     "kitchenAlert": "Kitchen alert after (minutes)",
     "customerNameFrom": "Guest name on receipt from (CHF)",
     "maxPinAttempts": "Failed PIN attempts before lockout",
-    "pinLockMinutes": "PIN lockout (minutes)"
+    "pinLockMinutes": "PIN lockout (minutes)",
+    "printMaxDelay": "Stop printing after (minutes)",
+    "hubUrls": "Hub addresses",
+    "hubUrlsHint": "One address per line, in order. The first hub numbers the orders; empty = no hub."
   },
   "floor": {
     "title": "Areas & tables",

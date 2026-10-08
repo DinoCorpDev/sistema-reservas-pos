@@ -129,6 +129,11 @@ export const printers = mysqlTable('printers', {
   hasCashDrawer: boolean('has_cash_drawer').notNull().default(false),
   isActive: boolean('is_active').notNull().default(true),
   lastTestAt: utcDatetime('last_test_at'),
+  /**
+   * A test page was requested from the backoffice (RF-F17, DEC-032): the hub sees it with the next
+   * configuration, prints it and reports the result in `printer_status`.
+   */
+  testRequestedAt: utcDatetime('test_requested_at'),
   ...timestamps(),
 });
 

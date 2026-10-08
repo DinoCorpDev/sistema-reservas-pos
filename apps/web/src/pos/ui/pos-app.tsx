@@ -2,14 +2,15 @@
 
 import { NextIntlClientProvider } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { bootPos } from '../boot';
-import { asPosLanguage, posMessages } from '../i18n';
-import { usePos } from '../store';
-import { PairingScreen } from './pairing-screen';
-import { PinScreen } from './pin-screen';
+import { configureDevice } from '@/device/app';
+import { bootDevice } from '@/device/boot';
+import { asDeviceLanguage, deviceMessages, type Messages } from '@/device/i18n';
+import { usePos } from '@/device/store';
+import { PairingScreen } from '@/device/ui/pairing-screen';
+import { PinScreen } from '@/device/ui/pin-screen';
 import { PosShell } from './pos-shell';
 
-type Messages = Awaited<ReturnType<typeof posMessages>>;
+const POS_FILES = ['pos', 'pos-order', 'pos-payment'] as const;
 
 /**
  * The POS as one client app (docs/SYNC.md §13): it boots from the local database, so it opens
@@ -21,7 +22,7 @@ export function PosApp() {
   const device = usePos((state) => state.device);
   const bootstrap = usePos((state) => state.bootstrap);
   const user = usePos((state) => state.user);
-  const language = asPosLanguage(
+  const language = asDeviceLanguage(
     user?.uiLanguage ??
       bootstrap?.location.defaultLanguage ??
       (typeof navigator === 'undefined' ? 'de' : navigator.language.slice(0, 2)),
@@ -29,12 +30,13 @@ export function PosApp() {
   const [messages, setMessages] = useState<{ language: string; messages: Messages } | null>(null);
 
   useEffect(() => {
-    void bootPos();
+    configureDevice('pos');
+    void bootDevice();
   }, []);
 
   useEffect(() => {
     let cancelled = false;
-    void posMessages(language).then((loaded) => {
+    void deviceMessages(POS_FILES, language).then((loaded) => {
       if (!cancelled) setMessages({ language, messages: loaded });
     });
     document.documentElement.lang = language;

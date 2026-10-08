@@ -246,7 +246,7 @@ async function refoldAndProject(
   const projection: ProjectionResult =
     group.orderIds.size > 0
       ? await writeProjection(tx, scope, state, group.orderIds)
-      : { previous: new Map(), renumbered: new Map(), insertedReceipts: [] };
+      : { previous: new Map(), renumbered: new Map(), insertedReceipts: [], tickets: [] };
 
   // A number stored with a suffix is a conflict of the operation that created the order.
   const renumberedBy = new Map<string, string>();
@@ -353,7 +353,7 @@ function domainEvents(
 ): EventRecord[] {
   const events: EventRecord[] = [];
   for (const op of fresh) {
-    if (op.type === 'terminal.unlocked' || op.type === 'terminal.pin_failed') continue;
+    if (op.orderId === null) continue;
     const meta = {
       userId: op.userId,
       terminalId: op.terminalId,
@@ -419,6 +419,23 @@ function domainEvents(
       userId: receipt.issuedByUserId,
       terminalId: receipt.terminalId,
       occurredAt: new Date(receipt.issuedAt),
+    });
+  }
+  // Kitchen tickets that became ready with this batch (RF-C23), announced once per readiness:
+  // a recalled ticket that is ready again is a new fact.
+  for (const ticket of projection.tickets) {
+    if (ticket.after !== 'ready' || ticket.before === 'ready' || ticket.before === 'served')
+      continue;
+    events.push({
+      type: 'kitchen.ticket_ready',
+      aggregateType: 'kitchen_ticket',
+      aggregateId: ticket.id,
+      payload: {
+        ticketId: ticket.id,
+        orderId: ticket.orderId,
+        kitchenStationId: ticket.stationId,
+        itemIds: ticket.itemIds,
+      },
     });
   }
   // Orders that closed with this batch (RN-12), announced once.

@@ -36,6 +36,13 @@
       "when": 1791335008762,
       "tag": "0004_phase2_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1791400642358,
+      "tag": "0005_phase3_kitchen",
+      "breakpoints": true
     }
   ]
 }

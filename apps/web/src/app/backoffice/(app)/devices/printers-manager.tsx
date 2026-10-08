@@ -13,9 +13,10 @@ import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { InfoIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { InfoIcon, PencilIcon, PlusIcon, PrinterIcon, Trash2Icon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useFormatter, useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import * as actions from './actions';
 
@@ -49,6 +50,20 @@ export function PrintersManager({
     actions.updatePrinter(id, { isActive }),
   );
   const remove = useServerAction(actions.deletePrinter);
+  const test = useServerAction(actions.testPrinter, { successMessage: t('testRequested') });
+  const router = useRouter();
+  // While a test page is on its way, look for the hub's answer every few seconds.
+  const waiting = printers.some(
+    (p) =>
+      p.testRequestedAt &&
+      (!p.lastTestAt || Date.parse(p.lastTestAt) < Date.parse(p.testRequestedAt)) &&
+      Date.now() - Date.parse(p.testRequestedAt) < 120_000,
+  );
+  useEffect(() => {
+    if (!waiting) return;
+    const timer = setInterval(() => router.refresh(), 3_000);
+    return () => clearInterval(timer);
+  }, [waiting, router]);
 
   return (
     <Card>
@@ -78,7 +93,7 @@ export function PrintersManager({
       </CardHeader>
       <Alert variant="info" className="flex items-center gap-2">
         <InfoIcon className="size-4 shrink-0" aria-hidden />
-        <span>{t('testNote')}</span>
+        <span>{t('hubNote')}</span>
       </Alert>
       {printers.length === 0 ? (
         <p className="text-muted-foreground">{t('empty')}</p>
@@ -92,6 +107,7 @@ export function PrintersManager({
               <TableHead>{t('address')}</TableHead>
               <TableHead>{t('paperWidth')}</TableHead>
               <TableHead>{t('cashDrawer')}</TableHead>
+              <TableHead>{t('state')}</TableHead>
               <TableHead>{tc('active')}</TableHead>
               {canEdit ? <TableHead className="text-right">{tc('actions')}</TableHead> : null}
             </TableRow>
@@ -111,6 +127,9 @@ export function PrintersManager({
                   {t('paperWidthValue', { mm: printer.paperWidthMm })}
                 </TableCell>
                 <TableCell>{printer.hasCashDrawer ? tc('yes') : tc('no')}</TableCell>
+                <TableCell data-testid="printer-state">
+                  <PrinterState printer={printer} />
+                </TableCell>
                 <TableCell>
                   <Switch
                     checked={printer.isActive}
@@ -121,6 +140,16 @@ export function PrintersManager({
                 </TableCell>
                 {canEdit ? (
                   <TableCell className="text-right whitespace-nowrap">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={t('test')}
+                      title={t('test')}
+                      disabled={test.pending || !printer.isActive}
+                      onClick={() => void test.run(printer.id)}
+                    >
+                      <PrinterIcon />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -176,6 +205,42 @@ export function PrintersManager({
       </Dialog>
     </Card>
   );
+}
+
+/**
+ * What the location hub last reported (DEC-032): the test page asked for and its result, the
+ * last error, or that it prints.
+ */
+function PrinterState({ printer }: { printer: people.PrinterDto }) {
+  const t = useTranslations('printers');
+  const format = useFormatter();
+  const when = (iso: string) =>
+    format.dateTime(new Date(iso), { dateStyle: 'short', timeStyle: 'short' });
+  const testPending =
+    printer.testRequestedAt &&
+    (!printer.lastTestAt || Date.parse(printer.lastTestAt) < Date.parse(printer.testRequestedAt));
+  if (testPending) return <Badge variant="secondary">{t('testPending')}</Badge>;
+  const lastOk = printer.lastOkAt ? Date.parse(printer.lastOkAt) : 0;
+  const lastError = printer.lastErrorAt ? Date.parse(printer.lastErrorAt) : 0;
+  if (lastError > lastOk && printer.lastError) {
+    return (
+      <span className="grid gap-0.5">
+        <Badge variant="destructive">{t('stateError')}</Badge>
+        <span className="text-xs text-muted-foreground">{printer.lastError}</span>
+      </span>
+    );
+  }
+  if (printer.lastTestAt) {
+    return (
+      <Badge variant={printer.lastTestOk ? 'success' : 'destructive'}>
+        {printer.lastTestOk
+          ? t('testOk', { when: when(printer.lastTestAt) })
+          : t('testFailed', { when: when(printer.lastTestAt) })}
+      </Badge>
+    );
+  }
+  if (printer.lastOkAt) return <Badge variant="success">{t('stateOk')}</Badge>;
+  return <span className="text-sm text-muted-foreground">{t('stateUnknown')}</span>;
 }
 
 /** Create/edit form; mounted per dialog opening so its field errors start empty. */

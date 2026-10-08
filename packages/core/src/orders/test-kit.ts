@@ -7,12 +7,13 @@ import { DEFAULT_LOCATION_SETTINGS } from '../organization/settings';
 import type { ReceiptContent } from '../receipts/content';
 import { formatHlc, HLC_ZERO, type HlcState, receiveHlc, tickHlc } from '../shared/hlc';
 import { orderNumber } from './numbering';
-import type {
-  LineSnapshot,
-  Operation,
-  OperationApproval,
-  OperationOf,
-  OperationType,
+import {
+  type LineSnapshot,
+  type Operation,
+  type OperationApproval,
+  type OperationOf,
+  type OperationType,
+  OPERATION_SCHEMA_VERSION,
 } from './operations';
 import type { FoldContext } from './reducer';
 import type { FoldState } from './state';
@@ -27,21 +28,24 @@ export const freshId = () => uid(nextId++);
 
 export const ORG = uid(1);
 export const LOC = uid(2);
-export const TERMINAL = { K1: uid(10), H1: uid(11), H2: uid(12) } as const;
+export const TERMINAL = { K1: uid(10), H1: uid(11), H2: uid(12), D1: uid(13) } as const;
 export const USER = {
   waiter: uid(20),
   waiter2: uid(21),
   manager: uid(22),
   cashier: uid(23),
   inactive: uid(24),
+  cook: uid(25),
 } as const;
 export const TABLE = { t1: uid(30), t2: uid(31), t3: uid(32) } as const;
+export const STATION = { kitchen: uid(40), bar: uid(41), dessert: uid(42) } as const;
 
 const permissions = new Map<string, ReadonlySet<Permission>>([
   [USER.waiter, new Set(DEFAULT_ROLE_PERMISSIONS.waiter)],
   [USER.waiter2, new Set(DEFAULT_ROLE_PERMISSIONS.waiter)],
   [USER.manager, new Set(DEFAULT_ROLE_PERMISSIONS.manager)],
   [USER.cashier, new Set(DEFAULT_ROLE_PERMISSIONS.cashier)],
+  [USER.cook, new Set(DEFAULT_ROLE_PERMISSIONS.kitchen)],
 ]);
 
 export const CONTEXT: FoldContext = {
@@ -117,13 +121,18 @@ export class Device {
     type: T,
     orderId: string | null,
     payload: PayloadOf<T>,
-    options: { userId?: string | null; approval?: OperationApproval; id?: string } = {},
+    options: {
+      userId?: string | null;
+      approval?: OperationApproval;
+      id?: string;
+      schemaVersion?: number;
+    } = {},
   ): OperationOf<T> {
     this.clock = tickHlc(this.clock, this.nowMs);
     this.nowMs += 1;
     return {
       id: options.id ?? freshId(),
-      schemaVersion: 1,
+      schemaVersion: options.schemaVersion ?? OPERATION_SCHEMA_VERSION,
       hlc: formatHlc(this.clock),
       deviceAt: new Date(this.clock.physical).toISOString(),
       organizationId: ORG,
@@ -158,8 +167,29 @@ export class Device {
     return this.op('items.add', orderId, { items });
   }
 
+  /** Sends to the kitchen; the items go to `stations` (one new ticket per station). */
   send(orderId: string, ...itemIds: string[]) {
-    return this.op('items.send', orderId, { itemIds });
+    return this.sendTo(orderId, [], ...itemIds);
+  }
+
+  sendTo(orderId: string, stationIds: readonly string[], ...itemIds: string[]) {
+    return this.op('items.send', orderId, {
+      itemIds,
+      tickets: stationIds.map((stationId) => ({
+        ticketId: freshId(),
+        stationId,
+        language: 'de' as const,
+      })),
+    });
+  }
+
+  kitchen(
+    type: 'kitchen.start' | 'kitchen.ready' | 'kitchen.recall',
+    orderId: string,
+    stationId: string,
+    ...itemIds: string[]
+  ) {
+    return this.op(type, orderId, { stationId, itemIds });
   }
 
   serve(orderId: string, ...itemIds: string[]) {
@@ -209,6 +239,7 @@ export function projection(state: FoldState) {
     payments: sorted(state.payments),
     refunds: sorted(state.refunds),
     receipts: sorted(state.receipts),
+    tickets: [...state.tickets.values()].sort((a, b) => (a.key < b.key ? -1 : 1)),
     outcomes: [...state.outcomes.entries()].sort(([a], [b]) => (a < b ? -1 : 1)),
     conflicts: [...state.conflicts].map((c) => `${c.opId}:${c.code}:${c.entityId}`).sort(),
   };

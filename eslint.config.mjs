@@ -80,6 +80,8 @@ export default tseslint.config(
     files: [
       'packages/core/src/orders/{reducer,state,totals,groups}.ts',
       'packages/core/src/tables/state.ts',
+      // DEC-029: kitchen tickets are derived from the fold the same way.
+      'packages/core/src/kitchen/{tickets,board}.ts',
     ],
     rules: {
       'no-restricted-syntax': [

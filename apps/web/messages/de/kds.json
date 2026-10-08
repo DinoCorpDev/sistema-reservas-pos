@@ -1,0 +1,33 @@
+{
+  "kds": {
+    "tabs": {
+      "open": "Offen ({count})",
+      "done": "Erledigt"
+    },
+    "noneOpen": "Keine offenen Bons.",
+    "noneDone": "In den letzten Stunden wurde nichts erledigt.",
+    "noStation": "Diesem Küchenbildschirm ist keine Station zugeordnet. Ordnen Sie sie im Backoffice unter Geräte & Stationen zu.",
+    "failed": "Das hat nicht geklappt. Bitte erneut versuchen.",
+    "reprinted": "Bon wird erneut gedruckt.",
+    "acknowledge": "Gesehen",
+    "lock": "Sperren",
+    "printerDown": "Drucker «{printer}» nicht erreichbar: {error}",
+    "ticket": {
+      "minutes": "{minutes} min",
+      "start": "Beginnen",
+      "ready": "Fertig",
+      "served": "Serviert",
+      "recall": "Zurückholen",
+      "reprint": "Bon nachdrucken",
+      "moved": "Auf eine andere Bestellung verschoben",
+      "itemLabel": "{name}: {status}",
+      "status": {
+        "sent": "Neu",
+        "preparing": "In Arbeit",
+        "ready": "Fertig",
+        "served": "Serviert",
+        "voided": "Storniert"
+      }
+    }
+  }
+}

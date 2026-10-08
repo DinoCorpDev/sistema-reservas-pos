@@ -19,7 +19,8 @@
       "pair": "Koppeln",
       "pairing": "Wird gekoppelt…",
       "invalidCode": "Der Code ist falsch oder abgelaufen.",
-      "failed": "Koppeln nicht möglich. Prüfen Sie die Verbindung und versuchen Sie es erneut."
+      "failed": "Koppeln nicht möglich. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
+      "hubCode": "Dieser Code gehört zum Standort-Hub. Er wird auf dem Hub selbst eingegeben, nicht hier."
     },
     "pin": {
       "title": "PIN eingeben",
@@ -29,7 +30,8 @@
       "wrong": "Falsche PIN. Noch {attemptsLeft, plural, one {# Versuch} other {# Versuche}}.",
       "locked": "Zu viele falsche Versuche. Gesperrt für {minutes, plural, one {# Minute} other {# Minuten}}.",
       "invalid": "Die PIN hat 4 bis 6 Ziffern.",
-      "noCredentials": "Dieses Gerät hat noch keine Zugangsdaten. Verbinden Sie es einmal mit dem Internet."
+      "noCredentials": "Dieses Gerät hat noch keine Zugangsdaten. Verbinden Sie es einmal mit dem Internet.",
+      "notAllowedKitchen": "{name} hat keine Küchenberechtigung. Entsperren Sie den Küchenbildschirm mit der PIN einer Person aus der Küche."
     },
     "approval": {
       "title": "Freigabe durch Führungsperson",
@@ -46,7 +48,16 @@
       "takeaway": "Take-away",
       "lock": "Sperren",
       "updateAvailable": "Eine neue Version der Kasse ist bereit.",
-      "updateNow": "Jetzt aktualisieren"
+      "updateNow": "Jetzt aktualisieren",
+      "drawer": "Schublade",
+      "drawerOpened": "Die Schublade wird geöffnet.",
+      "drawerFailed": "Die Schublade konnte nicht geöffnet werden.",
+      "printerDown": "Drucker «{printer}» nicht erreichbar: {error}"
+    },
+    "kitchen": {
+      "readyTable": "Tisch {table}: {count, plural, one {# Position} other {# Positionen}} bereit",
+      "readyOrder": "Bestellung {number}: {count, plural, one {# Position} other {# Positionen}} bereit",
+      "stillCooking": "Noch in der Küche: {count}"
     }
   }
 }

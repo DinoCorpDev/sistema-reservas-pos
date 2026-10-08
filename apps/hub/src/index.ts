@@ -1,10 +1,13 @@
 import { existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { createApiApp, resolveTerminal } from '@pos/api';
 import { createDb } from '@pos/db';
 import { cloudFetcher, cloudJson } from './cloud';
 import { syncConfig } from './config-sync';
 import { startCloudLink } from './node';
+import { PrintConfigCache } from './printing/config';
+import { tcpTransport } from './printing/transport';
+import { PrintWorker } from './printing/worker';
 import { startHub } from './server';
 import { StateFile } from './state';
 
@@ -13,7 +16,8 @@ import { StateFile } from './state';
  * - HUB_DATABASE_URL: its own MySQL (same schema as the cloud).
  * - HUB_CLOUD_URL: the cloud (default http://localhost:3000).
  * - HUB_PAIRING_CODE: on the first start, a pairing code of a terminal of type `hub`.
- * - HUB_STATE_FILE: where the device token and cursors are kept (default .hub-state.json).
+ * - HUB_STATE_FILE: where the device token and cursors are kept (default .hub-state.json); the
+ *   printing configuration is kept next to it (`.hub-config.json`).
  * - HUB_AUTHORITY=false for a standby hub that must not number orders (§11.4).
  * - HUB_ALLOWED_ORIGINS: comma-separated origins of the POS (default any).
  */
@@ -31,9 +35,9 @@ if (!databaseUrl) {
   process.exit(1);
 }
 const cloudUrl = process.env.HUB_CLOUD_URL ?? 'http://localhost:3000';
-const state = new StateFile(
-  process.env.HUB_STATE_FILE ?? resolve(process.cwd(), '.hub-state.json'),
-);
+const stateFile = process.env.HUB_STATE_FILE ?? resolve(process.cwd(), '.hub-state.json');
+const state = new StateFile(stateFile);
+const printConfig = new PrintConfigCache(join(dirname(stateFile), '.hub-config.json'));
 const authority = process.env.HUB_AUTHORITY !== 'false';
 const cloud = cloudFetcher(cloudUrl, () => state.value.deviceToken);
 
@@ -68,6 +72,9 @@ try {
   // Without internet the hub starts with the configuration it already has.
   console.warn('Cloud not reachable at start; using the stored configuration.', String(error));
 }
+if (!(await printConfig.refresh(cloud)) && !printConfig.value) {
+  console.warn('No printing configuration yet: the hub prints once it reaches the cloud.');
+}
 
 const scope = { organizationId: state.value.organizationId!, locationId: state.value.locationId! };
 const api = createApiApp({
@@ -77,13 +84,18 @@ const api = createApiApp({
 });
 
 let link: ReturnType<typeof startCloudLink> | null = null;
+let printer: PrintWorker | null = null;
 const hub = await startHub({
   port,
   pingDatabase: async () => {
     await pool.query('SELECT 1');
   },
   api,
-  onPushed: () => link?.kick(),
+  onPushed: () => {
+    link?.kick();
+    printer?.kick();
+  },
+  printers: () => printer?.printers() ?? {},
   allowedOrigins: process.env.HUB_ALLOWED_ORIGINS?.split(',').map((o) => o.trim()),
   realtime: {
     authority,
@@ -97,14 +109,36 @@ const hub = await startHub({
     },
   },
 });
-link = startCloudLink({ db, cloud, scope, state, broadcast: hub.broadcast });
+printer = new PrintWorker({
+  db,
+  scope,
+  state,
+  config: () => printConfig.value,
+  transport: tcpTransport(),
+  cloud,
+  broadcast: hub.broadcast,
+});
+printer.start();
+link = startCloudLink({
+  db,
+  cloud,
+  scope,
+  state,
+  broadcast: hub.broadcast,
+  onPulled: () => printer?.kick(),
+  onConfigChanged: async () => {
+    await printConfig.refresh(cloud);
+    printer?.kick();
+  },
+});
 
 console.log(
-  `Hub listening on http://0.0.0.0:${hub.port} (WebSocket /ws), cloud ${cloudUrl}, ${authority ? 'numbering authority' : 'standby'}`,
+  `Hub listening on http://0.0.0.0:${hub.port} (WebSocket /ws), cloud ${cloudUrl}, ${authority ? 'numbering authority' : 'standby'}, printing ${printConfig.value ? `on ${printConfig.value.printers.length} printer(s)` : 'pending configuration'}`,
 );
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.on(signal, async () => {
+    printer?.stop();
     link?.stop();
     await hub.close();
     await pool.end();

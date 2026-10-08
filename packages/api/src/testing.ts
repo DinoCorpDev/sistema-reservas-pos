@@ -7,6 +7,7 @@ import {
   type LineSnapshot,
   newId,
   formatReceiptNumber,
+  OPERATION_SCHEMA_VERSION,
   orderNumber,
   rappen,
   receiptContentHash,
@@ -121,7 +122,13 @@ export interface PairedTerminal {
 export async function pairTerminal(
   api: Pick<TestApi, 'request'>,
   adminHeaders: Record<string, string>,
-  options: { prefix: string; type?: 'pos' | 'handheld' | 'hub'; name?: string },
+  options: {
+    prefix: string;
+    type?: 'pos' | 'handheld' | 'hub' | 'kds';
+    name?: string;
+    kitchenStationId?: string | null;
+    receiptPrinterId?: string | null;
+  },
 ): Promise<PairedTerminal> {
   const created = await api.request('POST', '/terminals', {
     headers: adminHeaders,
@@ -129,6 +136,8 @@ export async function pairTerminal(
       name: options.name ?? `Test ${options.prefix}`,
       type: options.type ?? 'pos',
       orderNumberPrefix: options.prefix,
+      kitchenStationId: options.kitchenStationId ?? null,
+      receiptPrinterId: options.receiptPrinterId ?? null,
     },
   });
   if (created.status !== 201) throw new Error(`Terminal not created: ${created.status}`);
@@ -202,7 +211,7 @@ export class TestDevice {
     this.clock = tickHlc(this.clock, Date.now());
     return {
       id: newId(),
-      schemaVersion: 1,
+      schemaVersion: OPERATION_SCHEMA_VERSION,
       hlc: formatHlc(this.clock),
       deviceAt: new Date(this.clock.physical).toISOString(),
       organizationId: this.scope.organizationId,
@@ -227,6 +236,23 @@ export class TestDevice {
       number: orderNumber(this.businessDate, number, this.terminal.prefix),
       ...fields,
     });
+  }
+
+  /** Sends items to the kitchen with one new ticket per station (items.send v2, DEC-029). */
+  send(orderId: string, itemIds: string[], stationIds: readonly string[] = []) {
+    return this.op('items.send', orderId, {
+      itemIds,
+      tickets: stationIds.map((stationId) => ({ ticketId: newId(), stationId, language: 'de' })),
+    });
+  }
+
+  kitchen(
+    type: 'kitchen.start' | 'kitchen.ready' | 'kitchen.recall',
+    orderId: string,
+    stationId: string,
+    itemIds: string[],
+  ) {
+    return this.op(type, orderId, { stationId, itemIds });
   }
 
   async pay(orderId: string, amountRappen: number, fields: Record<string, unknown> = {}) {

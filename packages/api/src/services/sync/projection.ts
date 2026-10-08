@@ -1,4 +1,11 @@
-import type { FoldState, OrderState, ReceiptState } from '@pos/core';
+import {
+  type FoldState,
+  newId,
+  type OrderState,
+  type ReceiptState,
+  ticketItems,
+  ticketProgress,
+} from '@pos/core';
 import { schema as s, type Transaction } from '@pos/db';
 import { and, eq, getTableColumns, inArray, max, not, sql, type SQL } from 'drizzle-orm';
 import type { MySqlTable } from 'drizzle-orm/mysql-core';
@@ -44,6 +51,15 @@ export interface ProjectionResult {
   renumbered: Map<string, string>;
   /** Receipts inserted now (new originals and copies). */
   insertedReceipts: ReceiptState[];
+  /** Kitchen tickets written, with their status before and after (for `kitchen.ticket_ready`). */
+  tickets: {
+    id: string;
+    orderId: string;
+    stationId: string;
+    itemIds: string[];
+    before: string | null;
+    after: string;
+  }[];
 }
 
 /** A free variant of a taken number: `0042` → `0042/2`, `0042/3`… */
@@ -184,6 +200,8 @@ export async function writeProjection(
       note: i.note,
       prepStatus: i.prepStatus,
       sentAt: at(i.sentAt),
+      preparingAt: at(i.preparingAt),
+      readyAt: at(i.readyAt),
       servedAt: at(i.servedAt),
       voidedAt: at(i.voidedAt),
       voidReason: i.voidReason,
@@ -191,7 +209,9 @@ export async function writeProjection(
       voidAuthorizedByUserId: i.voidAuthorizedByUserId,
       addedByUserId: i.addedByUserId,
       transferredFromOrderId: i.transferredFromOrderId,
-      deviceUpdatedAt: at(i.voidedAt ?? i.servedAt ?? i.sentAt ?? i.addedAt),
+      deviceUpdatedAt: at(
+        i.voidedAt ?? i.servedAt ?? i.readyAt ?? i.preparingAt ?? i.sentAt ?? i.addedAt,
+      ),
       updatedAt: now,
     })),
   );
@@ -315,7 +335,97 @@ export async function writeProjection(
     [...state.receipts.values()].filter((r) => orderIds.has(r.orderId)),
     now,
   );
-  return { previous, renumbered, insertedReceipts };
+  const tickets = await writeKitchenTickets(tx, scope, state, orderIds, now);
+  return { previous, renumbered, insertedReceipts, tickets };
+}
+
+/**
+ * Kitchen tickets of the group (DEC-029): status and times derived from the items, one row per
+ * item and station. Version 1 sends have no ticket id and are not stored.
+ */
+async function writeKitchenTickets(
+  tx: Transaction,
+  scope: SyncScope,
+  state: FoldState,
+  orderIds: ReadonlySet<string>,
+  now: Date,
+): Promise<ProjectionResult['tickets']> {
+  const tickets = [...state.tickets.values()].filter(
+    (t): t is typeof t & { id: string } => t.id !== null && orderIds.has(t.orderId),
+  );
+  if (tickets.length === 0) return [];
+  const stored = await tx
+    .select({ id: s.kitchenTickets.id, status: s.kitchenTickets.status })
+    .from(s.kitchenTickets)
+    .where(
+      and(
+        eq(s.kitchenTickets.locationId, scope.locationId),
+        inArray(
+          s.kitchenTickets.id,
+          tickets.map((t) => t.id),
+        ),
+      ),
+    );
+  const before = new Map(stored.map((row) => [row.id, row.status]));
+  const written: ProjectionResult['tickets'] = [];
+  const ticketRows: (typeof s.kitchenTickets.$inferInsert)[] = [];
+  const itemRows: (typeof s.kitchenTicketItems.$inferInsert)[] = [];
+  for (const ticket of tickets) {
+    const progress = ticketProgress(state, ticket);
+    const items = ticketItems(state, ticket);
+    const courses = [...new Set(items.map((i) => i.course))];
+    const last = [progress.voidedAt, progress.servedAt, progress.readyAt, progress.preparingAt]
+      .filter((t): t is string => t !== null)
+      .sort((a, b) => Date.parse(b) - Date.parse(a))[0];
+    ticketRows.push({
+      id: ticket.id,
+      organizationId: scope.organizationId,
+      locationId: scope.locationId,
+      orderId: ticket.orderId,
+      kitchenStationId: ticket.stationId,
+      course: courses.length === 1 ? courses[0]! : null,
+      status: progress.status,
+      language: ticket.language ?? 'de',
+      sentAt: new Date(ticket.sentAt),
+      preparingAt: at(progress.preparingAt),
+      readyAt: at(progress.readyAt),
+      servedAt: at(progress.servedAt),
+      voidedAt: at(progress.voidedAt),
+      sentByUserId: ticket.sentByUserId,
+      deviceUpdatedAt: at(last ?? ticket.sentAt),
+      updatedAt: now,
+    });
+    for (const item of items) {
+      const atStation = item.kitchen[ticket.stationId];
+      itemRows.push({
+        id: newId(),
+        organizationId: scope.organizationId,
+        locationId: scope.locationId,
+        kitchenTicketId: ticket.id,
+        orderItemId: item.id,
+        status:
+          item.prepStatus === 'served' || item.prepStatus === 'voided'
+            ? item.prepStatus
+            : (atStation?.status ?? 'sent'),
+        preparingAt: at(atStation?.preparingAt ?? null),
+        readyAt: at(atStation?.readyAt ?? null),
+        deviceUpdatedAt: at(item.voidedAt ?? item.servedAt ?? atStation?.readyAt ?? ticket.sentAt),
+        updatedAt: now,
+      });
+    }
+    written.push({
+      id: ticket.id,
+      orderId: ticket.orderId,
+      stationId: ticket.stationId,
+      itemIds: [...ticket.itemIds],
+      before: before.get(ticket.id) ?? null,
+      after: progress.status,
+    });
+  }
+  // Printing is the hub's business: what the cloud stores never touches the print columns.
+  await upsert(tx, s.kitchenTickets, ticketRows, ['printedAt', 'printCount']);
+  await upsert(tx, s.kitchenTicketItems, itemRows);
+  return written;
 }
 
 function orderRow(scope: SyncScope, o: OrderState, displayNumber: string, now: Date) {

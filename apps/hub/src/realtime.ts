@@ -11,7 +11,9 @@ export type HubMessage =
   | { type: 'hub.pong'; serverTime: string }
   | { type: 'sync.applied'; seq: number | null }
   | { type: 'config.changed'; configVersion: string }
-  | { type: 'cloud.status'; online: boolean };
+  | { type: 'cloud.status'; online: boolean }
+  /** A printer started or stopped working (DEC-031): the KDS and the POS show it. */
+  | { type: 'printer.status'; printerId: string; ok: boolean; error: string | null };
 
 export interface RealtimeOptions {
   /** Whether this hub numbers the location's orders. */

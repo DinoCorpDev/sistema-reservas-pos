@@ -8,6 +8,7 @@ import {
   type ContentLanguage,
   DEFAULT_CONSUMPTION_BY_CHANNEL,
   type DiscountKind,
+  isContentLanguage,
   itemsOf,
   type LineSelection,
   newId,
@@ -23,13 +24,13 @@ import {
   type VoidReason,
 } from '@pos/core';
 import { ratesFor, translatedName } from './catalog';
-import { correctedNow } from './clock';
-import { dispatch } from './engine';
+import { correctedNow } from '@/device/clock';
+import { dispatch } from '@/device/engine';
 import { currentBusinessDate, nextOrderNumber, nextReceiptNumber } from './numbers';
-import { makeOperation } from './operations';
-import { identify } from './pin';
-import { getPos } from './store';
-import { requestSync } from './sync';
+import { makeOperation } from '@/device/operations';
+import { identify } from '@/device/pin';
+import { getPos } from '@/device/store';
+import { requestSync } from '@/device/sync';
 
 /**
  * What the POS screens can do (RF-C02…RF-C19, RF-D02…RF-D25). Every action becomes one operation
@@ -178,16 +179,36 @@ export async function updateItem(
   await record('item.update', orderId, { itemId, ...fields });
 }
 
-/** Sends what is pending, or only one course ("marching" it, RF-C09). */
+/**
+ * Sends what is pending, or only one course ("marching" it, RF-C09). Each active station that
+ * receives something gets a ticket, with its id and the kitchen language frozen here (RF-C21,
+ * RF-C25, DEC-029).
+ */
 export async function sendItems(orderId: string, course?: number): Promise<number> {
-  const { fold } = context();
-  const itemIds = itemsOf(fold, orderId)
-    .filter(
-      (item) => item.prepStatus === 'pending' && (course === undefined || item.course === course),
-    )
-    .map((item) => item.id);
-  if (itemIds.length > 0) await record('items.send', orderId, { itemIds });
-  return itemIds.length;
+  const { fold, bootstrap } = context();
+  const items = itemsOf(fold, orderId).filter(
+    (item) => item.prepStatus === 'pending' && (course === undefined || item.course === course),
+  );
+  if (items.length === 0) return 0;
+  const active = new Map(
+    bootstrap.stations.filter((station) => station.isActive).map((s) => [s.id, s]),
+  );
+  const routed = [...new Set(items.flatMap((item) => item.stationIds))].filter((id) =>
+    active.has(id),
+  );
+  const kitchenLanguage = bootstrap.location.kitchenLanguage;
+  await record('items.send', orderId, {
+    itemIds: items.map((item) => item.id),
+    tickets: routed.map((stationId) => {
+      const language = active.get(stationId)?.language ?? kitchenLanguage;
+      return {
+        ticketId: newId(),
+        stationId,
+        language: isContentLanguage(language) ? language : 'de',
+      };
+    }),
+  });
+  return items.length;
 }
 
 /** Served at the table, or handed over at the bar/counter (RF-C17). */
@@ -444,16 +465,51 @@ export async function refundPayment(
   );
 }
 
-/** Reprint marked as a copy, audited (RF-D24, RN-09). */
+/**
+ * The receipt printer of this terminal when the hub can print on it (DEC-031): the terminal
+ * works through a hub and has an active printer. Otherwise the browser prints (DEC-027).
+ */
+export function hubReceiptPrinter() {
+  const { bootstrap, sync, printers } = getPos();
+  if (sync.level !== 'hub' || !bootstrap?.terminal.receiptPrinterId) return null;
+  const printer = bootstrap.printers.find(
+    (p) => p.id === bootstrap.terminal.receiptPrinterId && p.isActive,
+  );
+  return printer ? { ...printer, health: printers[printer.id] ?? null } : null;
+}
+
+/** Prints the original receipt on the terminal's printer through the hub (RF-D20, DEC-031). */
+export async function printReceipt(orderId: string, receiptId: string): Promise<void> {
+  await record('receipt.print', orderId, { receiptId });
+}
+
+/**
+ * Reprint marked as a copy, audited (RF-D24, RN-09). With a hub and a receipt printer the hub
+ * prints it; otherwise the screen shows it for the browser to print.
+ */
 export async function reprintReceipt(
   orderId: string,
   receiptId: string,
-): Promise<{ content: ReceiptContent; copyAt: string }> {
+): Promise<{ content: ReceiptContent; copyAt: string; printedByHub: boolean }> {
   const receipt = getPos().fold.receipts.get(receiptId);
   if (!receipt) throw new Error('Unknown receipt');
   const copyAt = new Date(correctedNow()).toISOString();
-  await record('receipt.reprint', orderId, { receiptId, copyId: newId() });
-  return { content: receipt.content, copyAt };
+  const hubPrint = hubReceiptPrinter() !== null;
+  await record('receipt.reprint', orderId, { receiptId, copyId: newId(), hubPrint });
+  return { content: receipt.content, copyAt, printedByHub: hubPrint };
+}
+
+/** Whether this terminal has a cash drawer the hub can open (RF-D18). */
+export function hasCashDrawer(): boolean {
+  return hubReceiptPrinter()?.hasCashDrawer === true;
+}
+
+/** Opens the drawer without a sale: with the permission or a manager's approval (RF-D18). */
+export async function openDrawer(
+  reason: string | null,
+  approval: OperationApproval | null = null,
+): Promise<void> {
+  await record('drawer.open', null, { reason }, { approval });
 }
 
 /** True when nothing has been paid yet: transfer, merge and split are allowed (DEC-025). */

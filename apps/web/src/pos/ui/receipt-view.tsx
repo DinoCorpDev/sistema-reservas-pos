@@ -5,8 +5,11 @@ import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Check, Printer } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { usePos } from '@/device/store';
+import { hubReceiptPrinter, printReceipt } from '../actions';
 import { usePosUi } from '../ui-store';
+import { useRunner } from './order/run';
 import { useFold } from './payment/hooks';
 import { nextToCollect } from './payment/model';
 
@@ -38,23 +41,43 @@ const PRINT_CSS = `
 `;
 
 /**
- * The receipt of a payment as it was frozen (DEC-024), printed through the browser in Phase 2
- * (DEC-027); a reprint shows "KOPIE" with the time (RF-D24). From here the cashier prints,
- * continues collecting what is still open (mixed and split payments) or is done.
+ * The receipt of a payment as it was frozen (DEC-024); a reprint shows "KOPIE" with the time
+ * (RF-D24). With a hub and a receipt printer the hub prints it (DEC-031); otherwise the browser
+ * does (DEC-027). From here the cashier prints, continues collecting what is still open (mixed
+ * and split payments) or is done.
  */
 export function ReceiptView({
   orderId,
   content,
+  receiptId,
   copyAt,
+  printedByHub = false,
 }: {
   orderId: string;
   content: ReceiptContent;
+  receiptId?: string;
   copyAt?: string;
+  printedByHub?: boolean;
 }) {
   const t = useTranslations('posPayment.receipt');
   const navigate = usePosUi((state) => state.navigate);
   const fold = useFold();
   const text = useMemo(() => renderReceiptText(content, { copyAt }).join('\n'), [content, copyAt]);
+  // Re-evaluated when the connection or the printer changes.
+  usePos((state) => state.sync.level);
+  usePos((state) => state.printers);
+  const printer = hubReceiptPrinter();
+  const [sent, setSent] = useState(printedByHub);
+  const run = useRunner();
+
+  async function print() {
+    if (printer && receiptId && !copyAt) {
+      const result = await run(() => printReceipt(orderId, receiptId));
+      if (result.ok) setSent(true);
+      return;
+    }
+    window.print();
+  }
 
   const order = fold.orders.get(orderId);
   const next = nextToCollect(fold, orderId);
@@ -84,10 +107,30 @@ export function ReceiptView({
             </p>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button size="lg" variant={next ? 'outline' : 'default'} onClick={() => window.print()}>
+        <div className="flex flex-wrap items-center gap-2">
+          {sent && (
+            <span className="text-sm text-emerald-800" role="status" data-testid="receipt-sent">
+              {t('sentToPrinter')}
+            </span>
+          )}
+          {printer?.health && !printer.health.ok && (
+            <span className="text-sm text-destructive" role="alert">
+              {t('printerProblem', { error: printer.health.error ?? '' })}
+            </span>
+          )}
+          <Button
+            size="lg"
+            variant={next || sent ? 'outline' : 'default'}
+            onClick={() => void print()}
+            disabled={sent && Boolean(printer) && !copyAt}
+          >
             <Printer /> {t('print')}
           </Button>
+          {printer && (
+            <Button size="lg" variant="ghost" onClick={() => window.print()}>
+              {t('printInBrowser')}
+            </Button>
+          )}
           {next && (
             <Button size="lg" onClick={() => navigate({ name: 'payment', orderId: next })}>
               {t('continue')}

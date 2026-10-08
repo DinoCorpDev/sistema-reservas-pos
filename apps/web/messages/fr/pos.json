@@ -19,7 +19,8 @@
       "pair": "Appairer",
       "pairing": "Appairage…",
       "invalidCode": "Le code est incorrect ou a expiré.",
-      "failed": "Appairage impossible. Vérifiez la connexion et réessayez."
+      "failed": "Appairage impossible. Vérifiez la connexion et réessayez.",
+      "hubCode": "Ce code appartient au hub de l’établissement. Il se saisit sur le hub lui-même, pas ici."
     },
     "pin": {
       "title": "Saisir le PIN",
@@ -29,7 +30,8 @@
       "wrong": "PIN incorrect. Il reste {attemptsLeft, plural, one {# essai} other {# essais}}.",
       "locked": "Trop d’essais erronés. Bloqué pendant {minutes, plural, one {# minute} other {# minutes}}.",
       "invalid": "Le PIN comporte 4 à 6 chiffres.",
-      "noCredentials": "Cet appareil n’a pas encore de données d’accès. Connectez-le une fois à Internet."
+      "noCredentials": "Cet appareil n’a pas encore de données d’accès. Connectez-le une fois à Internet.",
+      "notAllowedKitchen": "{name} n’a pas l’autorisation cuisine. Déverrouillez l’écran de cuisine avec le PIN d’une personne de la cuisine."
     },
     "approval": {
       "title": "Validation par une personne responsable",
@@ -46,7 +48,16 @@
       "takeaway": "À l’emporter",
       "lock": "Verrouiller",
       "updateAvailable": "Une nouvelle version de la caisse est prête.",
-      "updateNow": "Mettre à jour"
+      "updateNow": "Mettre à jour",
+      "drawer": "Tiroir",
+      "drawerOpened": "Le tiroir s’ouvre.",
+      "drawerFailed": "Impossible d’ouvrir le tiroir.",
+      "printerDown": "Imprimante «{printer}» injoignable : {error}"
+    },
+    "kitchen": {
+      "readyTable": "Table {table} : {count, plural, one {# position prête} other {# positions prêtes}}",
+      "readyOrder": "Commande {number} : {count, plural, one {# position prête} other {# positions prêtes}}",
+      "stillCooking": "Encore en cuisine : {count}"
     }
   }
 }

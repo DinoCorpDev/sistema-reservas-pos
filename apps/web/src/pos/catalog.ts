@@ -9,9 +9,9 @@ import {
   type TaxCategoryKey,
   type TaxRateCode,
 } from '@pos/core';
-import { correctedNow } from './clock';
+import { correctedNow } from '@/device/clock';
 import { currentBusinessDate } from './numbers';
-import { getPos } from './store';
+import { getPos } from '@/device/store';
 
 /**
  * The menu and tax data on the device, from the offline snapshot (docs/SYNC.md §6.4): the same

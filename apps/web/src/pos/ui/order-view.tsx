@@ -6,7 +6,7 @@ import { cn } from '@pos/ui/utils';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { getPos } from '../store';
+import { getPos } from '@/device/store';
 import { usePosUi } from '../ui-store';
 import { ActionBar } from './order/action-bar';
 import { useLookups, useOrderData, useViewportFill } from './order/hooks';

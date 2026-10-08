@@ -4,7 +4,7 @@ import { formatChf, type OrderItemState, type OrderState, tableViews } from '@po
 import { cn } from '@pos/ui/utils';
 import { useTranslations } from 'next-intl';
 import { useId, useMemo } from 'react';
-import { usePos } from '../../store';
+import { usePos } from '@/device/store';
 import { byLabel } from './format';
 import { type Lookups, useFoldMemo } from './hooks';
 import { usePlaceOf } from './place';

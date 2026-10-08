@@ -71,6 +71,7 @@ export default async function DevicesPage({
           <StationsManager
             stations={stations}
             printers={printers}
+            terminals={terminals}
             defaults={{
               alertAfterMinutes: location.settings.kitchen.alertAfterMinutes,
               language: location.kitchenLanguage,

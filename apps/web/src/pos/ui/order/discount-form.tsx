@@ -15,7 +15,7 @@ import { Field } from '@pos/ui/label';
 import { useTranslations } from 'next-intl';
 import { useId, useState } from 'react';
 import { applyDiscount } from '../../actions';
-import { usePos } from '../../store';
+import { usePos } from '@/device/store';
 import { requestApproval } from '../../ui-store';
 import { effectivePercentBp, formatPercentBp, parsePercentBp } from './format';
 import { useRunner } from './run';

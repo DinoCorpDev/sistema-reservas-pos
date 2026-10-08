@@ -54,6 +54,13 @@ const PrinterSchema = z
     hasCashDrawer: z.boolean(),
     isActive: z.boolean(),
     lastTestAt: z.string().nullable(),
+    lastTestOk: z.boolean().nullable(),
+    testRequestedAt: z.string().nullable().openapi({
+      description: 'A test page is pending at the location hub until lastTestAt passes this time',
+    }),
+    lastOkAt: z.string().nullable().openapi({ description: 'Last job the hub printed' }),
+    lastError: z.string().nullable(),
+    lastErrorAt: z.string().nullable(),
   })
   .openapi('Printer');
 
@@ -298,6 +305,26 @@ function registerDeviceRoutes(app: ApiApp) {
           c.req.valid('json'),
         ),
         200,
+      ),
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/printers/{id}/test',
+      tags,
+      security,
+      summary: 'Print a test page through the location hub (RF-F17)',
+      description:
+        'The request reaches the hub with the next configuration; the hub prints and reports the ' +
+        'result, visible as lastTestAt / lastTestOk (DEC-032).',
+      request: { params: UuidParam },
+      responses: { 202: jsonResponse(PrinterSchema, 'Test page requested'), ...ERROR_RESPONSES },
+    }),
+    async (c) =>
+      c.json(
+        await service.requestPrinterTest({ db: c.get('db') }, actorOf(c), c.req.valid('param').id),
+        202,
       ),
   );
 

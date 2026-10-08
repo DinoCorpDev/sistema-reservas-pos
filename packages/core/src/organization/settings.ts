@@ -50,6 +50,15 @@ export const locationSettingsSchema = z.object({
       alertAfterMinutes: z.int().min(1).default(12),
     })
     .prefault({}),
+  printing: z
+    .object({
+      /**
+       * The hub does not print what is older than this (DEC-031): a hub that comes back late does
+       * not flood the kitchen with tickets that were already cooked from the KDS.
+       */
+      maxDelayMinutes: z.int().min(1).max(240).default(15),
+    })
+    .prefault({}),
   receipts: z
     .object({
       /** From this total (Rp) the system asks for the customer name on the receipt (RN-08: CHF 400+). */

@@ -1,4 +1,5 @@
 import type { AuditAction } from '../audit/constants';
+import type { KitchenItemStatus } from '../kitchen/constants';
 import type { PaymentAdapterKey, PaymentMethod } from '../payments/constants';
 import type { ReceiptContent } from '../receipts/content';
 import type { Channel, ConsumptionType } from '../shared/channels';
@@ -24,6 +25,15 @@ export interface ItemModifierState {
   quantity: number;
 }
 
+/** Progress of an item at one kitchen station (DEC-029). */
+export interface KitchenProgress {
+  /** Ticket the item arrived on at this station (`<send operation id>:<station id>`). */
+  ticketKey: string;
+  status: KitchenItemStatus;
+  preparingAt: string | null;
+  readyAt: string | null;
+}
+
 export interface OrderItemState {
   id: string;
   orderId: string;
@@ -41,10 +51,18 @@ export interface OrderItemState {
   seat: number | null;
   note: string | null;
   stationIds: string[];
+  /**
+   * Derived from `kitchen` until served or voided: ready when every station is ready,
+   * preparing when one has started (RF-C16).
+   */
   prepStatus: ItemPrepStatus;
+  /** Progress per station the item was sent to (RF-C21, RF-C22). */
+  kitchen: Record<string, KitchenProgress>;
   addedAt: string;
   addedByUserId: string;
   sentAt: string | null;
+  preparingAt: string | null;
+  readyAt: string | null;
   servedAt: string | null;
   voidedAt: string | null;
   voidReason: string | null;
@@ -175,6 +193,29 @@ export interface ReceiptState {
   copyOfReceiptId: string | null;
 }
 
+/**
+ * What one send delivered to one station (RF-C20, DEC-029). The items keep their own state;
+ * the status of the ticket is derived from them (`kitchen/tickets.ts`).
+ */
+export interface KitchenTicketState {
+  /** `<send operation id>:<station id>`. */
+  key: string;
+  /** Frozen by the device in `items.send` (version 2); null for version 1 sends. */
+  id: string | null;
+  sendOperationId: string;
+  stationId: string;
+  /** Order the items belonged to when they were sent. */
+  orderId: string;
+  terminalId: string;
+  sentAt: string;
+  sentByUserId: string;
+  /** Kitchen language frozen at send (RF-C25); null for version 1 sends. */
+  language: ContentLanguage | null;
+  /** Items in the ticket, including the voided part of a partial void. */
+  itemIds: string[];
+  reprintCount: number;
+}
+
 export interface ConflictRecord {
   opId: string;
   code: ConflictCode;
@@ -210,10 +251,14 @@ export interface FoldState {
   payments: Map<string, PaymentState>;
   refunds: Map<string, RefundState>;
   receipts: Map<string, ReceiptState>;
+  /** Kitchen tickets by key (`<send operation id>:<station id>`). */
+  tickets: Map<string, KitchenTicketState>;
   itemsByOrder: OrderIndex;
   discountsByOrder: OrderIndex;
   paymentsByOrder: OrderIndex;
   refundsByOrder: OrderIndex;
+  /** Tickets by the order they were sent for. */
+  ticketsByOrder: OrderIndex;
   /** Ids of the operations folded so far, with their outcome. */
   outcomes: Map<string, OperationOutcome>;
   conflicts: ConflictRecord[];
@@ -231,10 +276,12 @@ export function createFoldState(): FoldState {
     payments: new Map(),
     refunds: new Map(),
     receipts: new Map(),
+    tickets: new Map(),
     itemsByOrder: new Map(),
     discountsByOrder: new Map(),
     paymentsByOrder: new Map(),
     refundsByOrder: new Map(),
+    ticketsByOrder: new Map(),
     outcomes: new Map(),
     conflicts: [],
     audits: [],
@@ -274,3 +321,10 @@ export const paymentsOf = (state: FoldState, orderId: string) =>
   collect(state.paymentsByOrder, state.payments, orderId);
 export const refundsOf = (state: FoldState, orderId: string) =>
   collect(state.refundsByOrder, state.refunds, orderId);
+/** Kitchen tickets sent for an order, in the order they were sent. */
+export const ticketsOf = (state: FoldState, orderId: string) =>
+  collect(state.ticketsByOrder, state.tickets, orderId);
+
+/** Key of the ticket of one send at one station. */
+export const ticketKey = (sendOperationId: string, stationId: string) =>
+  `${sendOperationId}:${stationId}`;

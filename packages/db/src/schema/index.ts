@@ -7,6 +7,7 @@ export * from './organization';
 export * from './payments';
 export * from './platform';
 export * from './platform-access';
+export * from './printing';
 export * from './receipts';
 export * from './reservations';
 export * from './tax';

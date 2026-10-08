@@ -1,0 +1,33 @@
+{
+  "kds": {
+    "tabs": {
+      "open": "Open ({count})",
+      "done": "Done"
+    },
+    "noneOpen": "No open tickets.",
+    "noneDone": "Nothing finished in the last hours.",
+    "noStation": "No station is assigned to this kitchen display. Assign it in the backoffice under Devices & stations.",
+    "failed": "That did not work. Please try again.",
+    "reprinted": "The ticket is printed again.",
+    "acknowledge": "Seen",
+    "lock": "Lock",
+    "printerDown": "Printer “{printer}” not reachable: {error}",
+    "ticket": {
+      "minutes": "{minutes} min",
+      "start": "Start",
+      "ready": "Ready",
+      "served": "Served",
+      "recall": "Recall",
+      "reprint": "Reprint ticket",
+      "moved": "Moved to another order",
+      "itemLabel": "{name}: {status}",
+      "status": {
+        "sent": "New",
+        "preparing": "Preparing",
+        "ready": "Ready",
+        "served": "Served",
+        "voided": "Voided"
+      }
+    }
+  }
+}

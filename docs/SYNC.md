@@ -57,6 +57,13 @@ Cada acción del POS genera una **operación inmutable**. Nunca se edita ni se b
 | `order.reopen`                              | Reabre una orden cerrada, con permiso de gerente y motivo (RF-C14).                                                             |
 | `order.void`                                | Anula una orden sin pagos (RN-12: una orden sin ítems válidos ni pagos se anula, no se cierra).                                 |
 | `terminal.unlocked` / `terminal.pin_failed` | Desbloqueos e intentos fallidos de PIN en la terminal: solo dejan auditoría.                                                    |
+| `kitchen.start` / `kitchen.ready`           | La estación empieza o termina ítems de un ticket (RF-C22, DEC-029). El estado es por ítem **y por estación**.                   |
+| `kitchen.recall`                            | Devuelve al tablero ítems que estaban listos (RF-C28).                                                                          |
+| `kitchen.reprint`                           | Reimprime un ticket en su estación (RF-C26). Un ticket es `(items.send, estación)`.                                             |
+| `receipt.print`                             | Pide al hub imprimir el recibo original en la impresora de la terminal (DEC-031). No cambia el estado.                          |
+| `drawer.open`                               | Abre el cajón sin venta, con permiso o aprobación (RF-D18). No pertenece a una orden.                                           |
+
+**Versión 2 (Fase 3).** `items.send` trae `tickets: [{ ticketId, stationId, language }]`: una entrada por estación activa que recibe ítems, con el ID y el idioma de cocina congelados (RF-C21, RF-C25). Una operación de versión 1 (sin `tickets`) va a todas las estaciones del ítem, con tickets sin ID. `receipt.reprint` trae `hubPrint`: el hub imprime la copia solo si el POS lo pidió.
 
 ### 2.3 Payload congelado
 
@@ -102,6 +109,8 @@ Un conflicto **nunca bloquea** la operación del restaurante: lo que pasó en la
 | Número de orden, de recibo o de copia repetido                                                                       | Nunca lanza error: se guarda con un sufijo y se marca.                                                      | `duplicate_number`                       |
 | HLC más de 5 min adelantado                                                                                          | Se limita a la hora del servidor (§3).                                                                      | `clock_skew`                             |
 | Operación con esquema inválido o de otra sede                                                                        | Se rechaza (`rejected`). El dispositivo la muestra al gerente; no se reintenta.                             | `invalid`                                |
+| La cocina marca algo que la sala ya sirvió o anuló                                                                   | No tiene efecto: es la carrera normal entre cocina y sala (DEC-029).                                        | (no es conflicto)                        |
+| Una operación de cocina sobre un ítem no enviado o en una estación que no es la suya                                 | Queda sin efecto y marcada.                                                                                 | `item_state`                             |
 
 ## 6. Protocolo
 
@@ -173,7 +182,25 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
 - Es la autoridad de numeración (`order-numbers`) si es el primero de la lista.
 - Avisa por WebSocket a las terminales.
 - Reenvía a la nube lo que recibe, con las mismas claves de idempotencia, y trae de la nube lo que llegó directo (de terminales que no lo alcanzaban).
-- No mantiene proyección de órdenes. El KDS y la impresión llegan en la Fase 3.
+- No mantiene proyección de órdenes.
+
+### 11.1b Qué agrega la Fase 3: cocina e impresión (DEC-029 a DEC-032)
+
+- **KDS.** El KDS (`/kds`) es un cliente más, igual que el POS. Pull, push y avisos van por el hub, así que la cocina funciona en la LAN sin nube (RF-C27). Su tablero sale del mismo plegado: `stationBoard()` en `@pos/core`.
+- **Configuración de impresión.** Además de `hub-config`, el hub trae `/pos/bootstrap`: impresoras, estaciones, mesas, usuarios y catálogo, para los nombres y alérgenos en el idioma de cocina. Lo guarda en `.hub-config.json`, así que imprime aunque arranque sin internet.
+- **Cola de impresión** (`print_jobs` en `pos_hub`):
+  - **Planificar.** Recorre `sync_operations` por `seq` y pliega bajo demanda el grupo de la orden. Guarda un trabajo por documento con una clave idempotente:
+    - `kitchen:<ticket>`
+    - `storno:<operación>:<ticket>`
+    - `reprint:<operación>`
+    - `receipt:<operación>`
+    - `drawer:<operación>`
+    - `test:<impresora>:<pedido>`
+  - **Enviar.** Manda los trabajos en orden por impresora, con reintentos (2, 5, 10 y 30 s, durante 10 min).
+  - **Límite de antigüedad.** Lo que tiene más de `printing.maxDelayMinutes` (por defecto 15) se marca `expired` y no se imprime; para el cajón el límite es 1 min.
+  - **Envío incompleto.** Si los ítems de un envío todavía no llegaron, el trabajo espera.
+- **Protocolo.** ESC/POS por TCP 9100, con página de códigos 858 para DE, FR, IT y €. ePOS y CloudPRNT llegan en la Fase 6.
+- **Estado de las impresoras.** Cada cambio se avisa por WebSocket (`printer.status`) y se informa a la nube con `POST /sync/printer-status`, que lo guarda en `printer_status`, fuera de `configVersion`. La prueba de impresión pedida en el backoffice llega con la configuración (`printers.testRequestedAt`).
 
 ### 11.2 Emparejamiento y autenticación
 
@@ -191,6 +218,7 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
 | hub → terminal | `{ type: 'sync.applied', seq }`                                    | Hay operaciones nuevas: la terminal hace pull.       |
 | hub → terminal | `{ type: 'config.changed', configVersion }`                        | La configuración cambió: la terminal pide bootstrap. |
 | hub → terminal | `{ type: 'cloud.status', online }`                                 | El hub perdió o recuperó internet.                   |
+| hub → terminal | `{ type: 'printer.status', printerId, ok, error }`                 | Una impresora dejó de imprimir o volvió (DEC-031).   |
 
 ### 11.4 Difusión y relevo (RNF-05)
 
@@ -212,7 +240,9 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
 
 ## 13. Almacenamiento en el dispositivo
 
-- **Dexie (IndexedDB):** `meta` (terminal, token, cursor, desfase, HLC), `config` (bootstrap), `credentials`, `ops` (todas las operaciones conocidas, con su estado: pendiente, confirmada por un nodo, confirmada por la nube) y `counters` (números de orden y de recibo por día).
+- **Dexie (IndexedDB):** una base por app, `sistema-reservas-pos` y `sistema-reservas-kds` (DEC-030), con dos tablas:
+  - `meta`: terminal, token, cursores, desfase, HLC, bootstrap, credenciales y contadores de órdenes y recibos por día;
+  - `ops`: todas las operaciones conocidas, con su estado (pendiente, confirmada por un nodo, confirmada por la nube).
 - Las operaciones de órdenes cerradas fuera de la ventana activa (§4) y ya confirmadas por la nube se borran del dispositivo (la nube las conserva).
 - **Service worker (Serwist):** precachea `/pos` y sus archivos con la revisión del build. `/api/*` nunca se cachea (son datos vivos y, en las credenciales, hashes de PIN). Una versión nueva del POS no se activa en medio de un cobro: el POS avisa y recarga cuando está libre.
 
@@ -221,4 +251,8 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
 - **Core:** cada tipo de operación y sus invariantes; dinero y MWST; numeración; HLC; **propiedad**: 1000 permutaciones del mismo conjunto de operaciones de 2 o 3 terminales dan la misma proyección; aplicar dos veces es aplicar una; un pago nunca lanza error.
 - **API:** el mismo lote enviado dos veces y en paralelo no duplica; 404 entre organizaciones; colisiones como conflicto; auditoría y eventos una sola vez; la proyección guardada es la del Core.
 - **Hub:** terminal → hub → nube exactamente una vez; lo mismo por el hub y directo no duplica; con el hub apagado las terminales siguen y resincronizan.
+- **Cocina (puerta de la Fase 3):** `apps/hub/src/kitchen-load.int.test.ts`.
+  - **Montaje:** 60 órdenes, 10 terminales, 3 KDS e impresoras simuladas. Llegan lotes tarde y duplicados, algunas terminales van directo a la nube y el hub se reinicia a mitad de la prueba.
+  - **Se verifica:** ningún ticket se pierde, ninguno cambia de estado sin una operación sobre sus ítems, cada comanda y cada storno se imprime una sola vez, y la nube termina con los mismos tickets que la cocina.
+  - **E2E `kds.spec.ts`:** POS → hub → KDS en menos de 2 s, impresión, storno, aviso al mesero y recall.
 - **E2E:** el flujo mesa → pedido → pago → recibo con `setOffline(true)`, recargando la página sin conexión, y al volver exactamente una orden, sus pagos y sus recibos; "WAN colgada" (la API no responde) sin bloquear el POS.

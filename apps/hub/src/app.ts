@@ -12,13 +12,15 @@ export interface HubDependencies {
   onPushed?: () => void;
   /** Origins allowed to call the hub from the browser: the POS origin (default: any). */
   allowedOrigins?: string[];
+  /** Health of the printers as the print queue last saw them (DEC-031). */
+  printers?: () => Record<string, { ok: boolean; error: string | null }>;
 }
 
 /**
- * HTTP API of the hub on the location's LAN (docs/SYNC.md §11): health and the same sync routes
- * as the cloud under /api/v1 (push, pull, order numbers). The POS is served by the cloud, so the
- * hub answers cross-origin requests and Chrome's Private Network Access preflight. Phase 3 adds
- * the routing to KDS and printers.
+ * HTTP API of the hub on the location's LAN (docs/SYNC.md §11): health (with the printers) and
+ * the same sync routes as the cloud under /api/v1 (push, pull, order numbers). The POS and the
+ * KDS are served by the cloud, so the hub answers cross-origin requests and Chrome's Private
+ * Network Access preflight. Printing runs in the background (`printing/worker.ts`).
  */
 export function createApp(deps: HubDependencies) {
   const app = new Hono();
@@ -41,6 +43,7 @@ export function createApp(deps: HubDependencies) {
         level: 'hub',
         checks: { database },
         connectedClients: deps.connectedClients(),
+        printers: deps.printers?.() ?? {},
         time: new Date().toISOString(),
       },
       healthy ? 200 : 503,

@@ -68,12 +68,14 @@
     "languageHint": "Lingua delle comande di questa postazione.",
     "printer": "Stampante",
     "printerHint": "Facoltativo: stampa le comande di questa postazione.",
-    "inUse": "La postazione è ancora usata da prodotti o schermi cucina. Li riassegni prima o disattivi la postazione."
+    "inUse": "La postazione è ancora usata da prodotti o schermi cucina. Li riassegni prima o disattivi la postazione.",
+    "displays": "Schermi cucina",
+    "noOutput": "Comande non visibili",
+    "noOutputHint": "Questa postazione non ha né schermo cucina né stampante: le sue comande non appaiono da nessuna parte."
   },
   "printers": {
     "title": "Stampanti",
     "hint": "Stampanti di rete per scontrini e comande di cucina.",
-    "testNote": "La stampa di prova arriverà con l’hub della sede (fase 3).",
     "new": "Nuova stampante",
     "edit": "Modifica stampante",
     "empty": "Ancora nessuna stampante.",
@@ -96,7 +98,17 @@
     "paperWidthValue": "{mm} mm",
     "cashDrawer": "Cassetto cassa",
     "cashDrawerLabel": "Cassetto cassa collegato",
-    "inUse": "Postazioni o dispositivi stampano ancora su questa stampante. Li assegni prima a un’altra stampante."
+    "inUse": "Postazioni o dispositivi stampano ancora su questa stampante. Li assegni prima a un’altra stampante.",
+    "hubNote": "Si stampa tramite l’hub della sede nella rete locale (ESC/POS, porta 9100). La stampa di prova va all’hub alla prossima sincronizzazione.",
+    "test": "Stampa di prova",
+    "testRequested": "Stampa di prova richiesta. Il risultato appare qui appena l’hub ha stampato.",
+    "testPending": "Stampa di prova in corso…",
+    "testOk": "Prova riuscita ({when})",
+    "testFailed": "Prova fallita ({when})",
+    "state": "Stato",
+    "stateOk": "Stampa",
+    "stateError": "Errore",
+    "stateUnknown": "Ancora nessuna notizia"
   },
   "users": {
     "title": "Personale",

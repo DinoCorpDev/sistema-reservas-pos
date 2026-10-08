@@ -49,105 +49,143 @@ export async function buildSetupSnapshot(
   const ctx = { ...actor, locationId: location.id };
   const otherLanguages = location.languages.filter((l) => l !== location.defaultLanguage);
 
-  const [areas, tables, posTerminals, stations, receiptPrinters, managers] = await Promise.all([
-    db
-      .select({ value: count() })
-      .from(s.areas)
-      .where(inLocation(s.areas, ctx, eq(s.areas.isActive, true), notDeleted(s.areas))),
-    // Tables of a deactivated (seasonal) area cannot be used (RF-C06).
-    db
-      .select({ value: count() })
-      .from(s.diningTables)
-      .innerJoin(
-        s.areas,
-        and(
-          eq(s.areas.id, s.diningTables.areaId),
-          eq(s.areas.isActive, true),
-          isNull(s.areas.deletedAt),
+  const [areas, tables, posTerminals, stations, stationOutputs, receiptPrinters, managers] =
+    await Promise.all([
+      db
+        .select({ value: count() })
+        .from(s.areas)
+        .where(inLocation(s.areas, ctx, eq(s.areas.isActive, true), notDeleted(s.areas))),
+      // Tables of a deactivated (seasonal) area cannot be used (RF-C06).
+      db
+        .select({ value: count() })
+        .from(s.diningTables)
+        .innerJoin(
+          s.areas,
+          and(
+            eq(s.areas.id, s.diningTables.areaId),
+            eq(s.areas.isActive, true),
+            isNull(s.areas.deletedAt),
+          ),
+        )
+        .where(
+          inLocation(
+            s.diningTables,
+            ctx,
+            eq(s.diningTables.isActive, true),
+            notDeleted(s.diningTables),
+          ),
         ),
-      )
-      .where(
-        inLocation(
-          s.diningTables,
-          ctx,
-          eq(s.diningTables.isActive, true),
-          notDeleted(s.diningTables),
+      db
+        .select({ value: count() })
+        .from(s.terminals)
+        .where(
+          inLocation(
+            s.terminals,
+            ctx,
+            eq(s.terminals.type, 'pos'),
+            eq(s.terminals.isActive, true),
+            notDeleted(s.terminals),
+          ),
         ),
-      ),
-    db
-      .select({ value: count() })
-      .from(s.terminals)
-      .where(
-        inLocation(
-          s.terminals,
-          ctx,
-          eq(s.terminals.type, 'pos'),
-          eq(s.terminals.isActive, true),
-          notDeleted(s.terminals),
+      db
+        .select({ value: count() })
+        .from(s.kitchenStations)
+        .where(
+          inLocation(
+            s.kitchenStations,
+            ctx,
+            eq(s.kitchenStations.isActive, true),
+            notDeleted(s.kitchenStations),
+          ),
         ),
-      ),
-    db
-      .select({ value: count() })
-      .from(s.kitchenStations)
-      .where(
-        inLocation(
-          s.kitchenStations,
-          ctx,
-          eq(s.kitchenStations.isActive, true),
-          notDeleted(s.kitchenStations),
+      // Where each active station's tickets show up: an active KDS or an active printer.
+      db
+        .select({
+          id: s.kitchenStations.id,
+          printerActive: s.printers.isActive,
+          printerDeleted: s.printers.deletedAt,
+        })
+        .from(s.kitchenStations)
+        .leftJoin(s.printers, eq(s.printers.id, s.kitchenStations.printerId))
+        .where(
+          inLocation(
+            s.kitchenStations,
+            ctx,
+            eq(s.kitchenStations.isActive, true),
+            notDeleted(s.kitchenStations),
+          ),
+        )
+        .then(async (rows) => {
+          const displays = await db
+            .select({ stationId: s.terminals.kitchenStationId })
+            .from(s.terminals)
+            .where(
+              inLocation(
+                s.terminals,
+                ctx,
+                eq(s.terminals.type, 'kds'),
+                eq(s.terminals.isActive, true),
+                notDeleted(s.terminals),
+              ),
+            );
+          const withDisplay = new Set(displays.map((d) => d.stationId));
+          return rows.filter(
+            (row) =>
+              !withDisplay.has(row.id) &&
+              !(row.printerActive === true && row.printerDeleted === null),
+          ).length;
+        }),
+      db
+        .select({ value: count() })
+        .from(s.printers)
+        .where(
+          inLocation(
+            s.printers,
+            ctx,
+            eq(s.printers.kind, 'receipt'),
+            eq(s.printers.isActive, true),
+            notDeleted(s.printers),
+          ),
         ),
-      ),
-    db
-      .select({ value: count() })
-      .from(s.printers)
-      .where(
-        inLocation(
-          s.printers,
-          ctx,
-          eq(s.printers.kind, 'receipt'),
-          eq(s.printers.isActive, true),
-          notDeleted(s.printers),
+      // Active users working here, with a PIN, whose roles (here or everywhere) grant approvals (RN-15).
+      db
+        .select({ value: countDistinct(s.users.id) })
+        .from(s.users)
+        .innerJoin(
+          s.userLocations,
+          and(
+            eq(s.userLocations.userId, s.users.id),
+            eq(s.userLocations.locationId, location.id),
+            isNull(s.userLocations.deletedAt),
+          ),
+        )
+        .innerJoin(
+          s.userRoles,
+          and(
+            eq(s.userRoles.userId, s.users.id),
+            isNull(s.userRoles.deletedAt),
+            or(isNull(s.userRoles.locationId), eq(s.userRoles.locationId, location.id)),
+          ),
+        )
+        .innerJoin(s.roles, and(eq(s.roles.id, s.userRoles.roleId), isNull(s.roles.deletedAt)))
+        .innerJoin(
+          s.rolePermissions,
+          and(
+            eq(s.rolePermissions.roleId, s.roles.id),
+            eq(s.rolePermissions.permission, 'approval.grant'),
+            isNull(s.rolePermissions.deletedAt),
+          ),
+        )
+        .where(
+          inOrg(
+            s.users,
+            ctx,
+            eq(s.users.isActive, true),
+            notDeleted(s.users),
+            isNotNull(s.users.pinHash),
+          ),
         ),
-      ),
-    // Active users working here, with a PIN, whose roles (here or everywhere) grant approvals (RN-15).
-    db
-      .select({ value: countDistinct(s.users.id) })
-      .from(s.users)
-      .innerJoin(
-        s.userLocations,
-        and(
-          eq(s.userLocations.userId, s.users.id),
-          eq(s.userLocations.locationId, location.id),
-          isNull(s.userLocations.deletedAt),
-        ),
-      )
-      .innerJoin(
-        s.userRoles,
-        and(
-          eq(s.userRoles.userId, s.users.id),
-          isNull(s.userRoles.deletedAt),
-          or(isNull(s.userRoles.locationId), eq(s.userRoles.locationId, location.id)),
-        ),
-      )
-      .innerJoin(s.roles, and(eq(s.roles.id, s.userRoles.roleId), isNull(s.roles.deletedAt)))
-      .innerJoin(
-        s.rolePermissions,
-        and(
-          eq(s.rolePermissions.roleId, s.roles.id),
-          eq(s.rolePermissions.permission, 'approval.grant'),
-          isNull(s.rolePermissions.deletedAt),
-        ),
-      )
-      .where(
-        inOrg(
-          s.users,
-          ctx,
-          eq(s.users.isActive, true),
-          notDeleted(s.users),
-          isNotNull(s.users.pinHash),
-        ),
-      ),
-  ]);
+    ]);
 
   // Active products: active in the catalog and not deactivated at this location (RF-B01).
   const products = await db
@@ -262,6 +300,7 @@ export async function buildSetupSnapshot(
     activeTables: value(tables),
     activePosTerminals: value(posTerminals),
     activeKitchenStations: value(stations),
+    stationsWithoutOutput: stationOutputs,
     activeReceiptPrinters: value(receiptPrinters),
     managersWithPin: value(managers),
     tax: { categoriesInUse: categoriesInUse.length, categoriesResolvable },

@@ -138,7 +138,10 @@
       "print": "Imprimer",
       "continue": "Continuer l’encaissement",
       "toOrder": "Vers la commande",
-      "done": "Terminé"
+      "done": "Terminé",
+      "sentToPrinter": "Envoyé à l’imprimante.",
+      "printerProblem": "Imprimante injoignable : {error}",
+      "printInBrowser": "Imprimer depuis le navigateur"
     },
     "closed": {
       "title": "Paiements et tickets",

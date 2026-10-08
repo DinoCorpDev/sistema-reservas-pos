@@ -1,4 +1,12 @@
-import { char, index, int, mysqlTable, smallint, varchar } from 'drizzle-orm/mysql-core';
+import {
+  char,
+  index,
+  int,
+  mysqlTable,
+  smallint,
+  uniqueIndex,
+  varchar,
+} from 'drizzle-orm/mysql-core';
 import {
   locationId,
   organizationId,
@@ -48,8 +56,14 @@ export const kitchenTicketItems = mysqlTable(
     kitchenTicketId: uuid('kitchen_ticket_id').notNull(),
     orderItemId: uuid('order_item_id').notNull(),
     status: varchar('status', { length: 16 }).notNull().default('sent'),
+    /** Times of the item at this station (DEC-029), for the kitchen reports. */
+    preparingAt: utcDatetime('preparing_at'),
+    readyAt: utcDatetime('ready_at'),
     ...syncColumns(),
     ...timestamps(),
   },
-  (t) => [index('idx_kitchen_ticket_items_ticket').on(t.kitchenTicketId)],
+  (t) => [
+    index('idx_kitchen_ticket_items_ticket').on(t.kitchenTicketId),
+    uniqueIndex('uq_kitchen_ticket_items_item').on(t.kitchenTicketId, t.orderItemId),
+  ],
 );

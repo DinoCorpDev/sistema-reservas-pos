@@ -121,6 +121,8 @@ En el restaurante demo, la cerveza sin alcohol (≤ 0,5 % vol.) usa la categorí
 
 - El prompt maestro (§7) fija la interfaz de soporte en ES. El staff de DINOLABS no tiene idioma guardado (`platform_staff` no lo tiene): su sesión usa el idioma que elija en el selector (cookie) y, si no eligió ninguno, español. La página de inicio de sesión, antes de saber quién entra, sigue al navegador.
 
+## Decisiones de la Fase 2 (POS y órdenes offline)
+
 ### DEC-021 · El motor de órdenes es un registro de operaciones con plegado determinista
 
 - Cada acción del POS es una **operación inmutable** (UUID v7, que es también la clave de idempotencia) con un payload congelado: IDs nuevos, precios y MWST ya calculados, mesero de la propina. El estado de las órdenes se obtiene **plegando** las operaciones en orden canónico `(hlc, id)` con el mismo reductor puro de `@pos/core` en el dispositivo, en el hub y en la nube. Así los tres llegan al mismo resultado aunque las operaciones lleguen en distinto orden.
@@ -163,6 +165,40 @@ En el restaurante demo, la cerveza sin alcohol (≤ 0,5 % vol.) usa la categorí
 - Cada dispositivo guarda toda operación que conoce hasta que la nube la confirma y la reenvía al nodo que alcance. Si el hub muere, nada se pierde y no hace falta replicar entre hubs.
 - La PWA vive en HTTPS y el navegador bloquea las conexiones sin cifrar hacia la red local. En producción cada hub tendrá un nombre DNS público que apunta a su IP de la LAN, con un certificado emitido por la nube (ACME DNS-01), automatizado en la Fase 6. Hasta entonces el hub corre en `localhost`. **Juan debe validarlo con hardware real**: routers con protección contra DNS rebinding y el permiso de red local de Chrome.
 
+## Decisiones de la Fase 3 (Cocina, 7 oct 2026)
+
+### DEC-029 · El estado de cocina es por ítem y por estación
+
+- La cocina escribe sus propias operaciones (`kitchen.start`, `kitchen.ready`, `kitchen.recall`, `kitchen.reprint`) en el mismo registro que el POS. Un ítem avanza **en cada estación** por separado. Por ejemplo, un menú que va a cocina y a postres solo está listo cuando ambas terminaron. Su `prepStatus` se deriva de esas estaciones hasta que se sirve o se anula.
+- **El ticket es (envío, estación).** `items.send` (versión 2 de las operaciones) congela el ID y el idioma de cocina de cada ticket. Una operación de la versión 1 sigue valiendo: va a todas las estaciones del ítem, sin ID de ticket. El estado del ticket no se guarda: se deriva de sus ítems. Así un ticket no puede cambiar si no lo cambia una operación, y eso es lo que comprueba la puerta de la fase.
+- **Carreras entre cocina y sala.** Si la sala sirve o anula algo que la cocina marca después, no es un conflicto: la marca no tiene efecto. Solo es conflicto una operación de cocina sobre un ítem no enviado o sobre una estación que no le corresponde.
+- **Permisos.** Mover tickets requiere `kitchen.operate`. Servir acepta `order.create` o `kitchen.operate`, porque la cocina también puede marcar servido (RF-C22).
+
+### DEC-030 · El KDS es otro cliente del registro de operaciones
+
+- `/kds` es una app cliente igual que `/pos`: pliega las operaciones de la sede con el mismo Core y escribe las suyas.
+- **Runtime compartido** en `apps/web/src/device`: base local, motor, sincronización, PIN y textos. Cada app tiene su propia base IndexedDB (`sistema-reservas-pos` y `sistema-reservas-kds`), así que en un mismo navegador son dos dispositivos.
+- **Un código en la app equivocada no se pierde.** Si se ingresa en el POS un código de KDS (o al revés), la vinculación pasa a la app correcta.
+- **Desbloqueo.** El KDS se desbloquea una vez con el PIN de una persona con permiso de cocina (`kitchen.operate`) y no se bloquea solo; cada marca queda con su usuario. El PIN de alguien sin ese permiso (un mesero) se rechaza con un aviso.
+- **Toda estación necesita salida.** Una estación activa sin KDS ni impresora deja sus comandas invisibles. La lista de verificación del montaje lo marca (`station_output`, RF-A11) y la lista de estaciones lo señala.
+- **Conexión.** En la LAN funciona a través del hub (RF-C27). Sin hub funciona a través de la nube, con la consulta cada 2 s.
+
+### DEC-031 · Solo el hub imprime; en la Fase 3, ESC/POS por TCP 9100
+
+- **Origen de los trabajos.** Los trabajos se derivan de las operaciones (envío, anulación después de enviar, reimpresión, recibo, cajón).
+  - Cada uno tiene una clave idempotente, así que una operación repetida o un reinicio del hub no imprimen dos veces.
+  - Una operación más vieja que `settings.printing.maxDelayMinutes` (por defecto 15) queda `expired` y no se imprime. El cajón tiene un límite de 1 minuto.
+  - Si los ítems de un envío todavía no llegaron, el trabajo espera; nunca imprime a medias.
+- **Protocolo.** **Decidido con Juan:** en la Fase 3 solo ESC/POS por TCP 9100, que cubre las Epson TM y las Star en modo ESC/POS. Epson ePOS y Star CloudPRNT entran en la Fase 6, detrás de la misma interfaz, cuando se elija el hardware y se pueda probar con impresoras reales.
+- **Sin hub:** el recibo se imprime con el navegador (DEC-027) y no hay comandas impresas; el KDS sigue funcionando a través de la nube.
+- **Copias.** Una copia la imprime el hub solo si el POS lo pidió (`receipt.reprint` con `hubPrint`), para que no salga dos veces.
+
+### DEC-032 · Prueba de impresión y estado de las impresoras
+
+- La prueba se pide en el backoffice (`printers.test_requested_at`) y llega al hub con la configuración. El hub la imprime e informa el resultado con `POST /sync/printer-status`.
+- El estado de cada impresora vive en `printer_status`, fuera de `configVersion`, para que una impresora que falla no haga descargar la configuración a todas las terminales.
+- Las terminales se enteran por WebSocket (`printer.status`) y avisan en pantalla.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                | Antes de | Quién decide      |
@@ -172,5 +208,6 @@ En el restaurante demo, la cerveza sin alcohol (≤ 0,5 % vol.) usa la categorí
 | Redondeo a 0,05 de las devoluciones en efectivo (RN-06) | Fase 4   | Juan y fiduciaria |
 | Precio por sede en CHF y qué incluye                    | Piloto   | Juan y socio      |
 | Hardware recomendado por sede y quién lo instala        | Fase 6   | Juan y socio      |
+| Impresoras del piloto: ¿hacen falta ePOS o CloudPRNT?   | Fase 6   | Juan y socio      |
 | Modelo de soporte del piloto (horario, canal, persona)  | Fase 6   | Juan y socio      |
 | Nombre comercial definitivo en Suiza                    | Piloto   | Juan y socio      |

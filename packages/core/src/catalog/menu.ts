@@ -151,6 +151,29 @@ const allergenList = (rows: readonly { allergen: string; presence: string }[] = 
 const asDate = (value: string | null) => (value === null ? null : new Date(value));
 
 /**
+ * Text of a catalog entity in `language` (RF-B07): requested language → location language →
+ * catalog text. Null when there is no text at all (an empty description).
+ */
+export function snapshotText(
+  snapshot: Pick<CatalogSnapshot, 'translations' | 'locationLanguage' | 'catalogLanguage'>,
+  entityId: string,
+  field: 'name' | 'description',
+  catalogText: string | null,
+  language: ContentLanguage,
+): string | null {
+  const entry = snapshot.translations[entityId] ?? {};
+  const texts: Partial<Record<ContentLanguage, string>> = {};
+  for (const lang of CONTENT_LANGUAGES) {
+    const value = entry[lang]?.[field];
+    if (value) texts[lang] = value;
+  }
+  if (catalogText && !texts[snapshot.catalogLanguage])
+    texts[snapshot.catalogLanguage] = catalogText;
+  const value = translate(texts, catalogText ?? '', language, snapshot.locationLanguage);
+  return value === '' ? null : value;
+}
+
+/**
  * Builds the menu for one channel and language at one moment. Each product carries its gross
  * price per variant (RF-B04), allergens and origin (RF-B05, RF-B06), its kitchen stations and
  * whether it can be ordered right now and why not (RN-17). QR and web only list products that
@@ -161,22 +184,12 @@ export function buildMenu(
   options: { channel: Channel; language?: ContentLanguage; at: Date },
 ): Menu {
   const { channel, at } = options;
-  const { locationId, locationLanguage, catalogLanguage } = snapshot;
+  const { locationId, locationLanguage } = snapshot;
   const language = options.language ?? locationLanguage;
   const moment = localMoment(at, snapshot.timeZone);
 
-  /** RF-B07: requested language → location language → catalog text. */
-  const textOf = (id: string, field: 'name' | 'description', catalogText: string | null) => {
-    const entry = snapshot.translations[id] ?? {};
-    const texts: Partial<Record<ContentLanguage, string>> = {};
-    for (const lang of CONTENT_LANGUAGES) {
-      const value = entry[lang]?.[field];
-      if (value) texts[lang] = value;
-    }
-    if (catalogText && !texts[catalogLanguage]) texts[catalogLanguage] = catalogText;
-    const value = translate(texts, catalogText ?? '', language, locationLanguage);
-    return value === '' ? null : value;
-  };
+  const textOf = (id: string, field: 'name' | 'description', catalogText: string | null) =>
+    snapshotText(snapshot, id, field, catalogText, language);
   const nameOf = (id: string, name: string) => textOf(id, 'name', name) ?? name;
 
   const variantsOf = groupBy(snapshot.variants, (v) => v.productId);

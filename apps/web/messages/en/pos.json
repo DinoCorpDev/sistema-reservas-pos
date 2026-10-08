@@ -19,7 +19,8 @@
       "pair": "Pair",
       "pairing": "Pairing…",
       "invalidCode": "The code is wrong or has expired.",
-      "failed": "Pairing failed. Check the connection and try again."
+      "failed": "Pairing failed. Check the connection and try again.",
+      "hubCode": "This code belongs to the location hub. It is entered on the hub itself, not here."
     },
     "pin": {
       "title": "Enter PIN",
@@ -29,7 +30,8 @@
       "wrong": "Wrong PIN. {attemptsLeft, plural, one {# attempt} other {# attempts}} left.",
       "locked": "Too many wrong attempts. Locked for {minutes, plural, one {# minute} other {# minutes}}.",
       "invalid": "The PIN has 4 to 6 digits.",
-      "noCredentials": "This device has no access data yet. Connect it to the internet once."
+      "noCredentials": "This device has no access data yet. Connect it to the internet once.",
+      "notAllowedKitchen": "{name} has no kitchen permission. Unlock the kitchen display with the PIN of someone from the kitchen."
     },
     "approval": {
       "title": "Manager approval",
@@ -46,7 +48,16 @@
       "takeaway": "Takeaway",
       "lock": "Lock",
       "updateAvailable": "A new version of the POS is ready.",
-      "updateNow": "Update now"
+      "updateNow": "Update now",
+      "drawer": "Drawer",
+      "drawerOpened": "The drawer opens.",
+      "drawerFailed": "The drawer could not be opened.",
+      "printerDown": "Printer “{printer}” not reachable: {error}"
+    },
+    "kitchen": {
+      "readyTable": "Table {table}: {count, plural, one {# item} other {# items}} ready",
+      "readyOrder": "Order {number}: {count, plural, one {# item} other {# items}} ready",
+      "stillCooking": "Still in the kitchen: {count}"
     }
   }
 }

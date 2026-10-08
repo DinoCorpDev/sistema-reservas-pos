@@ -68,12 +68,14 @@
     "languageHint": "Sprache der Bons dieser Station.",
     "printer": "Drucker",
     "printerHint": "Optional: druckt die Bons dieser Station.",
-    "inUse": "Die Station wird noch von Produkten oder Küchenbildschirmen verwendet. Ordnen Sie diese zuerst neu zu oder deaktivieren Sie die Station."
+    "inUse": "Die Station wird noch von Produkten oder Küchenbildschirmen verwendet. Ordnen Sie diese zuerst neu zu oder deaktivieren Sie die Station.",
+    "displays": "Küchenbildschirme",
+    "noOutput": "Bons nirgends sichtbar",
+    "noOutputHint": "Diese Station hat weder einen Küchenbildschirm noch einen Drucker: ihre Bons erscheinen nirgends."
   },
   "printers": {
     "title": "Drucker",
     "hint": "Netzwerkdrucker für Belege und Küchenbons.",
-    "testNote": "Der Testdruck kommt mit dem Standort-Hub (Phase 3).",
     "new": "Neuer Drucker",
     "edit": "Drucker bearbeiten",
     "empty": "Noch keine Drucker.",
@@ -96,7 +98,17 @@
     "paperWidthValue": "{mm} mm",
     "cashDrawer": "Kassenschublade",
     "cashDrawerLabel": "Kassenschublade angeschlossen",
-    "inUse": "Stationen oder Geräte drucken noch auf diesem Drucker. Ordnen Sie sie zuerst einem anderen Drucker zu."
+    "inUse": "Stationen oder Geräte drucken noch auf diesem Drucker. Ordnen Sie sie zuerst einem anderen Drucker zu.",
+    "hubNote": "Gedruckt wird über den Standort-Hub im lokalen Netz (ESC/POS, Port 9100). Der Testdruck geht beim nächsten Abgleich an den Hub.",
+    "test": "Testdruck",
+    "testRequested": "Testdruck angefordert. Das Ergebnis erscheint hier, sobald der Hub gedruckt hat.",
+    "testPending": "Testdruck unterwegs…",
+    "testOk": "Testdruck ok ({when})",
+    "testFailed": "Testdruck fehlgeschlagen ({when})",
+    "state": "Zustand",
+    "stateOk": "Druckt",
+    "stateError": "Fehler",
+    "stateUnknown": "Noch keine Meldung"
   },
   "users": {
     "title": "Mitarbeitende",

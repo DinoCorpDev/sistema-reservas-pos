@@ -2,7 +2,7 @@
 
 import type { FoldState } from '@pos/core';
 import { useSyncExternalStore } from 'react';
-import { usePos } from '../../store';
+import { usePos } from '@/device/store';
 
 /**
  * The orders of the location, re-rendering on every change. The fold is updated in place, so

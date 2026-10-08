@@ -247,6 +247,13 @@
       "channelDescription": "Von {from} zu {to}: Die MWST aller Positionen wird neu berechnet.",
       "channelConfirm": "Zu {to} wechseln",
       "cancelDescription": "Alle Positionen werden storniert. Nichts wird gelöscht; der Grund bleibt im Protokoll."
+    },
+    "unsent": {
+      "title": "Noch nicht an die Küche gesendet",
+      "description": "{count, plural, one {# Position ist} other {# Positionen sind}} noch nicht gesendet. Die Küche sieht sie erst nach dem Senden.",
+      "send": "Jetzt senden",
+      "leave": "Ohne Senden verlassen",
+      "stay": "Zurück zur Bestellung"
     }
   }
 }

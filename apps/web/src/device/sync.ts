@@ -1,6 +1,6 @@
 import type { BootstrapDto, OfflineCredentials, PulledOperation, PushResult } from '@pos/api';
 import { observeHlc, recordServerTime } from './clock';
-import { getMeta, type OperationRow, posDb, setMeta } from './db';
+import { deviceDb, getMeta, type OperationRow, setMeta } from './db';
 import { ingest, isKnown, prune, refold } from './engine';
 import { CLOUD, callNode, NodeError } from './http';
 import { getPos, usePos } from './store';
@@ -56,7 +56,7 @@ function setSync(patch: Partial<ReturnType<typeof getPos>['sync']>): void {
 
 async function updateCounts(): Promise<void> {
   const deviceId = getPos().device?.terminalId;
-  const rows = await posDb.ops.where('cloudAcked').equals(0).toArray();
+  const rows = await deviceDb().ops.where('cloudAcked').equals(0).toArray();
   setSync({
     pending: rows.filter((r) => r.own === 1 && r.rejected === 0 && r.op.terminalId === deviceId)
       .length,
@@ -67,7 +67,7 @@ async function updateCounts(): Promise<void> {
 /** Pushes what this node has not confirmed yet, oldest first (every device gossips, §11.4). */
 async function push(target: string, deviceToken: string): Promise<void> {
   const key = ackKey(target);
-  const unconfirmed = (await posDb.ops.where('cloudAcked').equals(0).toArray())
+  const unconfirmed = (await deviceDb().ops.where('cloudAcked').equals(0).toArray())
     .filter((row) => row.rejected === 0 && !row.ackedBy.includes(key))
     .sort((a, b) => (a.hlc < b.hlc ? -1 : a.hlc > b.hlc ? 1 : a.id < b.id ? -1 : 1));
   for (let start = 0; start < unconfirmed.length; start += PUSH_BATCH) {
@@ -89,7 +89,7 @@ async function push(target: string, deviceToken: string): Promise<void> {
         conflicts: result.conflicts.map(({ code, entityId }) => ({ code, entityId })),
       };
     });
-    await posDb.ops.bulkPut(updated);
+    await deviceDb().ops.bulkPut(updated);
   }
 }
 
@@ -112,7 +112,7 @@ async function pull(target: string, deviceToken: string): Promise<string | null>
     const rows: OperationRow[] = [];
     for (const pulled of response.operations) {
       const op = pulled.operation;
-      const existing = await posDb.ops.get(op.id);
+      const existing = await deviceDb().ops.get(op.id);
       // The server may have clamped a clock running ahead (§3): its version wins.
       if (existing && existing.hlc !== op.hlc) clockChanged = true;
       rows.push({
@@ -128,7 +128,7 @@ async function pull(target: string, deviceToken: string): Promise<string | null>
     }
     await observeHlc(rows.map((row) => row.hlc));
     const fresh = rows.filter((row) => !isKnown(row.id));
-    await posDb.ops.bulkPut(rows.filter((row) => isKnown(row.id)));
+    await deviceDb().ops.bulkPut(rows.filter((row) => isKnown(row.id)));
     await ingest(fresh);
     after = response.cursor;
     await setMeta('cursors', { ...cursors, [target]: after });
@@ -229,10 +229,25 @@ function watchHub(current: string | null, deviceToken: string): void {
     socket = ws;
     socketNode = hub;
     ws.onmessage = (event) => {
-      const message = JSON.parse(String(event.data)) as { type?: string };
+      const message = JSON.parse(String(event.data)) as {
+        type?: string;
+        printerId?: string;
+        ok?: boolean;
+        error?: string | null;
+      };
       if (message.type === 'hub.hello')
         ws.send(JSON.stringify({ type: 'hello', token: deviceToken }));
       if (message.type === 'sync.applied' || message.type === 'config.changed') requestSync();
+      // A printer stopped or started working: the screens that print there warn (DEC-031).
+      if (message.type === 'printer.status' && message.printerId) {
+        const printerId = message.printerId;
+        usePos.setState((state) => ({
+          printers: {
+            ...state.printers,
+            [printerId]: { ok: message.ok === true, error: message.error ?? null },
+          },
+        }));
+      }
     };
     ws.onclose = () => {
       if (socket === ws) {

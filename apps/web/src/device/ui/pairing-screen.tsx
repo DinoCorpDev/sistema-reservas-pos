@@ -6,9 +6,12 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { pairDevice } from '../boot';
+import { HubCodeError, pairDevice } from '../boot';
 
-/** Pairs the device with a code from the backoffice (RF-A06); needs network once. */
+/**
+ * Pairs the device with a code from the backoffice (RF-A06); needs network once. The POS and
+ * the kitchen display share it (DEC-030).
+ */
 export function PairingScreen() {
   const t = useTranslations('pos.pairing');
   const [code, setCode] = useState('');
@@ -23,7 +26,13 @@ export function PairingScreen() {
       await pairDevice(code.trim());
     } catch (cause) {
       const status = (cause as { status?: number }).status;
-      setError(status === 401 ? t('invalidCode') : t('failed'));
+      setError(
+        cause instanceof HubCodeError
+          ? t('hubCode')
+          : status === 401
+            ? t('invalidCode')
+            : t('failed'),
+      );
     } finally {
       setBusy(false);
     }

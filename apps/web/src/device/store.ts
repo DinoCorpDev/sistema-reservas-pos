@@ -23,6 +23,12 @@ export interface SyncStatus {
   rejected: number;
 }
 
+/** A printer as the hub last reported it (DEC-031). */
+export interface PrinterHealth {
+  ok: boolean;
+  error: string | null;
+}
+
 export interface PosState {
   ready: boolean;
   device: PairedDevice | null;
@@ -34,10 +40,16 @@ export interface PosState {
   /** Bumped on every change of `fold` (it is updated in place for speed). */
   foldVersion: number;
   sync: SyncStatus;
-  /** A newer version of the POS is installed and waits for an idle moment. */
+  /** A newer version of the app is installed and waits for an idle moment. */
   updateWaiting: boolean;
+  /** Printers by id, as the hub reports them over WebSocket (`printer.status`). */
+  printers: Record<string, PrinterHealth>;
 }
 
+/**
+ * State of the device app (POS or KDS, DEC-030). The name stays `usePos` for the POS screens;
+ * `useDevice` reads better elsewhere.
+ */
 export const usePos = create<PosState>(() => ({
   ready: false,
   device: null,
@@ -48,6 +60,9 @@ export const usePos = create<PosState>(() => ({
   foldVersion: 0,
   sync: { level: 'standalone', node: null, pending: 0, lastSyncAt: null, rejected: 0 },
   updateWaiting: false,
+  printers: {},
 }));
 
 export const getPos = () => usePos.getState();
+export const useDevice = usePos;
+export const getDevice = getPos;

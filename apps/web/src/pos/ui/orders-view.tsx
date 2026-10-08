@@ -6,7 +6,7 @@ import { cn } from '@pos/ui/utils';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { currentBusinessDate } from '../numbers';
-import { usePos } from '../store';
+import { usePos } from '@/device/store';
 import { usePosUi } from '../ui-store';
 import { minutesSince } from './order/format';
 import { type Lookups, useFoldMemo, useLookups, useNow } from './order/hooks';

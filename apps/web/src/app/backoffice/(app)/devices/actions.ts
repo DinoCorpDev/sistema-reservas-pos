@@ -117,6 +117,13 @@ export async function updatePrinter(id: string, input: unknown) {
   );
 }
 
+/** Test page through the location hub (RF-F17, DEC-032); the result shows in the list. */
+export async function testPrinter(id: string) {
+  return runAction(async () =>
+    done(await people.requestPrinterTest(deps(), await currentActor(), id)),
+  );
+}
+
 export async function deletePrinter(id: string) {
   return runAction(async () => {
     const t = await getTranslations('printers');

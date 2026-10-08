@@ -2,6 +2,7 @@ import {
   businessDate,
   type CatalogSnapshot,
   type ConsumptionType,
+  type ContentLanguage,
   type TaxCategoryKey,
   type TaxRateCode,
   type TaxRateRecord,
@@ -42,15 +43,42 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
     .from(s.organizations)
     .where(eq(s.organizations.id, actor.organizationId));
 
-  const [areas, tables, stations, users, categories, rates, rules, catalog, version] =
+  const [areas, tables, stations, printers, users, categories, rates, rules, catalog, version] =
     await Promise.all([
       listAreas(deps, actor),
       listTables(deps, actor),
+      // Routing, delay alert, kitchen language and printer of each station (RF-C21…RF-C26).
       db
-        .select({ id: s.kitchenStations.id, name: s.kitchenStations.name })
+        .select({
+          id: s.kitchenStations.id,
+          name: s.kitchenStations.name,
+          alertAfterMinutes: s.kitchenStations.alertAfterMinutes,
+          language: s.kitchenStations.language,
+          printerId: s.kitchenStations.printerId,
+          sortOrder: s.kitchenStations.sortOrder,
+          isActive: s.kitchenStations.isActive,
+        })
         .from(s.kitchenStations)
         .where(inLocation(s.kitchenStations, actor, notDeleted(s.kitchenStations)))
-        .orderBy(asc(s.kitchenStations.name)),
+        .orderBy(asc(s.kitchenStations.sortOrder), asc(s.kitchenStations.name)),
+      // Printers of the location: the hub prints on them (DEC-031); the POS knows whether its
+      // receipt printer exists. `testRequestedAt` tells the hub a test page is due (DEC-032).
+      db
+        .select({
+          id: s.printers.id,
+          name: s.printers.name,
+          kind: s.printers.kind,
+          protocol: s.printers.protocol,
+          host: s.printers.host,
+          port: s.printers.port,
+          paperWidthMm: s.printers.paperWidthMm,
+          hasCashDrawer: s.printers.hasCashDrawer,
+          isActive: s.printers.isActive,
+          testRequestedAt: s.printers.testRequestedAt,
+        })
+        .from(s.printers)
+        .where(inLocation(s.printers, actor, notDeleted(s.printers)))
+        .orderBy(asc(s.printers.name)),
       db
         .select({ id: s.users.id, displayName: s.users.displayName })
         .from(s.users)
@@ -128,7 +156,14 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
     location,
     areas,
     tables,
-    stations,
+    stations: stations.map((station) => ({
+      ...station,
+      language: station.language as ContentLanguage | null,
+    })),
+    printers: printers.map((printer) => ({
+      ...printer,
+      testRequestedAt: printer.testRequestedAt?.toISOString() ?? null,
+    })),
     users,
     tax: {
       categories: categories.map((c) => ({ id: c.id, key: c.key as TaxCategoryKey, name: c.name })),

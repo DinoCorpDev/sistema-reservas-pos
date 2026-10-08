@@ -61,7 +61,14 @@ export const TABLE_GROUPS = {
   /** Insert-only; MySQL triggers reject UPDATE and DELETE (RN-10). */
   appendOnly: [s.auditEvents, s.receipts, s.dailyClosings],
   /** Infrastructure for events, sync and numbering. */
-  infrastructure: [s.outboxEvents, s.syncOperations, s.orderNumberSequences, s.orderNumberClaims],
+  infrastructure: [
+    s.outboxEvents,
+    s.syncOperations,
+    s.orderNumberSequences,
+    s.orderNumberClaims,
+    s.printerStatus,
+    s.printJobs,
+  ],
 } as const;
 
 /** Append-only tables by SQL name, used by the triggers migration. */

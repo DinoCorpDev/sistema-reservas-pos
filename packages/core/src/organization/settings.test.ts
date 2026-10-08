@@ -9,6 +9,7 @@ describe('location settings', () => {
       managerApproval: { discountAboveBp: 2000, voidSentItem: true, refundAboveRappen: 0 },
       reservations: { blockMinutesBefore: 15, noShowAfterMinutes: 20, defaultDurationMinutes: 120 },
       kitchen: { alertAfterMinutes: 12 },
+      printing: { maxDelayMinutes: 15 },
       receipts: { customerNameFromRappen: 40000 },
       security: { maxPinAttempts: 5, pinLockMinutes: 5 },
       pos: {

@@ -81,7 +81,7 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
   await page.getByLabel('Neues Passwort wiederholen').fill(OWNER.password);
   await page.getByRole('button', { name: 'Passwort ändern' }).click();
   await expect(page).toHaveURL(/\/backoffice$/);
-  await expect(page.getByText('7 von 14 erledigt')).toBeVisible();
+  await expect(page.getByText('8 von 15 erledigt')).toBeVisible();
 
   // ── 3. Floor: an area and a table (RF-A03) ──────────────────────────────
   await page.goto('/backoffice/floor');
@@ -112,6 +112,17 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
   await page.getByRole('button', { name: 'Neues Gerät' }).click();
   await page.getByRole('dialog').getByLabel('Name', { exact: true }).fill('Kasse 1');
   await page.getByRole('dialog').getByRole('button', { name: 'Speichern' }).click();
+  await expect(page.getByRole('dialog')).toBeHidden();
+
+  // A kitchen display for the station: without it (or a printer) its tickets show up nowhere.
+  await page.getByRole('button', { name: 'Neues Gerät' }).click();
+  const kds = page.getByRole('dialog');
+  await kds.getByLabel('Name', { exact: true }).fill('KDS Küche');
+  await kds.getByLabel('Typ').click();
+  await page.getByRole('option', { name: 'Küchenbildschirm (KDS)' }).click();
+  await kds.getByLabel('Küchenstation').click();
+  await page.getByRole('option', { name: 'Küche', exact: true }).click();
+  await kds.getByRole('button', { name: 'Speichern' }).click();
   await expect(page.getByRole('dialog')).toBeHidden();
 
   // ── 5. Staff: the owner sets her POS PIN (RF-A06) ───────────────────────
@@ -159,7 +170,7 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
 
   // ── 7. The checklist is complete; the owner activates operation (RF-A11) ─
   await page.goto('/backoffice');
-  await expect(page.getByText('14 von 14 erledigt')).toBeVisible();
+  await expect(page.getByText('15 von 15 erledigt')).toBeVisible();
   await page.getByRole('button', { name: 'Betrieb aktivieren' }).click();
   await expect(page.getByText(/Betrieb aktiv seit \d{2}\.\d{2}\.\d{4}/)).toBeVisible();
 
@@ -167,7 +178,7 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
   await page.getByRole('combobox', { name: 'Sprache' }).click();
   await page.getByRole('option', { name: 'Français' }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
-  await expect(page.getByText('14 sur 14 terminés')).toBeVisible();
+  await expect(page.getByText('15 sur 15 terminés')).toBeVisible();
   await expect(page.getByText(/Exploitation active depuis le \d{2}\.\d{2}\.\d{4}/)).toBeVisible();
 
   // The choice is stored on her user, so it survives a reload.
@@ -177,5 +188,5 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
   await page.getByRole('combobox', { name: 'Langue' }).click();
   await page.getByRole('option', { name: 'Italiano' }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'it');
-  await expect(page.getByText('14 di 14 completati')).toBeVisible();
+  await expect(page.getByText('15 di 15 completati')).toBeVisible();
 });

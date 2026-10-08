@@ -16,6 +16,7 @@ const ready: SetupSnapshot = {
   activeTables: 12,
   activePosTerminals: 1,
   activeKitchenStations: 3,
+  stationsWithoutOutput: 0,
   activeReceiptPrinters: 1,
   managersWithPin: 2,
   tax: { categoriesInUse: 3, categoriesResolvable: 3 },
@@ -92,6 +93,14 @@ describe('RF-A11 · setup checklist', () => {
       done: false,
       missing: 1,
     });
+  });
+
+  it('flags a kitchen station whose tickets nobody would see (no KDS, no printer)', () => {
+    const checklist = computeSetupChecklist({ ...ready, stationsWithoutOutput: 1 });
+    expect(checklist.complete).toBe(false);
+    expect(checklist.checks.filter((c) => !c.done)).toEqual([
+      { key: 'station_output', done: false, missing: 1 },
+    ]);
   });
 
   it('requires a valid Swiss UID and complete address', () => {

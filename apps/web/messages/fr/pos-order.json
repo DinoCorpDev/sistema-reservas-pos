@@ -247,6 +247,13 @@
       "channelDescription": "De «{from}» à «{to}» : la TVA de tous les articles est recalculée.",
       "channelConfirm": "Passer à «{to}»",
       "cancelDescription": "Tous les articles sont annulés. Rien n’est supprimé ; le motif reste dans le journal."
+    },
+    "unsent": {
+      "title": "Pas encore envoyé en cuisine",
+      "description": "{count, plural, one {# position n’est pas encore envoyée} other {# positions ne sont pas encore envoyées}}. La cuisine ne les voit qu’après l’envoi.",
+      "send": "Envoyer maintenant",
+      "leave": "Quitter sans envoyer",
+      "stay": "Retour à la commande"
     }
   }
 }

@@ -11,6 +11,13 @@ const devDatabase = new URL(process.env.DATABASE_URL ?? 'mysql://root@127.0.0.1:
 const e2eDatabase = new URL(devDatabase);
 e2eDatabase.pathname = `${devDatabase.pathname.replace(/\/$/, '')}_e2e`;
 process.env.TEST_DATABASE_URL = e2eDatabase.toString();
+// The LAN hub of the kitchen tests (Phase 3) gets its own empty database too.
+const devHubDatabase = new URL(
+  process.env.HUB_DATABASE_URL ?? 'mysql://root@127.0.0.1:3310/pos_hub',
+);
+const e2eHubDatabase = new URL(devHubDatabase);
+e2eHubDatabase.pathname = `${devHubDatabase.pathname.replace(/\/$/, '')}_e2e`;
+process.env.TEST_HUB_DATABASE_URL = e2eHubDatabase.toString();
 
 export default defineConfig({
   testDir: './e2e',

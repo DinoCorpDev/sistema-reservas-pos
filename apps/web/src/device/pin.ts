@@ -1,4 +1,5 @@
 import { isValidPin, type Permission } from '@pos/core';
+import { type DeviceApp, deviceApp } from './app';
 import { getMeta, setMeta } from './db';
 import { dispatch } from './engine';
 import { makeOperation } from './operations';
@@ -58,7 +59,18 @@ export type PinResult =
   | { status: 'wrong'; attemptsLeft: number }
   | { status: 'locked'; retryAfterSeconds: number }
   | { status: 'invalid' }
-  | { status: 'no_credentials' };
+  | { status: 'no_credentials' }
+  /** The PIN is right, but this person may not work on this kind of device. */
+  | { status: 'not_allowed'; displayName: string };
+
+/**
+ * What a person needs to unlock each app (RNF-10): the kitchen display is for the kitchen, so
+ * its marks are never made by someone without `kitchen.operate` (DEC-030).
+ */
+const REQUIRED_PERMISSION: Readonly<Record<DeviceApp, Permission | null>> = {
+  pos: null,
+  kds: 'kitchen.operate',
+};
 
 /** Finds the person with this PIN without recording anything (also used for approvals). */
 export async function identify(pin: string): Promise<PosUser | null | 'no_credentials'> {
@@ -115,6 +127,10 @@ export async function unlock(pin: string): Promise<PinResult> {
       : { status: 'wrong', attemptsLeft: security.maxPinAttempts - failures };
   }
   await setMeta('pinLock', { failures: 0, lockedUntil: null });
+  const required = REQUIRED_PERMISSION[deviceApp()];
+  if (required && !user.permissions.has(required)) {
+    return { status: 'not_allowed', displayName: user.displayName };
+  }
   usePos.setState({ user });
   await dispatch(await makeOperation('terminal.unlocked', null, {}));
   return { status: 'ok', user };

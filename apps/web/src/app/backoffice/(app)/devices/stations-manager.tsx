@@ -2,6 +2,7 @@
 
 import type { people } from '@pos/api';
 import { CONTENT_LANGUAGES } from '@pos/core';
+import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@pos/ui/card';
 import { ConfirmButton } from '@pos/ui/confirm';
@@ -36,11 +37,13 @@ type StationDefaults = { alertAfterMinutes: number; language: string };
 export function StationsManager({
   stations,
   printers,
+  terminals,
   defaults,
   canEdit,
 }: {
   stations: people.KitchenStationDto[];
   printers: people.PrinterDto[];
+  terminals: people.TerminalDto[];
   defaults: StationDefaults;
   canEdit: boolean;
 }) {
@@ -54,6 +57,11 @@ export function StationsManager({
   );
   const remove = useServerAction(actions.deleteKitchenStation);
   const printerName = (id: string | null) => printers.find((p) => p.id === id)?.name ?? '—';
+  // Where the tickets of a station show up: its kitchen displays and its printer (RF-C20, RF-C26).
+  const displaysOf = (stationId: string) =>
+    terminals.filter((d) => d.type === 'kds' && d.isActive && d.kitchenStationId === stationId);
+  const printsOn = (printerId: string | null) =>
+    printers.some((p) => p.id === printerId && p.isActive);
   const standard = (value: string) => (
     <span className="text-muted-foreground">{t('standard', { value })}</span>
   );
@@ -92,6 +100,7 @@ export function StationsManager({
               <TableHead>{t('alertAfter')}</TableHead>
               <TableHead>{t('language')}</TableHead>
               <TableHead>{t('printer')}</TableHead>
+              <TableHead>{t('displays')}</TableHead>
               <TableHead>{tc('sortOrder')}</TableHead>
               <TableHead>{tc('active')}</TableHead>
               {canEdit ? <TableHead className="text-right">{tc('actions')}</TableHead> : null}
@@ -110,6 +119,19 @@ export function StationsManager({
                   {station.language ? tl(station.language) : standard(tl(defaults.language))}
                 </TableCell>
                 <TableCell>{printerName(station.printerId)}</TableCell>
+                <TableCell data-testid="station-output">
+                  {displaysOf(station.id).length > 0 ? (
+                    displaysOf(station.id)
+                      .map((d) => d.name)
+                      .join(', ')
+                  ) : station.isActive && !printsOn(station.printerId) ? (
+                    <Badge variant="destructive" title={t('noOutputHint')}>
+                      {t('noOutput')}
+                    </Badge>
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
                 <TableCell className="tabular-nums">{station.sortOrder}</TableCell>
                 <TableCell>
                   <Switch

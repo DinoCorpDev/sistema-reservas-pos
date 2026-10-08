@@ -15,7 +15,7 @@ import { cn } from '@pos/ui/utils';
 import { Clock, Link2, Plus, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type CSSProperties, useId, useMemo, useState } from 'react';
-import { getPos, usePos } from '../store';
+import { getPos, usePos } from '@/device/store';
 import { usePosUi } from '../ui-store';
 import { byLabel, minutesSince } from './order/format';
 import { useElementWidth, useFoldMemo, useLookups, useNow } from './order/hooks';

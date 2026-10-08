@@ -1,0 +1,33 @@
+{
+  "kds": {
+    "tabs": {
+      "open": "Ouverts ({count})",
+      "done": "Terminés"
+    },
+    "noneOpen": "Aucun bon ouvert.",
+    "noneDone": "Rien de terminé ces dernières heures.",
+    "noStation": "Aucun poste n’est attribué à cet écran de cuisine. Attribuez-le dans le backoffice, sous Appareils & postes.",
+    "failed": "Cela n’a pas fonctionné. Veuillez réessayer.",
+    "reprinted": "Le bon est réimprimé.",
+    "acknowledge": "Vu",
+    "lock": "Verrouiller",
+    "printerDown": "Imprimante «{printer}» injoignable : {error}",
+    "ticket": {
+      "minutes": "{minutes} min",
+      "start": "Commencer",
+      "ready": "Prêt",
+      "served": "Servi",
+      "recall": "Rappeler",
+      "reprint": "Réimprimer le bon",
+      "moved": "Déplacé vers une autre commande",
+      "itemLabel": "{name} : {status}",
+      "status": {
+        "sent": "Nouveau",
+        "preparing": "En préparation",
+        "ready": "Prêt",
+        "served": "Servi",
+        "voided": "Annulé"
+      }
+    }
+  }
+}

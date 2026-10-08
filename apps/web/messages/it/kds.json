@@ -1,0 +1,33 @@
+{
+  "kds": {
+    "tabs": {
+      "open": "Aperti ({count})",
+      "done": "Completati"
+    },
+    "noneOpen": "Nessuna comanda aperta.",
+    "noneDone": "Niente completato nelle ultime ore.",
+    "noStation": "A questo schermo cucina non è assegnata nessuna postazione. Assegnala nel backoffice, in Dispositivi e postazioni.",
+    "failed": "Non ha funzionato. Riprova.",
+    "reprinted": "La comanda viene ristampata.",
+    "acknowledge": "Visto",
+    "lock": "Blocca",
+    "printerDown": "Stampante «{printer}» non raggiungibile: {error}",
+    "ticket": {
+      "minutes": "{minutes} min",
+      "start": "Inizia",
+      "ready": "Pronto",
+      "served": "Servito",
+      "recall": "Richiama",
+      "reprint": "Ristampa comanda",
+      "moved": "Spostato su un altro ordine",
+      "itemLabel": "{name}: {status}",
+      "status": {
+        "sent": "Nuovo",
+        "preparing": "In preparazione",
+        "ready": "Pronto",
+        "served": "Servito",
+        "voided": "Stornato"
+      }
+    }
+  }
+}

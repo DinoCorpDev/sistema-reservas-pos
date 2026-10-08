@@ -20,6 +20,11 @@ export interface SetupSnapshot {
   activeTables: number;
   activePosTerminals: number;
   activeKitchenStations: number;
+  /**
+   * Active stations whose tickets nobody would see: no active kitchen display and no active
+   * printer (RF-C20, RF-C26). Their items would reach the kitchen nowhere.
+   */
+  stationsWithoutOutput: number;
   activeReceiptPrinters: number;
   /** Active users at the location with a PIN and the `approval.grant` permission. */
   managersWithPin: number;
@@ -48,6 +53,7 @@ export const SETUP_CHECKS = [
   'tables',
   'pos_terminal',
   'kitchen_station',
+  'station_output',
   'receipt_printer',
   'manager_with_pin',
   'tax_rules',
@@ -109,6 +115,7 @@ export function computeSetupChecklist(snapshot: SetupSnapshot): SetupChecklist {
     atLeast(snapshot.activeTables, 'tables'),
     atLeast(snapshot.activePosTerminals, 'pos_terminal'),
     atLeast(snapshot.activeKitchenStations, 'kitchen_station'),
+    none(snapshot.stationsWithoutOutput, 'station_output'),
     atLeast(snapshot.activeReceiptPrinters, 'receipt_printer'),
     atLeast(snapshot.managersWithPin, 'manager_with_pin'),
     {

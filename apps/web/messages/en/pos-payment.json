@@ -138,7 +138,10 @@
       "print": "Print",
       "continue": "Take next payment",
       "toOrder": "Go to order",
-      "done": "Done"
+      "done": "Done",
+      "sentToPrinter": "Sent to the printer.",
+      "printerProblem": "Printer not reachable: {error}",
+      "printInBrowser": "Print from the browser"
     },
     "closed": {
       "title": "Payments and receipts",

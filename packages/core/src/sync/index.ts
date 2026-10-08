@@ -3,3 +3,4 @@
  * and their fold live in the orders module.
  */
 export * from './constants';
+export * from './commands';

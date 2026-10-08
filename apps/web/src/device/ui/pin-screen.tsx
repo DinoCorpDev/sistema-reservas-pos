@@ -30,6 +30,8 @@ export function PinScreen() {
     else if (result.status === 'locked')
       setMessage(t('locked', { minutes: Math.ceil(result.retryAfterSeconds / 60) }));
     else if (result.status === 'no_credentials') setMessage(t('noCredentials'));
+    else if (result.status === 'not_allowed')
+      setMessage(t('notAllowedKitchen', { name: result.displayName }));
     else if (result.status === 'invalid') setMessage(t('invalid'));
   }
 

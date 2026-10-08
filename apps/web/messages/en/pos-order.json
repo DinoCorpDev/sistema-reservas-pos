@@ -247,6 +247,13 @@
       "channelDescription": "From {from} to {to}: VAT on all items is recalculated.",
       "channelConfirm": "Switch to {to}",
       "cancelDescription": "All items are voided. Nothing is deleted; the reason stays in the audit log."
+    },
+    "unsent": {
+      "title": "Not sent to the kitchen yet",
+      "description": "{count, plural, one {# item has} other {# items have}} not been sent yet. The kitchen only sees them once they are sent.",
+      "send": "Send now",
+      "leave": "Leave without sending",
+      "stay": "Back to the order"
     }
   }
 }

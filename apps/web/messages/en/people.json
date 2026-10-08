@@ -68,12 +68,14 @@
     "languageHint": "Language of this station’s tickets.",
     "printer": "Printer",
     "printerHint": "Optional: prints this station’s tickets.",
-    "inUse": "The station is still used by products or kitchen displays. Reassign them first or deactivate the station."
+    "inUse": "The station is still used by products or kitchen displays. Reassign them first or deactivate the station.",
+    "displays": "Kitchen displays",
+    "noOutput": "Tickets shown nowhere",
+    "noOutputHint": "This station has neither a kitchen display nor a printer: its tickets show up nowhere."
   },
   "printers": {
     "title": "Printers",
     "hint": "Network printers for receipts and kitchen tickets.",
-    "testNote": "Test printing will come with the location hub (phase 3).",
     "new": "New printer",
     "edit": "Edit printer",
     "empty": "No printers yet.",
@@ -96,7 +98,17 @@
     "paperWidthValue": "{mm} mm",
     "cashDrawer": "Cash drawer",
     "cashDrawerLabel": "Cash drawer connected",
-    "inUse": "Stations or devices still print to this printer. Assign them to another printer first."
+    "inUse": "Stations or devices still print to this printer. Assign them to another printer first.",
+    "hubNote": "Printing goes through the location hub on the local network (ESC/POS, port 9100). The test page reaches the hub with the next sync.",
+    "test": "Test page",
+    "testRequested": "Test page requested. The result shows here once the hub has printed.",
+    "testPending": "Test page on its way…",
+    "testOk": "Test ok ({when})",
+    "testFailed": "Test failed ({when})",
+    "state": "State",
+    "stateOk": "Printing",
+    "stateError": "Error",
+    "stateUnknown": "No report yet"
   },
   "users": {
     "title": "Staff",

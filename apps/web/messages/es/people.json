@@ -68,12 +68,14 @@
     "languageHint": "Idioma de las comandas de esta estación.",
     "printer": "Impresora",
     "printerHint": "Opcional: imprime las comandas de esta estación.",
-    "inUse": "Todavía hay productos o pantallas de cocina que usan esta estación. Primero reasígnelos o desactive la estación."
+    "inUse": "Todavía hay productos o pantallas de cocina que usan esta estación. Primero reasígnelos o desactive la estación.",
+    "displays": "Pantallas de cocina",
+    "noOutput": "Comandas sin salida",
+    "noOutputHint": "Esta estación no tiene pantalla de cocina ni impresora: sus comandas no aparecen en ningún lado."
   },
   "printers": {
     "title": "Impresoras",
     "hint": "Impresoras de red para recibos y comandas de cocina.",
-    "testNote": "La impresión de prueba llegará con el hub de la sede (fase 3).",
     "new": "Nueva impresora",
     "edit": "Editar impresora",
     "empty": "Todavía no hay impresoras.",
@@ -96,7 +98,17 @@
     "paperWidthValue": "{mm} mm",
     "cashDrawer": "Cajón de dinero",
     "cashDrawerLabel": "Cajón de dinero conectado",
-    "inUse": "Todavía hay estaciones o dispositivos que imprimen en esta impresora. Primero asígnelos a otra impresora."
+    "inUse": "Todavía hay estaciones o dispositivos que imprimen en esta impresora. Primero asígnelos a otra impresora.",
+    "hubNote": "Se imprime a través del hub de la sede en la red local (ESC/POS, puerto 9100). La página de prueba llega al hub con la próxima sincronización.",
+    "test": "Página de prueba",
+    "testRequested": "Página de prueba solicitada. El resultado aparece aquí cuando el hub haya impreso.",
+    "testPending": "Página de prueba en camino…",
+    "testOk": "Prueba correcta ({when})",
+    "testFailed": "Prueba fallida ({when})",
+    "state": "Estado",
+    "stateOk": "Imprime",
+    "stateError": "Error",
+    "stateUnknown": "Sin noticias todavía"
   },
   "users": {
     "title": "Personal",

@@ -12,7 +12,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { approveWithPin, checkAction } from '../actions';
 import { usePosUi } from '../ui-store';
-import { NumPad } from './num-pad';
+import { NumPad } from '@/device/ui/num-pad';
 
 /**
  * Manager approval on the same device (RN-15, RF-A05): opened by `requestApproval()`. When the

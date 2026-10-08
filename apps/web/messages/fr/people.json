@@ -68,12 +68,14 @@
     "languageHint": "Langue des tickets de ce poste.",
     "printer": "Imprimante",
     "printerHint": "Facultatif : imprime les tickets de ce poste.",
-    "inUse": "Le poste est encore utilisé par des produits ou des écrans de cuisine. Réattribuez-les d’abord ou désactivez le poste."
+    "inUse": "Le poste est encore utilisé par des produits ou des écrans de cuisine. Réattribuez-les d’abord ou désactivez le poste.",
+    "displays": "Écrans de cuisine",
+    "noOutput": "Bons visibles nulle part",
+    "noOutputHint": "Ce poste n’a ni écran de cuisine ni imprimante : ses bons n’apparaissent nulle part."
   },
   "printers": {
     "title": "Imprimantes",
     "hint": "Imprimantes réseau pour les tickets de caisse et de cuisine.",
-    "testNote": "L’impression de test arrivera avec le hub de l’établissement (phase 3).",
     "new": "Nouvelle imprimante",
     "edit": "Modifier l’imprimante",
     "empty": "Aucune imprimante pour l’instant.",
@@ -96,7 +98,17 @@
     "paperWidthValue": "{mm} mm",
     "cashDrawer": "Tiroir-caisse",
     "cashDrawerLabel": "Tiroir-caisse raccordé",
-    "inUse": "Des postes ou des appareils impriment encore sur cette imprimante. Attribuez-les d’abord à une autre imprimante."
+    "inUse": "Des postes ou des appareils impriment encore sur cette imprimante. Attribuez-les d’abord à une autre imprimante.",
+    "hubNote": "L’impression passe par le hub de l’établissement sur le réseau local (ESC/POS, port 9100). La page de test part vers le hub à la prochaine synchronisation.",
+    "test": "Page de test",
+    "testRequested": "Page de test demandée. Le résultat s’affiche ici dès que le hub a imprimé.",
+    "testPending": "Page de test en cours…",
+    "testOk": "Test réussi ({when})",
+    "testFailed": "Test échoué ({when})",
+    "state": "État",
+    "stateOk": "Imprime",
+    "stateError": "Erreur",
+    "stateUnknown": "Pas encore de nouvelles"
   },
   "users": {
     "title": "Personnel",

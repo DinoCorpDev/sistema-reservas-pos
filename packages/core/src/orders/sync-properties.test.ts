@@ -13,10 +13,12 @@ import {
   projection,
   random,
   shuffle,
+  STATION,
   TABLE,
   TERMINAL,
   USER,
 } from './test-kit';
+import { ticketProgress } from '../kitchen/tickets';
 
 /**
  * Property tests of the sync rules (docs/SYNC.md §4-§5, RNF-03, RNF-04). A random history is
@@ -33,7 +35,14 @@ function history(seed: number, steps = 45): Operation[] {
     { device: new Device(TERMINAL.K1, USER.cashier), visible: [] as Operation[], seen: 0 },
     { device: new Device(TERMINAL.H1, USER.waiter), visible: [] as Operation[], seen: 0 },
     { device: new Device(TERMINAL.H2, USER.manager), visible: [] as Operation[], seen: 0 },
+    // The KDS of the kitchen (Phase 3): it only moves kitchen tickets and serves.
+    { device: new Device(TERMINAL.D1, USER.cook), visible: [] as Operation[], seen: 0 },
   ];
+  const food = () =>
+    line({
+      quantity: 1 + Math.floor(next() * 3),
+      stationIds: next() < 0.3 ? [STATION.kitchen, STATION.dessert] : [STATION.kitchen],
+    });
   const all: Operation[] = [];
   let number = 1;
 
@@ -57,16 +66,54 @@ function history(seed: number, steps = 45): Operation[] {
     const d = actor.device;
     const manager = { approverUserId: USER.manager, permissions: ['approval.grant' as const] };
 
+    if (d.terminalId === TERMINAL.D1) {
+      // Kitchen: work on a random ticket of the stations it sees.
+      const ticket = pick([...state.tickets.values()]);
+      const ticketItems = ticket ? ticket.itemIds.filter(() => next() < 0.7) : [];
+      const kitchenOps: (() => Operation | null)[] = [
+        () =>
+          ticket && ticketItems.length > 0
+            ? d.kitchen('kitchen.start', ticket.orderId, ticket.stationId, ...ticketItems)
+            : null,
+        () =>
+          ticket && ticketItems.length > 0
+            ? d.kitchen('kitchen.ready', ticket.orderId, ticket.stationId, ...ticketItems)
+            : null,
+        () =>
+          ticket && ticketItems.length > 0
+            ? d.kitchen('kitchen.recall', ticket.orderId, ticket.stationId, ...ticketItems)
+            : null,
+        () => (ticket && ticketItems.length > 0 ? d.serve(ticket.orderId, ...ticketItems) : null),
+        () =>
+          ticket
+            ? d.op('kitchen.reprint', ticket.orderId, {
+                sendOperationId: ticket.sendOperationId,
+                stationId: ticket.stationId,
+              })
+            : null,
+      ];
+      const op = pick(kitchenOps)!();
+      if (op) {
+        all.push(op);
+        actor.visible.push(op);
+      }
+      continue;
+    }
+
     const actions: (() => Operation | null)[] = [
       () =>
         open.length < 4
           ? d.open(freshId(), { tableId: pick(Object.values(TABLE))! }, number++)
           : null,
       () =>
-        order
-          ? d.add(order.id, next() < 0.5 ? line({ quantity: 1 + Math.floor(next() * 3) }) : beer())
-          : null,
-      () => (order && items.length > 0 ? d.send(order.id, ...items.map((i) => i.id)) : null),
+        order ? d.add(order.id, next() < 0.5 ? food() : beer({ stationIds: [STATION.bar] })) : null,
+      () => {
+        if (!order || items.length === 0) return null;
+        const stations = [...new Set(items.flatMap((i) => i.stationIds))];
+        // Now and then a station is left out, as when it is inactive.
+        const routed = stations.filter(() => next() < 0.9);
+        return d.sendTo(order.id, routed, ...items.map((i) => i.id));
+      },
       () => (order && item ? d.serve(order.id, item.id) : null),
       () =>
         order && item
@@ -167,8 +214,9 @@ describe('sync properties (docs/SYNC.md)', () => {
   it('the random histories exercise every kind of operation and real conflicts', () => {
     const types = new Set<string>();
     const conflictCodes = new Set<string>();
-    for (let seed = 1; seed <= 50; seed += 1) {
-      const ops = history(seed);
+    // Long histories: closing an order (served and paid) and reopening it take many steps.
+    for (let seed = 1; seed <= 100; seed += 1) {
+      const ops = history(seed, 120);
       for (const op of ops) types.add(op.type);
       for (const conflict of foldOperations(ops, CONTEXT).conflicts)
         conflictCodes.add(conflict.code);
@@ -181,6 +229,10 @@ describe('sync properties (docs/SYNC.md)', () => {
         'items.send',
         'items.serve',
         'items.transfer',
+        'kitchen.ready',
+        'kitchen.recall',
+        'kitchen.reprint',
+        'kitchen.start',
         'order.merge',
         'order.open',
         'order.reopen',
@@ -264,9 +316,61 @@ describe('sync properties (docs/SYNC.md)', () => {
         expect(pick(part.discounts, (d) => d.orderId)).toEqual(
           pick(whole.discounts, (d) => d.orderId),
         );
+        const tickets = (state: typeof whole) =>
+          [...state.tickets.values()]
+            .filter((t) => ids.has(t.orderId))
+            .sort((a, b) => (a.key < b.key ? -1 : 1))
+            .map((t) => ({ ...t, progress: ticketProgress(state, t) }));
+        expect(tickets(part)).toEqual(tickets(whole));
         for (const op of operationsOfGroup(ops, ids)) {
           expect(part.outcomes.get(op.id)).toBe(whole.outcomes.get(op.id));
         }
+      }
+    }
+  });
+
+  it('no kitchen ticket changes on its own: only an operation on its items moves it (gate)', () => {
+    // Items an operation acts on; an order-wide operation acts on all items of its order.
+    const touchedItems = (op: Operation, state: ReturnType<typeof foldOperations>) => {
+      switch (op.type) {
+        case 'items.send':
+        case 'items.serve':
+        case 'kitchen.start':
+        case 'kitchen.ready':
+        case 'kitchen.recall':
+          return new Set(op.payload.itemIds);
+        case 'item.void':
+          return new Set([op.payload.itemId, op.payload.voidedItemId]);
+        case 'order.void':
+          return new Set(itemsOf(state, op.orderId).map((i) => i.id));
+        default:
+          return new Set<string>();
+      }
+    };
+    for (let seed = 600; seed < 640; seed += 1) {
+      const sorted = [...history(seed, 70)].sort(compareOperations);
+      const state = createFoldState();
+      const snapshot = () =>
+        new Map(
+          [...state.tickets.values()].map((t) => [t.key, JSON.stringify(ticketProgress(state, t))]),
+        );
+      let before = snapshot();
+      for (const op of sorted) {
+        applyOperations(state, [op], CONTEXT);
+        const after = snapshot();
+        const acted = touchedItems(op, state);
+        for (const [key, progress] of after) {
+          if (before.get(key) === progress) continue;
+          const ticket = state.tickets.get(key)!;
+          // A new ticket comes from a send; a changed one shares an item with the operation.
+          const explained = before.has(key)
+            ? ticket.itemIds.some((id) => acted.has(id))
+            : op.type === 'items.send' && ticket.sendOperationId === op.id;
+          expect(explained, `${op.type} changed ticket ${key}`).toBe(true);
+        }
+        // Tickets never disappear.
+        for (const key of before.keys()) expect(after.has(key)).toBe(true);
+        before = after;
       }
     }
   });

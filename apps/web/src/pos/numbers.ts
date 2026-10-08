@@ -1,8 +1,8 @@
 import { businessDate, formatReceiptNumber, type OrderNumber, orderNumber } from '@pos/core';
-import { correctedNow } from './clock';
-import { type Counters, getMeta, setMeta } from './db';
-import { CLOUD, callNode } from './http';
-import { getPos } from './store';
+import { correctedNow } from '@/device/clock';
+import { type Counters, getMeta, setMeta } from '@/device/db';
+import { CLOUD, callNode } from '@/device/http';
+import { getPos } from '@/device/store';
 
 /**
  * Order and receipt numbers on the device (RN-16, docs/SYNC.md §8, DEC-022, DEC-024):

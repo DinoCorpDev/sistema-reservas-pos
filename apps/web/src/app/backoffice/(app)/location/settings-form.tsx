@@ -43,14 +43,26 @@ export function SettingsForm({
     customerNameFromChf: settings.receipts.customerNameFromRappen / 100,
     maxPinAttempts: settings.security.maxPinAttempts,
     pinLockMinutes: settings.security.pinLockMinutes,
+    printMaxDelayMinutes: settings.printing.maxDelayMinutes,
   });
+  // LAN hubs of the location, one per line, in order (docs/SYNC.md §1, §11.4).
+  const [hubUrls, setHubUrls] = useState(settings.sync.hubUrls.join('\n'));
   const { run, pending, fieldErrors } = useServerAction(saveLocationSettings);
   const num = (key: keyof typeof form) => (event: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: Number(event.target.value) }));
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
+    // The settings are replaced as a whole: what this form does not edit is sent as it is.
     void run(locationId, {
+      ...settings,
+      printing: { maxDelayMinutes: form.printMaxDelayMinutes },
+      sync: {
+        hubUrls: hubUrls
+          .split(/\s+/)
+          .map((url) => url.trim())
+          .filter((url) => url !== ''),
+      },
       shiftMode: form.shiftMode,
       managerApproval: {
         discountAboveBp: Math.round(form.discountAbovePercent * 100),
@@ -126,6 +138,24 @@ export function SettingsForm({
           {numberField('customerNameFromChf', t('customerNameFrom'), 0.05)}
           {numberField('maxPinAttempts', t('maxPinAttempts'))}
           {numberField('pinLockMinutes', t('pinLockMinutes'))}
+          {numberField('printMaxDelayMinutes', t('printMaxDelay'))}
+          <Field
+            label={t('hubUrls')}
+            hint={t('hubUrlsHint')}
+            htmlFor="set-hubUrls"
+            className="sm:col-span-2 lg:col-span-3"
+          >
+            <textarea
+              id="set-hubUrls"
+              rows={2}
+              value={hubUrls}
+              onChange={(event) => setHubUrls(event.target.value)}
+              disabled={!canEdit}
+              spellCheck={false}
+              placeholder="https://hub.restaurant.local:4100"
+              className="min-h-11 rounded-md border bg-background px-3 py-2 font-mono text-sm"
+            />
+          </Field>
         </CardContent>
         {canEdit ? (
           <CardFooter>

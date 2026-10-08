@@ -20,7 +20,8 @@ export type SensitiveAction =
   | { kind: 'refund'; amountRappen: Rappen }
   | { kind: 'reopen_order' }
   | { kind: 'open_drawer' }
-  | { kind: 'permission'; permission: Permission };
+  /** `orPermission`: a second permission that also allows it (serving from the KDS, RF-C22). */
+  | { kind: 'permission'; permission: Permission; orPermission?: Permission };
 
 export type AuthorizationDecision =
   | { status: 'allowed' }
@@ -66,7 +67,8 @@ export function authorize(
 ): AuthorizationDecision {
   const permission =
     action.kind === 'permission' ? action.permission : BASE_PERMISSION[action.kind];
-  if (!actor.permissions.has(permission)) {
+  const alternative = action.kind === 'permission' ? action.orPermission : undefined;
+  if (!actor.permissions.has(permission) && !(alternative && actor.permissions.has(alternative))) {
     return {
       status: 'needs_approval',
       permissions: exceedsThreshold(action, settings)

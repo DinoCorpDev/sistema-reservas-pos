@@ -247,6 +247,13 @@
       "channelDescription": "Da «{from}» a «{to}»: l’IVA di tutti gli articoli viene ricalcolata.",
       "channelConfirm": "Passa a «{to}»",
       "cancelDescription": "Tutti gli articoli vengono stornati. Nulla viene eliminato; il motivo resta nel registro."
+    },
+    "unsent": {
+      "title": "Non ancora inviato in cucina",
+      "description": "{count, plural, one {# posizione non è ancora stata inviata} other {# posizioni non sono ancora state inviate}}. La cucina le vede solo dopo l’invio.",
+      "send": "Invia ora",
+      "leave": "Esci senza inviare",
+      "stay": "Torna all’ordine"
     }
   }
 }

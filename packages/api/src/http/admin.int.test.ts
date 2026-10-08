@@ -624,6 +624,19 @@ describe('setup checklist (RF-A11, Phase 1 gate)', () => {
     const station = await call('POST', '/kitchen-stations', { name: 'Küche' });
     await call('POST', '/printers', { name: 'Bondrucker', kind: 'receipt', host: '10.0.0.5' });
     await call('POST', '/terminals', { name: 'Kasse 1', type: 'pos', orderNumberPrefix: 'K1' });
+    // Without a display (or a printer) the kitchen's tickets would show up nowhere.
+    let checklist = await call<Checklist>('GET', '/setup-checklist');
+    expect(checklist.checks.find((c) => c.key === 'station_output')).toEqual({
+      key: 'station_output',
+      done: false,
+      missing: 1,
+    });
+    await call('POST', '/terminals', {
+      name: 'KDS Küche',
+      type: 'kds',
+      orderNumberPrefix: 'D1',
+      kitchenStationId: station.id,
+    });
 
     const tax = await call<TaxOverview>('GET', '/tax');
     const food = tax.categories.find((c) => c.key === 'food')!;
@@ -646,9 +659,9 @@ describe('setup checklist (RF-A11, Phase 1 gate)', () => {
     });
     await call('PUT', `/catalog/products/${product.id}/stations`, { stationIds: [station.id] });
 
-    const checklist = await call<Checklist>('GET', '/setup-checklist');
+    checklist = await call<Checklist>('GET', '/setup-checklist');
     expect(checklist.checks.filter((c) => !c.done)).toEqual([]);
-    expect(checklist).toMatchObject({ complete: true, done: 14, total: 14 });
+    expect(checklist).toMatchObject({ complete: true, done: 15, total: 15 });
 
     // Activation needs location.manage (a waiter of another organization cannot either).
     const forbidden = await api.request('POST', '/setup-checklist/activate', { headers: waiter });

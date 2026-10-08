@@ -23,6 +23,7 @@ export * from './kitchen';
 export * from './payments';
 export * from './cash';
 export * from './receipts';
+export * from './printing';
 export * from './customers';
 export * from './reservations';
 export * from './reports';

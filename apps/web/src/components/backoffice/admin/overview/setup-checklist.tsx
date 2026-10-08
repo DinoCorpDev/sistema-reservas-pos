@@ -28,6 +28,7 @@ const FIX_PAGE: Record<string, string> = {
   tables: '/backoffice/floor',
   pos_terminal: '/backoffice/devices',
   kitchen_station: '/backoffice/devices',
+  station_output: '/backoffice/devices?tab=stations',
   receipt_printer: '/backoffice/devices',
   manager_with_pin: '/backoffice/users',
   tax_rules: '/backoffice/tax',

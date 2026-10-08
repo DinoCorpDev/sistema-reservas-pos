@@ -145,7 +145,8 @@
       "products": "Mindestens ein aktives Produkt",
       "product_routing": "Jedes Produkt ist einer Küchenstation zugeordnet",
       "product_publication": "Jedes Produkt hat Allergene und, wenn nötig, Herkunft",
-      "product_translations": "Jedes Produkt hat einen Namen in einer weiteren Sprache"
+      "product_translations": "Jedes Produkt hat einen Namen in einer weiteren Sprache",
+      "station_output": "Jede Küchenstation hat einen Küchenbildschirm oder einen Drucker"
     }
   },
   "location": {
@@ -183,7 +184,10 @@
     "kitchenAlert": "Küchenalarm nach (Minuten)",
     "customerNameFrom": "Gastname auf Beleg ab (CHF)",
     "maxPinAttempts": "PIN-Fehlversuche bis zur Sperre",
-    "pinLockMinutes": "PIN-Sperre (Minuten)"
+    "pinLockMinutes": "PIN-Sperre (Minuten)",
+    "printMaxDelay": "Nicht mehr drucken nach (Minuten)",
+    "hubUrls": "Hub-Adressen",
+    "hubUrlsHint": "Eine Adresse pro Zeile, in Reihenfolge. Der erste Hub vergibt die Bestellnummern; leer = kein Hub."
   },
   "floor": {
     "title": "Bereiche & Tische",

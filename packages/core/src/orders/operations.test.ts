@@ -131,7 +131,7 @@ function sampleOperations(): Operation[] {
       reason: 'Gericht kalt',
       externalReference: 'TRX-1',
     }),
-    d.op('receipt.reprint', id, { receiptId: freshId(), copyId: freshId() }),
+    d.op('receipt.reprint', id, { receiptId: freshId(), copyId: freshId(), hubPrint: false }),
     d.op('items.transfer', id, { itemIds: [item.itemId], toOrderId: other.orderId }),
     d.op('order.merge', other.orderId, { intoOrderId: id }),
     d.op('order.split', id, {
@@ -176,8 +176,42 @@ describe('operationSchema (docs/SYNC.md §2, DEC-021)', () => {
 
   it('rejects a schema version from the future', () => {
     const open = new Device(TERMINAL.H1).open();
-    expect(operationSchema.safeParse({ ...open, schemaVersion: 2 }).success).toBe(false);
+    expect(operationSchema.safeParse({ ...open, schemaVersion: 3 }).success).toBe(false);
     expect(operationSchema.safeParse({ ...open, schemaVersion: 0 }).success).toBe(false);
+  });
+
+  it('accepts a version 1 send without tickets, as an old device sends it', () => {
+    const d = new Device(TERMINAL.H1);
+    const send = d.op('items.send', freshId(), { itemIds: [freshId()] } as never, {
+      schemaVersion: 1,
+    });
+    const parsed = operationSchema.parse(send);
+    expect(parsed.type === 'items.send' && parsed.payload.tickets).toEqual([]);
+  });
+
+  it('validates the kitchen, printing and drawer operations (Phase 3)', () => {
+    const d = new Device(TERMINAL.H1);
+    const orderId = freshId();
+    const ok = [
+      d.kitchen('kitchen.start', orderId, freshId(), freshId()),
+      d.kitchen('kitchen.ready', orderId, freshId(), freshId()),
+      d.kitchen('kitchen.recall', orderId, freshId(), freshId()),
+      d.op('kitchen.reprint', orderId, { sendOperationId: freshId(), stationId: freshId() }),
+      d.op('receipt.print', orderId, { receiptId: freshId() }),
+      d.op('drawer.open', null, { reason: 'Wechselgeld' }),
+    ];
+    for (const op of ok) expect(operationSchema.safeParse(op).success).toBe(true);
+    // Kitchen operations name the items; an empty list means nothing.
+    expect(
+      operationSchema.safeParse(
+        d.op('kitchen.ready', orderId, { stationId: freshId(), itemIds: [] }),
+      ).success,
+    ).toBe(false);
+    // The drawer belongs to no order.
+    expect(
+      operationSchema.safeParse({ ...d.op('drawer.open', null, { reason: null }), orderId })
+        .success,
+    ).toBe(false);
   });
 
   it('rejects an item.update that only names the item', () => {

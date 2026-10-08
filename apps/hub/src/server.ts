@@ -19,6 +19,7 @@ export function startHub(options: {
   onPushed?: HubDependencies['onPushed'];
   allowedOrigins?: string[];
   realtime?: RealtimeOptions;
+  printers?: HubDependencies['printers'];
 }): Promise<StartedHub> {
   return new Promise((resolve) => {
     // The callbacks only read `realtime` once the server is listening, when it is initialized.
@@ -31,6 +32,7 @@ export function startHub(options: {
         options.onPushed?.();
       },
       allowedOrigins: options.allowedOrigins,
+      printers: options.printers,
     });
     const server = serve(
       { fetch: app.fetch, port: options.port, hostname: options.hostname ?? '0.0.0.0' },

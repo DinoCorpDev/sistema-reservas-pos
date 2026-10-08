@@ -138,7 +138,10 @@
       "print": "Imprimir",
       "continue": "Seguir cobrando",
       "toOrder": "Ir al pedido",
-      "done": "Listo"
+      "done": "Listo",
+      "sentToPrinter": "Enviado a la impresora.",
+      "printerProblem": "Impresora no disponible: {error}",
+      "printInBrowser": "Imprimir desde el navegador"
     },
     "closed": {
       "title": "Pagos y recibos",

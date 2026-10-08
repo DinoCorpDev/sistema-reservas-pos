@@ -247,6 +247,13 @@
       "channelDescription": "De «{from}» a «{to}»: se recalcula el IVA de todos los ítems.",
       "channelConfirm": "Cambiar a «{to}»",
       "cancelDescription": "Se anulan todos los ítems. No se elimina nada; el motivo queda en el registro de auditoría."
+    },
+    "unsent": {
+      "title": "Todavía no se envió a cocina",
+      "description": "{count, plural, one {# posición no se ha enviado} other {# posiciones no se han enviado}}. La cocina solo las ve después de enviarlas.",
+      "send": "Enviar ahora",
+      "leave": "Salir sin enviar",
+      "stay": "Volver al pedido"
     }
   }
 }

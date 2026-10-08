@@ -8,7 +8,7 @@ import {
   type Permission,
   sortsAfter,
 } from '@pos/core';
-import { type OperationRow, posDb } from './db';
+import { deviceDb, type OperationRow } from './db';
 import { getPos, usePos } from './store';
 
 /**
@@ -37,7 +37,7 @@ function publish(fold = getPos().fold): void {
 
 /** Folds every stored operation (at start, after pruning, or when the context changed). */
 export async function refold(): Promise<void> {
-  const rows = await posDb.ops.toArray();
+  const rows = await deviceDb().ops.toArray();
   known.clear();
   for (const row of rows) if (!row.rejected) known.set(row.id, row.op);
   publish(foldOperations([...known.values()], context()));
@@ -72,7 +72,7 @@ export async function dispatch(op: Operation): Promise<void> {
     conflicts: [],
     rejected: 0,
   };
-  await posDb.ops.put(row);
+  await deviceDb().ops.put(row);
   absorb([op]);
   usePos.setState((state) => ({ sync: { ...state.sync, pending: state.sync.pending + 1 } }));
 }
@@ -80,7 +80,7 @@ export async function dispatch(op: Operation): Promise<void> {
 /** Operations received from a node (pull): stored and applied. */
 export async function ingest(rows: readonly OperationRow[]): Promise<void> {
   if (rows.length === 0) return;
-  await posDb.ops.bulkPut([...rows]);
+  await deviceDb().ops.bulkPut([...rows]);
   absorb(rows.filter((row) => !row.rejected).map((row) => row.op));
 }
 
@@ -106,13 +106,13 @@ export async function prune(now = Date.now()): Promise<number> {
       .map((order) => order.id),
   );
   if (finished.size === 0) return 0;
-  const rows = await posDb.ops.toArray();
+  const rows = await deviceDb().ops.toArray();
   const removable = rows.filter((row) => {
     const orders = operationOrderIds(row.op);
     return row.cloudAcked === 1 && orders.length > 0 && orders.every((id) => finished.has(id));
   });
   if (removable.length === 0) return 0;
-  await posDb.ops.bulkDelete(removable.map((row) => row.id));
+  await deviceDb().ops.bulkDelete(removable.map((row) => row.id));
   await refold();
   return removable.length;
 }

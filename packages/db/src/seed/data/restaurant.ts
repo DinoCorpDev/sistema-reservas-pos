@@ -96,6 +96,8 @@ export const DEMO_TERMINALS: {
   { name: 'Handheld 2', type: 'handheld', prefix: 'H2' },
   { name: 'KDS Küche', type: 'kds', prefix: 'D1', station: 'kitchen' },
   { name: 'KDS Bar', type: 'kds', prefix: 'D2', station: 'bar' },
+  // Every station needs a display or a printer, or its tickets show up nowhere (station_output).
+  { name: 'KDS Patisserie', type: 'kds', prefix: 'D3', station: 'dessert' },
 ];
 
 /**

@@ -7,7 +7,7 @@ import { SlidersHorizontal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { menuFor } from '../../catalog';
-import { usePos } from '../../store';
+import { usePos } from '@/device/store';
 import { needsChoice, useAddLine } from './add-line';
 import { courseOf } from './format';
 import { useNow } from './hooks';

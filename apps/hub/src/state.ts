@@ -13,6 +13,10 @@ export interface HubState {
   cloudCursor: number;
   /** Configuration version of the cloud, relayed to the terminals (RF-F23). */
   cloudConfigVersion: string | null;
+  /** Last local `seq` the print queue planned (DEC-031). */
+  printCursor: number;
+  /** Test page request already queued, per printer (`testRequestedAt`, RF-F17). */
+  testsHandled: Record<string, string>;
 }
 
 const EMPTY: HubState = {
@@ -21,6 +25,8 @@ const EMPTY: HubState = {
   locationId: null,
   cloudCursor: 0,
   cloudConfigVersion: null,
+  printCursor: 0,
+  testsHandled: {},
 };
 
 export class StateFile {

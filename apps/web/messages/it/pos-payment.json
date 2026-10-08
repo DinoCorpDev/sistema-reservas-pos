@@ -138,7 +138,10 @@
       "print": "Stampa",
       "continue": "Continua a incassare",
       "toOrder": "All’ordine",
-      "done": "Fatto"
+      "done": "Fatto",
+      "sentToPrinter": "Inviato alla stampante.",
+      "printerProblem": "Stampante non raggiungibile: {error}",
+      "printInBrowser": "Stampa dal browser"
     },
     "closed": {
       "title": "Pagamenti e scontrini",

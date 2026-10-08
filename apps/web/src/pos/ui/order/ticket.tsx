@@ -16,7 +16,7 @@ import { Minus, Plus, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { removeDiscount, updateItem, voidItem } from '../../actions';
 import { translatedName } from '../../catalog';
-import { getPos, usePos } from '../../store';
+import { getPos, usePos } from '@/device/store';
 import { requestApproval } from '../../ui-store';
 import { clamp, formatPercentBp } from './format';
 import type { OrderData } from './hooks';

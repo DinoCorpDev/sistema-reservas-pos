@@ -18,8 +18,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import { correctedNow } from '../../clock';
-import { usePos } from '../../store';
+import { correctedNow } from '@/device/clock';
+import { usePos } from '@/device/store';
 
 /**
  * Derives data from the fold of the location's orders. The engine mutates the fold in place for

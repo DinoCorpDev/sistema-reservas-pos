@@ -138,7 +138,10 @@
       "print": "Drucken",
       "continue": "Weiter kassieren",
       "toOrder": "Zur Bestellung",
-      "done": "Fertig"
+      "done": "Fertig",
+      "sentToPrinter": "An den Drucker gesendet.",
+      "printerProblem": "Drucker nicht erreichbar: {error}",
+      "printInBrowser": "Im Browser drucken"
     },
     "closed": {
       "title": "Zahlungen und Belege",

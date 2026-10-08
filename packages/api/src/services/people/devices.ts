@@ -28,8 +28,10 @@ import { changedFields, definedOnly, iso, type ServiceDeps } from '../shared';
 // ── Printers (RF-F17) ───────────────────────────────────────────────────────
 
 type PrinterRow = typeof s.printers.$inferSelect;
+type PrinterStatusRow = typeof s.printerStatus.$inferSelect;
 
-const toPrinterDto = (row: PrinterRow) => ({
+/** A printer with what the hub last reported about it (DEC-032). */
+const toPrinterDto = (row: PrinterRow, status: PrinterStatusRow | null = null) => ({
   id: row.id,
   locationId: row.locationId,
   name: row.name,
@@ -40,7 +42,12 @@ const toPrinterDto = (row: PrinterRow) => ({
   paperWidthMm: row.paperWidthMm,
   hasCashDrawer: row.hasCashDrawer,
   isActive: row.isActive,
-  lastTestAt: iso(row.lastTestAt),
+  lastTestAt: iso(status?.lastTestAt ?? row.lastTestAt),
+  lastTestOk: status?.lastTestOk ?? null,
+  testRequestedAt: iso(row.testRequestedAt),
+  lastOkAt: iso(status?.lastOkAt ?? null),
+  lastError: status?.lastError ?? null,
+  lastErrorAt: iso(status?.lastErrorAt ?? null),
 });
 export type PrinterDto = ReturnType<typeof toPrinterDto>;
 
@@ -53,14 +60,42 @@ async function loadPrinter(deps: ServiceDeps, actor: Actor, id: string) {
   return row;
 }
 
+async function printerDto(deps: ServiceDeps, actor: Actor, id: string): Promise<PrinterDto> {
+  const row = await loadPrinter(deps, actor, id);
+  const [status] = await deps.db
+    .select()
+    .from(s.printerStatus)
+    .where(inLocation(s.printerStatus, actor, eq(s.printerStatus.id, id)));
+  return toPrinterDto(row, status ?? null);
+}
+
 export async function listPrinters(deps: ServiceDeps, actor: Actor): Promise<PrinterDto[]> {
   requireLocationId(actor);
   const rows = await deps.db
-    .select()
+    .select({ printer: s.printers, status: s.printerStatus })
     .from(s.printers)
+    .leftJoin(s.printerStatus, eq(s.printerStatus.id, s.printers.id))
     .where(inLocation(s.printers, actor, notDeleted(s.printers)))
     .orderBy(asc(s.printers.name));
-  return rows.map(toPrinterDto);
+  return rows.map((row) => toPrinterDto(row.printer, row.status));
+}
+
+/**
+ * Asks the location hub for a test page (RF-F17, DEC-032): the request travels with the
+ * configuration, the hub prints and reports the result, which `listPrinters` shows.
+ */
+export async function requestPrinterTest(
+  deps: ServiceDeps,
+  actor: Actor,
+  id: string,
+): Promise<PrinterDto> {
+  assertPermission(actor, 'location.manage');
+  await loadPrinter(deps, actor, id);
+  await deps.db
+    .update(s.printers)
+    .set({ testRequestedAt: new Date() })
+    .where(inLocation(s.printers, actor, eq(s.printers.id, id)));
+  return printerDto(deps, actor, id);
 }
 
 export async function createPrinter(
@@ -74,7 +109,7 @@ export async function createPrinter(
     .insert(s.printers)
     .values(ownedByLocation(actor, input))
     .$returningId();
-  return toPrinterDto(await loadPrinter(deps, actor, row!.id));
+  return printerDto(deps, actor, row!.id);
 }
 
 export async function updatePrinter(
@@ -89,7 +124,7 @@ export async function updatePrinter(
     .update(s.printers)
     .set(definedOnly(input))
     .where(inLocation(s.printers, actor, eq(s.printers.id, id)));
-  return toPrinterDto(await loadPrinter(deps, actor, id));
+  return printerDto(deps, actor, id);
 }
 
 /** Soft delete (PA-06); only when no station or terminal prints on it any more. */

@@ -15,7 +15,11 @@ import { DISCOUNT_KINDS, MAX_COURSE, MIN_COURSE, VOID_REASONS } from './constant
  * other input that is not deterministic, so every node folds to the same result.
  */
 
-export const OPERATION_SCHEMA_VERSION = 1;
+/**
+ * Version 2 (Phase 3): `items.send` carries the kitchen tickets it creates, and the kitchen,
+ * printing and cash drawer operations exist. Version 1 operations are still accepted.
+ */
+export const OPERATION_SCHEMA_VERSION = 2;
 
 const id = z.uuid();
 const isoDate = z.iso.date();
@@ -60,8 +64,8 @@ export const lineSnapshotSchema = z.object({
   course: z.int().min(MIN_COURSE).max(MAX_COURSE),
   seat: z.int().min(1).max(99).nullable(),
   note: optionalText(500),
-  /** Kitchen stations the item is routed to (RF-C20), frozen for the KDS of Phase 3. */
-  stationIds: z.array(id).max(5),
+  /** Kitchen stations the item is routed to (RF-C21), frozen at the sale. */
+  stationIds: z.array(id).max(10),
 });
 export type LineSnapshot = z.infer<typeof lineSnapshotSchema>;
 
@@ -94,6 +98,9 @@ const envelope = {
 };
 
 const orderOp = { ...envelope, orderId: id };
+
+/** Items of one ticket at one station: what the kitchen operations act on (RF-C22). */
+const kitchenItems = z.object({ stationId: id, itemIds: z.array(id).min(1).max(200) });
 
 export const operationSchema = z.discriminatedUnion('type', [
   z.object({
@@ -164,7 +171,24 @@ export const operationSchema = z.discriminatedUnion('type', [
   z.object({
     ...orderOp,
     type: z.literal('items.send'),
-    payload: z.object({ itemIds: z.array(id).min(1).max(200) }),
+    payload: z.object({
+      itemIds: z.array(id).min(1).max(200),
+      /**
+       * Since version 2: one ticket per active station that receives items of this send, with
+       * its id and the kitchen language frozen on the device (RF-C21, RF-C25, DEC-029). The
+       * items only go to these stations; version 1 sends route to all of an item's stations.
+       */
+      tickets: z
+        .array(
+          z.object({
+            ticketId: id,
+            stationId: id,
+            language: z.enum(CONTENT_LANGUAGES),
+          }),
+        )
+        .max(10)
+        .default([]),
+    }),
   }),
   z.object({
     ...orderOp,
@@ -238,7 +262,42 @@ export const operationSchema = z.discriminatedUnion('type', [
   z.object({
     ...orderOp,
     type: z.literal('receipt.reprint'),
-    payload: z.object({ receiptId: id, copyId: id }),
+    payload: z.object({
+      receiptId: id,
+      copyId: id,
+      /** Since version 2: the hub prints the copy (otherwise the POS printed it, DEC-031). */
+      hubPrint: z.boolean().default(false),
+    }),
+  }),
+  z.object({
+    ...orderOp,
+    /** Prints the original receipt on the terminal's printer through the hub (DEC-031). */
+    type: z.literal('receipt.print'),
+    payload: z.object({ receiptId: id }),
+  }),
+  z.object({
+    ...orderOp,
+    /** The station started preparing these items (RF-C22). */
+    type: z.literal('kitchen.start'),
+    payload: kitchenItems,
+  }),
+  z.object({
+    ...orderOp,
+    /** These items are ready at the station (RF-C22, RF-C23). */
+    type: z.literal('kitchen.ready'),
+    payload: kitchenItems,
+  }),
+  z.object({
+    ...orderOp,
+    /** Recall: ready items go back to the station's board (RF-C28). */
+    type: z.literal('kitchen.recall'),
+    payload: kitchenItems,
+  }),
+  z.object({
+    ...orderOp,
+    /** Prints a ticket again at its station (RF-C26). A ticket is a send at a station. */
+    type: z.literal('kitchen.reprint'),
+    payload: z.object({ sendOperationId: id, stationId: id }),
   }),
   z.object({
     ...orderOp,
@@ -283,6 +342,13 @@ export const operationSchema = z.discriminatedUnion('type', [
     type: z.literal('terminal.pin_failed'),
     payload: z.object({ attempt: positive }),
   }),
+  z.object({
+    ...envelope,
+    orderId: z.null().default(null),
+    /** Opens the cash drawer without a sale (RF-D18): permission or a manager's approval. */
+    type: z.literal('drawer.open'),
+    payload: z.object({ reason: optionalText(200).default(null) }),
+  }),
 ]);
 
 export type Operation = z.infer<typeof operationSchema>;
@@ -296,6 +362,7 @@ export function operationOrderIds(op: Operation): string[] {
   switch (op.type) {
     case 'terminal.unlocked':
     case 'terminal.pin_failed':
+    case 'drawer.open':
       return [];
     case 'items.transfer':
       return [op.orderId, op.payload.toOrderId];

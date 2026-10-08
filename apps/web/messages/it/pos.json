@@ -19,7 +19,8 @@
       "pair": "Abbina",
       "pairing": "Abbinamento…",
       "invalidCode": "Il codice è errato o scaduto.",
-      "failed": "Abbinamento non riuscito. Verifichi la connessione e riprovi."
+      "failed": "Abbinamento non riuscito. Verifichi la connessione e riprovi.",
+      "hubCode": "Questo codice appartiene all’hub della sede. Si inserisce sull’hub stesso, non qui."
     },
     "pin": {
       "title": "Inserisca il PIN",
@@ -29,7 +30,8 @@
       "wrong": "PIN errato. {attemptsLeft, plural, one {Resta # tentativo} other {Restano # tentativi}}.",
       "locked": "Troppi tentativi errati. Bloccato per {minutes, plural, one {# minuto} other {# minuti}}.",
       "invalid": "Il PIN è composto da 4 a 6 cifre.",
-      "noCredentials": "Questo dispositivo non ha ancora i dati di accesso. Lo colleghi una volta a Internet."
+      "noCredentials": "Questo dispositivo non ha ancora i dati di accesso. Lo colleghi una volta a Internet.",
+      "notAllowedKitchen": "{name} non ha l’autorizzazione cucina. Sblocca lo schermo cucina con il PIN di una persona della cucina."
     },
     "approval": {
       "title": "Autorizzazione di una persona responsabile",
@@ -46,7 +48,16 @@
       "takeaway": "Da asporto",
       "lock": "Blocca",
       "updateAvailable": "È pronta una nuova versione della cassa.",
-      "updateNow": "Aggiorna ora"
+      "updateNow": "Aggiorna ora",
+      "drawer": "Cassetto",
+      "drawerOpened": "Il cassetto si apre.",
+      "drawerFailed": "Impossibile aprire il cassetto.",
+      "printerDown": "Stampante «{printer}» non raggiungibile: {error}"
+    },
+    "kitchen": {
+      "readyTable": "Tavolo {table}: {count, plural, one {# posizione pronta} other {# posizioni pronte}}",
+      "readyOrder": "Ordine {number}: {count, plural, one {# posizione pronta} other {# posizioni pronte}}",
+      "stillCooking": "Ancora in cucina: {count}"
     }
   }
 }

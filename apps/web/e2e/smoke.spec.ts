@@ -11,21 +11,19 @@ test.describe('Smoke', () => {
     }
   });
 
-  for (const [path, heading] of [
-    ['/kds', 'Küche (KDS)'],
-    ['/qr/demo-table', 'Menü'],
-  ] as const) {
-    test(`${path} renders`, async ({ page }) => {
+  test('/qr/demo-table renders', async ({ page }) => {
+    await page.goto('/qr/demo-table');
+    await expect(page.getByRole('heading', { level: 1, name: 'Menü' })).toBeVisible();
+  });
+
+  // The POS and the kitchen display are client apps that start by pairing (DEC-030).
+  for (const path of ['/pos', '/kds']) {
+    test(`${path} asks a new device to pair`, async ({ page }) => {
       await page.goto(path);
-      await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible();
+      await expect(page.getByText('Gerät koppeln')).toBeVisible();
+      await expect(page.getByLabel('Kopplungscode')).toBeVisible();
     });
   }
-
-  test('/pos asks a new device to pair', async ({ page }) => {
-    await page.goto('/pos');
-    await expect(page.getByText('Gerät koppeln')).toBeVisible();
-    await expect(page.getByLabel('Kopplungscode')).toBeVisible();
-  });
 
   test('the backoffice requires signing in', async ({ page }) => {
     await page.goto('/backoffice');

@@ -17,6 +17,10 @@ export function startCloudLink(deps: {
   state: StateFile;
   broadcast: (message: HubMessage) => void;
   intervalMs?: number;
+  /** New operations arrived from the cloud (the print queue plans them). */
+  onPulled?: () => void;
+  /** The configuration changed and was copied (the print queue reloads it). */
+  onConfigChanged?: () => Promise<void>;
 }) {
   const interval = deps.intervalMs ?? 3_000;
   let timer: ReturnType<typeof setTimeout> | null = null;
@@ -41,9 +45,13 @@ export function startCloudLink(deps: {
         deps.state.value.cloudCursor,
       );
       deps.state.update({ cloudCursor: pulled.cursor });
-      if (pulled.inserted > 0) deps.broadcast({ type: 'sync.applied', seq: null });
+      if (pulled.inserted > 0) {
+        deps.broadcast({ type: 'sync.applied', seq: null });
+        deps.onPulled?.();
+      }
       if (pulled.configVersion && pulled.configVersion !== deps.state.value.cloudConfigVersion) {
         await syncConfig(deps.db, deps.cloud);
+        await deps.onConfigChanged?.();
         deps.state.update({ cloudConfigVersion: pulled.configVersion });
         deps.broadcast({ type: 'config.changed', configVersion: pulled.configVersion });
       }

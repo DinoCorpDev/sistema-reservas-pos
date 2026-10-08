@@ -58,6 +58,9 @@ export async function getHubConfig(deps: ServiceDeps, actor: Actor) {
       orderNumberPrefix: t.orderNumberPrefix,
       deviceTokenHash: t.deviceTokenHash,
       isActive: t.isActive,
+      // Where the hub prints this terminal's receipts and kicks its drawer (DEC-031).
+      receiptPrinterId: t.receiptPrinterId,
+      kitchenStationId: t.kitchenStationId,
     })),
   };
 }

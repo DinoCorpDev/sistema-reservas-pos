@@ -28,7 +28,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useState } from 'react';
 import { changeChannel, checkAction, updateOrder, voidOrder } from '../../actions';
-import { usePos } from '../../store';
+import { usePos } from '@/device/store';
 import { requestApproval, usePosUi } from '../../ui-store';
 import { MergePanel, SplitPanel, TransferPanel } from './bill-panels';
 import { DiscountForm } from './discount-form';

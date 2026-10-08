@@ -58,8 +58,8 @@ export function ClosedOrderPanel({ orderId }: { orderId: string }) {
     setBusy(payment.id);
     setError(null);
     try {
-      const { content, copyAt } = await reprintReceipt(orderId, payment.receiptId);
-      navigate({ name: 'receipt', orderId, content, copyAt });
+      const { content, copyAt, printedByHub } = await reprintReceipt(orderId, payment.receiptId);
+      navigate({ name: 'receipt', orderId, content, copyAt, printedByHub });
     } catch {
       setError(t('failed'));
       setBusy(null);

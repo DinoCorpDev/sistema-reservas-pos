@@ -8,6 +8,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsup",
     "start": "node dist/index.js",
+    "fake-printer": "tsx src/fake-printer-cli.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude \"**/*.int.test.ts\"",
     "test:integration": "vitest run --config vitest.integration.config.ts"

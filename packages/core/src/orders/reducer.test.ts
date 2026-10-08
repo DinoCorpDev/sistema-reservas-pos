@@ -467,7 +467,11 @@ describe('payments are never lost (RNF-04, RN-14)', () => {
         open,
         d.add(open.orderId, line()),
         pay,
-        d.op('receipt.reprint', open.orderId, { receiptId: pay.payload.receipt.receiptId, copyId }),
+        d.op('receipt.reprint', open.orderId, {
+          receiptId: pay.payload.receipt.receiptId,
+          copyId,
+          hubPrint: false,
+        }),
       ],
       CONTEXT,
     );

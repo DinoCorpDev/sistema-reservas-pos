@@ -22,6 +22,7 @@ import { forwardToCloud, pullFromCloud } from './forwarder';
 import type { HubMessage } from './realtime';
 import { startHub } from './server';
 import { StateFile } from './state';
+import { resetHubLog } from './test-support';
 
 /**
  * The LAN hub (docs/SYNC.md §11, RNF-05): it authenticates terminals offline, stores their
@@ -78,6 +79,7 @@ const pushTo = async (target: 'hub' | 'cloud', operations: unknown[]) => {
 };
 
 beforeAll(async () => {
+  await resetHubLog(hubDb);
   demo = await loadDemo(cloud.db);
   scope = { organizationId: demo.organizationId, locationId: demo.locationId };
   const admin = cloud.as(demoSession(demo, 'admin'));

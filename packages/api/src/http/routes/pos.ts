@@ -1,4 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
+import { printerStatusReportSchema } from '@pos/core';
 import * as orders from '../../services/orders';
 import { getBootstrap } from '../../services/pos/bootstrap';
 import * as sync from '../../services/sync';
@@ -190,6 +191,26 @@ export function registerPosRoutes(app: ApiApp) {
         await sync.listConflicts({ db: c.get('db') }, actorOf(c), {
           includeResolved: c.req.valid('query').includeResolved === 'true',
         }),
+        200,
+      ),
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/sync/printer-status',
+      tags: ['Sync'],
+      security: DEVICE,
+      summary: 'The location hub reports its printers and test pages (RF-F17)',
+      request: { body: jsonBody(printerStatusReportSchema) },
+      responses: {
+        200: jsonResponse(z.object({ updated: z.number().int() }), 'Stored'),
+        ...ERROR_RESPONSES,
+      },
+    }),
+    async (c) =>
+      c.json(
+        await sync.reportPrinterStatus({ db: c.get('db') }, actorOf(c), c.req.valid('json')),
         200,
       ),
   );

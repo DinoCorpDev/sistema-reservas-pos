@@ -1,4 +1,5 @@
 import type { AuditAction } from '../audit/constants';
+import type { KitchenItemStatus } from '../kitchen/constants';
 import { authorize, type SensitiveAction } from '../organization/authorization';
 import type { Permission } from '../organization/permissions';
 import type { LocationSettings } from '../organization/settings';
@@ -18,6 +19,7 @@ import {
   type OrderState,
   paymentsOf,
   refundsOf,
+  ticketKey,
 } from './state';
 import { discountAmount, isReadyToClose, lineGross, recalculateOrder } from './totals';
 
@@ -161,6 +163,18 @@ function sensitiveActionOf(state: FoldState, op: Operation): SensitiveAction | n
     case 'terminal.unlocked':
     case 'terminal.pin_failed':
       return null;
+    case 'drawer.open':
+      return { kind: 'open_drawer' };
+    case 'kitchen.start':
+    case 'kitchen.ready':
+    case 'kitchen.recall':
+    case 'kitchen.reprint':
+      return { kind: 'permission', permission: 'kitchen.operate' };
+    case 'items.serve':
+      // The floor serves; the kitchen may too (RF-C22).
+      return { kind: 'permission', permission: 'order.create', orPermission: 'kitchen.operate' };
+    case 'receipt.print':
+      return { kind: 'permission', permission: 'payment.take' };
     case 'item.void':
       return {
         kind: 'void_item',
@@ -206,6 +220,42 @@ function authorizationConflict(
   const approver = permissionsOf(op.approval.approverUserId);
   const approved = approver && decision.permissions.every((p) => approver.has(p));
   return approved ? null : 'approval_invalid';
+}
+
+/**
+ * The item's own status while it is in the kitchen, from its progress at its stations: ready when
+ * all of them are ready, preparing when one has started (DEC-029). Served and voided are final.
+ */
+function deriveKitchenStatus(item: OrderItemState): void {
+  if (item.prepStatus === 'served' || item.prepStatus === 'voided') return;
+  if (item.prepStatus === 'pending') return;
+  const progress = Object.values(item.kitchen);
+  if (progress.length === 0) return;
+  const byTime = (a: string, b: string) => Date.parse(a) - Date.parse(b);
+  const started = progress.flatMap((p) => (p.preparingAt === null ? [] : [p.preparingAt]));
+  item.preparingAt = started.sort(byTime)[0] ?? null;
+  if (progress.every((p) => p.status === 'ready')) {
+    item.prepStatus = 'ready';
+    item.readyAt = progress.map((p) => p.readyAt!).sort(byTime)[progress.length - 1]!;
+  } else {
+    item.prepStatus = progress.some((p) => p.status !== 'sent') ? 'preparing' : 'sent';
+    item.readyAt = null;
+  }
+}
+
+/** Status an item reaches at a station with each kitchen operation; null = no change. */
+function kitchenTransition(
+  type: 'kitchen.start' | 'kitchen.ready' | 'kitchen.recall',
+  current: KitchenItemStatus,
+): KitchenItemStatus | null {
+  switch (type) {
+    case 'kitchen.start':
+      return current === 'sent' ? 'preparing' : null;
+    case 'kitchen.ready':
+      return current === 'ready' ? null : 'ready';
+    case 'kitchen.recall':
+      return current === 'ready' ? 'preparing' : null;
+  }
 }
 
 function applyOperation(state: FoldState, op: Operation, context: FoldContext): void {
@@ -394,9 +444,12 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
           note: line.note,
           stationIds: [...line.stationIds],
           prepStatus: 'pending',
+          kitchen: {},
           addedAt: op.deviceAt,
           addedByUserId: op.userId,
           sentAt: null,
+          preparingAt: null,
+          readyAt: null,
           servedAt: null,
           voidedAt: null,
           voidReason: null,
@@ -436,6 +489,12 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
     }
 
     case 'items.send': {
+      // Version 2 names the tickets (active stations only); version 1 routes to every station.
+      const frozen = new Map((op.payload.tickets ?? []).map((t) => [t.stationId, t]));
+      const routed = (item: OrderItemState) =>
+        op.schemaVersion >= 2
+          ? item.stationIds.filter((stationId) => frozen.has(stationId))
+          : item.stationIds;
       for (const itemId of op.payload.itemIds) {
         const item = state.items.get(itemId);
         if (!item) {
@@ -445,10 +504,87 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
         if (item.prepStatus !== 'pending') continue;
         item.prepStatus = 'sent';
         item.sentAt = op.deviceAt;
+        for (const stationId of routed(item)) {
+          const key = ticketKey(op.id, stationId);
+          let ticket = state.tickets.get(key);
+          if (!ticket) {
+            ticket = {
+              key,
+              id: frozen.get(stationId)?.ticketId ?? null,
+              sendOperationId: op.id,
+              stationId,
+              orderId: item.orderId,
+              terminalId: op.terminalId,
+              sentAt: op.deviceAt,
+              sentByUserId: op.userId,
+              language: frozen.get(stationId)?.language ?? null,
+              itemIds: [],
+              reprintCount: 0,
+            };
+            state.tickets.set(key, ticket);
+            indexAdd(state.ticketsByOrder, item.orderId, key);
+          }
+          ticket.itemIds.push(item.id);
+          item.kitchen[stationId] = {
+            ticketKey: key,
+            status: 'sent',
+            preparingAt: null,
+            readyAt: null,
+          };
+        }
         const order = state.orders.get(item.orderId);
         if (order) order.lastSentAt = op.deviceAt;
         touched.add(item.orderId);
       }
+      break;
+    }
+
+    case 'kitchen.start':
+    case 'kitchen.ready':
+    case 'kitchen.recall': {
+      const { stationId } = op.payload;
+      for (const itemId of op.payload.itemIds) {
+        const item = state.items.get(itemId);
+        if (!item) {
+          flag('item_not_found', itemId);
+          continue;
+        }
+        // The floor served or voided it first: the normal race with the kitchen (DEC-029).
+        if (item.prepStatus === 'served' || item.prepStatus === 'voided') continue;
+        const progress = item.kitchen[stationId];
+        if (!progress) {
+          flag('item_state', item.id);
+          continue;
+        }
+        const next = kitchenTransition(op.type, progress.status);
+        if (next === null) continue;
+        progress.status = next;
+        if (next === 'preparing' && progress.preparingAt === null)
+          progress.preparingAt = op.deviceAt;
+        if (next === 'ready') {
+          progress.preparingAt ??= op.deviceAt;
+          progress.readyAt = op.deviceAt;
+        } else {
+          progress.readyAt = null;
+        }
+        deriveKitchenStatus(item);
+        touched.add(item.orderId);
+      }
+      break;
+    }
+
+    case 'kitchen.reprint': {
+      const ticket = state.tickets.get(ticketKey(op.payload.sendOperationId, op.payload.stationId));
+      if (!ticket) {
+        flag('item_not_found', op.payload.sendOperationId);
+        break;
+      }
+      ticket.reprintCount += 1;
+      audit('kitchen.ticket_reprinted', 'kitchen_ticket', ticket.id, null, {
+        sendOperationId: ticket.sendOperationId,
+        stationId: ticket.stationId,
+        orderId: ticket.orderId,
+      });
       break;
     }
 
@@ -494,10 +630,20 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
           quantity: p.quantity,
           modifiers: item.modifiers.map((m) => ({ ...m })),
           stationIds: [...item.stationIds],
+          kitchen: Object.fromEntries(
+            Object.entries(item.kitchen).map(([stationId, progress]) => [
+              stationId,
+              { ...progress },
+            ]),
+          ),
         };
         voidItem(voided, p.reason);
         state.items.set(voided.id, voided);
         indexAdd(state.itemsByOrder, voided.orderId, voided.id);
+        // The voided part stays on the kitchen tickets, struck through (RN-13).
+        for (const progress of Object.values(voided.kitchen)) {
+          state.tickets.get(progress.ticketKey)?.itemIds.push(voided.id);
+        }
       }
       audit(
         'order.item_voided',
@@ -710,6 +856,11 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
       break;
     }
 
+    case 'receipt.print':
+      // Only the hub acts on it (it prints); the state does not change (DEC-031).
+      if (!state.receipts.has(op.payload.receiptId)) flag('item_not_found', op.payload.receiptId);
+      break;
+
     case 'items.transfer': {
       const target = liveOrder(state, op.payload.toOrderId);
       if (!target) {
@@ -882,6 +1033,10 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
       audit('terminal.pin_failed', 'terminal', op.terminalId, null, {
         attempt: op.payload.attempt,
       });
+      break;
+
+    case 'drawer.open':
+      audit('cash.drawer_opened', 'terminal', op.terminalId, null, null, op.payload.reason);
       break;
   }
 

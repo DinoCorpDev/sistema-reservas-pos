@@ -22,9 +22,9 @@ import { ArrowLeft, Banknote, CreditCard, Eraser, Smartphone } from 'lucide-reac
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { pay, type PaymentInput } from '../actions';
-import { usePos } from '../store';
+import { usePos } from '@/device/store';
 import { usePosUi } from '../ui-store';
-import { NumPad } from './num-pad';
+import { NumPad } from '@/device/ui/num-pad';
 import { AmountField } from './payment/amount-field';
 import { ClosedOrderPanel } from './payment/closed-order-panel';
 import { useFold, useKeypadVisible } from './payment/hooks';
@@ -372,7 +372,12 @@ function PaymentForm({ order }: { order: OrderState }) {
     setError(null);
     try {
       const issued = await pay(order.id, prepared.input);
-      navigate({ name: 'receipt', orderId: order.id, content: issued.content });
+      navigate({
+        name: 'receipt',
+        orderId: order.id,
+        content: issued.content,
+        receiptId: issued.receiptId,
+      });
     } catch (caught) {
       busyRef.current = false;
       setBusy(false);

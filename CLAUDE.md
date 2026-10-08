@@ -47,10 +47,15 @@ POS para restaurantes en Suiza. El restaurante opera **mesa → pedido → cocin
   - Nunca se hace un `UPDATE` directo de `orders`, `payments` ni `receipts`.
   - El reductor no lee la hora ni crea IDs (lo vigila ESLint): todo va congelado en el payload.
   - Una regla rota no rechaza la operación: se aplica y queda como conflicto.
-- **POS (`apps/web/src/pos`):**
-  - Es una app cliente sin navegación de Next. Las pantallas llaman solo a `pos/actions.ts`, que despacha operaciones al motor local (`engine.ts`), y `sync.ts` las sincroniza.
-  - Los textos van en `messages/<idioma>/pos*.json`.
-  - `/pos` no puede redirigir ni leer datos del servidor (lo precachea el service worker).
+- **POS y KDS (`apps/web/src/pos`, `apps/web/src/kds`, DEC-030):**
+  - Son apps cliente sin navegación de Next sobre el runtime compartido `apps/web/src/device`: base local por app (`sistema-reservas-pos` / `-kds`), motor (`engine.ts`), `sync.ts`, PIN y pantallas de vinculación.
+  - Las pantallas llaman solo a su `actions.ts`, que despacha operaciones al motor local.
+  - Los textos van en `messages/<idioma>/pos*.json` y `kds.json`.
+  - `/pos` y `/kds` no pueden redirigir ni leer datos del servidor (los precachea el service worker).
+- **Cocina e impresión (DEC-029, DEC-031):**
+  - El estado de cocina es por ítem y por estación, con operaciones `kitchen.*`.
+  - El ticket (envío, estación) no guarda estado: se deriva con `ticketProgress()` y `stationBoard()` de `@pos/core`.
+  - Solo el hub imprime: los trabajos se derivan de las operaciones con clave idempotente (`apps/hub/src/printing`).
 - **Textos de la interfaz:** `apps/web/messages/<idioma>/<módulo>.json`. El alemán es la referencia; si falta una clave en otro idioma, se muestra en alemán.
 - **Esquema:** una tabla nueva se clasifica en `packages/db/src/table-groups.ts` y debe pasar `schema.test.ts`. Migraciones solo con `pnpm db:generate` (nunca editar una migración ya aplicada). El SQL a mano va en una migración `--custom`.
 - **Columnas:** `id`/FKs como `uuid()` (`BINARY(16)`), dinero como `rappen('x_rappen')`, tiempos con `utcDatetime()`, y `...timestamps()` y `...syncColumns()` de `packages/db/src/columns.ts`. Estados como `varchar` validados en el dominio (DEC-006). Sin FK en tablas operativas (DEC-007).
@@ -74,6 +79,7 @@ pnpm e2e:install         # una vez: Chromium de Playwright en .cache/ms-playwrig
 pnpm e2e                 # Playwright en :3100 contra su propia base `<db>_e2e` (requiere build y MySQL arriba)
 pnpm --filter @pos/db outbox:work   # publicador del outbox (sin consumidores externos hasta la Fase 5)
 pnpm --filter @pos/hub dev          # hub de la LAN en :4100 (HUB_PAIRING_CODE la primera vez; ver docs/SYNC.md §11.2)
+pnpm --filter @pos/hub fake-printer # impresora ESC/POS simulada en :9100 que muestra las comandas en la consola
 pnpm check:trace         # TRAZABILIDAD.md cubre todos los IDs del documento con su prioridad
 ```
 
