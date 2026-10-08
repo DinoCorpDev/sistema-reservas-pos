@@ -224,6 +224,20 @@ No está en el documento: extiende RF-C21. Juan lo pidió después de que unos p
 - **En cocina** el ítem muestra su origen («für Bar») en el KDS y en la comanda impresa.
 - **Lista de verificación.** Una estación sin pantalla ni impresora deja de ser un problema (`station_output`) si tiene un reemplazo activo.
 
+### DEC-034 · Globitos de «listo» y pantalla de Barra y Para llevar (pedido de Juan, _Podría_)
+
+No está en el documento: mejora RF-C17, RF-C19 y RF-C23. Juan lo pidió después de probar la caja: el aviso de cocina se pierde en unos segundos y Barra y Para llevar abrían pedidos con un toque suelto.
+
+- **Globito en el encabezado.** Mesas, Barra y Para llevar muestran cuántos de **sus** pedidos (los del mesero desbloqueado) tienen algo listo para entregar: `readyToServe()` en `@pos/core/tables/ready.ts`.
+  - «Listo» es lo mismo que la mesa verde del mapa (`orderTableState`).
+  - En Mesas se cuentan mesas: una mesa con dos pedidos cuenta una vez. En Barra y Para llevar se cuentan pedidos.
+  - Desaparece cuando se sirve o se entrega. El aviso emergente sigue igual.
+- **Barra y Para llevar abren una pantalla**, no un pedido.
+  - La pantalla muestra los pedidos abiertos de ese tipo, de todos los meseros (en la barra se atiende lo de todos), primero los listos.
+  - Un cuadro grande «+ Neue Bestellung» abre uno nuevo y se bloquea mientras abre, para que un doble toque no cree dos.
+  - Se sigue cumpliendo RNF-22: Barra → + → producto.
+- **Decidido con Juan:** los pedidos vacíos no se descartan solos ni se pregunta por ellos. El editor del salón queda para más adelante.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                | Antes de | Quién decide      |

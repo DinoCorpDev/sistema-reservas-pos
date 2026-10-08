@@ -52,12 +52,20 @@
       "drawer": "Tiroir",
       "drawerOpened": "Le tiroir s’ouvre.",
       "drawerFailed": "Impossible d’ouvrir le tiroir.",
-      "printerDown": "Imprimante «{printer}» injoignable : {error}"
+      "printerDown": "Imprimante «{printer}» injoignable : {error}",
+      "readyTables": "{count, plural, one {# table a} other {# tables ont}} quelque chose de prêt à servir",
+      "readyOrders": "{count, plural, one {# commande a} other {# commandes ont}} quelque chose de prêt à remettre"
     },
     "kitchen": {
       "readyTable": "Table {table} : {count, plural, one {# position prête} other {# positions prêtes}}",
       "readyOrder": "Commande {number} : {count, plural, one {# position prête} other {# positions prêtes}}",
       "stillCooking": "Encore en cuisine : {count}"
+    },
+    "counter": {
+      "newOrder": "Nouvelle commande",
+      "openCount": "{count, plural, =0 {aucune ouverte} one {# ouverte} other {# ouvertes}}",
+      "emptyBar": "Aucune commande au comptoir ouverte.",
+      "emptyTakeaway": "Aucune commande à emporter ouverte."
     }
   }
 }

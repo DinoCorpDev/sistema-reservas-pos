@@ -52,12 +52,20 @@
       "drawer": "Schublade",
       "drawerOpened": "Die Schublade wird geöffnet.",
       "drawerFailed": "Die Schublade konnte nicht geöffnet werden.",
-      "printerDown": "Drucker «{printer}» nicht erreichbar: {error}"
+      "printerDown": "Drucker «{printer}» nicht erreichbar: {error}",
+      "readyTables": "{count, plural, one {# Tisch hat} other {# Tische haben}} etwas bereit zum Servieren",
+      "readyOrders": "{count, plural, one {# Bestellung hat} other {# Bestellungen haben}} etwas bereit zur Übergabe"
     },
     "kitchen": {
       "readyTable": "Tisch {table}: {count, plural, one {# Position} other {# Positionen}} bereit",
       "readyOrder": "Bestellung {number}: {count, plural, one {# Position} other {# Positionen}} bereit",
       "stillCooking": "Noch in der Küche: {count}"
+    },
+    "counter": {
+      "newOrder": "Neue Bestellung",
+      "openCount": "{count, plural, =0 {keine offen} other {# offen}}",
+      "emptyBar": "Keine offenen Theken-Bestellungen.",
+      "emptyTakeaway": "Keine offenen Take-away-Bestellungen."
     }
   }
 }

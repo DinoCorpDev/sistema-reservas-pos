@@ -139,6 +139,9 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
     await ticket.getByRole('button', { name: 'Fertig' }).click();
     await expect(ticket).toHaveCount(0);
     await expect(pos.getByText('Tisch 7: 1 Position bereit')).toBeVisible({ timeout: 10_000 });
+    // The header keeps counting it after the notice is gone (DEC-034).
+    const readyBadge = pos.getByTestId('ready-badge-tables');
+    await expect(readyBadge).toContainText('1 Tisch hat etwas bereit zum Servieren');
     await pos
       .getByRole('navigation', { name: 'Kasse' })
       .getByRole('button', { name: 'Tische' })
@@ -155,6 +158,8 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
       'data-status',
       'preparing',
     );
+    // Back in the kitchen: nothing left to hand over at table 7.
+    await expect(readyBadge).toHaveCount(0, { timeout: 10_000 });
 
     // After the first service the table orders a dessert: it goes to the pastry station's own
     // display. Leaving the order without sending it is not possible by mistake (RF-C09, RF-C21).

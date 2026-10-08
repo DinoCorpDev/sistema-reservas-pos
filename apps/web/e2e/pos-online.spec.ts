@@ -34,7 +34,9 @@ test('approvals, prepay at the bar, a receipt copy and a refund', async ({ page 
   await expect(page.getByTestId('sync-level')).toHaveAttribute('data-level', 'cloud');
 
   // A bar order: numbered by the cloud, the location's authority (no prefix).
+  // The counter lists what is open; a new order is opened only on purpose (DEC-034).
   await page.getByRole('button', { name: 'Theke' }).click();
+  await page.getByRole('button', { name: 'Neue Bestellung' }).click();
   await expect(page.getByTestId('order-number')).toContainText(/\d{4}/);
   await expect(page.getByTestId('order-number')).not.toContainText('K1-');
   await category(page, 'Vorspeisen');
@@ -69,6 +71,15 @@ test('approvals, prepay at the bar, a receipt copy and a refund', async ({ page 
   await page.getByRole('button', { name: 'Zahlung bestätigen' }).click();
   await expect(page.getByTestId('receipt-text')).toContainText('Rabatt');
   await page.getByRole('button', { name: 'Zur Bestellung' }).click();
+  // Back at the counter, the paid order waits in the list until it is handed over (DEC-034).
+  const number = /\d{4}/.exec((await page.getByTestId('order-number').textContent()) ?? '')![0];
+  await page
+    .getByRole('navigation', { name: 'Kasse' })
+    .getByRole('button', { name: 'Theke' })
+    .click();
+  const card = page.getByTestId('counter-order').filter({ hasText: number });
+  await expect(card).toHaveAttribute('data-state', 'in_kitchen');
+  await card.click();
   await page.getByRole('button', { name: 'Ausgegeben' }).click();
   await expect(page.locator('[data-testid="line"][data-status="served"]')).toHaveCount(1);
 

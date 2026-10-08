@@ -13,6 +13,7 @@ test('a price change reaches the POS in less than a minute', async ({ page }) =>
   await pairPos(page, 'K1');
   await unlockPos(page, '4001');
   await page.getByRole('button', { name: 'Theke' }).click();
+  await page.getByRole('button', { name: 'Neue Bestellung' }).click();
   await page.getByRole('button', { name: 'Vorspeisen', exact: true }).click();
   const soup = page.getByTestId('product').filter({ hasText: 'Tomatensuppe' });
   await expect(soup).toContainText('10.50');

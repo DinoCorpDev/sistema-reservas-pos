@@ -52,12 +52,20 @@
       "drawer": "Cassetto",
       "drawerOpened": "Il cassetto si apre.",
       "drawerFailed": "Impossibile aprire il cassetto.",
-      "printerDown": "Stampante «{printer}» non raggiungibile: {error}"
+      "printerDown": "Stampante «{printer}» non raggiungibile: {error}",
+      "readyTables": "{count, plural, one {# tavolo ha} other {# tavoli hanno}} qualcosa di pronto da servire",
+      "readyOrders": "{count, plural, one {# ordine ha} other {# ordini hanno}} qualcosa di pronto da consegnare"
     },
     "kitchen": {
       "readyTable": "Tavolo {table}: {count, plural, one {# posizione pronta} other {# posizioni pronte}}",
       "readyOrder": "Ordine {number}: {count, plural, one {# posizione pronta} other {# posizioni pronte}}",
       "stillCooking": "Ancora in cucina: {count}"
+    },
+    "counter": {
+      "newOrder": "Nuovo ordine",
+      "openCount": "{count, plural, =0 {nessuno aperto} one {# aperto} other {# aperti}}",
+      "emptyBar": "Nessun ordine al banco aperto.",
+      "emptyTakeaway": "Nessun ordine da asporto aperto."
     }
   }
 }

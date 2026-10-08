@@ -15,6 +15,8 @@ import { getPos } from '@/device/store';
 export type PosView =
   | { name: 'floor' }
   | { name: 'orders' }
+  /** Open bar or take-away orders and a button to open a new one (DEC-034). */
+  | { name: 'counter'; channel: 'bar' | 'takeaway' }
   | { name: 'order'; orderId: string }
   | { name: 'payment'; orderId: string }
   | {

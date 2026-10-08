@@ -52,12 +52,20 @@
       "drawer": "Drawer",
       "drawerOpened": "The drawer opens.",
       "drawerFailed": "The drawer could not be opened.",
-      "printerDown": "Printer “{printer}” not reachable: {error}"
+      "printerDown": "Printer “{printer}” not reachable: {error}",
+      "readyTables": "{count, plural, one {# table has} other {# tables have}} something ready to serve",
+      "readyOrders": "{count, plural, one {# order has} other {# orders have}} something ready to hand over"
     },
     "kitchen": {
       "readyTable": "Table {table}: {count, plural, one {# item} other {# items}} ready",
       "readyOrder": "Order {number}: {count, plural, one {# item} other {# items}} ready",
       "stillCooking": "Still in the kitchen: {count}"
+    },
+    "counter": {
+      "newOrder": "New order",
+      "openCount": "{count, plural, =0 {none open} other {# open}}",
+      "emptyBar": "No open bar orders.",
+      "emptyTakeaway": "No open take-away orders."
     }
   }
 }

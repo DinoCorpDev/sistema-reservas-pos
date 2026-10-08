@@ -52,12 +52,20 @@
       "drawer": "Cajón",
       "drawerOpened": "El cajón se abre.",
       "drawerFailed": "No se pudo abrir el cajón.",
-      "printerDown": "Impresora «{printer}» no disponible: {error}"
+      "printerDown": "Impresora «{printer}» no disponible: {error}",
+      "readyTables": "{count, plural, one {# mesa tiene} other {# mesas tienen}} algo listo para servir",
+      "readyOrders": "{count, plural, one {# pedido tiene} other {# pedidos tienen}} algo listo para entregar"
     },
     "kitchen": {
       "readyTable": "Mesa {table}: {count, plural, one {# posición lista} other {# posiciones listas}}",
       "readyOrder": "Pedido {number}: {count, plural, one {# posición lista} other {# posiciones listas}}",
       "stillCooking": "Todavía en cocina: {count}"
+    },
+    "counter": {
+      "newOrder": "Abrir nuevo pedido",
+      "openCount": "{count, plural, =0 {ninguno abierto} one {# abierto} other {# abiertos}}",
+      "emptyBar": "No hay pedidos de barra abiertos.",
+      "emptyTakeaway": "No hay pedidos para llevar abiertos."
     }
   }
 }
