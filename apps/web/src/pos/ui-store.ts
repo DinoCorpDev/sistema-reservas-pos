@@ -30,6 +30,12 @@ export type PosView =
       printedByHub?: boolean;
     };
 
+/** The lists an order is opened from: tables, all orders, bar or take-away. */
+export type ListView = Extract<PosView, { name: 'floor' | 'orders' | 'counter' }>;
+
+const isList = (view: PosView): view is ListView =>
+  view.name === 'floor' || view.name === 'orders' || view.name === 'counter';
+
 interface ApprovalRequest {
   action: SensitiveAction;
   resolve: (approval: OperationApproval | 'allowed' | null) => void;
@@ -41,6 +47,10 @@ interface PosUiState {
   navigate: (view: PosView) => void;
   /** Goes there without asking (the waiter already decided). */
   leaveTo: (view: PosView) => void;
+  /** The last list shown: leaving an order, its payment or its receipt goes back there. */
+  origin: ListView;
+  /** Back to the list the order was opened from. */
+  goBack: () => void;
   approval: ApprovalRequest | null;
   /** Leaving an order whose items the kitchen has not received yet (RF-C09). */
   leaving: { orderId: string; next: PosView; count: number } | null;
@@ -55,7 +65,7 @@ export function unsentCount(orderId: string): number {
   return itemsOf(fold, orderId).filter((item) => item.prepStatus === 'pending').length;
 }
 
-export const usePosUi = create<PosUiState>((set) => ({
+export const usePosUi = create<PosUiState>((set, get) => ({
   view: { name: 'floor' },
   navigate: (view) =>
     set((state) => {
@@ -69,9 +79,12 @@ export const usePosUi = create<PosUiState>((set) => ({
         const count = unsentCount(current.orderId);
         if (count > 0) return { leaving: { orderId: current.orderId, next: view, count } };
       }
-      return { view, leaving: null };
+      return { view, leaving: null, origin: isList(view) ? view : state.origin };
     }),
-  leaveTo: (view) => set({ view, leaving: null }),
+  leaveTo: (view) =>
+    set((state) => ({ view, leaving: null, origin: isList(view) ? view : state.origin })),
+  origin: { name: 'floor' },
+  goBack: () => get().navigate(get().origin),
   approval: null,
   leaving: null,
   sendConfirm: null,

@@ -214,5 +214,22 @@
     "view": "Consulter le menu uniquement",
     "order": "Commander",
     "order_pay": "Commander et payer"
+  },
+  "navHint": {
+    "overview": "Le site en un coup d’œil et la liste de ce qui manque encore pour l’exploitation.",
+    "location": "Données du site (nom, raison sociale, adresse, IDE/TVA, langues) et ses règles : quand le gérant doit valider, essais de NIP, alerte cuisine, impression, reçus, réservations et hub local.",
+    "floor": "Zones du restaurant (salle, terrasse…) et leurs tables avec places, forme et code QR.",
+    "devices": "Caisses, appareils mobiles et écrans de cuisine (KDS) : les coupler avec un code, les activer ou désactiver. Aussi les postes de cuisine et les imprimantes.",
+    "users": "Personnel : rôles (admin, gérant, caissier, serveur, cuisine), NIP de caisse, langue et sites.",
+    "products": "Plats et boissons : prix, catégorie, catégorie fiscale, variantes, options, allergènes, poste de cuisine et disponibilité.",
+    "categories": "Groupes de la carte (entrées, plats, boissons…) et leur ordre à la caisse.",
+    "modifiers": "Options ajoutées à un produit : cuisson, accompagnement, suppléments avec ou sans prix.",
+    "tax": "TVA suisse : taux en vigueur et taux de chaque catégorie fiscale, sur place ou à l’emporter.",
+    "customers": "Clients enregistrés avec leur consentement (factures dès CHF 400, réservations et contact).",
+    "audit": "Historique des actions sensibles : annulations, rabais, réouvertures, remboursements et changements de configuration, avec qui, quand et pourquoi.",
+    "syncConflicts": "Opérations faites hors ligne qui se sont heurtées à la synchronisation (p. ex. deux personnes ont modifié la même chose). Le gérant les examine et les résout.",
+    "supportAccess": "Donner ou retirer au support DINOLABS l’accès à votre organisation pour une durée limitée.",
+    "apiKeys": "Clés pour relier d’autres systèmes (comme Zitas) à l’API de la caisse, avec des droits limités.",
+    "account": "Votre utilisateur : nom, mot de passe et langue de l’interface."
   }
 }

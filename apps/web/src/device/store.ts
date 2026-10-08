@@ -46,8 +46,6 @@ export interface PosState {
   /** Bumped on every change of `fold` (it is updated in place for speed). */
   foldVersion: number;
   sync: SyncStatus;
-  /** A newer version of the app is installed and waits for an idle moment. */
-  updateWaiting: boolean;
   /** Printers by id, as the hub reports them over WebSocket (`printer.status`). */
   printers: Record<string, PrinterHealth>;
   /** Who is at the kitchen displays, from the last pull (DEC-033); null until one arrives. */
@@ -69,7 +67,6 @@ export const usePos = create<PosState>(() => ({
   fold: createFoldState(),
   foldVersion: 0,
   sync: { level: 'standalone', node: null, pending: 0, lastSyncAt: null, rejected: 0 },
-  updateWaiting: false,
   printers: {},
   presence: null,
   revoked: false,

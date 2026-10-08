@@ -120,8 +120,7 @@
       "closedAt": "Ora"
     },
     "order": {
-      "backToFloor": "Torna alla pianta della sala",
-      "floorShort": "Pianta sala",
+      "backTo": "Torna a: {place}",
       "number": "Ordine",
       "waiter": "Cameriere: {name}",
       "notFound": "Questo ordine non esiste su questo dispositivo.",

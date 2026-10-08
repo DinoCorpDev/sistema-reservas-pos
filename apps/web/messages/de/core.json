@@ -214,5 +214,22 @@
     "view": "Nur Menü ansehen",
     "order": "Bestellen",
     "order_pay": "Bestellen und bezahlen"
+  },
+  "navHint": {
+    "overview": "Der Standort auf einen Blick und die Liste dessen, was für den Betrieb noch fehlt.",
+    "location": "Daten des Standorts (Name, Firma, Adresse, UID/MWST, Sprachen) und seine Regeln: wann die Leitung freigeben muss, PIN-Versuche, Küchenalarm, Druck, Belege, Reservationen und lokaler Hub.",
+    "floor": "Bereiche des Lokals (Saal, Terrasse …) und ihre Tische mit Plätzen, Form und QR-Code.",
+    "devices": "Kassen, Handhelds und Küchenbildschirme (KDS): mit einem Code koppeln, aktivieren oder deaktivieren. Dazu Küchenstationen und Drucker.",
+    "users": "Mitarbeitende: Rollen (Admin, Leitung, Kasse, Service, Küche), PIN für die Kasse, Sprache und Standorte.",
+    "products": "Speisen und Getränke: Preis, Kategorie, Steuerkategorie, Varianten, Optionen, Allergene, Küchenstation und Verfügbarkeit.",
+    "categories": "Gruppen der Karte (Vorspeisen, Hauptgerichte, Getränke …) und ihre Reihenfolge an der Kasse.",
+    "modifiers": "Optionen zu einem Produkt: Garstufe, Beilage, Extras mit oder ohne Aufpreis.",
+    "tax": "Schweizer MWST: gültige Sätze und welcher Satz für jede Steuerkategorie gilt, im Lokal oder zum Mitnehmen.",
+    "customers": "Erfasste Gäste mit ihrer Einwilligung (für Rechnungen ab CHF 400, Reservationen und Kontakt).",
+    "audit": "Protokoll heikler Aktionen: Stornos, Rabatte, Wiedereröffnungen, Rückerstattungen und Konfigurationsänderungen, mit wer, wann und warum.",
+    "syncConflicts": "Offline gemachte Vorgänge, die beim Synchronisieren kollidierten (z. B. zwei Personen änderten dasselbe). Die Leitung prüft sie und markiert sie als gelöst.",
+    "supportAccess": "Dem DINOLABS-Support Zugang zu Ihrer Organisation für eine begrenzte Zeit geben oder entziehen.",
+    "apiKeys": "Schlüssel, um andere Systeme (wie Zitas) mit begrenzten Rechten an die API der Kasse anzubinden.",
+    "account": "Ihr Benutzer: Name, Passwort und Sprache der Oberfläche."
   }
 }

@@ -8,6 +8,7 @@ import { asDeviceLanguage, deviceMessages, type Messages } from '@/device/i18n';
 import { usePos } from '@/device/store';
 import { PairingScreen } from '@/device/ui/pairing-screen';
 import { RevokedScreen } from '@/device/ui/revoked-screen';
+import { UpdateBanner } from '@/device/ui/update-banner';
 import { PinScreen } from '@/device/ui/pin-screen';
 import { KdsShell } from './kds-shell';
 
@@ -58,6 +59,7 @@ export function KdsApp() {
       messages={messages.messages}
       timeZone={bootstrap?.location.timezone ?? 'Europe/Zurich'}
     >
+      <UpdateBanner />
       {revoked ? (
         <RevokedScreen />
       ) : !device || !bootstrap ? (

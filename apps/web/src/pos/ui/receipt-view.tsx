@@ -61,6 +61,7 @@ export function ReceiptView({
 }) {
   const t = useTranslations('posPayment.receipt');
   const navigate = usePosUi((state) => state.navigate);
+  const goBack = usePosUi((state) => state.goBack);
   const fold = useFold();
   const text = useMemo(() => renderReceiptText(content, { copyAt }).join('\n'), [content, copyAt]);
   // Re-evaluated when the connection or the printer changes.
@@ -82,7 +83,7 @@ export function ReceiptView({
   const order = fold.orders.get(orderId);
   const next = nextToCollect(fold, orderId);
   const nextOrder = next ? fold.orders.get(next) : undefined;
-  const done = () => navigate(order?.tableId ? { name: 'floor' } : { name: 'orders' });
+  const done = goBack;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 print:block print:overflow-visible print:p-0">

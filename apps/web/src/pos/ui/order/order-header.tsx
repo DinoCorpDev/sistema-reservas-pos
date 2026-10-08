@@ -1,11 +1,10 @@
 'use client';
 
 import type { OrderState } from '@pos/core';
-import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
-import { ArrowLeft, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { usePosUi } from '../../ui-store';
+import { BackButton } from './back-button';
 import type { Lookups } from './hooks';
 import { PAYMENT_STATUS_STYLES } from './status';
 
@@ -15,7 +14,6 @@ export function OrderHeader({ order, lookups }: { order: OrderState; lookups: Lo
   const tc = useTranslations('posOrder.common');
   const tch = useTranslations('posOrder.channel');
   const tp = useTranslations('posOrder.paymentStatus');
-  const navigate = usePosUi((state) => state.navigate);
   const table = order.tableId ? lookups.tables.get(order.tableId) : undefined;
   const joined = order.joinedTableIds
     .map((id) => lookups.tables.get(id)?.label)
@@ -24,14 +22,7 @@ export function OrderHeader({ order, lookups }: { order: OrderState; lookups: Lo
 
   return (
     <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b bg-card px-3 py-2">
-      <Button
-        variant="outline"
-        aria-label={t('backToFloor')}
-        onClick={() => navigate({ name: 'floor' })}
-      >
-        <ArrowLeft />
-        <span className="hidden sm:inline">{t('floorShort')}</span>
-      </Button>
+      <BackButton variant="outline" short />
       <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
         <h1 className="text-xl font-bold">
           {table ? tc('table', { label: table.label }) : tch(order.channel)}

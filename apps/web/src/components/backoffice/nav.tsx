@@ -1,5 +1,6 @@
 'use client';
 
+import { Tooltip } from '@pos/ui/tooltip';
 import { cn } from '@pos/ui/utils';
 import {
   CloudAlertIcon,
@@ -90,6 +91,7 @@ export function BackofficeNav({
   onNavigate?: () => void;
 }) {
   const t = useTranslations('nav');
+  const th = useTranslations('navHint');
   const pathname = usePathname();
   const allowed = new Set(permissions);
   const isActive = (href: string) => {
@@ -110,18 +112,21 @@ export function BackofficeNav({
           <ul key={index} className="grid gap-1">
             {visible.map(({ href, key, icon: Icon }) => (
               <li key={href}>
-                <Link
-                  href={href}
-                  onClick={onNavigate}
-                  aria-current={isActive(href) ? 'page' : undefined}
-                  className={cn(
-                    'flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors hover:bg-accent',
-                    isActive(href) && 'bg-accent text-accent-foreground',
-                  )}
-                >
-                  <Icon className="size-5 shrink-0 text-muted-foreground" />
-                  {t(key)}
-                </Link>
+                {/* What each section is for, while the team learns the backoffice. */}
+                <Tooltip content={th(key)}>
+                  <Link
+                    href={href}
+                    onClick={onNavigate}
+                    aria-current={isActive(href) ? 'page' : undefined}
+                    className={cn(
+                      'flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors hover:bg-accent',
+                      isActive(href) && 'bg-accent text-accent-foreground',
+                    )}
+                  >
+                    <Icon className="size-5 shrink-0 text-muted-foreground" />
+                    {t(key)}
+                  </Link>
+                </Tooltip>
               </li>
             ))}
           </ul>

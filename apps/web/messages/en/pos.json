@@ -32,7 +32,8 @@
       "locked": "Too many wrong attempts. Locked for {minutes, plural, one {# minute} other {# minutes}}.",
       "invalid": "The PIN has 4 to 6 digits.",
       "noCredentials": "This device has no access data yet. Connect it to the internet once.",
-      "notAllowedKitchen": "{name} has no kitchen permission. Unlock the kitchen display with the PIN of someone from the kitchen."
+      "notAllowedKitchen": "{name} has no kitchen permission. Unlock the kitchen display with the PIN of someone from the kitchen.",
+      "failed": "That did not work. Enter the PIN again or reload the page."
     },
     "approval": {
       "title": "Manager approval",
@@ -72,6 +73,10 @@
       "title": "Device unpaired",
       "description": "“{name}” was deactivated or unpaired in the backoffice. To use it again, enter a new pairing code (Backoffice → Devices).",
       "pending": "{count, plural, one {# operation is} other {# operations are}} not in the cloud yet. They are sent as soon as the device is paired again."
+    },
+    "update": {
+      "available": "A new version is ready.",
+      "now": "Update now"
     }
   }
 }

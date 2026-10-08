@@ -32,7 +32,8 @@
       "locked": "Troppi tentativi errati. Bloccato per {minutes, plural, one {# minuto} other {# minuti}}.",
       "invalid": "Il PIN è composto da 4 a 6 cifre.",
       "noCredentials": "Questo dispositivo non ha ancora i dati di accesso. Lo colleghi una volta a Internet.",
-      "notAllowedKitchen": "{name} non ha l’autorizzazione cucina. Sblocca lo schermo cucina con il PIN di una persona della cucina."
+      "notAllowedKitchen": "{name} non ha l’autorizzazione cucina. Sblocca lo schermo cucina con il PIN di una persona della cucina.",
+      "failed": "Non ha funzionato. Inserisci di nuovo il PIN o ricarica la pagina."
     },
     "approval": {
       "title": "Autorizzazione di una persona responsabile",
@@ -72,6 +73,10 @@
       "title": "Dispositivo disaccoppiato",
       "description": "«{name}» è stato disattivato o disaccoppiato nel backoffice. Per usarlo di nuovo, inserisci un nuovo codice di accoppiamento (Backoffice → Dispositivi).",
       "pending": "{count, plural, one {# operazione non è} other {# operazioni non sono}} ancora nel cloud. Verranno inviate appena il dispositivo sarà di nuovo accoppiato."
+    },
+    "update": {
+      "available": "È pronta una nuova versione.",
+      "now": "Aggiorna ora"
     }
   }
 }

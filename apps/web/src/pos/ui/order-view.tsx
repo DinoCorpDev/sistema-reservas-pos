@@ -3,12 +3,12 @@
 import { formatChf } from '@pos/core';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
-import { ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { getPos } from '@/device/store';
 import { usePosUi } from '../ui-store';
 import { ActionBar } from './order/action-bar';
+import { BackButton } from './order/back-button';
 import { useLookups, useOrderData, useViewportFill } from './order/hooks';
 import { LineDialog } from './order/line-dialog';
 import { MoreDialog } from './order/more-dialog';
@@ -46,9 +46,7 @@ function OrderScreen({ orderId }: { orderId: string }) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
         <p className="text-muted-foreground">{t('notFound')}</p>
-        <Button size="lg" onClick={() => navigate({ name: 'floor' })}>
-          <ArrowLeft /> {t('backToFloor')}
-        </Button>
+        <BackButton size="lg" />
       </div>
     );
   }

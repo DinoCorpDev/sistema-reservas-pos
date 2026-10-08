@@ -14,14 +14,24 @@ import { getPos, type PosUser, usePos } from './store';
 
 let worker: Worker | null = null;
 let nextRequest = 1;
-const waiting = new Map<number, (index: number) => void>();
+const waiting = new Map<number, { resolve: (index: number) => void; reject: (e: Error) => void }>();
+
+/** No answer in this time means the worker is broken: the check fails instead of hanging. */
+const VERIFY_TIMEOUT_MS = 20_000;
 
 function pinWorker(): Worker {
   if (!worker) {
     worker = new Worker(new URL('./pin.worker.ts', import.meta.url), { type: 'module' });
     worker.onmessage = (event: MessageEvent<{ id: number; index: number }>) => {
-      waiting.get(event.data.id)?.(event.data.index);
+      waiting.get(event.data.id)?.resolve(event.data.index);
       waiting.delete(event.data.id);
+    };
+    // The worker did not load or crashed: every pending check fails and the next one starts over.
+    worker.onerror = () => {
+      for (const pending of waiting.values()) pending.reject(new Error('PIN worker failed'));
+      waiting.clear();
+      worker?.terminate();
+      worker = null;
     };
   }
   return worker;
@@ -30,8 +40,21 @@ function pinWorker(): Worker {
 function verifyHashes(pin: string, hashes: string[]): Promise<number> {
   if (hashes.length === 0) return Promise.resolve(-1);
   const id = nextRequest++;
-  return new Promise((resolve) => {
-    waiting.set(id, resolve);
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      waiting.delete(id);
+      reject(new Error('PIN check timed out'));
+    }, VERIFY_TIMEOUT_MS);
+    waiting.set(id, {
+      resolve: (index) => {
+        clearTimeout(timer);
+        resolve(index);
+      },
+      reject: (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    });
     pinWorker().postMessage({ id, pin, hashes });
   });
 }

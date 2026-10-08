@@ -214,5 +214,22 @@
     "view": "View menu only",
     "order": "Order",
     "order_pay": "Order and pay"
+  },
+  "navHint": {
+    "overview": "The location at a glance and the list of what is still missing before it can operate.",
+    "location": "Location data (name, legal name, address, UID/VAT, languages) and its rules: when a manager must approve, PIN attempts, kitchen alert, printing, receipts, reservations and the local hub.",
+    "floor": "Areas of the restaurant (dining room, terrace…) and their tables with seats, shape and QR code.",
+    "devices": "POS terminals, handhelds and kitchen displays (KDS): pair them with a code, activate or deactivate them. Also kitchen stations and printers.",
+    "users": "Staff: roles (admin, manager, cashier, waiter, kitchen), POS PIN, language and the locations they work at.",
+    "products": "Dishes and drinks: price, category, tax category, variants, modifiers, allergens, kitchen station and availability.",
+    "categories": "Menu groups (starters, mains, drinks…) and the order they appear in on the POS.",
+    "modifiers": "Options added to a product: doneness, side dish, extras with or without a price.",
+    "tax": "Swiss VAT (MWST): current rates and which rate each tax category takes, eaten in or taken away.",
+    "customers": "Registered guests with their data consent (for invoices from CHF 400, reservations and contact).",
+    "audit": "History of sensitive actions: voids, discounts, reopenings, refunds and configuration changes, with who, when and why.",
+    "syncConflicts": "Operations made offline that clashed when syncing (e.g. two people changed the same thing). The manager reviews and resolves them.",
+    "supportAccess": "Grant or revoke DINOLABS support access to your organization for a limited time.",
+    "apiKeys": "Keys to connect other systems (such as Zitas) to the POS API with limited permissions.",
+    "account": "Your user: name, password and interface language."
   }
 }

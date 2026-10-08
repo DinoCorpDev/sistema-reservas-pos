@@ -120,8 +120,7 @@
       "closedAt": "Heure"
     },
     "order": {
-      "backToFloor": "Retour au plan de salle",
-      "floorShort": "Plan de salle",
+      "backTo": "Retour à : {place}",
       "number": "Commande",
       "waiter": "Serveur : {name}",
       "notFound": "Cette commande n’existe pas sur cet appareil.",

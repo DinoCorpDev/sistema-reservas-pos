@@ -214,5 +214,22 @@
     "view": "Solo consultare il menu",
     "order": "Ordinare",
     "order_pay": "Ordinare e pagare"
+  },
+  "navHint": {
+    "overview": "La sede a colpo d’occhio e l’elenco di ciò che manca per poter operare.",
+    "location": "Dati della sede (nome, ragione sociale, indirizzo, IDI/IVA, lingue) e le sue regole: quando serve il gerente, tentativi di PIN, allerta cucina, stampa, ricevute, prenotazioni e hub locale.",
+    "floor": "Aree del locale (sala, terrazza…) e i loro tavoli con posti, forma e codice QR.",
+    "devices": "Casse, palmari e schermi cucina (KDS): accoppiarli con un codice, attivarli o disattivarli. Anche postazioni di cucina e stampanti.",
+    "users": "Personale: ruoli (admin, gerente, cassiere, cameriere, cucina), PIN della cassa, lingua e sedi.",
+    "products": "Piatti e bevande: prezzo, categoria, categoria fiscale, varianti, opzioni, allergeni, postazione di cucina e disponibilità.",
+    "categories": "Gruppi del menu (antipasti, secondi, bevande…) e il loro ordine alla cassa.",
+    "modifiers": "Opzioni aggiunte a un prodotto: cottura, contorno, extra con o senza prezzo.",
+    "tax": "IVA svizzera: aliquote in vigore e quale aliquota ha ogni categoria fiscale, nel locale o da asporto.",
+    "customers": "Clienti registrati con il loro consenso (fatture da CHF 400, prenotazioni e contatto).",
+    "audit": "Storico delle azioni sensibili: annullamenti, sconti, riaperture, rimborsi e modifiche di configurazione, con chi, quando e perché.",
+    "syncConflicts": "Operazioni fatte offline che si sono scontrate nella sincronizzazione (es. due persone hanno cambiato la stessa cosa). Il gerente le controlla e le risolve.",
+    "supportAccess": "Dare o togliere al supporto DINOLABS l’accesso alla tua organizzazione per un tempo limitato.",
+    "apiKeys": "Chiavi per collegare altri sistemi (come Zitas) all’API della cassa, con permessi limitati.",
+    "account": "Il tuo utente: nome, password e lingua dell’interfaccia."
   }
 }

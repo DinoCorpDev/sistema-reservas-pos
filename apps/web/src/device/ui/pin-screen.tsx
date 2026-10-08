@@ -23,10 +23,13 @@ export function PinScreen() {
     if (value.length < 4 || busy) return;
     setBusy(true);
     setMessage(null);
-    const result = await unlock(value);
+    // Whatever fails (local database, PIN check), the pad never stays busy for good.
+    const result = await unlock(value).catch(() => ({ status: 'failed' }) as const);
     setBusy(false);
     setPin('');
-    if (result.status === 'wrong') setMessage(t('wrong', { attemptsLeft: result.attemptsLeft }));
+    if (result.status === 'failed') setMessage(t('failed'));
+    else if (result.status === 'wrong')
+      setMessage(t('wrong', { attemptsLeft: result.attemptsLeft }));
     else if (result.status === 'locked')
       setMessage(t('locked', { minutes: Math.ceil(result.retryAfterSeconds / 60) }));
     else if (result.status === 'no_credentials') setMessage(t('noCredentials'));

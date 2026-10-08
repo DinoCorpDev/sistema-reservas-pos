@@ -120,8 +120,7 @@
       "closedAt": "Zeit"
     },
     "order": {
-      "backToFloor": "Zurück zum Tischplan",
-      "floorShort": "Tischplan",
+      "backTo": "Zurück zu: {place}",
       "number": "Bestellung",
       "waiter": "Bedienung: {name}",
       "notFound": "Diese Bestellung gibt es auf diesem Gerät nicht.",

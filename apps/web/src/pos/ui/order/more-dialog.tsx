@@ -370,7 +370,7 @@ function ChannelPanel({
 /** Cancels an order without payments (RN-12); every line is voided with the reason. */
 function CancelPanel({ order, onDone }: { order: OrderState; onDone: () => void }) {
   const t = useTranslations('posOrder.more');
-  const navigate = usePosUi((state) => state.navigate);
+  const goBack = usePosUi((state) => state.goBack);
   const run = useRunner();
   const [busy, setBusy] = useState(false);
 
@@ -391,7 +391,7 @@ function CancelPanel({ order, onDone }: { order: OrderState; onDone: () => void 
     setBusy(false);
     if (!result?.ok) return;
     onDone();
-    navigate({ name: 'floor' });
+    goBack();
   }
 
   return (

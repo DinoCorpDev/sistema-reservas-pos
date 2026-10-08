@@ -1,6 +1,7 @@
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import type { ComponentProps } from 'react';
+import { Tooltip } from './tooltip';
 import { cn } from './utils';
 
 /**
@@ -41,6 +42,20 @@ export type ButtonProps = ComponentProps<'button'> &
 
 export function Button({ className, variant, size, asChild = false, ...props }: ButtonProps) {
   const Component = asChild ? Slot : 'button';
+  // An icon alone says little: its name shows in a tooltip on hover or focus (desktop).
+  const label = size === 'icon' ? (props['aria-label'] ?? props.title) : undefined;
+  if (label) {
+    const { title: _title, ...rest } = props;
+    return (
+      <Tooltip content={label} side="top">
+        <Component
+          data-slot="button"
+          className={cn(buttonVariants({ variant, size, className }))}
+          {...rest}
+        />
+      </Tooltip>
+    );
+  }
   return (
     <Component
       data-slot="button"

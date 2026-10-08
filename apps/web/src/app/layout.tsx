@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
+import { SiteUpdateBanner } from '@/device/ui/update-banner';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={locale}>
       <body className="min-h-dvh">
         <NextIntlClientProvider>
+          <SiteUpdateBanner />
           {children}
           <Toaster />
         </NextIntlClientProvider>

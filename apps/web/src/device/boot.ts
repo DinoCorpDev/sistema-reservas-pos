@@ -20,14 +20,8 @@ import { refreshConfiguration, startSync } from './sync';
  * local database, the engine and the sync loop. Works without network once it is paired.
  */
 export async function bootDevice(): Promise<void> {
-  void registerPosWorker().then((registration) => {
-    if (!registration) return;
-    const check = () => usePos.setState({ updateWaiting: Boolean(registration.waiting) });
-    registration.addEventListener('updatefound', () => {
-      registration.installing?.addEventListener('statechange', check);
-    });
-    check();
-  });
+  // A new version is offered by the update banner on every screen.
+  void registerPosWorker();
   await loadClock();
   const [device, bootstrap, credentials, revoked] = await Promise.all([
     getMeta('device'),

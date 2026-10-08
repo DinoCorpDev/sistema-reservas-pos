@@ -12,6 +12,18 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@pos/web", "start"],
       "port": 3000
+    },
+    {
+      "name": "hub",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@pos/hub", "dev"],
+      "port": 4100
+    },
+    {
+      "name": "fake-printer",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@pos/hub", "fake-printer"],
+      "port": 9100
     }
   ]
 }

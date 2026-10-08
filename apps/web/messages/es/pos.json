@@ -32,7 +32,8 @@
       "locked": "Demasiados intentos fallidos. Bloqueado durante {minutes, plural, one {# minuto} other {# minutos}}.",
       "invalid": "El PIN debe tener de 4 a 6 dígitos.",
       "noCredentials": "Este dispositivo todavía no tiene datos de acceso. Conéctelo una vez a internet.",
-      "notAllowedKitchen": "{name} no tiene permiso de cocina. Desbloquea la pantalla de cocina con el PIN de una persona de la cocina."
+      "notAllowedKitchen": "{name} no tiene permiso de cocina. Desbloquea la pantalla de cocina con el PIN de una persona de la cocina.",
+      "failed": "No funcionó. Ingrese el PIN de nuevo o recargue la página."
     },
     "approval": {
       "title": "Autorización de un gerente",
@@ -72,6 +73,10 @@
       "title": "Dispositivo desvinculado",
       "description": "«{name}» fue desactivado o desvinculado en el backoffice. Para volver a usarlo, ingresa un código de vinculación nuevo (Backoffice → Dispositivos).",
       "pending": "{count, plural, one {# operación todavía no llegó} other {# operaciones todavía no llegaron}} a la nube. Se enviarán en cuanto el dispositivo se vuelva a vincular."
+    },
+    "update": {
+      "available": "Hay una versión nueva lista.",
+      "now": "Actualizar ahora"
     }
   }
 }

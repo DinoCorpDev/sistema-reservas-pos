@@ -32,7 +32,8 @@
       "locked": "Zu viele falsche Versuche. Gesperrt für {minutes, plural, one {# Minute} other {# Minuten}}.",
       "invalid": "Die PIN hat 4 bis 6 Ziffern.",
       "noCredentials": "Dieses Gerät hat noch keine Zugangsdaten. Verbinden Sie es einmal mit dem Internet.",
-      "notAllowedKitchen": "{name} hat keine Küchenberechtigung. Entsperren Sie den Küchenbildschirm mit der PIN einer Person aus der Küche."
+      "notAllowedKitchen": "{name} hat keine Küchenberechtigung. Entsperren Sie den Küchenbildschirm mit der PIN einer Person aus der Küche.",
+      "failed": "Das hat nicht geklappt. Bitte PIN erneut eingeben oder die Seite neu laden."
     },
     "approval": {
       "title": "Freigabe durch Führungsperson",
@@ -72,6 +73,10 @@
       "title": "Gerät entkoppelt",
       "description": "«{name}» wurde im Backoffice deaktiviert oder entkoppelt. Um es wieder zu benutzen, geben Sie einen neuen Kopplungscode ein (Backoffice → Geräte).",
       "pending": "{count, plural, one {# Vorgang ist} other {# Vorgänge sind}} noch nicht in der Cloud. Sie werden gesendet, sobald das Gerät wieder gekoppelt ist."
+    },
+    "update": {
+      "available": "Eine neue Version ist bereit.",
+      "now": "Jetzt aktualisieren"
     }
   }
 }

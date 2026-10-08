@@ -32,7 +32,8 @@
       "locked": "Trop d’essais erronés. Bloqué pendant {minutes, plural, one {# minute} other {# minutes}}.",
       "invalid": "Le PIN comporte 4 à 6 chiffres.",
       "noCredentials": "Cet appareil n’a pas encore de données d’accès. Connectez-le une fois à Internet.",
-      "notAllowedKitchen": "{name} n’a pas l’autorisation cuisine. Déverrouillez l’écran de cuisine avec le PIN d’une personne de la cuisine."
+      "notAllowedKitchen": "{name} n’a pas l’autorisation cuisine. Déverrouillez l’écran de cuisine avec le PIN d’une personne de la cuisine.",
+      "failed": "Cela n'a pas fonctionné. Saisissez à nouveau le PIN ou rechargez la page."
     },
     "approval": {
       "title": "Validation par une personne responsable",
@@ -72,6 +73,10 @@
       "title": "Appareil découplé",
       "description": "« {name} » a été désactivé ou découplé dans le backoffice. Pour l’utiliser de nouveau, saisissez un nouveau code de couplage (Backoffice → Appareils).",
       "pending": "{count, plural, one {# opération n’est} other {# opérations ne sont}} pas encore dans le cloud. Elles seront envoyées dès que l’appareil sera de nouveau couplé."
+    },
+    "update": {
+      "available": "Une nouvelle version est prête.",
+      "now": "Mettre à jour"
     }
   }
 }

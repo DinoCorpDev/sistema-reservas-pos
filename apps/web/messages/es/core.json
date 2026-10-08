@@ -214,5 +214,22 @@
     "view": "Solo ver el menú",
     "order": "Pedir",
     "order_pay": "Pedir y pagar"
+  },
+  "navHint": {
+    "overview": "Estado de la sede de un vistazo y la lista de lo que falta configurar para poder operar.",
+    "location": "Datos de la sede (nombre, razón social, dirección, UID/MWST, idiomas) y sus reglas: cuándo hace falta un gerente, intentos de PIN, alerta de cocina, impresión, recibos, reservas y hub local.",
+    "floor": "Áreas del local (salón, terraza…) y sus mesas con capacidad, forma y código QR.",
+    "devices": "Cajas, handhelds y pantallas de cocina (KDS): vincularlas con un código, activarlas o desactivarlas. También estaciones de cocina e impresoras.",
+    "users": "Empleados: roles (admin, gerente, cajero, mesero, cocina), PIN para la caja, idioma y sedes donde trabajan.",
+    "products": "Platos y bebidas: precio, categoría, categoría fiscal, variantes, modificadores, alérgenos, estación de cocina y disponibilidad.",
+    "categories": "Grupos del menú (entradas, platos fuertes, bebidas…) y el orden en que aparecen en la caja.",
+    "modifiers": "Opciones que se agregan a un producto: término de la carne, guarnición, extras con o sin precio.",
+    "tax": "IVA suizo (MWST): tasas vigentes y qué tasa lleva cada categoría fiscal según se consuma en el local o para llevar.",
+    "customers": "Clientes registrados con su consentimiento de datos (para facturas desde CHF 400, reservas y contacto).",
+    "audit": "Historial de acciones sensibles: anulaciones, descuentos, reaperturas, devoluciones y cambios de configuración, con quién, cuándo y por qué.",
+    "syncConflicts": "Operaciones hechas sin conexión que chocaron al sincronizar (por ejemplo, dos personas cambiaron lo mismo). El gerente las revisa y las marca como resueltas.",
+    "supportAccess": "Dar o quitar permiso al soporte de DINOLABS para entrar a tu organización por un tiempo limitado.",
+    "apiKeys": "Claves para conectar otros sistemas (como Zitas) a la API del POS, con permisos limitados.",
+    "account": "Tu usuario: nombre, contraseña e idioma de la interfaz."
   }
 }

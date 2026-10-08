@@ -120,8 +120,7 @@
       "closedAt": "Hora"
     },
     "order": {
-      "backToFloor": "Volver al plano de mesas",
-      "floorShort": "Plano de mesas",
+      "backTo": "Volver a {place}",
       "number": "Pedido",
       "waiter": "Mesero: {name}",
       "notFound": "Este pedido no existe en este dispositivo.",

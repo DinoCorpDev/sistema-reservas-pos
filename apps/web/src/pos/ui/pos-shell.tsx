@@ -7,7 +7,6 @@ import { cn } from '@pos/ui/utils';
 import { Archive, Beer, LayoutGrid, ListOrdered, Lock, ShoppingBag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { lockTerminal } from '@/device/pin';
-import { activateWaitingWorker } from '@/device/service-worker';
 import { usePos } from '@/device/store';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import { hasCashDrawer, hubReceiptPrinter, openDrawer } from '../actions';
@@ -31,7 +30,6 @@ export function PosShell() {
   const navigate = usePosUi((state) => state.navigate);
   const user = usePos((state) => state.user);
   const location = usePos((state) => state.bootstrap?.location.name);
-  const updateWaiting = usePos((state) => state.updateWaiting);
   // The hub's printers and the connection decide what the header offers (DEC-031).
   usePos((state) => state.printers);
   usePos((state) => state.sync.level);
@@ -53,11 +51,6 @@ export function PosShell() {
     } catch {
       toast.error(t('drawerFailed'));
     }
-  }
-
-  async function update() {
-    const registration = await navigator.serviceWorker?.getRegistration();
-    if (registration) activateWaitingWorker(registration);
   }
 
   const tab = (active: boolean) => cn('relative gap-2', active && 'bg-accent');
@@ -125,14 +118,6 @@ export function PosShell() {
       {printer?.health && !printer.health.ok && (
         <div className="bg-destructive/10 px-4 py-2 text-sm text-destructive" role="alert">
           {t('printerDown', { printer: printer.name, error: printer.health.error ?? '' })}
-        </div>
-      )}
-      {updateWaiting && view.name === 'floor' && (
-        <div className="flex items-center justify-between gap-2 bg-sky-50 px-4 py-2 text-sm text-sky-900">
-          <span>{t('updateAvailable')}</span>
-          <Button size="default" variant="outline" onClick={() => void update()}>
-            {t('updateNow')}
-          </Button>
         </div>
       )}
       <main className="flex min-h-0 flex-1 flex-col">

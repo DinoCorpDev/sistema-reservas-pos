@@ -109,6 +109,7 @@ function SettledPanel({ order }: { order: OrderState }) {
   const t = useTranslations('posPayment.screen');
   const tr = useTranslations('posPayment.receipt');
   const navigate = usePosUi((state) => state.navigate);
+  const goBack = usePosUi((state) => state.goBack);
   const fold = useFold();
   const next = nextToCollect(fold, order.id);
   const message =
@@ -129,11 +130,7 @@ function SettledPanel({ order }: { order: OrderState }) {
               {tr('continue')}
             </Button>
           )}
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => navigate(order.tableId ? { name: 'floor' } : { name: 'orders' })}
-          >
+          <Button size="lg" variant="outline" onClick={goBack}>
             {tr('done')}
           </Button>
         </div>

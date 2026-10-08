@@ -120,8 +120,7 @@
       "closedAt": "Time"
     },
     "order": {
-      "backToFloor": "Back to floor plan",
-      "floorShort": "Floor plan",
+      "backTo": "Back to {place}",
       "number": "Order",
       "waiter": "Server: {name}",
       "notFound": "This order doesn’t exist on this device.",

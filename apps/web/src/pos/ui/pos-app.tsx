@@ -9,6 +9,7 @@ import { usePos } from '@/device/store';
 import { PairingScreen } from '@/device/ui/pairing-screen';
 import { RevokedScreen } from '@/device/ui/revoked-screen';
 import { PinScreen } from '@/device/ui/pin-screen';
+import { UpdateBanner } from '@/device/ui/update-banner';
 import { PosShell } from './pos-shell';
 
 const POS_FILES = ['pos', 'pos-order', 'pos-payment'] as const;
@@ -56,6 +57,7 @@ export function PosApp() {
       messages={messages.messages}
       timeZone={bootstrap?.location.timezone ?? 'Europe/Zurich'}
     >
+      <UpdateBanner />
       {revoked ? (
         <RevokedScreen />
       ) : !device || !bootstrap ? (
