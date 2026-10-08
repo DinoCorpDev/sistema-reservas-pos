@@ -138,7 +138,12 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
     // The kitchen bumps the ticket: it leaves the board and the waiter hears it (RF-C22, RF-C23).
     await ticket.getByRole('button', { name: 'Fertig' }).click();
     await expect(ticket).toHaveCount(0);
-    await expect(pos.getByText('Tisch 7: 1 Position bereit')).toBeVisible({ timeout: 10_000 });
+    const readyNotice = pos.getByText('Tisch 7: 1 Position bereit');
+    await expect(readyNotice).toBeVisible({ timeout: 10_000 });
+    // A tap anywhere on the notice closes it; there is no close button to aim at.
+    await expect(pos.locator('[data-sonner-toast] [data-close-button]')).toHaveCount(0);
+    await readyNotice.click();
+    await expect(readyNotice).toBeHidden();
     // The header keeps counting it after the notice is gone (DEC-034).
     const readyBadge = pos.getByTestId('ready-badge-tables');
     await expect(readyBadge).toContainText('1 Tisch hat etwas bereit zum Servieren');

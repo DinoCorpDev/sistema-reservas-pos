@@ -236,6 +236,7 @@ No está en el documento: mejora RF-C17, RF-C19 y RF-C23. Juan lo pidió despué
   - La pantalla muestra los pedidos abiertos de ese tipo, de todos los meseros (en la barra se atiende lo de todos), primero los listos.
   - Un cuadro grande «+ Neue Bestellung» abre uno nuevo y se bloquea mientras abre, para que un doble toque no cree dos.
   - Se sigue cumpliendo RNF-22: Barra → + → producto.
+- **Avisos.** Un toque en cualquier parte de un aviso lo cierra; ya no hay una X pequeña a la que apuntar. Vale para la caja, el KDS y el backoffice (`@pos/ui/toaster`).
 - **Decidido con Juan:** los pedidos vacíos no se descartan solos ni se pregunta por ellos. El editor del salón queda para más adelante.
 
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
