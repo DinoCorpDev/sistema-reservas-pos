@@ -20,7 +20,8 @@
       "pairing": "Pairing…",
       "invalidCode": "The code is wrong or has expired.",
       "failed": "Pairing failed. Check the connection and try again.",
-      "hubCode": "This code belongs to the location hub. It is entered on the hub itself, not here."
+      "hubCode": "This code belongs to the location hub. It is entered on the hub itself, not here.",
+      "pendingElsewhere": "This device still has {count, plural, one {# operation} other {# operations}} of its previous location that are not in the cloud yet. Pair it with that location again so nothing is lost."
     },
     "pin": {
       "title": "Enter PIN",
@@ -66,6 +67,11 @@
       "openCount": "{count, plural, =0 {none open} other {# open}}",
       "emptyBar": "No open bar orders.",
       "emptyTakeaway": "No open take-away orders."
+    },
+    "revoked": {
+      "title": "Device unpaired",
+      "description": "“{name}” was deactivated or unpaired in the backoffice. To use it again, enter a new pairing code (Backoffice → Devices).",
+      "pending": "{count, plural, one {# operation is} other {# operations are}} not in the cloud yet. They are sent as soon as the device is paired again."
     }
   }
 }

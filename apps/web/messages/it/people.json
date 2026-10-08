@@ -46,11 +46,11 @@
     "reactivateFirst": "Attivi il dispositivo prima di abbinarlo.",
     "deactivate": "Disattiva dispositivo",
     "deactivateTitle": "Disattivare {name}?",
-    "deactivateText": "Il dispositivo viene scollegato subito e non può più funzionare finché non viene riattivato e abbinato di nuovo. Ordini e scontrini restano conservati.",
+    "deactivateText": "Il dispositivo si blocca appena si connette e non può più lavorare finché non viene riattivato e accoppiato con un nuovo codice. Ordini e ricevute restano conservati.",
     "deactivated": "Dispositivo disattivato e scollegato.",
     "activate": "Attiva dispositivo",
     "activateTitle": "Riattivare {name}?",
-    "activateText": "In seguito il dispositivo dovrà essere abbinato con un nuovo codice.",
+    "activateText": "L’attivazione genera un nuovo codice di accoppiamento da inserire sul dispositivo.",
     "activated": "Dispositivo attivato."
   },
   "stations": {

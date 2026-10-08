@@ -52,6 +52,8 @@ export interface PosState {
   printers: Record<string, PrinterHealth>;
   /** Who is at the kitchen displays, from the last pull (DEC-033); null until one arrives. */
   presence: PresenceSnapshot | null;
+  /** Deactivated or unpaired in the backoffice: nothing works until a new code (DEC-035). */
+  revoked: boolean;
 }
 
 /**
@@ -70,6 +72,7 @@ export const usePos = create<PosState>(() => ({
   updateWaiting: false,
   printers: {},
   presence: null,
+  revoked: false,
 }));
 
 export const getPos = () => usePos.getState();

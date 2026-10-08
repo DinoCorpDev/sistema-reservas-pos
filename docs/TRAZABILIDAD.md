@@ -63,7 +63,7 @@ Otras pruebas de la fase:
 | RF-A09 | Fichaje simple de entrada y salida con reporte de horas (L-GAV)                         | PODRÍA    | Post | ⬜      |                                                                                                                                                                     |
 | RF-A10 | Acceso de soporte DINOLABS con permiso del dueño, limitado y auditado                   | DEBERÍA   | 1    | ✅      | `admin.int.test.ts` (permisos de soporte), consola `/support`, auditoría con `support_staff_id`                                                                     |
 | RF-A11 | Montar un restaurante completo desde el backoffice con lista de verificación            | DEBE      | 1    | ✅      | `e2e/setup-restaurant.spec.ts` (puerta de la Fase 1), `admin.int.test.ts`; desde la Fase 3 también exige que cada estación tenga KDS o impresora (`station_output`) |
-| RF-A12 | Desactivar usuarios y terminales sin borrarlos                                          | DEBE      | 1    | ✅      | `people.int.test.ts` (desactivar usuarios y terminales)                                                                                                             |
+| RF-A12 | Desactivar usuarios y terminales sin borrarlos                                          | DEBE      | 1    | ✅      | `people.int.test.ts` (desactivar usuarios y terminales), `e2e/device-revoke.spec.ts` (la caja desactivada se bloquea y vuelve con un código nuevo, DEC-035)         |
 
 ## RF-B — Catálogo maestro e impuestos
 

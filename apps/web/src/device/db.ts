@@ -46,6 +46,8 @@ export interface MetaValues {
   counters: Counters;
   pinLock: PinLock;
   storagePersisted: boolean;
+  /** The cloud no longer accepts this device's token: deactivated or unpaired (DEC-035). */
+  revoked: { at: string };
 }
 
 export type MetaKey = keyof MetaValues;
@@ -94,6 +96,29 @@ export async function getMeta<K extends MetaKey>(key: K): Promise<MetaValues[K] 
 
 export async function setMeta<K extends MetaKey>(key: K, value: MetaValues[K]): Promise<void> {
   await deviceDb().meta.put({ key, value });
+}
+
+export async function deleteMeta(key: MetaKey): Promise<void> {
+  await deviceDb().meta.delete(key);
+}
+
+/** Operations of this device the cloud has not confirmed yet (rejected ones never will be). */
+export async function unconfirmedCount(): Promise<number> {
+  return (await deviceDb().ops.where('cloudAcked').equals(0).toArray()).filter(
+    (row) => row.rejected === 0,
+  ).length;
+}
+
+/**
+ * Forgets everything of the previous location (operations, configuration, counters), when the
+ * device is paired to another one and the cloud has all of it (DEC-035).
+ */
+export async function resetDeviceData(): Promise<void> {
+  const db = deviceDb();
+  await db.transaction('rw', db.meta, db.ops, async () => {
+    await db.ops.clear();
+    await db.meta.clear();
+  });
 }
 
 /** Hands a pairing to the other app of this browser (a KDS code entered in the POS, DEC-030). */

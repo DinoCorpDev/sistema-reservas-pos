@@ -130,7 +130,25 @@ link = startCloudLink({
     await printConfig.refresh(cloud);
     printer?.kick();
   },
+  onRevoked: () => void revoke(),
 });
+
+/**
+ * Deactivated or unpaired in the backoffice (DEC-035): the hub forgets its token and stops
+ * serving the terminals and printing; they go to the cloud by themselves and keep everything
+ * not confirmed yet. Only /health stays, until it is restarted with a new pairing code.
+ */
+async function revoke(): Promise<void> {
+  console.error(
+    'This hub was deactivated or unpaired in the backoffice: it stops serving the terminals. Create a new pairing code for its terminal and restart it with HUB_PAIRING_CODE=<code>.',
+  );
+  state.update({ deviceToken: null });
+  printer?.stop();
+  link?.stop();
+  await hub.close();
+  const idle = await startHub({ port, pingDatabase: null });
+  console.log(`Hub (unpaired) listening on http://0.0.0.0:${idle.port}`);
+}
 
 console.log(
   `Hub listening on http://0.0.0.0:${hub.port} (WebSocket /ws), cloud ${cloudUrl}, ${authority ? 'numbering authority' : 'standby'}, printing ${printConfig.value ? `on ${printConfig.value.printers.length} printer(s)` : 'pending configuration'}`,

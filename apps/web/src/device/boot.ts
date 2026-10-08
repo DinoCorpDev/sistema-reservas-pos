@@ -1,6 +1,14 @@
 import { deviceApp, TERMINAL_TYPES_OF } from './app';
 import { loadClock } from './clock';
-import { getMeta, type PairedDevice, setMeta, storePairedDeviceFor } from './db';
+import {
+  deleteMeta,
+  getMeta,
+  type PairedDevice,
+  resetDeviceData,
+  setMeta,
+  storePairedDeviceFor,
+  unconfirmedCount,
+} from './db';
 import { refold } from './engine';
 import { CLOUD, callNode } from './http';
 import { registerPosWorker } from './service-worker';
@@ -21,24 +29,38 @@ export async function bootDevice(): Promise<void> {
     check();
   });
   await loadClock();
-  const [device, bootstrap, credentials] = await Promise.all([
+  const [device, bootstrap, credentials, revoked] = await Promise.all([
     getMeta('device'),
     getMeta('bootstrap'),
     getMeta('credentials'),
+    getMeta('revoked'),
   ]);
   usePos.setState({
     device: device ?? null,
     bootstrap: bootstrap ?? null,
     credentials: credentials ?? null,
+    // Deactivated in the backoffice: a reload does not bring the screens back (DEC-035).
+    revoked: revoked !== undefined,
   });
   await refold();
   usePos.setState({ ready: true });
-  if (device) startSync();
+  if (device && !revoked) startSync();
 }
 
 /** The code belongs to a hub: it is paired on the hub itself, never in a browser. */
 export class HubCodeError extends Error {
   override readonly name = 'HubCodeError';
+}
+
+/**
+ * The code belongs to another location while operations of the current one have not reached
+ * the cloud yet: pairing there would lose them (DEC-035).
+ */
+export class PendingElsewhereError extends Error {
+  override readonly name = 'PendingElsewhereError';
+  constructor(readonly pending: number) {
+    super(`${pending} operations of the previous location are not in the cloud yet`);
+  }
 }
 
 /**
@@ -72,8 +94,20 @@ export async function pairDevice(code: string): Promise<void> {
     window.location.assign(`/${target}`);
     return;
   }
+  // Paired again after a deactivation (DEC-035): at the same location the operations not sent yet
+  // go out with the new token; another location starts from scratch once nothing would be lost.
+  const previous = await getMeta('device');
+  if (
+    previous &&
+    (previous.organizationId !== device.organizationId || previous.locationId !== device.locationId)
+  ) {
+    const pending = await unconfirmedCount();
+    if (pending > 0) throw new PendingElsewhereError(pending);
+    await resetDeviceData();
+  }
+  await deleteMeta('revoked');
   await setMeta('device', device);
-  usePos.setState({ device });
+  usePos.setState({ device, revoked: false });
   await refreshConfiguration(device.deviceToken);
   const persisted =
     typeof navigator !== 'undefined' && navigator.storage?.persist

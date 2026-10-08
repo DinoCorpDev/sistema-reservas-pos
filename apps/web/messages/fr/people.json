@@ -46,11 +46,11 @@
     "reactivateFirst": "Activez l’appareil avant de l’appairer.",
     "deactivate": "Désactiver l’appareil",
     "deactivateTitle": "Désactiver {name} ?",
-    "deactivateText": "L’appareil est immédiatement désappairé et ne peut plus fonctionner tant qu’il n’est pas réactivé et appairé à nouveau. Les commandes et les tickets sont conservés.",
+    "deactivateText": "L’appareil est bloqué dès qu’il se connecte et ne peut plus travailler tant qu’il n’est pas réactivé et couplé avec un nouveau code. Les commandes et les reçus sont conservés.",
     "deactivated": "Appareil désactivé et désappairé.",
     "activate": "Activer l’appareil",
     "activateTitle": "Réactiver {name} ?",
-    "activateText": "L’appareil devra ensuite être appairé avec un nouveau code.",
+    "activateText": "L’activation génère un nouveau code de couplage à saisir sur l’appareil.",
     "activated": "Appareil activé."
   },
   "stations": {

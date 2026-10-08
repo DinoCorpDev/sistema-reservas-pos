@@ -20,7 +20,8 @@
       "pairing": "Vinculando…",
       "invalidCode": "El código es incorrecto o ha vencido.",
       "failed": "No se pudo vincular. Revise la conexión e inténtelo de nuevo.",
-      "hubCode": "Este código es del hub de la sede. Se ingresa en el propio hub, no aquí."
+      "hubCode": "Este código es del hub de la sede. Se ingresa en el propio hub, no aquí.",
+      "pendingElsewhere": "Este dispositivo todavía tiene {count, plural, one {# operación} other {# operaciones}} de su sede anterior que no llegaron a la nube. Vincúlalo de nuevo a esa sede para no perder nada."
     },
     "pin": {
       "title": "Ingrese su PIN",
@@ -66,6 +67,11 @@
       "openCount": "{count, plural, =0 {ninguno abierto} one {# abierto} other {# abiertos}}",
       "emptyBar": "No hay pedidos de barra abiertos.",
       "emptyTakeaway": "No hay pedidos para llevar abiertos."
+    },
+    "revoked": {
+      "title": "Dispositivo desvinculado",
+      "description": "«{name}» fue desactivado o desvinculado en el backoffice. Para volver a usarlo, ingresa un código de vinculación nuevo (Backoffice → Dispositivos).",
+      "pending": "{count, plural, one {# operación todavía no llegó} other {# operaciones todavía no llegaron}} a la nube. Se enviarán en cuanto el dispositivo se vuelva a vincular."
     }
   }
 }

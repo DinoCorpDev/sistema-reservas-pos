@@ -239,6 +239,27 @@ No está en el documento: mejora RF-C17, RF-C19 y RF-C23. Juan lo pidió despué
 - **Avisos.** Un toque en cualquier parte de un aviso lo cierra; ya no hay una X pequeña a la que apuntar. Vale para la caja, el KDS y el backoffice (`@pos/ui/toaster`).
 - **Decidido con Juan:** los pedidos vacíos no se descartan solos ni se pregunta por ellos. El editor del salón queda para más adelante.
 
+### DEC-035 · Un dispositivo desactivado se bloquea hasta un código nuevo (corrección de RF-A06 y RF-A12)
+
+Juan desactivó una caja en el backoffice: la caja siguió funcionando y solo mostró «Sin conexión». Al reactivarla, nada cambió. El servidor ya rechazaba su token (`401`), pero la caja lo tomaba como falta de red.
+
+- **La nube decide.** Un `401` de la nube al token del dispositivo significa «desvinculado».
+  - La caja o el KDS guarda `revoked` en su base local, cierra la sesión y deja de sincronizar.
+  - Muestra «Dispositivo desvinculado» con el campo del código de vinculación, también tras recargar.
+- **Un hub no decide.** Puede tardar unos segundos en conocer un dispositivo recién vinculado, así que su `401` solo hace que el dispositivo pregunte a la nube y vuelva a probar ese hub en el siguiente latido (5 s).
+- **Sin red no se puede saber.** El dispositivo sigue trabajando (RNF-02) y se bloquea en cuanto la nube responde.
+- **Nada se pierde.**
+  - Las operaciones sin enviar quedan en el dispositivo y salen al vincularlo de nuevo a la misma sede.
+  - Un código de otra sede se rechaza mientras queden pendientes. Sin pendientes, se borran los datos locales de la sede anterior.
+- **Reactivar da el código.** En el backoffice, «Activar» genera el código nuevo y lo muestra de inmediato, porque desactivar anuló el anterior.
+- **Vale para todos los dispositivos vinculados** (pedido de Juan).
+  - La caja, el handheld y el KDS comparten el runtime `apps/web/src/device`.
+  - El **hub**, cuando la nube rechaza su token:
+    - olvida el token;
+    - deja de atender a las terminales y de imprimir;
+    - solo responde `/health` hasta reiniciarlo con `HUB_PAIRING_CODE=<código nuevo>`.
+  - Las terminales pasan solas a la nube con todo lo que no estaba confirmado.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                | Antes de | Quién decide      |

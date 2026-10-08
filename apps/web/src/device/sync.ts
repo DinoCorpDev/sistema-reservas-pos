@@ -18,6 +18,10 @@ import { getPos, usePos } from './store';
  * A kitchen display says on every pull whether someone is logged in on it, and every pull brings
  * who is at the displays, so the POS can send around an unattended station (DEC-033). That is why
  * the KDS keeps its pace even in the background.
+ *
+ * When the cloud no longer accepts the device token (deactivated or unpaired in the backoffice,
+ * RF-A12), the device stops: nothing works until it is paired again (DEC-035). A hub may not know
+ * a freshly paired device for a few seconds, so its refusal only sends the device to the cloud.
  */
 
 const HEARTBEAT_MS = 5_000;
@@ -25,19 +29,38 @@ const ACTIVE_INTERVAL_MS = 2_000;
 const HIDDEN_INTERVAL_MS = 30_000;
 const PING_TIMEOUT_MS = 2_000;
 const PUSH_BATCH = 200;
+/**
+ * A hub that refused the device token is skipped until the next heartbeat, while the cloud
+ * decides; a hub that just lags behind a new pairing knows the device a few seconds later.
+ */
+const REFUSED_HUB_MS = HEARTBEAT_MS;
 
 let started = false;
 let timer: ReturnType<typeof setTimeout> | null = null;
 let inFlight: Promise<void> | null = null;
 let node: string | null = null;
 let lastHeartbeat = 0;
+const refusedHubs = new Map<string, number>();
 
 const ackKey = (target: string) => (target === CLOUD ? 'cloud' : target);
 
 /** Nodes in order of preference: the LAN hubs of the location, then the cloud. */
 function candidates(): string[] {
-  const hubs = getPos().bootstrap?.location.settings.sync.hubUrls ?? [];
+  const now = Date.now();
+  const hubs = (getPos().bootstrap?.location.settings.sync.hubUrls ?? []).filter(
+    (hub) => (refusedHubs.get(hub) ?? 0) <= now,
+  );
   return [...hubs, CLOUD];
+}
+
+/** The cloud refused the device token: the device was deactivated or unpaired (DEC-035). */
+async function markRevoked(): Promise<void> {
+  await setMeta('revoked', { at: new Date().toISOString() });
+  node = null;
+  watchHub(null, '');
+  // The person on it is signed out; the screens show the pairing form instead.
+  usePos.setState({ revoked: true, user: null, presence: null });
+  setSync({ level: 'standalone', node: null });
 }
 
 async function heartbeat(): Promise<string | null> {
@@ -206,8 +229,8 @@ export async function refreshConfiguration(deviceToken: string): Promise<void> {
 }
 
 async function runOnce(): Promise<void> {
-  const { device, bootstrap } = getPos();
-  if (!device) return;
+  const { device, bootstrap, revoked } = getPos();
+  if (!device || revoked) return;
   if (node === null || Date.now() - lastHeartbeat > HEARTBEAT_MS) {
     node = await heartbeat();
     lastHeartbeat = Date.now();
@@ -236,8 +259,21 @@ async function runOnce(): Promise<void> {
     });
     await prune();
   } catch (error) {
-    // A device deactivated in the backoffice can no longer sync; anything else means "offline".
-    if (!(error instanceof NodeError && error.status < 500)) node = null;
+    if (error instanceof NodeError && error.status === 401) {
+      // The token is not accepted. The cloud is the authority: it was deactivated or unpaired.
+      // A hub may lag behind the configuration: skip it and let the cloud decide (DEC-035).
+      if (getPos().device?.deviceToken !== device.deviceToken) return;
+      if (node === CLOUD) {
+        await markRevoked();
+        return;
+      }
+      refusedHubs.set(node, Date.now() + REFUSED_HUB_MS);
+      node = null;
+      again = true;
+    } else if (!(error instanceof NodeError && error.status < 500)) {
+      // Anything but a refusal of the request means "offline".
+      node = null;
+    }
     setSync({ level: node === null ? 'standalone' : getPos().sync.level, node });
     if (node === null) usePos.setState({ presence: null });
   }

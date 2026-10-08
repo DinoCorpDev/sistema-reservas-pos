@@ -46,11 +46,11 @@
     "reactivateFirst": "Active el dispositivo antes de vincularlo.",
     "deactivate": "Desactivar dispositivo",
     "deactivateTitle": "¿Desactivar {name}?",
-    "deactivateText": "El dispositivo se desvincula de inmediato y no podrá operar hasta que se vuelva a activar y vincular. Los pedidos y los recibos se conservan.",
+    "deactivateText": "El dispositivo se bloquea en cuanto se conecte y no podrá operar hasta que se vuelva a activar y vincular con un código nuevo. Los pedidos y los recibos se conservan.",
     "deactivated": "Dispositivo desactivado y desvinculado.",
     "activate": "Activar dispositivo",
     "activateTitle": "¿Volver a activar {name}?",
-    "activateText": "Después, el dispositivo debe conectarse con un nuevo código de vinculación.",
+    "activateText": "Al activarlo se genera un código de vinculación nuevo para escribir en el dispositivo.",
     "activated": "Dispositivo activado."
   },
   "stations": {

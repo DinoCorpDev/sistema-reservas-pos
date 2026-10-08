@@ -46,11 +46,11 @@
     "reactivateFirst": "Aktivieren Sie das Gerät, bevor Sie es koppeln.",
     "deactivate": "Gerät deaktivieren",
     "deactivateTitle": "{name} deaktivieren?",
-    "deactivateText": "Das Gerät wird sofort entkoppelt und kann nicht mehr arbeiten, bis es wieder aktiviert und neu gekoppelt ist. Bestellungen und Belege bleiben erhalten.",
+    "deactivateText": "Das Gerät wird gesperrt, sobald es sich verbindet, und kann nicht mehr arbeiten, bis es wieder aktiviert und mit einem neuen Code gekoppelt ist. Bestellungen und Belege bleiben erhalten.",
     "deactivated": "Gerät deaktiviert und entkoppelt.",
     "activate": "Gerät aktivieren",
     "activateTitle": "{name} wieder aktivieren?",
-    "activateText": "Danach muss das Gerät mit einem neuen Kopplungscode verbunden werden.",
+    "activateText": "Beim Aktivieren wird ein neuer Kopplungscode erzeugt, den Sie auf dem Gerät eingeben.",
     "activated": "Gerät aktiviert."
   },
   "stations": {

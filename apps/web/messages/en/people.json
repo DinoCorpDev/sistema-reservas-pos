@@ -46,11 +46,11 @@
     "reactivateFirst": "Activate the device before pairing it.",
     "deactivate": "Deactivate device",
     "deactivateTitle": "Deactivate {name}?",
-    "deactivateText": "The device is unpaired immediately and can’t be used until it is reactivated and paired again. Orders and receipts are kept.",
+    "deactivateText": "The device is locked as soon as it connects and cannot work until it is activated again and paired with a new code. Orders and receipts are kept.",
     "deactivated": "Device deactivated and unpaired.",
     "activate": "Activate device",
     "activateTitle": "Reactivate {name}?",
-    "activateText": "Afterwards, the device must be connected with a new pairing code.",
+    "activateText": "Activating it creates a new pairing code to enter on the device.",
     "activated": "Device activated."
   },
   "stations": {

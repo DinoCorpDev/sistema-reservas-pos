@@ -19,6 +19,7 @@ import { createApp } from './app';
 import type { CloudFetch } from './cloud';
 import { syncConfig } from './config-sync';
 import { forwardToCloud, pullFromCloud, pushPresence } from './forwarder';
+import { startCloudLink } from './node';
 import type { HubMessage } from './realtime';
 import { startHub } from './server';
 import { StateFile } from './state';
@@ -362,6 +363,46 @@ describe('who is at the kitchen displays (DEC-033)', () => {
       expect(seen.presence).toContainEqual(
         expect.objectContaining({ terminalId: onWan.id, unlocked: false }),
       );
+    }
+  });
+});
+
+describe('a hub deactivated in the backoffice (DEC-035)', () => {
+  it('stops its link with the cloud once and says so', async () => {
+    const admin = cloud.as(demoSession(demo, 'admin'));
+    const standby = await pairTerminal(cloud, admin, { prefix: 'HR', type: 'hub' });
+    const deactivated = await cloud.request('PATCH', `/terminals/${standby.id}`, {
+      headers: admin,
+      body: { isActive: false },
+    });
+    expect(deactivated.status).toBe(200);
+
+    let revoked = 0;
+    const link = startCloudLink({
+      db: hubDb,
+      cloud: async (path, init = {}) =>
+        cloud.app.request(`/api/v1${path}`, {
+          method: init.method ?? 'GET',
+          headers: { 'content-type': 'application/json', 'x-terminal-token': standby.deviceToken },
+          body: init.body === undefined ? undefined : JSON.stringify(init.body),
+        }),
+      scope,
+      state: new StateFile(null),
+      broadcast: () => undefined,
+      intervalMs: 60_000,
+      onRevoked: () => {
+        revoked += 1;
+      },
+    });
+    try {
+      await link.runOnce();
+      await expect.poll(() => revoked).toBe(1);
+      // Another cycle does not report it again: the link is stopped.
+      await link.runOnce();
+      expect(revoked).toBe(1);
+      expect(link.isOnline()).toBe(false);
+    } finally {
+      link.stop();
     }
   });
 });

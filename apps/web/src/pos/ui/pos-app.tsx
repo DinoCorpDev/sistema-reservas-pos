@@ -7,6 +7,7 @@ import { bootDevice } from '@/device/boot';
 import { asDeviceLanguage, deviceMessages, type Messages } from '@/device/i18n';
 import { usePos } from '@/device/store';
 import { PairingScreen } from '@/device/ui/pairing-screen';
+import { RevokedScreen } from '@/device/ui/revoked-screen';
 import { PinScreen } from '@/device/ui/pin-screen';
 import { PosShell } from './pos-shell';
 
@@ -22,6 +23,7 @@ export function PosApp() {
   const device = usePos((state) => state.device);
   const bootstrap = usePos((state) => state.bootstrap);
   const user = usePos((state) => state.user);
+  const revoked = usePos((state) => state.revoked);
   const language = asDeviceLanguage(
     user?.uiLanguage ??
       bootstrap?.location.defaultLanguage ??
@@ -54,7 +56,15 @@ export function PosApp() {
       messages={messages.messages}
       timeZone={bootstrap?.location.timezone ?? 'Europe/Zurich'}
     >
-      {!device || !bootstrap ? <PairingScreen /> : !user ? <PinScreen /> : <PosShell />}
+      {revoked ? (
+        <RevokedScreen />
+      ) : !device || !bootstrap ? (
+        <PairingScreen />
+      ) : !user ? (
+        <PinScreen />
+      ) : (
+        <PosShell />
+      )}
     </NextIntlClientProvider>
   );
 }

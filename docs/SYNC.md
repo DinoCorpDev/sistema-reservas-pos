@@ -211,6 +211,17 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
 - Copia de la nube (`GET /sync/hub-config`, solo para el hub) los datos mínimos para autenticar y numerar: organización, sede (zona horaria y ajustes) y terminales de la sede con sus hashes de token. Los renueva con cada cambio de configuración. Así verifica `X-Terminal-Token` sin internet, y una terminal dada de baja en la nube pierde el acceso al hub.
 - Variables: `HUB_DATABASE_URL` (su MySQL, mismo esquema), `HUB_CLOUD_URL`, `HUB_AUTHORITY=false` para un hub de reserva que no numera, `HUB_ALLOWED_ORIGINS` (origen del POS para CORS). El hub responde el preflight de "Private Network Access" de Chrome.
 - En los `pull`, el hub entrega el `configVersion` de la nube que vio por última vez (vacío si aún no lo conoce): las terminales comparan contra la configuración real y la traen de la nube.
+- **Dispositivo desactivado (DEC-035).** Desactivar una terminal anula su token. Cuando **la nube** responde `401` a su token, la terminal se bloquea:
+  - guarda `revoked` en su base local, cierra la sesión y deja de sincronizar;
+  - muestra «Dispositivo desvinculado» con el campo del código, aunque se recargue la página.
+  - Si el `401` viene de un hub, que puede ir atrasado con la configuración, la terminal pregunta a la nube y vuelve a probar el hub en el siguiente latido (5 s).
+  - Sin red no se entera hasta que vuelva a alcanzar la nube.
+  - Lo que no se envió se queda en el dispositivo y sale con el token nuevo al vincularlo de nuevo a la misma sede. Un código de otra sede se rechaza mientras queden operaciones sin enviar.
+  - **El hub** hace lo mismo con su propio token:
+    - detiene el enlace con la nube y la cola de impresión;
+    - olvida el token y queda solo con `/health`;
+    - espera un reinicio con `HUB_PAIRING_CODE`.
+    - Las terminales dejan de alcanzarlo y siguen con la nube.
 
 ### 11.3 WebSocket `/ws`
 

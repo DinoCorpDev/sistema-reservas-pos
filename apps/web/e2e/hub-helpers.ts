@@ -45,7 +45,10 @@ export function pointPrinter(kind: 'kitchen' | 'receipt', port: number, host = '
  * A terminal of the demo location with a fresh pairing code, as the backoffice would create it.
  * The kitchen tests use their own terminals, so the other specs' terminals stay untouched.
  */
-export function terminalPairingCode(prefix: string, fields: { name: string; type: 'pos' | 'hub' }) {
+export function terminalPairingCode(
+  prefix: string,
+  fields: { name: string; type: 'pos' | 'hub' | 'kds' },
+) {
   return withDb(async (db) => {
     const [location] = await db.select().from(s.locations).limit(1);
     const code = pairingCode();

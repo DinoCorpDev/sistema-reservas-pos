@@ -1,5 +1,5 @@
 import type { Database } from '@pos/db';
-import type { CloudFetch } from './cloud';
+import { CloudError, type CloudFetch } from './cloud';
 import { syncConfig } from './config-sync';
 import { forwardToCloud, type HubScope, pullFromCloud, pushPresence } from './forwarder';
 import type { HubMessage } from './realtime';
@@ -22,6 +22,11 @@ export function startCloudLink(deps: {
   onPulled?: () => void;
   /** The configuration changed and was copied (the print queue reloads it). */
   onConfigChanged?: () => Promise<void>;
+  /**
+   * The cloud no longer accepts the hub's token: it was deactivated or unpaired in the
+   * backoffice (DEC-035). The link stops for good; the hub needs a new pairing code.
+   */
+  onRevoked?: () => void;
 }) {
   const interval = deps.intervalMs ?? 3_000;
   let timer: ReturnType<typeof setTimeout> | null = null;
@@ -58,7 +63,15 @@ export function startCloudLink(deps: {
         deps.broadcast({ type: 'config.changed', configVersion: pulled.configVersion });
       }
       setOnline(true);
-    } catch {
+    } catch (error) {
+      if (error instanceof CloudError && error.status === 401) {
+        if (!stopped) {
+          stopped = true;
+          if (timer) clearTimeout(timer);
+          deps.onRevoked?.();
+        }
+        return;
+      }
       setOnline(false);
     }
   }
