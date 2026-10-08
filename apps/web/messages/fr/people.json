@@ -68,10 +68,15 @@
     "languageHint": "Langue des tickets de ce poste.",
     "printer": "Imprimante",
     "printerHint": "Facultatif : imprime les tickets de ce poste.",
-    "inUse": "Le poste est encore utilisé par des produits ou des écrans de cuisine. Réattribuez-les d’abord ou désactivez le poste.",
+    "inUse": "Le poste est encore utilisé par des produits, des écrans de cuisine ou comme remplaçant d’un autre poste. Réaffectez-les d’abord ou désactivez le poste.",
     "displays": "Écrans de cuisine",
     "noOutput": "Bons visibles nulle part",
-    "noOutputHint": "Ce poste n’a ni écran de cuisine ni imprimante : ses bons n’apparaissent nulle part."
+    "noOutputHint": "Ce poste n’a ni écran de cuisine ni imprimante : ses bons n’apparaissent nulle part.",
+    "fallback": "Si personne n’est là",
+    "fallbackLabel": "Si personne n’est là, envoyer à",
+    "fallbackHint": "Si personne n’est connecté à un écran de ce poste (ou s’il n’a ni écran ni imprimante), ses bons partent vers ce poste. La caisse demande confirmation avant.",
+    "fallbackNone": "Aucun (les bons restent ici)",
+    "viaFallback": "Via {station}"
   },
   "printers": {
     "title": "Imprimantes",

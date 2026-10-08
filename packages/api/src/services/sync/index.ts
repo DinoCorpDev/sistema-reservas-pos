@@ -12,6 +12,7 @@ export {
 } from './store';
 export { claimOrderNumber } from './numbers';
 export { reportPrinterStatus } from './printers';
+export { listPresence, recordPresence, reportPresence } from './presence';
 export { MAX_PULL_OPERATIONS, type PulledOperation, pullOperations } from './pull';
 export {
   MAX_PUSH_OPERATIONS,

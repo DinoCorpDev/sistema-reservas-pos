@@ -100,6 +100,8 @@ export const createKitchenStationSchema = z.object({
   /** null = the location's kitchen language (RF-C25). */
   language: z.enum(CONTENT_LANGUAGES).nullable().default(null),
   printerId: z.uuid().nullable().default(null),
+  /** "If nobody is there, send to…": another station of the location (DEC-033). */
+  fallbackStationId: z.uuid().nullable().default(null),
   sortOrder: z.int().min(0).default(0),
   isActive: z.boolean().default(true),
 });

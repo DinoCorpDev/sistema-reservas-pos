@@ -68,10 +68,15 @@
     "languageHint": "Sprache der Bons dieser Station.",
     "printer": "Drucker",
     "printerHint": "Optional: druckt die Bons dieser Station.",
-    "inUse": "Die Station wird noch von Produkten oder Küchenbildschirmen verwendet. Ordnen Sie diese zuerst neu zu oder deaktivieren Sie die Station.",
+    "inUse": "Die Station wird noch von Produkten, Küchenbildschirmen oder als Ersatz einer anderen Station verwendet. Ordnen Sie diese zuerst neu zu oder deaktivieren Sie die Station.",
     "displays": "Küchenbildschirme",
     "noOutput": "Bons nirgends sichtbar",
-    "noOutputHint": "Diese Station hat weder einen Küchenbildschirm noch einen Drucker: ihre Bons erscheinen nirgends."
+    "noOutputHint": "Diese Station hat weder einen Küchenbildschirm noch einen Drucker: ihre Bons erscheinen nirgends.",
+    "fallback": "Wenn niemand da ist",
+    "fallbackLabel": "Wenn niemand da ist, senden an",
+    "fallbackHint": "Ist an keinem Küchenbildschirm dieser Station jemand angemeldet (oder hat sie weder Bildschirm noch Drucker), gehen ihre Bons an diese Station. Die Kasse fragt vorher nach.",
+    "fallbackNone": "Niemand (Bons bleiben hier)",
+    "viaFallback": "Über {station}"
   },
   "printers": {
     "title": "Drucker",

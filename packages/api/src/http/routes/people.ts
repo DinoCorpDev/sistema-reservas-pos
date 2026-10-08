@@ -80,6 +80,9 @@ const KitchenStationSchema = z
         description: 'null = the location kitchen language',
       }),
     printerId: z.uuid().nullable(),
+    fallbackStationId: z.uuid().nullable().openapi({
+      description: 'If nobody is at this station, its tickets go there (DEC-033)',
+    }),
     sortOrder: z.number().int(),
     isActive: z.boolean(),
   })

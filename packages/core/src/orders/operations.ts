@@ -184,6 +184,11 @@ export const operationSchema = z.discriminatedUnion('type', [
             ticketId: id,
             stationId: id,
             language: z.enum(CONTENT_LANGUAGES),
+            /**
+             * Stations this ticket stands in for: nobody was there, so their items come here
+             * (DEC-033). Empty = only the station's own items.
+             */
+            replaces: z.array(id).max(10).default([]),
           }),
         )
         .max(10)

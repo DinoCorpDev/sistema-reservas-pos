@@ -254,6 +254,15 @@
       "send": "Enviar ahora",
       "leave": "Salir sin enviar",
       "stay": "Volver al pedido"
+    },
+    "routing": {
+      "confirmTitle": "No hay nadie en {stations}",
+      "confirmDescription": "Nadie ha iniciado sesión en la tablet de {stations}. ¿Seguro que quiere enviarlo? {count, plural, one {La posición se enviará} other {Las # posiciones se enviarán}} a {targets}.",
+      "line": "{count, plural, one {# posición} other {# posiciones}} de {from} → {to}",
+      "cancel": "Cancelar",
+      "confirm": "Sí, enviar a {targets}",
+      "sent": "{count, plural, one {# posición de {from} se envió} other {# posiciones de {from} se enviaron}} a {to}.",
+      "notice": "No hay nadie en {from}: sus posiciones irán a {to}."
     }
   }
 }

@@ -1,14 +1,15 @@
 import type { Database } from '@pos/db';
 import type { CloudFetch } from './cloud';
 import { syncConfig } from './config-sync';
-import { forwardToCloud, type HubScope, pullFromCloud } from './forwarder';
+import { forwardToCloud, type HubScope, pullFromCloud, pushPresence } from './forwarder';
 import type { HubMessage } from './realtime';
 import type { StateFile } from './state';
 
 /**
  * The hub's link with the cloud (docs/SYNC.md §11.1): every few seconds it forwards what the
- * terminals sent, brings what reached the cloud directly and relays configuration changes. With
- * the internet down it keeps serving the LAN and tells the terminals (`cloud.status`).
+ * terminals sent, brings what reached the cloud directly, exchanges who is at the kitchen displays
+ * (DEC-033) and relays configuration changes. With the internet down it keeps serving the LAN and
+ * tells the terminals (`cloud.status`).
  */
 export function startCloudLink(deps: {
   db: Database;
@@ -38,6 +39,7 @@ export function startCloudLink(deps: {
       while ((await forwardToCloud(deps.db, deps.cloud, deps.scope)) > 0) {
         // Keep forwarding while there is a backlog.
       }
+      await pushPresence(deps.db, deps.cloud, deps.scope);
       const pulled = await pullFromCloud(
         deps.db,
         deps.cloud,

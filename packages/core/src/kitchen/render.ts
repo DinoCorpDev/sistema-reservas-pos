@@ -24,6 +24,8 @@ export interface KitchenRenderOptions {
   at: string;
   /** Only these items (a storno prints the voided ones). Default: all live items. */
   itemIds?: readonly string[];
+  /** Names of the stations, for items that came from an unattended one (DEC-033). */
+  stationNames?: Readonly<Record<string, string>>;
 }
 
 const hhmm = (iso: string, timeZone: string) =>
@@ -68,6 +70,10 @@ export function renderKitchenTicket(
     for (const item of items.filter((i) => i.course === course)) {
       const name = item.variantName ? `${item.name} (${item.variantName})` : item.name;
       lines.push(...wrapped(`${item.quantity}x ${name}`, width, { bold: true, size: 'tall' }));
+      if (item.fromStationId) {
+        const from = options.stationNames?.[item.fromStationId] ?? '?';
+        lines.push(...wrapped(`(${l.fromStation} ${from})`, width, { bold: true }, '   '));
+      }
       for (const modifier of item.modifiers) {
         const quantity = modifier.quantity > 1 ? `${modifier.quantity}x ` : '';
         lines.push(...wrapped(`+ ${quantity}${modifier.name}`, width, {}, '   '));

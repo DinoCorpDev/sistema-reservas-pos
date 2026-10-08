@@ -110,9 +110,18 @@ function history(seed: number, steps = 45): Operation[] {
       () => {
         if (!order || items.length === 0) return null;
         const stations = [...new Set(items.flatMap((i) => i.stationIds))];
-        // Now and then a station is left out, as when it is inactive.
+        // Now and then a station is left out, as when it is inactive, or the kitchen stands in
+        // for a station nobody attends (DEC-033).
         const routed = stations.filter(() => next() < 0.9);
-        return d.sendTo(order.id, routed, ...items.map((i) => i.id));
+        const absent = stations.filter((s) => !routed.includes(s) && s !== STATION.kitchen);
+        const standIn = next() < 0.5 ? absent : [];
+        const tickets = routed.map((stationId) => ({ stationId, replaces: [] as string[] }));
+        if (standIn.length > 0) {
+          const kitchen = tickets.find((t) => t.stationId === STATION.kitchen);
+          if (kitchen) kitchen.replaces = standIn;
+          else tickets.push({ stationId: STATION.kitchen, replaces: standIn });
+        }
+        return d.sendRouted(order.id, tickets, ...items.map((i) => i.id));
       },
       () => (order && item ? d.serve(order.id, item.id) : null),
       () =>

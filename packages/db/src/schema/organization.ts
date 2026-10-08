@@ -1,5 +1,6 @@
 import type { LocationSettings } from '@pos/core';
 import {
+  type AnyMySqlColumn,
   boolean,
   char,
   int,
@@ -148,6 +149,13 @@ export const kitchenStations = mysqlTable('kitchen_stations', {
   /** null = the location's kitchen language (RF-C25). */
   language: char('language', { length: 2 }),
   printerId: uuid('printer_id').references(() => printers.id),
+  /**
+   * "If nobody is there, send to…" (DEC-033): its tickets go to this station while no kitchen
+   * display of this one is online and unlocked. null = no replacement.
+   */
+  fallbackStationId: uuid('fallback_station_id').references(
+    (): AnyMySqlColumn => kitchenStations.id,
+  ),
   sortOrder: int('sort_order').notNull().default(0),
   isActive: boolean('is_active').notNull().default(true),
   ...timestamps(),

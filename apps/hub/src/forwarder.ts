@@ -9,7 +9,8 @@ import { type CloudFetch, cloudJson } from './cloud';
  * - forwards to the cloud the operations it received, with their original ids (the cloud
  *   dedupes), and marks them confirmed;
  * - brings from the cloud the operations that reached it directly (terminals that could not
- *   reach the hub), so every terminal on the LAN sees them.
+ *   reach the hub), so every terminal on the LAN sees them;
+ * - exchanges who is at the kitchen displays, so a POS on either node sees them all (DEC-033).
  */
 
 export type HubScope = sync.SyncScope;
@@ -78,8 +79,22 @@ export async function pullFromCloud(
       cursor: number;
       hasMore: boolean;
       configVersion: string;
+      presence?: {
+        terminalId: string;
+        unlocked: boolean;
+        userId: string | null;
+        lastSeenAt: string;
+      }[];
     }>(cloud, `/sync/pull?after=${cursor}&limit=500`);
     configVersion = response.configVersion || configVersion;
+    if (page === 0 && response.presence && response.presence.length > 0) {
+      // Displays working against the cloud; the newest report per terminal wins.
+      await sync.recordPresence(
+        db,
+        scope,
+        response.presence.map((entry) => ({ ...entry, lastSeenAt: new Date(entry.lastSeenAt) })),
+      );
+    }
     const ops = response.operations.map((pulled) => pulled.operation as Operation);
     if (ops.length > 0) {
       inserted += await db.transaction(async (tx) => {
@@ -124,4 +139,15 @@ export async function pullFromCloud(
     if (!response.hasMore) break;
   }
   return { cursor, inserted, configVersion };
+}
+
+/** Hands the cloud who is at the kitchen displays of the LAN (DEC-033); returns how many. */
+export async function pushPresence(db: Database, cloud: CloudFetch, scope: HubScope) {
+  const entries = await sync.listPresence(db, scope);
+  if (entries.length === 0) return 0;
+  const { stored } = await cloudJson<{ stored: number }>(cloud, '/sync/presence', {
+    method: 'POST',
+    body: { entries: entries.slice(0, 100) },
+  });
+  return stored;
 }

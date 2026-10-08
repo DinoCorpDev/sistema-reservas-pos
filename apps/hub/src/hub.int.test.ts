@@ -18,7 +18,7 @@ import { WebSocket } from 'ws';
 import { createApp } from './app';
 import type { CloudFetch } from './cloud';
 import { syncConfig } from './config-sync';
-import { forwardToCloud, pullFromCloud } from './forwarder';
+import { forwardToCloud, pullFromCloud, pushPresence } from './forwarder';
 import type { HubMessage } from './realtime';
 import { startHub } from './server';
 import { StateFile } from './state';
@@ -299,8 +299,69 @@ describe('real-time hints over WebSocket (RNF-07)', () => {
       });
       expect(preflight.headers.get('access-control-allow-private-network')).toBe('true');
       expect(preflight.headers.get('access-control-allow-headers')).toContain('x-terminal-token');
+      // A kitchen display says who is there with its pull (DEC-033).
+      const kdsPreflight = await fetch(`http://127.0.0.1:${hub.port}/api/v1/sync/pull`, {
+        method: 'OPTIONS',
+        headers: {
+          origin: 'https://pos.example.ch',
+          'access-control-request-method': 'GET',
+          'access-control-request-headers': 'x-terminal-token,x-presence,x-presence-user',
+        },
+      });
+      expect(kdsPreflight.headers.get('access-control-allow-headers')).toContain('x-presence');
     } finally {
       await hub.close();
+    }
+  });
+});
+
+describe('who is at the kitchen displays (DEC-033)', () => {
+  it('a display on the LAN reaches the cloud, and one on the cloud reaches the hub', async () => {
+    const admin = cloud.as(demoSession(demo, 'admin'));
+    const [bar] = await cloud.db
+      .select({ id: s.kitchenStations.id })
+      .from(s.kitchenStations)
+      .where(eq(s.kitchenStations.name, 'Bar'));
+    const onLan = await pairTerminal(cloud, admin, {
+      prefix: 'KH1',
+      type: 'kds',
+      kitchenStationId: bar!.id,
+    });
+    const onWan = await pairTerminal(cloud, admin, {
+      prefix: 'KH2',
+      type: 'kds',
+      kitchenStationId: bar!.id,
+    });
+    await syncConfig(hubDb, cloudFetch);
+
+    const unlocked = await hubApp.request('/api/v1/sync/pull?after=0&limit=1', {
+      headers: {
+        'x-terminal-token': onLan.deviceToken,
+        'x-presence': 'unlocked',
+        'x-presence-user': demo.users.kitchen.id,
+      },
+    });
+    expect(unlocked.status).toBe(200);
+    const wan = await cloud.request('GET', '/sync/pull?after=0&limit=1', {
+      headers: { 'x-terminal-token': onWan.deviceToken, 'x-presence': 'locked' },
+    });
+    expect(wan.status).toBe(200);
+
+    expect(await pushPresence(hubDb, cloudFetch, scope)).toBeGreaterThanOrEqual(1);
+    await pullFromCloud(hubDb, cloudFetch, scope, state.value.cloudCursor);
+
+    type Presence = { presence: { terminalId: string; unlocked: boolean }[] };
+    const viaHub = (await (await hubRequest('/sync/pull?after=0&limit=1')).json()) as Presence;
+    const viaCloud = (await (
+      await cloud.request('GET', '/sync/pull?after=0&limit=1', { headers: device.headers })
+    ).json()) as Presence;
+    for (const seen of [viaHub, viaCloud]) {
+      expect(seen.presence).toContainEqual(
+        expect.objectContaining({ terminalId: onLan.id, unlocked: true }),
+      );
+      expect(seen.presence).toContainEqual(
+        expect.objectContaining({ terminalId: onWan.id, unlocked: false }),
+      );
     }
   });
 });

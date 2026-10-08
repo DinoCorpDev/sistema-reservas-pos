@@ -9,3 +9,4 @@ export * from './catalog';
 export * from './labels';
 export * from './board';
 export * from './render';
+export * from './routing';

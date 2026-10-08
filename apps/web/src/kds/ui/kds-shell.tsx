@@ -34,6 +34,7 @@ export function KdsShell() {
   const user = usePos((state) => state.user);
   const tables = usePos((state) => state.bootstrap?.tables);
   const users = usePos((state) => state.bootstrap?.users);
+  const stations = usePos((state) => state.bootstrap?.stations);
   const printers = usePos((state) => state.printers);
   const [acknowledged, setAcknowledged] = useState<Set<string>>(() => new Set());
   // Voids older than this screen are struck on the tickets, without a new notice.
@@ -85,6 +86,7 @@ export function KdsShell() {
     tables?.find((table) => table.id === ticket.tableId)?.label ?? null;
   const waiterOf = (ticket: KitchenTicketView) =>
     users?.find((u) => u.id === ticket.waiterUserId)?.displayName ?? null;
+  const stationName = (id: string) => stations?.find((s) => s.id === id)?.name ?? '?';
   const printerHealth = station.printer ? printers[station.printer.id] : undefined;
 
   const grid = (tickets: KitchenTicketView[], done: boolean) =>
@@ -101,6 +103,7 @@ export function KdsShell() {
             labels={labels}
             tableLabel={tableOf(ticket)}
             waiterName={waiterOf(ticket)}
+            stationName={stationName}
             canReprint={Boolean(station.printer)}
             actions={actions}
             done={done}

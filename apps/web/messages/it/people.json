@@ -68,10 +68,15 @@
     "languageHint": "Lingua delle comande di questa postazione.",
     "printer": "Stampante",
     "printerHint": "Facoltativo: stampa le comande di questa postazione.",
-    "inUse": "La postazione è ancora usata da prodotti o schermi cucina. Li riassegni prima o disattivi la postazione.",
+    "inUse": "La postazione è ancora usata da prodotti, schermi cucina o come sostituta di un’altra postazione. Riassegnali prima o disattiva la postazione.",
     "displays": "Schermi cucina",
     "noOutput": "Comande non visibili",
-    "noOutputHint": "Questa postazione non ha né schermo cucina né stampante: le sue comande non appaiono da nessuna parte."
+    "noOutputHint": "Questa postazione non ha né schermo cucina né stampante: le sue comande non appaiono da nessuna parte.",
+    "fallback": "Se non c’è nessuno",
+    "fallbackLabel": "Se non c’è nessuno, invia a",
+    "fallbackHint": "Se nessuno è connesso a uno schermo di questa postazione (o non ha né schermo né stampante), le sue comande vanno a questa postazione. La cassa chiede conferma prima.",
+    "fallbackNone": "Nessuna (le comande restano qui)",
+    "viaFallback": "Tramite {station}"
   },
   "printers": {
     "title": "Stampanti",

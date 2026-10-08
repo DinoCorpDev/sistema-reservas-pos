@@ -254,6 +254,15 @@
       "send": "Invia ora",
       "leave": "Esci senza inviare",
       "stay": "Torna all’ordine"
+    },
+    "routing": {
+      "confirmTitle": "Nessuno connesso: {stations}",
+      "confirmDescription": "Nessuno è connesso al display di {stations}. Inviare comunque? {count, plural, one {La posizione va} other {Le # posizioni vanno}} a {targets}.",
+      "line": "{count, plural, one {# posizione} other {# posizioni}} di {from} → {to}",
+      "cancel": "Annulla",
+      "confirm": "Sì, invia a {targets}",
+      "sent": "{count, plural, one {# posizione di {from} inviata} other {# posizioni di {from} inviate}} a {to}.",
+      "notice": "Nessuno è connesso: {from}. Le posizioni andranno a {to}."
     }
   }
 }

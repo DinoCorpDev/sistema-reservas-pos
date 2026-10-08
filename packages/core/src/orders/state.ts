@@ -211,6 +211,8 @@ export interface KitchenTicketState {
   sentByUserId: string;
   /** Kitchen language frozen at send (RF-C25); null for version 1 sends. */
   language: ContentLanguage | null;
+  /** Stations nobody attended whose items this ticket received (DEC-033). */
+  replaces: string[];
   /** Items in the ticket, including the voided part of a partial void. */
   itemIds: string[];
   reprintCount: number;

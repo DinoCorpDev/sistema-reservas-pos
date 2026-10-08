@@ -130,7 +130,8 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
 
 ### 6.2 `GET /sync/pull?after=<seq>&limit=500`
 
-- Devuelve las operaciones de la sede con `seq > after`, en orden de `seq`: `{ operations: [{ ...op, seq, status, cloudAcked }], cursor, hasMore, configVersion, serverTime }`.
+- Devuelve las operaciones de la sede con `seq > after`, en orden de `seq`: `{ operations: [{ ...op, seq, status, cloudAcked }], cursor, hasMore, configVersion, serverTime, presence }`.
+- **Presencia (DEC-033).** Un KDS manda `x-presence: unlocked | locked` (y `x-presence-user` si está desbloqueado). El nodo lo guarda en `terminal_presence` con su propia hora, y gana el reporte más nuevo. `presence` trae las KDS de la sede vistas en los últimos 10 min: `{ terminalId, unlocked, userId, lastSeenAt }`. La caja mide la edad con `serverTime` y descarta la presencia si se queda sin conexión.
 - Como el `seq` se asigna bajo el bloqueo de la sede, una operación nunca aparece con un `seq` menor que el cursor de alguien que ya leyó: no se pierde nada.
 - `cloudAcked` dice si la nube ya tiene la operación. En la nube siempre es `true`; en el hub, cuando la nube confirmó su reenvío.
 
@@ -143,6 +144,7 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
 
 - Foto **cruda** de la configuración de la sede para operar sin conexión: catálogo completo (productos, variantes, grupos de modificadores, precios por canal, ajustes por sede, disponibilidad, traducciones, estaciones), categorías fiscales, tasas y reglas de MWST con vigencia, la sede (datos del recibo, idiomas, zona horaria, ajustes), áreas, mesas, usuarios activos con sus nombres, y los contadores del día de esta terminal (órdenes con prefijo y recibos).
 - El dispositivo calcula precios, disponibilidad, traducción y MWST con las mismas funciones de `@pos/core` que usa el servidor (`buildMenu`, `resolvePrice`, `checkOrderable`, `resolveTaxRate`).
+- Para la cocina trae las estaciones con su reemplazo (`fallbackStationId`) y `kitchenDisplays`, las KDS activas de cada estación, con las que la caja decide a dónde enviar (DEC-033).
 - `configVersion` resume la configuración (máximo `updated_at` y cantidad de filas de cada tabla de configuración de la sede). Se memoriza unos 10 s.
 
 ## 7. PIN y aprobaciones (DEC-023)
@@ -201,6 +203,7 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
   - **Envío incompleto.** Si los ítems de un envío todavía no llegaron, el trabajo espera.
 - **Protocolo.** ESC/POS por TCP 9100, con página de códigos 858 para DE, FR, IT y €. ePOS y CloudPRNT llegan en la Fase 6.
 - **Estado de las impresoras.** Cada cambio se avisa por WebSocket (`printer.status`) y se informa a la nube con `POST /sync/printer-status`, que lo guarda en `printer_status`, fuera de `configVersion`. La prueba de impresión pedida en el backoffice llega con la configuración (`printers.testRequestedAt`).
+- **Quién está en las KDS (DEC-033).** En cada ciclo el hub sube a la nube su `terminal_presence` reciente (`POST /sync/presence`) y guarda la que trae el pull de la nube. Así una caja conectada a cualquiera de los dos ve todas las tablets.
 
 ### 11.2 Emparejamiento y autenticación
 

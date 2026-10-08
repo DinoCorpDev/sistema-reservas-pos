@@ -27,14 +27,16 @@ export interface TicketActions {
 /**
  * One ticket of the station (RF-C20): table or number, waiter, time and timer with the delay
  * alert (RF-C24), items by course with modifiers, notes, seat and allergens in the kitchen
- * language (RF-C25), voided items struck through (RN-13). Tapping an item moves it one step;
- * the buttons move the whole ticket (RF-C22).
+ * language (RF-C25), voided items struck through (RN-13), and the station an item belongs to when
+ * it came here because nobody was there (DEC-033). Tapping an item moves it one step; the buttons
+ * move the whole ticket (RF-C22).
  */
 export function TicketCard({
   ticket,
   labels,
   tableLabel,
   waiterName,
+  stationName,
   canReprint,
   actions,
   done = false,
@@ -43,6 +45,7 @@ export function TicketCard({
   labels: KitchenLabels;
   tableLabel: string | null;
   waiterName: string | null;
+  stationName: (id: string) => string;
   canReprint: boolean;
   actions: TicketActions;
   done?: boolean;
@@ -141,6 +144,15 @@ export function TicketCard({
                         {item.status === 'voided' ? labels.storno : t(`status.${item.status}`)}
                       </span>
                     </span>
+                    {item.fromStationId && (
+                      <Badge
+                        variant="outline"
+                        className="border-sky-600 text-sky-800 dark:text-sky-200"
+                        data-testid="kds-from-station"
+                      >
+                        {labels.fromStation} {stationName(item.fromStationId)}
+                      </Badge>
+                    )}
                     {item.modifiers.map((m, index) => (
                       <span key={index} className="text-sm">
                         + {m.quantity > 1 ? `${m.quantity}× ` : ''}

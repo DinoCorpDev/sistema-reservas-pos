@@ -20,6 +20,9 @@ import {
   rappen,
   type ReceiptContent,
   receiptContentHash,
+  type Redirect,
+  type RoutedTicket,
+  routeSend,
   type SensitiveAction,
   type VoidReason,
 } from '@pos/core';
@@ -184,31 +187,68 @@ export async function updateItem(
  * receives something gets a ticket, with its id and the kitchen language frozen here (RF-C21,
  * RF-C25, DEC-029).
  */
-export async function sendItems(orderId: string, course?: number): Promise<number> {
+/** What a send does: its items, the tickets by station and which stations are replaced. */
+export interface SendPlan {
+  itemIds: string[];
+  tickets: RoutedTicket[];
+  redirected: Redirect[];
+}
+
+/**
+ * Plans sending the pending items (of one course) to the kitchen (RF-C21): each item goes to its
+ * stations, and a station where nobody would see the ticket is replaced by the one the owner chose
+ * ("if nobody is there, send to…", DEC-033), from who is at the kitchen displays right now.
+ */
+export function planSend(
+  orderId: string,
+  course?: number,
+  newTicketId: () => string = newId,
+): SendPlan {
   const { fold, bootstrap } = context();
+  const { presence } = getPos();
   const items = itemsOf(fold, orderId).filter(
     (item) => item.prepStatus === 'pending' && (course === undefined || item.course === course),
   );
-  if (items.length === 0) return 0;
-  const active = new Map(
-    bootstrap.stations.filter((station) => station.isActive).map((s) => [s.id, s]),
-  );
-  const routed = [...new Set(items.flatMap((item) => item.stationIds))].filter((id) =>
-    active.has(id),
-  );
   const kitchenLanguage = bootstrap.location.kitchenLanguage;
-  await record('items.send', orderId, {
-    itemIds: items.map((item) => item.id),
-    tickets: routed.map((stationId) => {
-      const language = active.get(stationId)?.language ?? kitchenLanguage;
-      return {
-        ticketId: newId(),
-        stationId,
-        language: isContentLanguage(language) ? language : 'de',
-      };
-    }),
+  // A configuration cached before DEC-033 has no displays nor replacements yet.
+  const displays = (bootstrap.kitchenDisplays as BootstrapDisplays | undefined) ?? [];
+  const { tickets, redirected } = routeSend({
+    items: items.map((item) => ({ id: item.id, stationIds: item.stationIds })),
+    stations: bootstrap.stations.map((station) => ({
+      ...station,
+      fallbackStationId: station.fallbackStationId ?? null,
+    })),
+    displays: displays.flatMap((display) =>
+      display.kitchenStationId
+        ? [{ terminalId: display.terminalId, kitchenStationId: display.kitchenStationId }]
+        : [],
+    ),
+    activePrinterIds: new Set(
+      bootstrap.printers.filter((printer) => printer.isActive).map((printer) => printer.id),
+    ),
+    presence,
+    now: Date.now(),
+    kitchenLanguage: isContentLanguage(kitchenLanguage) ? kitchenLanguage : 'de',
+    isLanguage: isContentLanguage,
+    newTicketId,
   });
-  return items.length;
+  return { itemIds: items.map((item) => item.id), tickets, redirected };
+}
+
+type BootstrapDisplays = NonNullable<ReturnType<typeof getPos>['bootstrap']>['kitchenDisplays'];
+
+/**
+ * Sends the pending items (of one course) to the kitchen. `plan` is the one the waiter confirmed
+ * (stations nobody is at); without it, the send is planned now.
+ */
+export async function sendItems(
+  orderId: string,
+  course?: number,
+  plan: SendPlan = planSend(orderId, course),
+): Promise<{ count: number; redirected: Redirect[] }> {
+  if (plan.itemIds.length === 0) return { count: 0, redirected: [] };
+  await record('items.send', orderId, { itemIds: plan.itemIds, tickets: plan.tickets });
+  return { count: plan.itemIds.length, redirected: plan.redirected };
 }
 
 /** Served at the table, or handed over at the bar/counter (RF-C17). */

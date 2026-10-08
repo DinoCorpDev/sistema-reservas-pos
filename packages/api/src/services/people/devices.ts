@@ -173,10 +173,27 @@ const toStationDto = (row: StationRow) => ({
   alertAfterMinutes: row.alertAfterMinutes,
   language: row.language,
   printerId: row.printerId,
+  fallbackStationId: row.fallbackStationId,
   sortOrder: row.sortOrder,
   isActive: row.isActive,
 });
 export type KitchenStationDto = ReturnType<typeof toStationDto>;
+
+/** The replacement must be another station of the same location (DEC-033). */
+async function assertFallback(
+  deps: ServiceDeps,
+  actor: Actor,
+  stationId: string | null,
+  fallbackStationId: string | null | undefined,
+) {
+  if (!fallbackStationId) return;
+  if (fallbackStationId === stationId) {
+    throw new ApiError('RULE_VIOLATION', 'A station cannot replace itself', {
+      rule: 'fallback_self',
+    });
+  }
+  await loadStation(deps, actor, fallbackStationId);
+}
 
 async function loadStation(deps: ServiceDeps, actor: Actor, id: string) {
   const [row] = await deps.db
@@ -215,6 +232,7 @@ export async function createKitchenStation(
   assertPermission(actor, 'location.manage');
   requireLocationId(actor);
   if (input.printerId) await loadPrinter(deps, actor, input.printerId);
+  await assertFallback(deps, actor, null, input.fallbackStationId);
   const [row] = await deps.db
     .insert(s.kitchenStations)
     .values(ownedByLocation(actor, input))
@@ -231,6 +249,7 @@ export async function updateKitchenStation(
   assertPermission(actor, 'location.manage');
   await loadStation(deps, actor, id);
   if (input.printerId) await loadPrinter(deps, actor, input.printerId);
+  await assertFallback(deps, actor, id, input.fallbackStationId);
   await deps.db
     .update(s.kitchenStations)
     .set(definedOnly(input))
@@ -265,10 +284,23 @@ export async function deleteKitchenStation(
       inLocation(s.terminals, actor, eq(s.terminals.kitchenStationId, id), notDeleted(s.terminals)),
     )
     .limit(1);
-  if (route || terminal) {
+  // Another station sends here when nobody is there (DEC-033).
+  const [standIn] = await deps.db
+    .select({ id: s.kitchenStations.id })
+    .from(s.kitchenStations)
+    .where(
+      inLocation(
+        s.kitchenStations,
+        actor,
+        eq(s.kitchenStations.fallbackStationId, id),
+        notDeleted(s.kitchenStations),
+      ),
+    )
+    .limit(1);
+  if (route || terminal || standIn) {
     throw new ApiError(
       'CONFLICT',
-      'Products or KDS terminals still use this station; reroute them first, or deactivate the station',
+      'Products, KDS terminals or other stations still use this station; reroute them first, or deactivate the station',
     );
   }
   await deps.db

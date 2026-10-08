@@ -20,6 +20,8 @@ export interface KitchenLabels {
   storno: string;
   reprint: string;
   sentBy: string;
+  /** Before the name of the station an item comes from (DEC-033). */
+  fromStation: string;
   testPage: string;
   testPageBody: string;
   channels: Record<Channel, string>;
@@ -39,6 +41,7 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     storno: 'STORNO',
     reprint: 'NACHDRUCK',
     sentBy: 'Service',
+    fromStation: 'für',
     testPage: 'TESTDRUCK',
     testPageBody: 'Der Drucker ist bereit.',
     channels: {
@@ -78,6 +81,7 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     storno: 'ANNULÉ',
     reprint: 'RÉIMPRESSION',
     sentBy: 'Serveur',
+    fromStation: 'pour',
     testPage: 'PAGE DE TEST',
     testPageBody: 'L’imprimante est prête.',
     channels: {
@@ -117,6 +121,7 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     storno: 'STORNO',
     reprint: 'RISTAMPA',
     sentBy: 'Servizio',
+    fromStation: 'per',
     testPage: 'STAMPA DI PROVA',
     testPageBody: 'La stampante è pronta.',
     channels: {
@@ -156,6 +161,7 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     storno: 'VOID',
     reprint: 'REPRINT',
     sentBy: 'Server',
+    fromStation: 'for',
     testPage: 'TEST PAGE',
     testPageBody: 'The printer is ready.',
     channels: {

@@ -12,9 +12,8 @@ import {
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { sendItems } from '../actions';
 import { usePosUi } from '../ui-store';
-import { useRunner } from './order/run';
+import { useSend } from './order/send';
 
 /**
  * Leaving an order with dishes that were added but never sent (RF-C09): the kitchen would never
@@ -24,13 +23,13 @@ export function UnsentDialog() {
   const t = useTranslations('posOrder.unsent');
   const leaving = usePosUi((state) => state.leaving);
   const leaveTo = usePosUi((state) => state.leaveTo);
-  const run = useRunner();
+  const send = useSend();
   const [busy, setBusy] = useState(false);
 
   async function sendAndLeave() {
     if (!leaving) return;
     setBusy(true);
-    const result = await run(() => sendItems(leaving.orderId));
+    const result = await send(leaving.orderId);
     setBusy(false);
     if (result.ok) leaveTo(leaving.next);
   }

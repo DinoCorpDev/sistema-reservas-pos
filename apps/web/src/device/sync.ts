@@ -1,4 +1,6 @@
 import type { BootstrapDto, OfflineCredentials, PulledOperation, PushResult } from '@pos/api';
+import type { PresenceEntry } from '@pos/core';
+import { deviceApp } from './app';
 import { observeHlc, recordServerTime } from './clock';
 import { deviceDb, getMeta, type OperationRow, setMeta } from './db';
 import { ingest, isKnown, prune, refold } from './engine';
@@ -12,6 +14,10 @@ import { getPos, usePos } from './store';
  * 3. new operations of the location are pulled after this node's cursor;
  * 4. a new configuration version brings a fresh bootstrap and credentials (RF-F23).
  * Without any node the POS keeps working on its own (level 1).
+ *
+ * A kitchen display says on every pull whether someone is logged in on it, and every pull brings
+ * who is at the displays, so the POS can send around an unattended station (DEC-033). That is why
+ * the KDS keeps its pace even in the background.
  */
 
 const HEARTBEAT_MS = 5_000;
@@ -93,6 +99,15 @@ async function push(target: string, deviceToken: string): Promise<void> {
   }
 }
 
+/** A kitchen display tells whether someone unlocked it with their PIN (DEC-033). */
+function presenceHeaders(): Record<string, string> | undefined {
+  if (deviceApp() !== 'kds') return undefined;
+  const user = getPos().user;
+  return user
+    ? { 'x-presence': 'unlocked', 'x-presence-user': user.id }
+    : { 'x-presence': 'locked' };
+}
+
 /** Pulls the location's operations after this node's cursor; returns its config version. */
 async function pull(target: string, deviceToken: string): Promise<string | null> {
   const cursors = (await getMeta('cursors')) ?? {};
@@ -101,13 +116,31 @@ async function pull(target: string, deviceToken: string): Promise<string | null>
   const deviceId = getPos().device?.terminalId;
   let clockChanged = false;
   for (let page = 0; page < 50; page += 1) {
+    const sentAt = Date.now();
     const response = await callNode<{
       operations: PulledOperation[];
       cursor: number;
       hasMore: boolean;
       configVersion: string;
-    }>(target, `/sync/pull?after=${after}&limit=500`, { deviceToken, timeoutMs: 15_000 });
+      serverTime: string;
+      presence?: PresenceEntry[];
+    }>(target, `/sync/pull?after=${after}&limit=500`, {
+      deviceToken,
+      timeoutMs: 15_000,
+      headers: page === 0 ? presenceHeaders() : undefined,
+    });
     configVersion = response.configVersion;
+    if (page === 0 && response.presence) {
+      // On the device clock: the middle of the request is about when the server answered.
+      const receivedAt = Date.now();
+      usePos.setState({
+        presence: {
+          entries: response.presence,
+          serverTime: response.serverTime,
+          receivedAt: Math.round((sentAt + receivedAt) / 2),
+        },
+      });
+    }
     const key = ackKey(target);
     const rows: OperationRow[] = [];
     for (const pulled of response.operations) {
@@ -182,6 +215,8 @@ async function runOnce(): Promise<void> {
   if (node === null) {
     watchHub(null, device.deviceToken);
     setSync({ level: 'standalone', node: null });
+    // Alone, nobody knows who is at the displays now: nothing is guessed (DEC-033).
+    usePos.setState({ presence: null });
     await updateCounts();
     return;
   }
@@ -204,6 +239,7 @@ async function runOnce(): Promise<void> {
     // A device deactivated in the backoffice can no longer sync; anything else means "offline".
     if (!(error instanceof NodeError && error.status < 500)) node = null;
     setSync({ level: node === null ? 'standalone' : getPos().sync.level, node });
+    if (node === null) usePos.setState({ presence: null });
   }
   await updateCounts();
 }
@@ -261,9 +297,20 @@ function watchHub(current: string | null, deviceToken: string): void {
   }
 }
 
-/** Runs one sync cycle now (or joins the one in flight). */
+/**
+ * Asked for while a cycle runs: that cycle may have pushed or pulled already, so another one
+ * follows right after it instead of at the next tick (a hint must not wait 2 s, RNF-07).
+ */
+let again = false;
+
+/** Runs one sync cycle now (or joins the one in flight and runs again after it). */
 export function syncNow(): Promise<void> {
-  inFlight ??= runOnce().finally(() => {
+  if (inFlight) {
+    again = true;
+    return inFlight;
+  }
+  again = false;
+  inFlight = runOnce().finally(() => {
     inFlight = null;
   });
   return inFlight;
@@ -271,18 +318,25 @@ export function syncNow(): Promise<void> {
 
 function schedule(delay?: number): void {
   if (timer) clearTimeout(timer);
-  const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+  // A kitchen display in the background is still at its station (DEC-033).
+  const hidden =
+    deviceApp() !== 'kds' &&
+    typeof document !== 'undefined' &&
+    document.visibilityState === 'hidden';
   timer = setTimeout(
     () => {
-      void syncNow().finally(() => schedule());
+      void syncNow().finally(() => schedule(again ? 0 : undefined));
     },
     delay ?? (hidden ? HIDDEN_INTERVAL_MS : ACTIVE_INTERVAL_MS),
   );
 }
 
-/** Asks for a sync soon after a local change, without waiting for the next tick. */
+/** Asks for a sync soon after a local change or a hint, without waiting for the next tick. */
 export function requestSync(): void {
-  if (started) schedule(150);
+  if (!started) return;
+  // A cycle running now may end before this timer and would otherwise reschedule at 2 s.
+  if (inFlight) again = true;
+  schedule(150);
 }
 
 export function startSync(): void {
@@ -295,6 +349,7 @@ export function startSync(): void {
   window.addEventListener('offline', () => {
     node = null;
     setSync({ level: 'standalone', node: null });
+    usePos.setState({ presence: null });
   });
   document.addEventListener('visibilitychange', () => requestSync());
   schedule(0);

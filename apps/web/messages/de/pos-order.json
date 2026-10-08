@@ -254,6 +254,15 @@
       "send": "Jetzt senden",
       "leave": "Ohne Senden verlassen",
       "stay": "Zurück zur Bestellung"
+    },
+    "routing": {
+      "confirmTitle": "Niemand angemeldet: {stations}",
+      "confirmDescription": "Am Küchendisplay von {stations} ist niemand angemeldet. Wirklich senden? {count, plural, one {Die Position geht} other {Die # Positionen gehen}} an {targets}.",
+      "line": "{count, plural, one {# Position} other {# Positionen}} von {from} → {to}",
+      "cancel": "Abbrechen",
+      "confirm": "Ja, an {targets} senden",
+      "sent": "{count, plural, one {# Position von {from} ging} other {# Positionen von {from} gingen}} an {to}.",
+      "notice": "Niemand angemeldet: {from}. Die Positionen gehen an {to}."
     }
   }
 }

@@ -285,3 +285,171 @@ describe('printer test page and status (RF-F17, DEC-032)', () => {
     expect(crossed.status).toBe(404);
   });
 });
+
+describe('stations nobody attends (DEC-033)', () => {
+  type Presence = { terminalId: string; unlocked: boolean; userId: string | null }[];
+  const pullAs = async (headers: Record<string, string>) => {
+    const response = await api.request('GET', '/sync/pull?after=0&limit=1', { headers });
+    expect(response.status).toBe(200);
+    return json<{ presence: Presence; serverTime: string }>(response);
+  };
+
+  it('a kitchen display says on every pull whether someone is there; the POS sees it', async () => {
+    await pullAs({
+      ...kds.headers,
+      'x-presence': 'unlocked',
+      'x-presence-user': demo.users.kitchen.id,
+    });
+    let seen = await pullAs(pos.headers);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({
+        terminalId: kds.terminal.id,
+        unlocked: true,
+        userId: demo.users.kitchen.id,
+      }),
+    );
+
+    await pullAs({ ...kds.headers, 'x-presence': 'locked' });
+    seen = await pullAs(pos.headers);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({ terminalId: kds.terminal.id, unlocked: false, userId: null }),
+    );
+
+    // Only kitchen displays report presence.
+    await pullAs({ ...pos.headers, 'x-presence': 'unlocked' });
+    seen = await pullAs(pos.headers);
+    expect(seen.presence.map((p) => p.terminalId)).not.toContain(pos.terminal.id);
+
+    // The bootstrap names the displays of each station and the replacements.
+    const bootstrap = await json<{
+      kitchenDisplays: { terminalId: string; kitchenStationId: string | null }[];
+      stations: { id: string; fallbackStationId: string | null }[];
+    }>(await api.request('GET', '/pos/bootstrap', { headers: pos.headers }));
+    expect(bootstrap.kitchenDisplays).toContainEqual(
+      expect.objectContaining({ terminalId: kds.terminal.id, kitchenStationId: station.kitchen }),
+    );
+    expect(bootstrap.stations.find((st) => st.id === station.bar)).toHaveProperty(
+      'fallbackStationId',
+    );
+  });
+
+  it('the hub hands over its displays only; a late report never wins; others never see it', async () => {
+    const barDisplay = await pairTerminal(api, admin, {
+      prefix: 'KD3',
+      type: 'kds',
+      kitchenStationId: station.bar,
+    });
+    const other = await createOtherOrganization(api.db, 'Presence Other');
+    const foreign = await api.db
+      .insert(s.terminals)
+      .values({
+        organizationId: other.organizationId,
+        locationId: other.locationId,
+        name: 'Fremd KDS',
+        type: 'kds',
+        orderNumberPrefix: 'FX',
+      })
+      .$returningId();
+    const now = new Date();
+    const entry = (terminalId: string, unlocked: boolean, at: Date) => ({
+      terminalId,
+      unlocked,
+      userId: unlocked ? demo.users.kitchen.id : null,
+      lastSeenAt: at.toISOString(),
+    });
+
+    const fromPos = await api.request('POST', '/sync/presence', {
+      headers: pos.headers,
+      body: { entries: [entry(barDisplay.id, true, now)] },
+    });
+    expect(fromPos.status).toBe(403);
+
+    const reported = await api.request('POST', '/sync/presence', {
+      headers: hubToken,
+      body: { entries: [entry(barDisplay.id, true, now), entry(foreign[0]!.id, true, now)] },
+    });
+    expect(await json(reported)).toEqual({ stored: 1 });
+
+    const late = await api.request('POST', '/sync/presence', {
+      headers: hubToken,
+      body: { entries: [entry(barDisplay.id, false, new Date(now.getTime() - 60_000))] },
+    });
+    expect(await json(late)).toEqual({ stored: 1 });
+    const seen = await pullAs(pos.headers);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({ terminalId: barDisplay.id, unlocked: true }),
+    );
+    expect(seen.presence.map((p) => p.terminalId)).not.toContain(foreign[0]!.id);
+
+    // A terminal of the other organization sees none of it.
+    const otherAdmin = api.as(other.session);
+    const otherPos = await pairTerminal(api, otherAdmin, { prefix: 'OP' });
+    const theirs = await pullAs({ 'x-terminal-token': otherPos.deviceToken });
+    expect(theirs.presence).toEqual([]);
+  });
+
+  it('a stand-in ticket carries the items of the station it replaces', async () => {
+    const open = pos.open(newId(), 3);
+    const beer = testLine({ name: 'Bier', stationIds: [station.bar] });
+    const rosti = testLine({ stationIds: [station.kitchen] });
+    const add = pos.op('items.add', open.orderId, { items: [beer, rosti] });
+    const ticketId = newId();
+    const send = pos.op('items.send', open.orderId, {
+      itemIds: [beer.itemId, rosti.itemId],
+      tickets: [{ ticketId, stationId: station.kitchen, language: 'de', replaces: [station.bar] }],
+    });
+    const sent = await push(pos, [open, add, send]);
+    expect(sent.results.map((r) => r.status)).toEqual(['applied', 'applied', 'applied']);
+
+    const tickets = await ticketsOf(open.orderId);
+    expect(tickets.map((t) => [t.id, t.kitchenStationId])).toEqual([[ticketId, station.kitchen]]);
+    const items = await api.db
+      .select({ orderItemId: s.kitchenTicketItems.orderItemId })
+      .from(s.kitchenTicketItems)
+      .where(eq(s.kitchenTicketItems.kitchenTicketId, ticketId));
+    expect(items.map((i) => i.orderItemId).sort()).toEqual([beer.itemId, rosti.itemId].sort());
+  });
+
+  it('the replacement is another station of the location; one in use is not deleted', async () => {
+    const self = await api.request('PATCH', `/kitchen-stations/${station.bar}`, {
+      headers: admin,
+      body: { fallbackStationId: station.bar },
+    });
+    expect(self.status).toBe(422);
+    const unknown = await api.request('PATCH', `/kitchen-stations/${station.bar}`, {
+      headers: admin,
+      body: { fallbackStationId: newId() },
+    });
+    expect(unknown.status).toBe(404);
+
+    const set = await api.request('PATCH', `/kitchen-stations/${station.bar}`, {
+      headers: admin,
+      body: { fallbackStationId: station.kitchen },
+    });
+    expect(set.status).toBe(200);
+    expect(await json(set)).toMatchObject({ fallbackStationId: station.kitchen });
+
+    const created = await api.request('POST', '/kitchen-stations', {
+      headers: admin,
+      body: { name: 'Grill DEC-033' },
+    });
+    expect(created.status).toBe(201);
+    const grill = await json<{ id: string }>(created);
+    await api.request('PATCH', `/kitchen-stations/${station.bar}`, {
+      headers: admin,
+      body: { fallbackStationId: grill.id },
+    });
+    const removed = await api.request('DELETE', `/kitchen-stations/${grill.id}`, {
+      headers: admin,
+    });
+    expect(removed.status).toBe(409);
+    await api.request('PATCH', `/kitchen-stations/${station.bar}`, {
+      headers: admin,
+      body: { fallbackStationId: station.kitchen },
+    });
+    const removedNow = await api.request('DELETE', `/kitchen-stations/${grill.id}`, {
+      headers: admin,
+    });
+    expect(removedNow.status).toBe(204);
+  });
+});

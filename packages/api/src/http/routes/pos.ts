@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { printerStatusReportSchema } from '@pos/core';
+import { presenceReportSchema, printerStatusReportSchema } from '@pos/core';
 import * as orders from '../../services/orders';
 import { getBootstrap } from '../../services/pos/bootstrap';
 import * as sync from '../../services/sync';
@@ -213,6 +213,23 @@ export function registerPosRoutes(app: ApiApp) {
         await sync.reportPrinterStatus({ db: c.get('db') }, actorOf(c), c.req.valid('json')),
         200,
       ),
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/sync/presence',
+      tags: ['Sync'],
+      security: DEVICE,
+      summary: 'The location hub hands over who is at the kitchen displays (DEC-033)',
+      request: { body: jsonBody(presenceReportSchema) },
+      responses: {
+        200: jsonResponse(z.object({ stored: z.number().int() }), 'Stored'),
+        ...ERROR_RESPONSES,
+      },
+    }),
+    async (c) =>
+      c.json(await sync.reportPresence({ db: c.get('db') }, actorOf(c), c.req.valid('json')), 200),
   );
 
   app.openapi(

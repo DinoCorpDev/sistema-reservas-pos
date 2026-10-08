@@ -199,6 +199,31 @@ En el restaurante demo, la cerveza sin alcohol (≤ 0,5 % vol.) usa la categorí
 - El estado de cada impresora vive en `printer_status`, fuera de `configVersion`, para que una impresora que falla no haga descargar la configuración a todas las terminales.
 - Las terminales se enteran por WebSocket (`printer.status`) y avisan en pantalla.
 
+### DEC-033 · Estación sin nadie: sus comandas van al reemplazo (pedido de Juan, _Podría_)
+
+No está en el documento: extiende RF-C21. Juan lo pidió después de que unos postres y una carne no aparecieran en cocina.
+
+- **Configuración, sin código.** Cada estación tiene «Si no hay nadie, enviar a…» (`kitchen_stations.fallback_station_id`): otra estación activa de la sede, o ninguna. No puede apuntar a sí misma. Una estación que sirve de reemplazo no se puede borrar. En la demo, Bar y Patisserie → Küche.
+- **«Hay alguien» significa** que una tablet KDS de la estación se vio en los últimos 45 s y está desbloqueada con el PIN de una persona. Cuentan todas las KDS activas configuradas para la estación, vinculadas o no: una tablet configurada pero apagada es «no hay nadie».
+- **Presencia.** El KDS la dice en cada pull (encabezados `x-presence` y `x-presence-user`) y no baja su ritmo de 2 s aunque quede en segundo plano. Cada nodo la guarda en `terminal_presence`, fuera de `configVersion`. El pull la devuelve a todas las terminales, y el hub y la nube se la pasan (`POST /sync/presence`, solo el hub y solo sus terminales).
+- **Decide la caja al enviar** (`routeSend()` en `@pos/core/kitchen/routing.ts`):
+
+  | Estación                                             | Destino     |
+  | ---------------------------------------------------- | ----------- |
+  | Inactiva                                             | Reemplazo   |
+  | Con tablets, alguien desbloqueado hace menos de 45 s | La estación |
+  | Con tablets, presencia fresca y nadie desbloqueado   | Reemplazo   |
+  | Con tablets y sin presencia fresca (caja sin red)    | La estación |
+  | Sin tablets, con impresora activa                    | La estación |
+  | Sin tablets ni impresora                             | Reemplazo   |
+  - Un solo salto: el reemplazo recibe aunque tampoco haya nadie. Sin reemplazo, todo queda como antes.
+  - Sin conexión no se adivina: la caja descarta la presencia y envía a la estación propia.
+
+- **Confirmación (pedido de Juan).** Si la estación está activa pero nadie inició sesión en su tablet, la caja pregunta antes de enviar: «No hay nadie en Bar… ¿Seguro? Se enviará a Küche». Si el mesero cancela, no sale nada. Antes de pulsar Enviar ya se ve el aviso en el pedido, y después un mensaje dice qué se fue a otra estación.
+- **Queda congelado** (DEC-021). Cada ticket de `items.send` lleva `replaces: [estaciones]`, con valor por defecto `[]`, así que las operaciones ya guardadas no cambian. El reductor asigna a ese ticket los ítems de las estaciones que reemplaza.
+- **En cocina** el ítem muestra su origen («für Bar») en el KDS y en la comanda impresa.
+- **Lista de verificación.** Una estación sin pantalla ni impresora deja de ser un problema (`station_output`) si tiene un reemplazo activo.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                | Antes de | Quién decide      |

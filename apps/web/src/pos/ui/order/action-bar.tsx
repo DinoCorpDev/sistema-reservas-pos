@@ -4,10 +4,11 @@ import { Button } from '@pos/ui/button';
 import { CreditCard, Ellipsis, HandPlatter, PackageCheck, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { sendItems, serveItems } from '../../actions';
+import { serveItems } from '../../actions';
 import { usePosUi } from '../../ui-store';
 import type { OrderData } from './hooks';
 import { useRunner } from './run';
+import { useSend } from './send';
 
 /** Bar and take-away orders are handed over at the counter and may be paid first (RF-C17). */
 export const isCounterOrder = (order: OrderData['order']) =>
@@ -21,6 +22,7 @@ export function ActionBar({ data, onMore }: { data: OrderData; onMore: () => voi
   const t = useTranslations('posOrder.actions');
   const navigate = usePosUi((state) => state.navigate);
   const run = useRunner();
+  const send = useSend();
   const [busy, setBusy] = useState(false);
   const { order, items } = data;
   const counter = isCounterOrder(order);
@@ -49,6 +51,12 @@ export function ActionBar({ data, onMore }: { data: OrderData; onMore: () => voi
     setBusy(false);
   }
 
+  async function sendNow(course?: number) {
+    setBusy(true);
+    await send(order.id, course);
+    setBusy(false);
+  }
+
   return (
     <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t bg-card p-2">
       <Button
@@ -66,16 +74,12 @@ export function ActionBar({ data, onMore }: { data: OrderData; onMore: () => voi
           size="lg"
           variant="secondary"
           disabled={busy}
-          onClick={() => void act(() => sendItems(order.id, course))}
+          onClick={() => void sendNow(course)}
         >
           {t('sendCourse', { course })}
         </Button>
       ))}
-      <Button
-        size="lg"
-        disabled={busy || pending.length === 0}
-        onClick={() => void act(() => sendItems(order.id))}
-      >
+      <Button size="lg" disabled={busy || pending.length === 0} onClick={() => void sendNow()}>
         <Send /> {t('send')}
       </Button>
       {counter ? (

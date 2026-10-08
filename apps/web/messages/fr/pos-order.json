@@ -254,6 +254,15 @@
       "send": "Envoyer maintenant",
       "leave": "Quitter sans envoyer",
       "stay": "Retour à la commande"
+    },
+    "routing": {
+      "confirmTitle": "Personne n’est connecté : {stations}",
+      "confirmDescription": "Personne n’est connecté à l’écran de {stations}. Envoyer quand même ? {count, plural, one {La position part} other {Les # positions partent}} vers {targets}.",
+      "line": "{count, plural, one {# position} other {# positions}} de {from} → {to}",
+      "cancel": "Annuler",
+      "confirm": "Oui, envoyer à {targets}",
+      "sent": "{count, plural, one {# position de {from} envoyée} other {# positions de {from} envoyées}} à {to}.",
+      "notice": "Personne n’est connecté : {from}. Les positions partiront vers {to}."
     }
   }
 }

@@ -163,6 +163,10 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
     await pos.getByTestId('table-7').click();
     await pos.getByRole('button', { name: 'Desserts', exact: true }).click();
     await pos.getByTestId('product').filter({ hasText: 'Zuger Kirschtorte' }).first().click();
+    await expect(pos.getByTestId('line').filter({ hasText: 'Zuger Kirschtorte' })).toBeVisible();
+    // Someone is logged in at the pastry display: once the POS knows, the dessert stays there
+    // (DEC-033). Until then it shows that nobody is there.
+    await expect(pos.getByTestId('routing-notice')).toBeHidden({ timeout: 15_000 });
     await pos
       .getByRole('navigation', { name: 'Kasse' })
       .getByRole('button', { name: 'Tische' })
@@ -179,6 +183,36 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
     await expect(kds.getByTestId('kds-item').filter({ hasText: 'Zuger Kirschtorte' })).toHaveCount(
       0,
     );
+
+    // Nobody is logged in at the bar display: the POS warns before the beer goes to the kitchen
+    // instead, and the kitchen sees whose it is (DEC-033).
+    await pos.getByTestId('table-7').click();
+    await pos.getByRole('button', { name: 'Bier & Wein', exact: true }).click();
+    await pos.getByTestId('product').filter({ hasText: 'Amber Bier 3.3 dl' }).first().click();
+    await expect(pos.getByTestId('routing-notice')).toContainText(
+      'Niemand angemeldet: Bar. Die Positionen gehen an Küche.',
+      { timeout: 15_000 },
+    );
+    const confirm = pos.getByTestId('send-confirm');
+    await pos.getByRole('button', { name: 'Senden', exact: true }).click();
+    await expect(confirm).toContainText('Niemand angemeldet: Bar');
+    await expect(confirm).toContainText('1 Position von Bar → Küche');
+    // Cancelled: nothing leaves.
+    await confirm.getByRole('button', { name: 'Abbrechen' }).click();
+    await expect(confirm).toBeHidden();
+    const beer = pos.getByTestId('line').filter({ hasText: 'Amber Bier' });
+    await expect(beer).toHaveAttribute('data-status', 'pending');
+    // Confirmed: it reaches the kitchen display marked as the bar's, and the kitchen printer.
+    await pos.getByRole('button', { name: 'Senden', exact: true }).click();
+    await confirm.getByRole('button', { name: 'Ja, an Küche senden' }).click();
+    await expect(beer).toHaveAttribute('data-status', 'sent');
+    await expect(pos.getByText('1 Position von Bar ging an Küche.')).toBeVisible();
+    const beerOnKitchen = kds.getByTestId('kds-item').filter({ hasText: 'Amber Bier' });
+    await expect(beerOnKitchen).toBeVisible({ timeout: 5_000 });
+    await expect(beerOnKitchen.getByTestId('kds-from-station')).toHaveText('für Bar');
+    await expect
+      .poll(() => printedText().some((text) => text.includes('(für Bar)')), { timeout: 15_000 })
+      .toBe(true);
   } finally {
     await posContext.close();
     await kdsContext.close();

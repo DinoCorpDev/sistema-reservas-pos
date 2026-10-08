@@ -2,6 +2,7 @@ import {
   itemsOf,
   type OperationApproval,
   type ReceiptContent,
+  type Redirect,
   type SensitiveAction,
 } from '@pos/core';
 import { create } from 'zustand';
@@ -41,6 +42,8 @@ interface PosUiState {
   approval: ApprovalRequest | null;
   /** Leaving an order whose items the kitchen has not received yet (RF-C09). */
   leaving: { orderId: string; next: PosView; count: number } | null;
+  /** Nobody is at a station these items go to: send them to its replacement? (DEC-033) */
+  sendConfirm: { redirected: Redirect[]; resolve: (confirmed: boolean) => void } | null;
 }
 
 /** Items of an open order that were added but not sent to the kitchen. */
@@ -69,6 +72,7 @@ export const usePosUi = create<PosUiState>((set) => ({
   leaveTo: (view) => set({ view, leaving: null }),
   approval: null,
   leaving: null,
+  sendConfirm: null,
 }));
 
 /**
@@ -79,4 +83,12 @@ export function requestApproval(
   action: SensitiveAction,
 ): Promise<OperationApproval | 'allowed' | null> {
   return new Promise((resolve) => usePosUi.setState({ approval: { action, resolve } }));
+}
+
+/**
+ * Asks the waiter before sending to a replacement station because nobody is logged in at the
+ * station (DEC-033). Resolves to true to send, false to cancel.
+ */
+export function confirmRedirects(redirected: Redirect[]): Promise<boolean> {
+  return new Promise((resolve) => usePosUi.setState({ sendConfirm: { redirected, resolve } }));
 }

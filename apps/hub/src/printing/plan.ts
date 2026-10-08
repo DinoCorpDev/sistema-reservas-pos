@@ -114,6 +114,7 @@ function kitchenDocument(
       labels: KITCHEN_LABELS[language],
       timeZone: config.location.timezone,
       stationName: station.name,
+      stationNames: Object.fromEntries(config.stations.map((s) => [s.id, s.name])),
       tableLabel: config.tables.find((t) => t.id === order?.tableId)?.label ?? null,
       waiterName: config.users.find((u) => u.id === order?.waiterUserId)?.displayName ?? null,
       at,

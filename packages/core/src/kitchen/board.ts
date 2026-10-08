@@ -26,6 +26,8 @@ export interface KitchenItemView {
   voidedAt: string | null;
   /** The item was moved to another order after it was sent (transfer, merge, split). */
   movedToOrderId: string | null;
+  /** Station it belongs to when it came here because nobody was there (DEC-033). */
+  fromStationId: string | null;
 }
 
 export interface KitchenTicketView extends TicketProgress {
@@ -109,6 +111,9 @@ export function ticketView(
       status,
       voidedAt: item.voidedAt,
       movedToOrderId: item.orderId === ticket.orderId ? null : item.orderId,
+      fromStationId: item.stationIds.includes(ticket.stationId)
+        ? null
+        : (item.stationIds.find((id) => ticket.replaces.includes(id)) ?? null),
     };
   });
   const end = progress.finishedAt ?? options.now;

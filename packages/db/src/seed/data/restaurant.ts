@@ -52,12 +52,17 @@ export const DEMO_AREAS = [
   { name: 'Terrasse', qrMode: 'order', tables: ['T1', 'T2', 'T3', 'T4'] },
 ] as const;
 
-export const DEMO_STATIONS: { key: StationKey; name: string; alertAfterMinutes: number | null }[] =
-  [
-    { key: 'kitchen', name: 'Küche', alertAfterMinutes: null },
-    { key: 'bar', name: 'Bar', alertAfterMinutes: 5 },
-    { key: 'dessert', name: 'Patisserie', alertAfterMinutes: 8 },
-  ];
+/** Bar and pastry send to the kitchen while nobody is there (DEC-033). */
+export const DEMO_STATIONS: {
+  key: StationKey;
+  name: string;
+  alertAfterMinutes: number | null;
+  fallback?: StationKey;
+}[] = [
+  { key: 'kitchen', name: 'Küche', alertAfterMinutes: null },
+  { key: 'bar', name: 'Bar', alertAfterMinutes: 5, fallback: 'kitchen' },
+  { key: 'dessert', name: 'Patisserie', alertAfterMinutes: 8, fallback: 'kitchen' },
+];
 
 export const DEMO_PRINTERS: {
   key: string;

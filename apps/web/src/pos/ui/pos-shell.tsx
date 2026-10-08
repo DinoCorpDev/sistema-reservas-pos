@@ -18,6 +18,7 @@ import { OrderView } from './order-view';
 import { OrdersView } from './orders-view';
 import { PaymentView } from './payment-view';
 import { ReceiptView } from './receipt-view';
+import { SendConfirmDialog } from './send-confirm-dialog';
 import { UnsentDialog } from './unsent-dialog';
 
 /** Frame of every POS screen: location, navigation, connection status and the person (RF-C19). */
@@ -128,6 +129,7 @@ export function PosShell() {
       </main>
       <ApprovalDialog />
       <UnsentDialog />
+      <SendConfirmDialog />
       <KitchenNotices />
     </div>
   );

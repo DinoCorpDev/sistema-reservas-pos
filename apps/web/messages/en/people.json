@@ -68,10 +68,15 @@
     "languageHint": "Language of this station’s tickets.",
     "printer": "Printer",
     "printerHint": "Optional: prints this station’s tickets.",
-    "inUse": "The station is still used by products or kitchen displays. Reassign them first or deactivate the station.",
+    "inUse": "The station is still used by products, kitchen displays or as another station’s replacement. Reassign them first or deactivate the station.",
     "displays": "Kitchen displays",
     "noOutput": "Tickets shown nowhere",
-    "noOutputHint": "This station has neither a kitchen display nor a printer: its tickets show up nowhere."
+    "noOutputHint": "This station has neither a kitchen display nor a printer: its tickets show up nowhere.",
+    "fallback": "If nobody is there",
+    "fallbackLabel": "If nobody is there, send to",
+    "fallbackHint": "When nobody is logged in on a display of this station (or it has neither a display nor a printer), its tickets go to this station. The POS asks first.",
+    "fallbackNone": "None (tickets stay here)",
+    "viaFallback": "Via {station}"
   },
   "printers": {
     "title": "Printers",

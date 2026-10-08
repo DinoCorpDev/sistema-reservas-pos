@@ -128,6 +128,13 @@ export async function seedDemoRestaurant(db: Database): Promise<SeedResult> {
         sortOrder: index,
       });
     }
+    for (const station of DEMO_STATIONS) {
+      if (!station.fallback) continue;
+      await tx
+        .update(s.kitchenStations)
+        .set({ fallbackStationId: stationIds.get(station.fallback)! })
+        .where(eq(s.kitchenStations.id, stationIds.get(station.key)!));
+    }
 
     for (const [areaIndex, area] of DEMO_AREAS.entries()) {
       const areaId = newId();

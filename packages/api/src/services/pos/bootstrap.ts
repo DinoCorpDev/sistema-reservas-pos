@@ -43,73 +43,104 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
     .from(s.organizations)
     .where(eq(s.organizations.id, actor.organizationId));
 
-  const [areas, tables, stations, printers, users, categories, rates, rules, catalog, version] =
-    await Promise.all([
-      listAreas(deps, actor),
-      listTables(deps, actor),
-      // Routing, delay alert, kitchen language and printer of each station (RF-C21…RF-C26).
-      db
-        .select({
-          id: s.kitchenStations.id,
-          name: s.kitchenStations.name,
-          alertAfterMinutes: s.kitchenStations.alertAfterMinutes,
-          language: s.kitchenStations.language,
-          printerId: s.kitchenStations.printerId,
-          sortOrder: s.kitchenStations.sortOrder,
-          isActive: s.kitchenStations.isActive,
-        })
-        .from(s.kitchenStations)
-        .where(inLocation(s.kitchenStations, actor, notDeleted(s.kitchenStations)))
-        .orderBy(asc(s.kitchenStations.sortOrder), asc(s.kitchenStations.name)),
-      // Printers of the location: the hub prints on them (DEC-031); the POS knows whether its
-      // receipt printer exists. `testRequestedAt` tells the hub a test page is due (DEC-032).
-      db
-        .select({
-          id: s.printers.id,
-          name: s.printers.name,
-          kind: s.printers.kind,
-          protocol: s.printers.protocol,
-          host: s.printers.host,
-          port: s.printers.port,
-          paperWidthMm: s.printers.paperWidthMm,
-          hasCashDrawer: s.printers.hasCashDrawer,
-          isActive: s.printers.isActive,
-          testRequestedAt: s.printers.testRequestedAt,
-        })
-        .from(s.printers)
-        .where(inLocation(s.printers, actor, notDeleted(s.printers)))
-        .orderBy(asc(s.printers.name)),
-      db
-        .select({ id: s.users.id, displayName: s.users.displayName })
-        .from(s.users)
-        .innerJoin(s.userLocations, eq(s.userLocations.userId, s.users.id))
-        .where(
-          inOrg(
-            s.users,
-            actor,
-            eq(s.users.isActive, true),
-            notDeleted(s.users),
-            eq(s.userLocations.locationId, locationId),
-            notDeleted(s.userLocations),
-          ),
-        )
-        .orderBy(asc(s.users.displayName)),
-      db
-        .select({ id: s.taxCategories.id, key: s.taxCategories.key, name: s.taxCategories.name })
-        .from(s.taxCategories)
-        .where(inOrg(s.taxCategories, actor, notDeleted(s.taxCategories))),
-      db
-        .select()
-        .from(s.taxRates)
-        .where(inOrg(s.taxRates, actor, notDeleted(s.taxRates))),
-      db
-        .select({ rule: s.taxRules, taxCategoryKey: s.taxCategories.key })
-        .from(s.taxRules)
-        .innerJoin(s.taxCategories, eq(s.taxCategories.id, s.taxRules.taxCategoryId))
-        .where(inOrg(s.taxRules, actor, notDeleted(s.taxRules))),
-      loadCatalogSnapshot(db, actor, locationId),
-      configVersion(db, { organizationId: actor.organizationId, locationId }),
-    ]);
+  const [
+    areas,
+    tables,
+    stations,
+    printers,
+    displays,
+    users,
+    categories,
+    rates,
+    rules,
+    catalog,
+    version,
+  ] = await Promise.all([
+    listAreas(deps, actor),
+    listTables(deps, actor),
+    // Routing, delay alert, kitchen language and printer of each station (RF-C21…RF-C26).
+    db
+      .select({
+        id: s.kitchenStations.id,
+        name: s.kitchenStations.name,
+        alertAfterMinutes: s.kitchenStations.alertAfterMinutes,
+        language: s.kitchenStations.language,
+        printerId: s.kitchenStations.printerId,
+        fallbackStationId: s.kitchenStations.fallbackStationId,
+        sortOrder: s.kitchenStations.sortOrder,
+        isActive: s.kitchenStations.isActive,
+      })
+      .from(s.kitchenStations)
+      .where(inLocation(s.kitchenStations, actor, notDeleted(s.kitchenStations)))
+      .orderBy(asc(s.kitchenStations.sortOrder), asc(s.kitchenStations.name)),
+    // Printers of the location: the hub prints on them (DEC-031); the POS knows whether its
+    // receipt printer exists. `testRequestedAt` tells the hub a test page is due (DEC-032).
+    db
+      .select({
+        id: s.printers.id,
+        name: s.printers.name,
+        kind: s.printers.kind,
+        protocol: s.printers.protocol,
+        host: s.printers.host,
+        port: s.printers.port,
+        paperWidthMm: s.printers.paperWidthMm,
+        hasCashDrawer: s.printers.hasCashDrawer,
+        isActive: s.printers.isActive,
+        testRequestedAt: s.printers.testRequestedAt,
+      })
+      .from(s.printers)
+      .where(inLocation(s.printers, actor, notDeleted(s.printers)))
+      .orderBy(asc(s.printers.name)),
+    // Kitchen displays of each station, paired or not: with presence, the POS knows whether
+    // someone is at one of them and sends to the replacement station if not (DEC-033).
+    db
+      .select({
+        terminalId: s.terminals.id,
+        name: s.terminals.name,
+        kitchenStationId: s.terminals.kitchenStationId,
+      })
+      .from(s.terminals)
+      .where(
+        inLocation(
+          s.terminals,
+          actor,
+          eq(s.terminals.type, 'kds'),
+          eq(s.terminals.isActive, true),
+          notDeleted(s.terminals),
+        ),
+      )
+      .orderBy(asc(s.terminals.name)),
+    db
+      .select({ id: s.users.id, displayName: s.users.displayName })
+      .from(s.users)
+      .innerJoin(s.userLocations, eq(s.userLocations.userId, s.users.id))
+      .where(
+        inOrg(
+          s.users,
+          actor,
+          eq(s.users.isActive, true),
+          notDeleted(s.users),
+          eq(s.userLocations.locationId, locationId),
+          notDeleted(s.userLocations),
+        ),
+      )
+      .orderBy(asc(s.users.displayName)),
+    db
+      .select({ id: s.taxCategories.id, key: s.taxCategories.key, name: s.taxCategories.name })
+      .from(s.taxCategories)
+      .where(inOrg(s.taxCategories, actor, notDeleted(s.taxCategories))),
+    db
+      .select()
+      .from(s.taxRates)
+      .where(inOrg(s.taxRates, actor, notDeleted(s.taxRates))),
+    db
+      .select({ rule: s.taxRules, taxCategoryKey: s.taxCategories.key })
+      .from(s.taxRules)
+      .innerJoin(s.taxCategories, eq(s.taxCategories.id, s.taxRules.taxCategoryId))
+      .where(inOrg(s.taxRules, actor, notDeleted(s.taxRules))),
+    loadCatalogSnapshot(db, actor, locationId),
+    configVersion(db, { organizationId: actor.organizationId, locationId }),
+  ]);
 
   // Counters this terminal already used today, so a reinstalled device never repeats a number
   // (docs/SYNC.md §8): offline order numbers by prefix and receipt numbers by prefix and day.
@@ -164,6 +195,7 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
       ...printer,
       testRequestedAt: printer.testRequestedAt?.toISOString() ?? null,
     })),
+    kitchenDisplays: displays,
     users,
     tax: {
       categories: categories.map((c) => ({ id: c.id, key: c.key as TaxCategoryKey, name: c.name })),

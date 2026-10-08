@@ -254,6 +254,15 @@
       "send": "Send now",
       "leave": "Leave without sending",
       "stay": "Back to the order"
+    },
+    "routing": {
+      "confirmTitle": "Nobody logged in: {stations}",
+      "confirmDescription": "Nobody is logged in on the {stations} display. Send anyway? {count, plural, one {The item goes} other {The # items go}} to {targets}.",
+      "line": "{count, plural, one {# item} other {# items}} from {from} → {to}",
+      "cancel": "Cancel",
+      "confirm": "Yes, send to {targets}",
+      "sent": "{count, plural, one {# item} other {# items}} from {from} sent to {to}.",
+      "notice": "Nobody logged in: {from}. Its items will go to {to}."
     }
   }
 }

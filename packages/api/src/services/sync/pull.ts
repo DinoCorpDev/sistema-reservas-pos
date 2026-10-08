@@ -3,6 +3,7 @@ import { schema as s } from '@pos/db';
 import { and, asc, eq, gt } from 'drizzle-orm';
 import { type Actor, requireTerminal } from '../../actor';
 import { configVersion } from './config-version';
+import { listPresence, recordPresence } from './presence';
 import type { SyncDeps } from './push';
 import type { StoredConflict } from './store';
 
@@ -25,15 +26,33 @@ export interface PulledOperation {
 export async function pullOperations(
   deps: SyncDeps,
   actor: Actor,
-  query: { after: number; limit?: number },
+  query: {
+    after: number;
+    limit?: number;
+    /** A kitchen display says whether someone is logged in on it (DEC-033). */
+    presence?: { unlocked: boolean; userId: string | null } | null;
+  },
 ): Promise<{
   operations: PulledOperation[];
   cursor: number;
   hasMore: boolean;
   configVersion: string;
   serverTime: string;
+  presence: Awaited<ReturnType<typeof listPresence>>;
 }> {
-  const { locationId } = requireTerminal(actor);
+  const { terminalId, locationId } = requireTerminal(actor);
+  const scope = { organizationId: actor.organizationId, locationId };
+  const now = new Date();
+  if (query.presence && actor.terminalType === 'kds') {
+    await recordPresence(deps.db, scope, [
+      {
+        terminalId,
+        unlocked: query.presence.unlocked,
+        userId: query.presence.unlocked ? query.presence.userId : null,
+        lastSeenAt: now,
+      },
+    ]);
+  }
   const limit = Math.min(Math.max(query.limit ?? MAX_PULL_OPERATIONS, 1), MAX_PULL_OPERATIONS);
   const rows = await deps.db
     .select({
@@ -69,6 +88,8 @@ export async function pullOperations(
     configVersion: deps.node?.configVersion
       ? (deps.node.configVersion() ?? '')
       : await configVersion(deps.db, { organizationId: actor.organizationId, locationId }),
-    serverTime: new Date().toISOString(),
+    serverTime: now.toISOString(),
+    // Who is at the kitchen displays, so the POS can send around an unattended station.
+    presence: await listPresence(deps.db, scope, now),
   };
 }

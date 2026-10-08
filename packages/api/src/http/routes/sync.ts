@@ -104,6 +104,12 @@ export function registerSyncRoutes(app: ApiApp) {
           after: z.coerce.number().int().min(0).default(0),
           limit: z.coerce.number().int().min(1).max(sync.MAX_PULL_OPERATIONS).optional(),
         }),
+        headers: z.object({
+          'x-presence': z.enum(['unlocked', 'locked']).optional().openapi({
+            description: 'Kitchen displays: whether someone is logged in (DEC-033)',
+          }),
+          'x-presence-user': z.uuid().optional(),
+        }),
       },
       responses: {
         200: jsonResponse(
@@ -113,6 +119,14 @@ export function registerSyncRoutes(app: ApiApp) {
             hasMore: z.boolean(),
             configVersion: z.string(),
             serverTime: z.string(),
+            presence: z.array(
+              z.object({
+                terminalId: z.uuid(),
+                unlocked: z.boolean(),
+                userId: z.uuid().nullable(),
+                lastSeenAt: z.string(),
+              }),
+            ),
           }),
           'A page of operations',
         ),
@@ -121,7 +135,19 @@ export function registerSyncRoutes(app: ApiApp) {
     }),
     async (c) => {
       c.header('Cache-Control', 'no-store');
-      return c.json(await sync.pullOperations(depsOf(c), actorOf(c), c.req.valid('query')), 200);
+      const headers = c.req.valid('header');
+      return c.json(
+        await sync.pullOperations(depsOf(c), actorOf(c), {
+          ...c.req.valid('query'),
+          presence: headers['x-presence']
+            ? {
+                unlocked: headers['x-presence'] === 'unlocked',
+                userId: headers['x-presence-user'] ?? null,
+              }
+            : null,
+        }),
+        200,
+      );
     },
   );
 

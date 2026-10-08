@@ -491,9 +491,22 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
     case 'items.send': {
       // Version 2 names the tickets (active stations only); version 1 routes to every station.
       const frozen = new Map((op.payload.tickets ?? []).map((t) => [t.stationId, t]));
+      // A station nobody attends is replaced by another one (DEC-033).
+      const standIn = new Map<string, string>();
+      for (const ticket of op.payload.tickets ?? []) {
+        for (const replaced of ticket.replaces ?? []) standIn.set(replaced, ticket.stationId);
+      }
       const routed = (item: OrderItemState) =>
         op.schemaVersion >= 2
-          ? item.stationIds.filter((stationId) => frozen.has(stationId))
+          ? [
+              ...new Set(
+                item.stationIds.flatMap((stationId) => {
+                  if (frozen.has(stationId)) return [stationId];
+                  const target = standIn.get(stationId);
+                  return target ? [target] : [];
+                }),
+              ),
+            ]
           : item.stationIds;
       for (const itemId of op.payload.itemIds) {
         const item = state.items.get(itemId);
@@ -518,6 +531,7 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
               sentAt: op.deviceAt,
               sentByUserId: op.userId,
               language: frozen.get(stationId)?.language ?? null,
+              replaces: [...(frozen.get(stationId)?.replaces ?? [])],
               itemIds: [],
               reprintCount: 0,
             };

@@ -173,12 +173,26 @@ export class Device {
   }
 
   sendTo(orderId: string, stationIds: readonly string[], ...itemIds: string[]) {
+    return this.sendRouted(
+      orderId,
+      stationIds.map((stationId) => ({ stationId, replaces: [] })),
+      ...itemIds,
+    );
+  }
+
+  /** A send whose tickets stand in for unattended stations (DEC-033). */
+  sendRouted(
+    orderId: string,
+    tickets: readonly { stationId: string; replaces: string[] }[],
+    ...itemIds: string[]
+  ) {
     return this.op('items.send', orderId, {
       itemIds,
-      tickets: stationIds.map((stationId) => ({
+      tickets: tickets.map((ticket) => ({
         ticketId: freshId(),
-        stationId,
+        stationId: ticket.stationId,
         language: 'de' as const,
+        replaces: ticket.replaces,
       })),
     });
   }

@@ -28,6 +28,7 @@ export async function callNode<T>(
     body?: unknown;
     deviceToken?: string | null;
     timeoutMs?: number;
+    headers?: Record<string, string>;
   } = {},
 ): Promise<T> {
   const controller = new AbortController();
@@ -38,6 +39,7 @@ export async function callNode<T>(
       headers: {
         'content-type': 'application/json',
         ...(init.deviceToken ? { 'x-terminal-token': init.deviceToken } : {}),
+        ...init.headers,
       },
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
       signal: controller.signal,

@@ -15,6 +15,7 @@ import { MoreDialog } from './order/more-dialog';
 import { OpenTableDialog } from './order/open-table-dialog';
 import { OrderHeader } from './order/order-header';
 import { ProductPanel } from './order/product-panel';
+import { RoutingNotice } from './order/routing-notice';
 import { Ticket } from './order/ticket';
 
 type Pane = 'menu' | 'ticket';
@@ -55,6 +56,7 @@ function OrderScreen({ orderId }: { orderId: string }) {
   const { order, items } = data;
   const editable = order.status === 'open';
   const validCount = items.filter((item) => item.prepStatus !== 'voided').length;
+  const pendingCount = items.filter((item) => item.prepStatus === 'pending').length;
   const mergedInto = order.mergedIntoOrderId
     ? getPos().fold.orders.get(order.mergedIntoOrderId)
     : undefined;
@@ -137,6 +139,7 @@ function OrderScreen({ orderId }: { orderId: string }) {
         />
       </div>
 
+      {editable && <RoutingNotice orderId={order.id} pending={pendingCount} />}
       {editable && <ActionBar data={data} onMore={() => setMoreOpen(true)} />}
 
       <LineDialog data={data} itemId={lineId} onClose={() => setLineId(null)} />

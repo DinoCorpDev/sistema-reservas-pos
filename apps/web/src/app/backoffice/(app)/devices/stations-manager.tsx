@@ -27,13 +27,18 @@ type StationDraft = {
   /** NONE = the location's kitchen language. */
   language: string;
   printerId: string;
+  /** "If nobody is there, send to…" (DEC-033); NONE = no replacement. */
+  fallbackStationId: string;
   sortOrder: number;
   isActive: boolean;
 };
 
 type StationDefaults = { alertAfterMinutes: number; language: string };
 
-/** Kitchen stations with their own delay alert, ticket language and printer (RF-A03, RF-C24, RF-C25). */
+/**
+ * Kitchen stations with their own delay alert, ticket language and printer (RF-A03, RF-C24,
+ * RF-C25), and the station that gets their tickets when nobody is there (DEC-033).
+ */
 export function StationsManager({
   stations,
   printers,
@@ -62,6 +67,8 @@ export function StationsManager({
     terminals.filter((d) => d.type === 'kds' && d.isActive && d.kitchenStationId === stationId);
   const printsOn = (printerId: string | null) =>
     printers.some((p) => p.id === printerId && p.isActive);
+  const fallbackOf = (station: people.KitchenStationDto) =>
+    stations.find((s) => s.id === station.fallbackStationId && s.isActive) ?? null;
   const standard = (value: string) => (
     <span className="text-muted-foreground">{t('standard', { value })}</span>
   );
@@ -81,6 +88,7 @@ export function StationsManager({
                 alertAfterMinutes: '',
                 language: NONE,
                 printerId: NONE,
+                fallbackStationId: NONE,
                 sortOrder: stations.length,
                 isActive: true,
               })
@@ -101,6 +109,7 @@ export function StationsManager({
               <TableHead>{t('language')}</TableHead>
               <TableHead>{t('printer')}</TableHead>
               <TableHead>{t('displays')}</TableHead>
+              <TableHead>{t('fallback')}</TableHead>
               <TableHead>{tc('sortOrder')}</TableHead>
               <TableHead>{tc('active')}</TableHead>
               {canEdit ? <TableHead className="text-right">{tc('actions')}</TableHead> : null}
@@ -125,12 +134,21 @@ export function StationsManager({
                       .map((d) => d.name)
                       .join(', ')
                   ) : station.isActive && !printsOn(station.printerId) ? (
-                    <Badge variant="destructive" title={t('noOutputHint')}>
-                      {t('noOutput')}
-                    </Badge>
+                    fallbackOf(station) ? (
+                      <Badge variant="secondary">
+                        {t('viaFallback', { station: fallbackOf(station)!.name })}
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive" title={t('noOutputHint')}>
+                        {t('noOutput')}
+                      </Badge>
+                    )
                   ) : (
                     '—'
                   )}
+                </TableCell>
+                <TableCell data-testid="station-fallback">
+                  {stations.find((s) => s.id === station.fallbackStationId)?.name ?? '—'}
                 </TableCell>
                 <TableCell className="tabular-nums">{station.sortOrder}</TableCell>
                 <TableCell>
@@ -158,6 +176,7 @@ export function StationsManager({
                               : String(station.alertAfterMinutes),
                           language: toOption(station.language),
                           printerId: toOption(station.printerId),
+                          fallbackStationId: toOption(station.fallbackStationId),
                           sortOrder: station.sortOrder,
                           isActive: station.isActive,
                         })
@@ -192,6 +211,7 @@ export function StationsManager({
             <StationForm
               initial={draft}
               printers={printers}
+              stations={stations}
               defaults={defaults}
               onCancel={() => setDraft(null)}
               onSaved={() => setDraft(null)}
@@ -207,12 +227,14 @@ export function StationsManager({
 function StationForm({
   initial,
   printers,
+  stations,
   defaults,
   onCancel,
   onSaved,
 }: {
   initial: StationDraft;
   printers: people.PrinterDto[];
+  stations: people.KitchenStationDto[];
   defaults: StationDefaults;
   onCancel: () => void;
   onSaved: () => void;
@@ -229,6 +251,7 @@ function StationForm({
         alertAfterMinutes: minutes === '' ? null : Number(minutes),
         language: fromOption(draft.language),
         printerId: fromOption(draft.printerId),
+        fallbackStationId: fromOption(draft.fallbackStationId),
         sortOrder: draft.sortOrder,
         isActive: draft.isActive,
       };
@@ -327,6 +350,31 @@ function StationForm({
                 {printer.name}
               </SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+      </Field>
+      <Field
+        label={t('fallbackLabel')}
+        htmlFor="station-fallback"
+        hint={t('fallbackHint')}
+        error={errors.fallbackStationId}
+      >
+        <Select
+          value={form.fallbackStationId}
+          onValueChange={(fallbackStationId) => setForm({ ...form, fallbackStationId })}
+        >
+          <SelectTrigger id="station-fallback">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={NONE}>{t('fallbackNone')}</SelectItem>
+            {selectable(stations, fromOption(initial.fallbackStationId))
+              .filter((station) => station.id !== form.id)
+              .map((station) => (
+                <SelectItem key={station.id} value={station.id}>
+                  {station.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </Field>

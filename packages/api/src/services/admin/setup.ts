@@ -98,10 +98,12 @@ export async function buildSetupSnapshot(
             notDeleted(s.kitchenStations),
           ),
         ),
-      // Where each active station's tickets show up: an active KDS or an active printer.
+      // Where each active station's tickets show up: an active KDS, an active printer or, through
+      // "if nobody is there, send to…", an active replacement station (DEC-033).
       db
         .select({
           id: s.kitchenStations.id,
+          fallbackStationId: s.kitchenStations.fallbackStationId,
           printerActive: s.printers.isActive,
           printerDeleted: s.printers.deletedAt,
         })
@@ -129,10 +131,12 @@ export async function buildSetupSnapshot(
               ),
             );
           const withDisplay = new Set(displays.map((d) => d.stationId));
+          const active = new Set(rows.map((row) => row.id));
           return rows.filter(
             (row) =>
               !withDisplay.has(row.id) &&
-              !(row.printerActive === true && row.printerDeleted === null),
+              !(row.printerActive === true && row.printerDeleted === null) &&
+              !(row.fallbackStationId !== null && active.has(row.fallbackStationId)),
           ).length;
         }),
       db

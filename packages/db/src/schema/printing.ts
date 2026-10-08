@@ -37,6 +37,26 @@ export const printerStatus = mysqlTable(
 );
 
 /**
+ * Who is at each kitchen display (DEC-033): every pull of a KDS says whether someone unlocked it
+ * with their PIN. The POS reads it to send the items of an unattended station to its replacement.
+ * Kept by every node (hub and cloud, which exchange it); out of the configuration version. `id` is
+ * the terminal id.
+ */
+export const terminalPresence = mysqlTable(
+  'terminal_presence',
+  {
+    id: uuid('id').primaryKey(),
+    organizationId: organizationId(),
+    locationId: locationId(),
+    unlocked: boolean('unlocked').notNull(),
+    userId: uuid('user_id'),
+    /** Server time of the terminal's last pull. */
+    lastSeenAt: utcDatetime('last_seen_at').notNull(),
+  },
+  (t) => [index('idx_terminal_presence_location').on(t.locationId, t.lastSeenAt)],
+);
+
+/**
  * Print queue of the hub (DEC-031): one job per document derived from an operation, with an
  * idempotent key (`kitchen:<operation>:<station>`, `receipt:<operation>`…), so a restart or an
  * operation received twice never prints twice. Written only in the hub's database.

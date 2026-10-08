@@ -68,10 +68,15 @@
     "languageHint": "Idioma de las comandas de esta estación.",
     "printer": "Impresora",
     "printerHint": "Opcional: imprime las comandas de esta estación.",
-    "inUse": "Todavía hay productos o pantallas de cocina que usan esta estación. Primero reasígnelos o desactive la estación.",
+    "inUse": "Todavía hay productos, pantallas de cocina u otras estaciones (como reemplazo) que usan esta estación. Primero reasígnelos o desactive la estación.",
     "displays": "Pantallas de cocina",
     "noOutput": "Comandas sin salida",
-    "noOutputHint": "Esta estación no tiene pantalla de cocina ni impresora: sus comandas no aparecen en ningún lado."
+    "noOutputHint": "Esta estación no tiene pantalla de cocina ni impresora: sus comandas no aparecen en ningún lado.",
+    "fallback": "Si no hay nadie",
+    "fallbackLabel": "Si no hay nadie, enviar a",
+    "fallbackHint": "Si nadie ha iniciado sesión en una pantalla de esta estación (o no tiene pantalla ni impresora), sus comandas van a esta estación. La caja pregunta antes de enviar.",
+    "fallbackNone": "Ninguna (las comandas se quedan aquí)",
+    "viaFallback": "Vía {station}"
   },
   "printers": {
     "title": "Impresoras",

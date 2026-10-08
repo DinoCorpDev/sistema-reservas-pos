@@ -1,5 +1,11 @@
 import type { BootstrapDto, OfflineCredentials } from '@pos/api';
-import { createFoldState, type FoldState, type Permission, type SyncLevel } from '@pos/core';
+import {
+  createFoldState,
+  type FoldState,
+  type Permission,
+  type PresenceSnapshot,
+  type SyncLevel,
+} from '@pos/core';
 import { create } from 'zustand';
 import type { PairedDevice } from './db';
 
@@ -44,6 +50,8 @@ export interface PosState {
   updateWaiting: boolean;
   /** Printers by id, as the hub reports them over WebSocket (`printer.status`). */
   printers: Record<string, PrinterHealth>;
+  /** Who is at the kitchen displays, from the last pull (DEC-033); null until one arrives. */
+  presence: PresenceSnapshot | null;
 }
 
 /**
@@ -61,6 +69,7 @@ export const usePos = create<PosState>(() => ({
   sync: { level: 'standalone', node: null, pending: 0, lastSyncAt: null, rejected: 0 },
   updateWaiting: false,
   printers: {},
+  presence: null,
 }));
 
 export const getPos = () => usePos.getState();

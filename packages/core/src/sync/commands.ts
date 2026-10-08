@@ -20,3 +20,18 @@ export const printerStatusReportSchema = z.object({
     .max(50),
 });
 export type PrinterStatusReport = z.infer<typeof printerStatusReportSchema>;
+
+/** Who is at the kitchen displays of the LAN, from the hub to the cloud (DEC-033). */
+export const presenceReportSchema = z.object({
+  entries: z
+    .array(
+      z.object({
+        terminalId: z.uuid(),
+        unlocked: z.boolean(),
+        userId: z.uuid().nullable(),
+        lastSeenAt: z.iso.datetime({ offset: true }),
+      }),
+    )
+    .max(100),
+});
+export type PresenceReport = z.infer<typeof presenceReportSchema>;
