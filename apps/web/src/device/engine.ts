@@ -3,9 +3,13 @@ import {
   DEFAULT_LOCATION_SETTINGS,
   type FoldContext,
   foldOperations,
+  isShiftOperation,
   type Operation,
   operationOrderIds,
+  operationShiftId,
+  paymentsOf,
   type Permission,
+  refundsOf,
   sortsAfter,
 } from '@pos/core';
 import { deviceDb, type OperationRow } from './db';
@@ -97,19 +101,34 @@ const KEEP_CLOSED_HOURS = 36;
 export async function prune(now = Date.now()): Promise<number> {
   const { fold } = getPos();
   const limit = now - KEEP_CLOSED_HOURS * 3_600_000;
+  // A shift keeps its money on the device while open and for the same hours after its close,
+  // so its expected cash never changes under the cashier (DEC-038).
+  const oldShifts = new Set(
+    [...fold.shifts.values()]
+      .filter((shift) => shift.closedAt !== null && Date.parse(shift.closedAt) < limit)
+      .map((shift) => shift.id),
+  );
+  const inKeptShift = (shiftId: string | null) => shiftId !== null && !oldShifts.has(shiftId);
   const finished = new Set(
     [...fold.orders.values()]
       .filter((order) => {
         const end = order.closedAt ?? order.voidedAt;
         return order.status !== 'open' && end !== null && Date.parse(end) < limit;
       })
+      .filter(
+        (order) =>
+          !paymentsOf(fold, order.id).some((p) => inKeptShift(p.shiftId)) &&
+          !refundsOf(fold, order.id).some((r) => inKeptShift(r.shiftId)),
+      )
       .map((order) => order.id),
   );
-  if (finished.size === 0) return 0;
+  if (finished.size === 0 && oldShifts.size === 0) return 0;
   const rows = await deviceDb().ops.toArray();
   const removable = rows.filter((row) => {
+    if (row.cloudAcked !== 1) return false;
+    if (isShiftOperation(row.op.type)) return oldShifts.has(operationShiftId(row.op) ?? '');
     const orders = operationOrderIds(row.op);
-    return row.cloudAcked === 1 && orders.length > 0 && orders.every((id) => finished.has(id));
+    return orders.length > 0 && orders.every((id) => finished.has(id));
   });
   if (removable.length === 0) return 0;
   await deviceDb().ops.bulkDelete(removable.map((row) => row.id));

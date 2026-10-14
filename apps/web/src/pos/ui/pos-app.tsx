@@ -12,7 +12,7 @@ import { PinScreen } from '@/device/ui/pin-screen';
 import { UpdateBanner } from '@/device/ui/update-banner';
 import { PosShell } from './pos-shell';
 
-const POS_FILES = ['pos', 'pos-order', 'pos-payment'] as const;
+const POS_FILES = ['pos', 'pos-order', 'pos-payment', 'pos-cash'] as const;
 
 /**
  * The POS as one client app (docs/SYNC.md §13): it boots from the local database, so it opens

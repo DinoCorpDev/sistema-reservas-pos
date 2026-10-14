@@ -1,15 +1,19 @@
+import type { ClosingDto, DayClosePreview } from '@pos/api';
 import {
   type AuthorizationDecision,
   authorize,
   buildLineSnapshot,
   buildReceipt,
   canApprove,
+  countTotal,
+  type DenominationCount,
   type Channel,
   type ContentLanguage,
   DEFAULT_CONSUMPTION_BY_CHANNEL,
   type DiscountKind,
   isContentLanguage,
   itemsOf,
+  openShiftOf,
   type LineSelection,
   newId,
   type OperationApproval,
@@ -25,6 +29,13 @@ import {
   type RoutedTicket,
   routeSend,
   type SensitiveAction,
+  settleRefund,
+  type ShiftOwner,
+  shiftOwnerFor,
+  type ShiftReport,
+  shiftReport,
+  type ShiftState,
+  type TerminalType,
   type VoidReason,
 } from '@pos/core';
 import { ratesFor, translatedName } from './catalog';
@@ -35,7 +46,7 @@ import { currentBusinessDate, nextOrderNumber, nextReceiptNumber } from './numbe
 import { makeOperation } from '@/device/operations';
 import { identify } from '@/device/pin';
 import { getPos } from '@/device/store';
-import { requestSync } from '@/device/sync';
+import { flushToCloud, requestSync } from '@/device/sync';
 
 /**
  * What the POS screens can do (RF-C02…RF-C19, RF-D02…RF-D25). Every action becomes one operation
@@ -391,6 +402,8 @@ export interface IssuedReceipt {
 export async function pay(orderId: string, input: PaymentInput): Promise<IssuedReceipt> {
   const { bootstrap, fold } = context();
   const order = orderOf(orderId);
+  // Cash goes into the open shift of its drawer or wallet; without one it is refused (RN-19).
+  const shift = shiftForMoney(input.method);
   const breakdown = PAYMENT_ADAPTER_REGISTRY[input.adapter].settle({
     balanceRappen: order.balanceRappen,
     amountRappen: rappen(input.amountRappen),
@@ -479,8 +492,8 @@ export async function pay(orderId: string, input: PaymentInput): Promise<IssuedR
       customerName: content.customer?.name ?? null,
       customerAddress: content.customer?.address ?? null,
     },
-    shiftId: null,
-    businessDate: currentBusinessDate(),
+    shiftId: shift?.id ?? null,
+    businessDate: shift?.businessDate ?? currentBusinessDate(),
   });
   return { paymentId, receiptId, content };
 }
@@ -494,6 +507,12 @@ export async function refundPayment(
 ): Promise<void> {
   const payment = getPos().fold.payments.get(paymentId);
   if (!payment) throw new Error('Unknown payment');
+  // Cash goes back out of the open drawer, rounded to CHF 0.05 (RN-06, DEC-038).
+  const shift = shiftForMoney(payment.method);
+  const settled = settleRefund(payment.method === 'cash' ? 'cash' : 'other', {
+    amountRappen: rappen(input.amountRappen),
+    tipRappen: rappen(input.tipRappen ?? 0),
+  });
   await record(
     'refund.record',
     orderId,
@@ -504,11 +523,11 @@ export async function refundPayment(
       adapter: payment.adapter,
       amountRappen: input.amountRappen,
       tipRappen: input.tipRappen ?? 0,
-      roundingRappen: 0,
+      roundingRappen: settled.roundingRappen,
       reason: input.reason,
       externalReference: null,
-      shiftId: null,
-      businessDate: currentBusinessDate(),
+      shiftId: shift?.id ?? null,
+      businessDate: shift?.businessDate ?? currentBusinessDate(),
     },
     { approval },
   );
@@ -559,6 +578,199 @@ export async function openDrawer(
   approval: OperationApproval | null = null,
 ): Promise<void> {
   await record('drawer.open', null, { reason }, { approval });
+}
+
+// ── Cash: shifts, movements and counts (RF-D12…RF-D15, RN-19, DEC-038) ──────
+
+/** Cash needs an open shift of its drawer or wallet (RN-19). */
+export class NoShiftError extends Error {
+  override readonly name = 'NoShiftError';
+}
+
+/** This device takes no cash: a waiter's phone when only the till collects it (DEC-038). */
+export class NoCashHereError extends Error {
+  override readonly name = 'NoCashHereError';
+}
+
+/** Whose drawer or wallet the cash of this person on this device goes into; null = none. */
+export function cashOwner(): ShiftOwner | null {
+  const { bootstrap, user } = getPos();
+  if (!bootstrap || !user) return null;
+  return shiftOwnerFor(
+    bootstrap.location.settings.shiftMode,
+    { id: bootstrap.terminal.id, type: bootstrap.terminal.type as TerminalType },
+    user.id,
+  );
+}
+
+/** The open shift cash goes into here, if any (with all its operations, from every device). */
+export function currentShift(): ShiftState | null {
+  const owner = cashOwner();
+  return owner ? (openShiftOf(getPos().fold, owner) ?? null) : null;
+}
+
+/** The shift money of `method` goes into; cash without one is refused before it happens. */
+function shiftForMoney(method: PaymentMethod): ShiftState | null {
+  const shift = currentShift();
+  if (method === 'cash' && !shift) {
+    throw cashOwner()
+      ? new NoShiftError('Open a shift first')
+      : new NoCashHereError('No cash here');
+  }
+  return shift;
+}
+
+/** The name a shift's report carries: the person of a wallet, or this till. */
+function shiftOwnerName(shift: ShiftState): string {
+  const { bootstrap } = context();
+  if (shift.scope === 'personal') {
+    return bootstrap.users.find((u) => u.id === shift.cashierUserId)?.displayName ?? '?';
+  }
+  return shift.terminalId === bootstrap.terminal.id ? bootstrap.terminal.name : '?';
+}
+
+/** Opens the shift of this till or of this person's wallet, with the counted float (RF-D12). */
+export async function openShift(
+  count: DenominationCount,
+  approval: OperationApproval | null = null,
+): Promise<string> {
+  const owner = cashOwner();
+  if (!owner) throw new NoCashHereError('No cash here');
+  if (currentShift()) throw new Error('A shift is already open');
+  const shiftId = newId();
+  await record(
+    'shift.open',
+    null,
+    {
+      shiftId,
+      scope: owner.scope,
+      cashierUserId: owner.scope === 'personal' ? owner.userId : null,
+      businessDate: currentBusinessDate(),
+      openingFloatRappen: countTotal(count),
+      openingCount: count,
+    },
+    { approval },
+  );
+  return shiftId;
+}
+
+/** Cash in, cash out or a small expense in the open shift (RF-D13). `amount` is positive. */
+export async function recordMovement(
+  kind: 'cash_in' | 'cash_out' | 'expense',
+  amountRappen: number,
+  reason: string,
+  approval: OperationApproval | null = null,
+): Promise<void> {
+  const shift = currentShift();
+  if (!shift) throw new NoShiftError('Open a shift first');
+  await record(
+    'cash.movement',
+    null,
+    {
+      movementId: newId(),
+      shiftId: shift.id,
+      businessDate: shift.businessDate,
+      kind,
+      amountRappen: kind === 'cash_in' ? amountRappen : -amountRappen,
+      reason,
+      dailyClosingId: null,
+    },
+    { approval },
+  );
+}
+
+/** The report of the open shift right now (X report). */
+export function currentShiftReport(): ShiftReport | null {
+  const shift = currentShift();
+  if (!shift) return null;
+  return shiftReport(getPos().fold, shift.id, {
+    until: new Date(correctedNow()).toISOString(),
+    ownerName: shiftOwnerName(shift),
+    timeZone: context().bootstrap.location.timezone,
+  });
+}
+
+/**
+ * Closes the open shift with the count (RF-D14, RF-D15): the expected cash and the report are
+ * frozen as this device sees them now; a difference needs a comment. Works offline.
+ */
+export async function closeShift(
+  count: DenominationCount,
+  differenceComment: string | null,
+  approval: OperationApproval | null = null,
+): Promise<{ report: ShiftReport; countedRappen: number; expectedRappen: number }> {
+  const shift = currentShift();
+  if (!shift) throw new NoShiftError('No shift open');
+  const report = currentShiftReport()!;
+  const countedRappen = countTotal(count);
+  const expectedRappen = report.cash.expectedRappen;
+  await record(
+    'shift.close',
+    null,
+    {
+      shiftId: shift.id,
+      businessDate: shift.businessDate,
+      countByDenomination: count,
+      countedCashRappen: countedRappen,
+      expectedCashRappen: expectedRappen,
+      differenceComment: countedRappen === expectedRappen ? null : differenceComment,
+      hubPrint: hubReceiptPrinter() !== null,
+      report,
+    },
+    { approval },
+  );
+  return { report, countedRappen, expectedRappen };
+}
+
+// ── Closing the day (Z, RF-D15, RF-D19): needs the cloud and a manager ──────
+
+/** A manager's session on this device for the cloud, from their PIN (POST /terminals/unlock). */
+export async function managerSession(pin: string): Promise<string> {
+  const device = getPos().device;
+  if (!device) throw new Error('This device is not paired');
+  const { token } = await callNode<{ token: string }>(CLOUD, '/terminals/unlock', {
+    method: 'POST',
+    deviceToken: device.deviceToken,
+    body: { pin },
+  });
+  return token;
+}
+
+const asManager = (token: string) => ({
+  deviceToken: getPos().device?.deviceToken ?? null,
+  headers: { authorization: `Bearer ${token}` },
+  timeoutMs: 20_000,
+});
+
+/** Everything this device did must be in the cloud before the Z: how many are still missing. */
+export const sendPendingToCloud = (): Promise<number> => flushToCloud();
+
+export const businessDayNow = (): string => currentBusinessDate();
+
+export function dayClosePreview(token: string, businessDate: string) {
+  return callNode<DayClosePreview>(
+    CLOUD,
+    `/cash/day-close/preview?businessDate=${encodeURIComponent(businessDate)}`,
+    asManager(token),
+  );
+}
+
+export function closeBusinessDay(
+  token: string,
+  input: {
+    businessDate: string;
+    reconciliations: {
+      method: PaymentMethod;
+      terminalTotalRappen: number;
+      reason: string | null;
+    }[];
+  },
+) {
+  return callNode<ClosingDto>(CLOUD, '/cash/day-close', {
+    ...asManager(token),
+    method: 'POST',
+    body: input,
+  });
 }
 
 // ── Waiters' own phones (DEC-036) ───────────────────────────────────────────

@@ -64,7 +64,8 @@
       "drawerFailed": "Die Schublade konnte nicht geöffnet werden.",
       "printerDown": "Drucker «{printer}» nicht erreichbar: {error}",
       "readyTables": "{count, plural, one {# Tisch hat} other {# Tische haben}} etwas bereit zum Servieren",
-      "readyOrders": "{count, plural, one {# Bestellung hat} other {# Bestellungen haben}} etwas bereit zur Übergabe"
+      "readyOrders": "{count, plural, one {# Bestellung hat} other {# Bestellungen haben}} etwas bereit zur Übergabe",
+      "cash": "Kasse"
     },
     "kitchen": {
       "readyTable": "Tisch {table}: {count, plural, one {# Position} other {# Positionen}} bereit",

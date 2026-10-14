@@ -64,7 +64,8 @@
       "drawerFailed": "Impossibile aprire il cassetto.",
       "printerDown": "Stampante «{printer}» non raggiungibile: {error}",
       "readyTables": "{count, plural, one {# tavolo ha} other {# tavoli hanno}} qualcosa di pronto da servire",
-      "readyOrders": "{count, plural, one {# ordine ha} other {# ordini hanno}} qualcosa di pronto da consegnare"
+      "readyOrders": "{count, plural, one {# ordine ha} other {# ordini hanno}} qualcosa di pronto da consegnare",
+      "cash": "Cassa"
     },
     "kitchen": {
       "readyTable": "Tavolo {table}: {count, plural, one {# posizione pronta} other {# posizioni pronte}}",

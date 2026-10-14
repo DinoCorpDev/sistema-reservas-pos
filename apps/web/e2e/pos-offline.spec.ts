@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
-import { cloudState, pairPos, posLocalData, unlockPos } from './pos-helpers';
+import { cloudState, openShift, pairPos, posLocalData, unlockPos } from './pos-helpers';
 
 /**
  * Phase 2 gate (prompt maestro §6, RNF-02, RNF-03, RF-C18): table → order → kitchen → payment →
@@ -31,6 +31,12 @@ test('the full service works offline and syncs exactly once', async ({ page, con
   await context.setOffline(true);
   await unlockPos(page, '4001');
   await expect(page.getByTestId('sync-level')).toHaveAttribute('data-level', 'standalone');
+  // Cash needs the till's shift, opened offline too (RF-D12, DEC-038).
+  await openShift(page);
+  await page
+    .getByRole('navigation', { name: 'Kasse' })
+    .getByRole('button', { name: 'Tische' })
+    .click();
 
   // Open table 3 for two guests (RF-C02).
   await page.getByTestId('table-3').click();

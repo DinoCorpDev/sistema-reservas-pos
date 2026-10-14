@@ -104,6 +104,11 @@ async function today(db: Db, tenant: Tenant): Promise<string> {
   return businessDateOf(new Date(), timezone, settings.businessDayStartsAt);
 }
 
+/** The business day at the location right now (DEC-022): the day a Z would close. */
+export async function currentBusinessDay(deps: ServiceDeps, actor: Actor): Promise<string> {
+  return today(deps.db, tenantOf(actor));
+}
+
 /** Names of terminals and people, for shift owners and closings. */
 async function namesOf(db: Db, tenant: Tenant) {
   const [terminals, users] = await Promise.all([

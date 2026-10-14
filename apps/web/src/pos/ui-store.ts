@@ -19,6 +19,8 @@ export type PosView =
   | { name: 'counter'; channel: 'bar' | 'takeaway' }
   | { name: 'order'; orderId: string }
   | { name: 'payment'; orderId: string }
+  /** The till's or the waiter's cash: shift, movements, count, day close (DEC-038). */
+  | { name: 'cash' }
   | {
       name: 'receipt';
       orderId: string;

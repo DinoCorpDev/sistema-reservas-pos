@@ -64,7 +64,8 @@
       "drawerFailed": "No se pudo abrir el cajón.",
       "printerDown": "Impresora «{printer}» no disponible: {error}",
       "readyTables": "{count, plural, one {# mesa tiene} other {# mesas tienen}} algo listo para servir",
-      "readyOrders": "{count, plural, one {# pedido tiene} other {# pedidos tienen}} algo listo para entregar"
+      "readyOrders": "{count, plural, one {# pedido tiene} other {# pedidos tienen}} algo listo para entregar",
+      "cash": "Caja"
     },
     "kitchen": {
       "readyTable": "Mesa {table}: {count, plural, one {# posición lista} other {# posiciones listas}}",

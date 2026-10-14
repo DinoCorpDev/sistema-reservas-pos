@@ -64,7 +64,8 @@
       "drawerFailed": "The drawer could not be opened.",
       "printerDown": "Printer “{printer}” not reachable: {error}",
       "readyTables": "{count, plural, one {# table has} other {# tables have}} something ready to serve",
-      "readyOrders": "{count, plural, one {# order has} other {# orders have}} something ready to hand over"
+      "readyOrders": "{count, plural, one {# order has} other {# orders have}} something ready to hand over",
+      "cash": "Cash"
     },
     "kitchen": {
       "readyTable": "Table {table}: {count, plural, one {# item} other {# items}} ready",

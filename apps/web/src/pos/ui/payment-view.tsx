@@ -21,7 +21,15 @@ import { cn } from '@pos/ui/utils';
 import { ArrowLeft, Banknote, CreditCard, Eraser, Smartphone } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
-import { pay, type PaymentInput } from '../actions';
+import {
+  cashOwner,
+  currentShift,
+  NoCashHereError,
+  NoShiftError,
+  pay,
+  type PaymentInput,
+} from '../actions';
+import { useFoldMemo } from './order/hooks';
 import { usePos } from '@/device/store';
 import { usePosUi } from '../ui-store';
 import { NumPad } from '@/device/ui/num-pad';
@@ -159,6 +167,13 @@ function PaymentForm({ order }: { order: OrderState }) {
   const users = usePos((state) => state.bootstrap?.users);
   const fold = useFold();
   const keypadVisible = useKeypadVisible();
+  // Cash goes into an open shift of this till or wallet (RN-19, DEC-038).
+  const cashState = useFoldMemo(
+    () => (cashOwner() ? (currentShift() ? 'open' : 'no_shift') : 'none'),
+    [],
+  );
+  const methods = METHODS.filter(({ method: key }) => key !== 'cash' || cashState !== 'none');
+  const tcash = useTranslations('posCash.payment');
   const nameRef = useRef<HTMLInputElement>(null);
   const busyRef = useRef(false);
 
@@ -353,6 +368,8 @@ function PaymentForm({ order }: { order: OrderState }) {
         : te('invalidAmount');
     }
     if (caught instanceof MoneyError) return te('invalidAmount');
+    if (caught instanceof NoShiftError) return tcash('noShift');
+    if (caught instanceof NoCashHereError) return tcash('noCashHere');
     return te('generic');
   }
 
@@ -425,15 +442,16 @@ function PaymentForm({ order }: { order: OrderState }) {
           <div
             role="group"
             aria-labelledby="payment-method-label"
-            className="grid grid-cols-3 gap-2"
+            className={cn('grid gap-2', methods.length === 3 ? 'grid-cols-3' : 'grid-cols-2')}
           >
-            {METHODS.map(({ method: key, icon: Icon }) => (
+            {methods.map(({ method: key, icon: Icon }) => (
               <Button
                 key={key}
                 type="button"
                 size="lg"
                 variant={method === key ? 'default' : 'outline'}
                 aria-pressed={method === key}
+                disabled={key === 'cash' && cashState === 'no_shift'}
                 className="h-auto min-h-16 flex-col gap-1 px-2"
                 onClick={() => chooseMethod(key)}
               >
@@ -442,6 +460,17 @@ function PaymentForm({ order }: { order: OrderState }) {
               </Button>
             ))}
           </div>
+          {cashState === 'no_shift' && (
+            <p className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+              {tcash('noShift')}
+              <Button type="button" variant="outline" onClick={() => navigate({ name: 'cash' })}>
+                {tcash('openShift')}
+              </Button>
+            </p>
+          )}
+          {cashState === 'none' && (
+            <p className="text-sm text-muted-foreground">{tcash('noCashHere')}</p>
+          )}
         </div>
 
         {method === 'cash' && (

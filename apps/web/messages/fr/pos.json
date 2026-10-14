@@ -64,7 +64,8 @@
       "drawerFailed": "Impossible d’ouvrir le tiroir.",
       "printerDown": "Imprimante «{printer}» injoignable : {error}",
       "readyTables": "{count, plural, one {# table a} other {# tables ont}} quelque chose de prêt à servir",
-      "readyOrders": "{count, plural, one {# commande a} other {# commandes ont}} quelque chose de prêt à remettre"
+      "readyOrders": "{count, plural, one {# commande a} other {# commandes ont}} quelque chose de prêt à remettre",
+      "cash": "Caisse"
     },
     "kitchen": {
       "readyTable": "Table {table} : {count, plural, one {# position prête} other {# positions prêtes}}",

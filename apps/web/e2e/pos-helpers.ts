@@ -104,3 +104,14 @@ export async function unlockPos(page: Page, pin: string): Promise<void> {
   await page.getByRole('button', { name: 'Entsperren' }).click();
   await expect(page.getByTestId('pos-user')).toBeVisible({ timeout: 15_000 });
 }
+
+/**
+ * Opens the shift of this till with CHF 100 notes counted as float (RF-D12): cash needs an open
+ * shift (RN-19, DEC-038). Leaves the POS on the cash screen.
+ */
+export async function openShift(page: Page, hundreds = 2): Promise<void> {
+  await page.getByTestId('nav-cash').click();
+  await page.getByTestId('count-10000').fill(String(hundreds));
+  await page.getByTestId('open-shift-confirm').click();
+  await expect(page.getByTestId('shift-open')).toBeVisible({ timeout: 15_000 });
+}

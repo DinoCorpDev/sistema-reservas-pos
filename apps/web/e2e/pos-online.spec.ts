@@ -2,7 +2,7 @@ import { createDb, schema as s } from '@pos/db';
 import { testDatabaseUrl } from '@pos/db/testing';
 import { expect, type Page, test } from '@playwright/test';
 import { and, eq, inArray } from 'drizzle-orm';
-import { cloudState, pairPos, tapDigits, unlockPos } from './pos-helpers';
+import { cloudState, openShift, pairPos, tapDigits, unlockPos } from './pos-helpers';
 
 /**
  * POS with a connection: manager approvals on the same device (RN-15, RF-A05), prepay and
@@ -32,6 +32,7 @@ test('approvals, prepay at the bar, a receipt copy and a refund', async ({ page 
   await pairPos(page, 'K1');
   await unlockPos(page, '4001');
   await expect(page.getByTestId('sync-level')).toHaveAttribute('data-level', 'cloud');
+  await openShift(page);
 
   // A bar order: numbered by the cloud, the location's authority (no prefix).
   // The counter lists what is open; a new order is opened only on purpose (DEC-034).

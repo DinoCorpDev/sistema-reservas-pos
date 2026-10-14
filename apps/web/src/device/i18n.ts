@@ -8,7 +8,7 @@
 export type Messages = { [key: string]: string | Messages };
 
 /** The files the device apps load; the KDS reuses the shared texts of `pos.json`. */
-export type DeviceMessageFile = 'pos' | 'pos-order' | 'pos-payment' | 'kds';
+export type DeviceMessageFile = 'pos' | 'pos-order' | 'pos-payment' | 'pos-cash' | 'kds';
 
 export const DEVICE_LANGUAGES = ['de', 'fr', 'it', 'en', 'es'] as const;
 export type DeviceLanguage = (typeof DEVICE_LANGUAGES)[number];
@@ -33,7 +33,7 @@ async function loadLanguage(
   const parts = await Promise.all(
     files.map((file) =>
       import(
-        /* webpackInclude: /[\\/](pos|pos-order|pos-payment|kds)\.json$/ */
+        /* webpackInclude: /[\\/](pos|pos-order|pos-payment|pos-cash|kds)\.json$/ */
         `../../messages/${language}/${file}.json`
       )
         .then((module: { default: Messages }) => module.default)

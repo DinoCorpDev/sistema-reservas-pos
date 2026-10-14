@@ -1,6 +1,6 @@
 'use client';
 
-import { formatChf, type PaymentState, type Rappen, rappen } from '@pos/core';
+import { formatChf, type PaymentState, type Rappen, rappen, roundCashTo5 } from '@pos/core';
 import { Button } from '@pos/ui/button';
 import {
   Dialog,
@@ -14,7 +14,7 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { refundPayment } from '../../actions';
+import { NoShiftError, refundPayment } from '../../actions';
 import { requestApproval } from '../../ui-store';
 import { useFold } from './hooks';
 import { parseAmount, refundableOf, toAmountText } from './model';
@@ -89,7 +89,11 @@ function RefundBody({
 
   const amount = parseAmount(amountText);
   const tip = tipText.trim() === '' ? rappen(0) : parseAmount(tipText);
-  const handBack = amount !== null && tip !== null ? rappen(amount + tip) : null;
+  const total = amount !== null && tip !== null ? rappen(amount + tip) : null;
+  // Cash goes back rounded to CHF 0.05, like it was collected (RN-06, DEC-038).
+  const handBack =
+    total === null ? null : payment.method === 'cash' ? roundCashTo5(total).payable : total;
+  const tcash = useTranslations('posCash.payment');
 
   async function confirm() {
     if (busy) return;
@@ -120,9 +124,9 @@ function RefundBody({
         { amountRappen: amount, tipRappen: tip, reason: text },
         decision === 'allowed' ? null : decision,
       );
-      onDone(rappen(amount + tip));
-    } catch {
-      setError(t('errors.failed'));
+      onDone(handBack ?? rappen(amount + tip));
+    } catch (caught) {
+      setError(caught instanceof NoShiftError ? tcash('noShift') : t('errors.failed'));
       setBusy(false);
     }
   }

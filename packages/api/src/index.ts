@@ -11,6 +11,7 @@ export type { AreaDto, LocationDto, TableDto } from './services/locations';
 export type { BootstrapDto } from './services/pos/bootstrap';
 export type { OfflineCredentials } from './services/people/terminal-auth';
 export type { OrderDto, OrderSummaryDto } from './services/orders';
+export type { ClosingDetail, ClosingDto, DayCloseBlockers, DayClosePreview } from './services/cash';
 export type {
   HubConfigDto,
   PulledOperation,
@@ -27,3 +28,4 @@ export * as catalog from './services/catalog';
 export * as admin from './services/admin';
 export * as orders from './services/orders';
 export * as sync from './services/sync';
+export * as cash from './services/cash';
