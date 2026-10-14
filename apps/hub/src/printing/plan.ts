@@ -15,6 +15,8 @@ import {
   receiptDocument,
   renderAllergyNotice,
   renderKitchenTicket,
+  SHIFT_REPORT_LABELS,
+  shiftReportDocument,
   ticketsOf,
   ticketView,
 } from '@pos/core';
@@ -32,11 +34,13 @@ import type { PrintConfig } from './config';
  * | kitchen.reprint                   | the ticket again, marked (RF-C26)      | the station's           |
  * | receipt.print / receipt.reprint   | the frozen receipt (DEC-024)           | the terminal's receipt  |
  * | payment.record in cash, drawer.open | drawer kick (RF-D18)                 | the terminal's, if any  |
+ * | shift.open, cash.movement, cash refund | drawer kick (DEC-038)              | the terminal's, if any  |
+ * | shift.close with hubPrint         | the frozen shift report (RF-D15)       | the terminal's receipt  |
  * | order.update with allergies after send | allergy notice (DEC-037)        | each station's          |
  */
 
 export type PrintJobKind =
-  'kitchen' | 'storno' | 'reprint' | 'allergy' | 'receipt' | 'drawer' | 'test';
+  'kitchen' | 'storno' | 'reprint' | 'allergy' | 'receipt' | 'drawer' | 'shift' | 'test';
 
 export interface PrintJobDraft {
   jobKey: string;
@@ -59,7 +63,11 @@ export const PRINTING_OPERATIONS = new Set<Operation['type']>([
   'receipt.print',
   'receipt.reprint',
   'payment.record',
+  'refund.record',
   'drawer.open',
+  'shift.open',
+  'cash.movement',
+  'shift.close',
 ]);
 
 const catalogs = new WeakMap<PrintConfig, Map<ContentLanguage, KitchenCatalog>>();
@@ -289,9 +297,42 @@ export function planPrintJobs(op: Operation, state: FoldState, config: PrintConf
         },
       ]);
     }
+    case 'shift.close': {
+      if (!op.payload.hubPrint) return ready([]);
+      const printer = terminalPrinter(config, op.terminalId);
+      if (!printer) return ready([]);
+      const language = kitchenLanguageOf(config, null);
+      return ready([
+        {
+          jobKey: `shift:${op.id}`,
+          kind: 'shift',
+          printerId: printer.id,
+          stationId: null,
+          document: shiftReportDocument(
+            op.payload.report,
+            {
+              countedRappen: op.payload.countedCashRappen,
+              expectedRappen: op.payload.expectedCashRappen,
+              comment: op.payload.differenceComment,
+            },
+            { width: columnsFor(printer.paperWidthMm), labels: SHIFT_REPORT_LABELS[language] },
+          ),
+        },
+      ]);
+    }
     case 'payment.record':
-    case 'drawer.open': {
-      if (op.type === 'payment.record' && op.payload.method !== 'cash') return ready([]);
+    case 'refund.record':
+    case 'drawer.open':
+    case 'shift.open':
+    case 'cash.movement': {
+      // The drawer opens whenever cash goes in or out of it: the float, a movement, a cash
+      // payment or refund, or on request (RF-D18, DEC-038).
+      if (
+        (op.type === 'payment.record' || op.type === 'refund.record') &&
+        op.payload.method !== 'cash'
+      ) {
+        return ready([]);
+      }
       const printer = terminalPrinter(config, op.terminalId);
       if (!printer?.hasCashDrawer) return ready([]);
       return ready([
