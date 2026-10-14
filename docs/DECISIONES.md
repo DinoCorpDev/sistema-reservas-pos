@@ -305,15 +305,43 @@ Juan pidió poder anotar en el pedido que un comensal es alérgico a algo, aunqu
   - aviso naranja, que **no bloquea**, al agregar un producto que contenga o pueda contener un alérgeno marcado.
 - **Límite:** el aviso al agregar depende de que la carta tenga sus alérgenos cargados. La de Lalín todavía no los tiene; la franja en cocina funciona igual.
 
+## Decisiones de la Fase 4 (Caja y reportes, 13 oct 2026)
+
+### DEC-038 · Caja: quién cobra en efectivo, turnos sin conexión y un Z que sale del dinero
+
+Juan pidió que el modo de cobro se elija en el backoffice. Las demás reglas resuelven lo que el documento no dice sobre turnos sin conexión y cierres.
+
+- **Modo de cobro en efectivo** (`settings.shiftMode`, «Bargeld kassieren»):
+  - `terminal` (por defecto): solo la caja. El turno es de la POS o el handheld; el teléfono del mesero no cobra efectivo, pero sí tarjeta y TWINT.
+  - `cashier`: cada mesero con su cartera. El turno es de la persona, en cualquier dispositivo.
+  - `mixed`: los dos a la vez. POS y handheld usan el turno de la caja; el teléfono, la cartera del mesero.
+  - Lo decide `shiftOwnerFor()` de `@pos/core`. El rol de mesero puede abrir y cerrar su turno por defecto (migración 0009).
+- **Turnos como operaciones** (versión 3 del esquema): `shift.open`, `cash.movement` y `shift.close`.
+  - Funcionan **sin conexión** (RNF-02) y se pliegan con el mismo reductor que las órdenes.
+  - Un pago o una devolución nombran su turno y su día de negocio.
+  - El efectivo sin turno abierto se rechaza en la pantalla; si igual ocurre, queda como conflicto `cash_without_shift`.
+  - Las reglas nunca rechazan, marcan conflictos: segundo turno abierto del mismo dueño (`shift_already_open`, RN-19), dinero en un turno cerrado, ajeno o desconocido, y un cierre cuyo esperado no coincide con lo que la nube sabe (`shift_count_mismatch`).
+  - El cierre **congela** el esperado y el informe tal como los vio y firmó el cajero, como el recibo en DEC-024.
+- **Día de negocio:** se congela al abrir el turno. Todo el dinero de ese turno cuenta en ese Z, aunque pase la medianoche o las 04:00. Un turno de otro día que sigue abierto avisa y bloquea su Z.
+- **El Z sale del dinero**, no de las órdenes:
+  - ventas, medios de pago y MWST se calculan con los pagos y los recibos del día, menos las devoluciones (el MWST de una devolución se reparte sobre el recibo que devuelve);
+  - por eso cuadra al rappen con lo cobrado y con el reporte de MWST;
+  - de las órdenes salen solo los descuentos, las anulaciones y la cuenta de órdenes.
+- **Bloqueos del cierre** (RF-D19, RN-20): turnos abiertos de ese día o antes, órdenes del día **con saldo pendiente** y un día anterior sin Z (solo cuando ya existe algún Z). Una orden pagada cuyos ítems nadie marcó servidos no bloquea.
+- **Conciliación** (RF-D11): cada medio cobrado con terminal externo se compara con el total del terminal; una diferencia exige motivo.
+- **Correcciones** (RF-D17, RN-21): el Z nunca se edita (trigger). El dinero de un día ya cerrado que llega después se aplica igual, queda como conflicto `day_closed` y aparece como corrección de ese Z, nunca dentro de él.
+- **Devoluciones en efectivo:** se redondean a 0,05 como el cobro y la diferencia queda como redondeo de la devolución (RN-06). Decidido con Juan; falta la validación de la fiduciaria.
+- **Impresión:** el hub abre el cajón al abrir turno, en cada movimiento y en cada devolución en efectivo, e imprime el informe de turno congelado. El Z lo imprime el navegador, porque es un dato de la nube.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
-| Decisión                                                | Antes de | Quién decide      |
-| ------------------------------------------------------- | -------- | ----------------- |
-| Proveedor de hosting en Suiza                           | Fase 6   | Juan y socio      |
-| Proveedor de pago online (TWINT y tarjeta en QR/web)    | Fase 5   | Juan y socio      |
-| Redondeo a 0,05 de las devoluciones en efectivo (RN-06) | Fase 4   | Juan y fiduciaria |
-| Precio por sede en CHF y qué incluye                    | Piloto   | Juan y socio      |
-| Hardware recomendado por sede y quién lo instala        | Fase 6   | Juan y socio      |
-| Impresoras del piloto: ¿hacen falta ePOS o CloudPRNT?   | Fase 6   | Juan y socio      |
-| Modelo de soporte del piloto (horario, canal, persona)  | Fase 6   | Juan y socio      |
-| Nombre comercial definitivo en Suiza                    | Piloto   | Juan y socio      |
+| Decisión                                                                               | Antes de | Quién decide |
+| -------------------------------------------------------------------------------------- | -------- | ------------ |
+| Proveedor de hosting en Suiza                                                          | Fase 6   | Juan y socio |
+| Proveedor de pago online (TWINT y tarjeta en QR/web)                                   | Fase 5   | Juan y socio |
+| Validar el redondeo de las devoluciones en efectivo (DEC-038) y el Z basado en recibos | Piloto   | Fiduciaria   |
+| Precio por sede en CHF y qué incluye                                                   | Piloto   | Juan y socio |
+| Hardware recomendado por sede y quién lo instala                                       | Fase 6   | Juan y socio |
+| Impresoras del piloto: ¿hacen falta ePOS o CloudPRNT?                                  | Fase 6   | Juan y socio |
+| Modelo de soporte del piloto (horario, canal, persona)                                 | Fase 6   | Juan y socio |
+| Nombre comercial definitivo en Suiza                                                   | Piloto   | Juan y socio |
