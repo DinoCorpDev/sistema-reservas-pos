@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { SHIFT_MODES } from '../cash/constants';
 import { DISCOUNT_KINDS } from '../orders/constants';
+import { TABLE_OWNERSHIP_MODES } from '../tables/constants';
 
 /** A frequent discount shown as a button on the POS (RF-C11). `code` is the reason code. */
 export const discountPresetSchema = z.object({
@@ -20,6 +21,8 @@ export type DiscountPreset = z.infer<typeof discountPresetSchema>;
 export const locationSettingsSchema = z.object({
   /** Who collects cash: only the till, each waiter's wallet, or both (RF-D12, DEC-038). */
   shiftMode: z.enum(SHIFT_MODES).default('terminal'),
+  /** Who may work on a table's order: any waiter, or its own waiter only (DEC-039). */
+  tableOwnership: z.enum(TABLE_OWNERSHIP_MODES).default('open'),
   /** Local time at which a new business day starts (DEC-022): order numbers and the Z closing. */
   businessDayStartsAt: z
     .string()

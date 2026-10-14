@@ -205,7 +205,9 @@
       "void": "Ganze Bestellungen stornieren",
       "discount": "Rabatte gewähren",
       "reopen": "Abgeschlossene Bestellungen wieder öffnen",
-      "transfer": "Bestellungen auf einen anderen Tisch übertragen"
+      "transfer": "Bestellungen auf einen anderen Tisch übertragen",
+      "any_table": "An allen Tischen arbeiten, auch wenn die Tische der Servicekraft gehören",
+      "reassign": "Tische einer anderen Servicekraft übergeben"
     },
     "payment": {
       "take": "Zahlungen entgegennehmen",

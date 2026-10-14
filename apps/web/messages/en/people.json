@@ -205,7 +205,9 @@
       "void": "Void entire orders",
       "discount": "Grant discounts",
       "reopen": "Reopen closed orders",
-      "transfer": "Transfer orders to another table"
+      "transfer": "Transfer orders to another table",
+      "any_table": "Work on any table, also when tables belong to their waiter",
+      "reassign": "Hand tables to another waiter"
     },
     "payment": {
       "take": "Take payments",

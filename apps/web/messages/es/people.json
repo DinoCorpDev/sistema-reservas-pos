@@ -205,7 +205,9 @@
       "void": "Anular pedidos completos",
       "discount": "Aplicar descuentos",
       "reopen": "Reabrir pedidos cerrados",
-      "transfer": "Transferir pedidos a otra mesa"
+      "transfer": "Transferir pedidos a otra mesa",
+      "any_table": "Trabajar en cualquier mesa, aunque las mesas sean de su mesero",
+      "reassign": "Pasar mesas a otro mesero"
     },
     "payment": {
       "take": "Recibir pagos",

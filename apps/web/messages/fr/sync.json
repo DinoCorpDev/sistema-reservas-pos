@@ -192,6 +192,11 @@
         "label": "Après la clôture du jour",
         "what": "L'opération concerne un jour déjà clôturé (Z). Elle a été conservée et apparaît comme correction de cette clôture.",
         "todo": "Vérifiez la correction dans la clôture du jour ; la clôture elle-même ne change jamais."
+      },
+      "not_table_owner": {
+        "label": "Table d'un autre serveur",
+        "what": "Quelqu'un a travaillé sur la table d'un autre serveur alors que les tables sont attribuées dans cet établissement. L'opération a été conservée.",
+        "todo": "Vérifiez avec les deux serveurs qui sert la table et remettez-la avec le PIN de la direction si nécessaire."
       }
     }
   }

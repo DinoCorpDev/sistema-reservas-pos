@@ -296,6 +296,11 @@
       "sulphites": "Sulfite",
       "lupin": "Lupinen",
       "molluscs": "Weichtiere"
+    },
+    "ownership": {
+      "banner": "Tisch von {name}. An diesem Standort arbeitet nur die zuständige Servicekraft an ihren Tischen.",
+      "takeOver": "Tisch übernehmen",
+      "addedByOther": "{name} hat {count, plural, one {# Position} other {# Positionen}} an Ihrem Tisch {table} hinzugefügt."
     }
   }
 }

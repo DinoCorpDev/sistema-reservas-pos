@@ -296,6 +296,11 @@
       "sulphites": "Solfiti",
       "lupin": "Lupini",
       "molluscs": "Molluschi"
+    },
+    "ownership": {
+      "banner": "Tavolo di {name}. In questa sede solo il cameriere responsabile lavora sui suoi tavoli.",
+      "takeOver": "Prendi il tavolo",
+      "addedByOther": "{name} ha aggiunto {count, plural, one {# articolo} other {# articoli}} al tuo tavolo {table}."
     }
   }
 }

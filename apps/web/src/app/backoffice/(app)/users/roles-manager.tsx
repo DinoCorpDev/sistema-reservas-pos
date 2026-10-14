@@ -25,6 +25,8 @@ const GROUPS: { key: string; permissions: readonly Permission[] }[] = [
       'order.discount',
       'order.reopen',
       'order.transfer',
+      'order.any_table',
+      'order.reassign',
     ],
   },
   { key: 'payments', permissions: ['payment.take', 'payment.refund', 'receipt.reprint'] },

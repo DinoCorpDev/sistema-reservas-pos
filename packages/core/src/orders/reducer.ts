@@ -214,6 +214,14 @@ function sensitiveActionOf(state: FoldState, op: Operation): SensitiveAction | n
       return { kind: 'permission', permission: 'cash.movement' };
     case 'receipt.reprint':
       return { kind: 'permission', permission: 'receipt.reprint' };
+    case 'order.update': {
+      // Handing a table to another waiter needs a manager or an admin (DEC-039).
+      const waiter = op.payload.waiterUserId;
+      const order = state.orders.get(op.orderId);
+      return waiter !== undefined && order && waiter !== order.waiterUserId
+        ? { kind: 'permission', permission: 'order.reassign' }
+        : { kind: 'permission', permission: 'order.create' };
+    }
     default:
       return { kind: 'permission', permission: 'order.create' };
   }
@@ -234,6 +242,45 @@ function authorizationConflict(
   const approver = permissionsOf(op.approval.approverUserId);
   const approved = approver && decision.permissions.every((p) => approver.has(p));
   return approved ? null : 'approval_invalid';
+}
+
+/** Work on an order that, with restricted tables, only its waiter may do (DEC-039). */
+const OWNED_OPERATIONS = new Set<Operation['type']>([
+  'order.change_channel',
+  'items.add',
+  'item.update',
+  'items.send',
+  'items.serve',
+  'item.void',
+  'discount.apply',
+  'discount.remove',
+  'payment.record',
+  'items.transfer',
+  'order.merge',
+  'order.split',
+  'order.void',
+]);
+
+/**
+ * The table order this operation touches when it belongs to another waiter and the location
+ * keeps tables with their waiter (DEC-039); null when it is fine. Bar and take-away orders are
+ * shared; whoever has `order.any_table` (the till, managers) or an approval with it works on any
+ * table, and taking the table over (`order.update` of the waiter) is always allowed.
+ */
+function ownershipConflict(state: FoldState, op: Operation, context: FoldContext): string | null {
+  if (context.settings.tableOwnership !== 'restricted' || !context.permissionsOf) return null;
+  if (op.orderId === null || op.userId === null || !OWNED_OPERATIONS.has(op.type)) return null;
+  const order = liveOrder(state, op.orderId);
+  if (!order || order.tableId === null || order.waiterUserId === op.userId) return null;
+  if (context.permissionsOf(op.userId)?.has('order.any_table')) return null;
+  const approver = op.approval;
+  if (
+    approver?.permissions.includes('order.any_table') &&
+    context.permissionsOf(approver.approverUserId)?.has('order.any_table')
+  ) {
+    return null;
+  }
+  return order.id;
 }
 
 /**
@@ -307,6 +354,9 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
     const code = authorizationConflict(op, sensitive, context);
     if (code) flag(code, op.userId);
   }
+  // Tables that belong to their waiter (DEC-039): what someone else did still happened.
+  const foreignTable = ownershipConflict(state, op, context);
+  if (foreignTable) flag('not_table_owner', foreignTable);
 
   const moveItem = (item: OrderItemState, toOrderId: string) => {
     const fromOrderId = item.orderId;
@@ -398,7 +448,17 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
       // Canonical order makes this "last change per field wins" (RNF-04).
       const p = op.payload;
       if (p.guestCount !== undefined) order.guestCount = p.guestCount;
-      if (p.waiterUserId !== undefined) order.waiterUserId = p.waiterUserId;
+      if (p.waiterUserId !== undefined && p.waiterUserId !== order.waiterUserId) {
+        // Taking a table over (DEC-039) is always allowed, and always recorded.
+        audit(
+          'order.waiter_changed',
+          'order',
+          order.id,
+          { waiterUserId: order.waiterUserId },
+          { waiterUserId: p.waiterUserId },
+        );
+        order.waiterUserId = p.waiterUserId;
+      }
       if (p.tableId !== undefined) order.tableId = p.tableId;
       if (p.joinedTableIds !== undefined) order.joinedTableIds = [...p.joinedTableIds];
       if (p.customerName !== undefined) order.customerName = p.customerName;

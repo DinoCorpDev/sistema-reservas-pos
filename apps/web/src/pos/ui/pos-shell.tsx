@@ -24,6 +24,7 @@ import { PaymentView } from './payment-view';
 import { PhonePairingButton, SignOutButton } from './phone-access';
 import { ReceiptView } from './receipt-view';
 import { SendConfirmDialog } from './send-confirm-dialog';
+import { TableNotices } from './table-notices';
 import { UnpairButton } from './unpair-button';
 import { UnsentDialog } from './unsent-dialog';
 
@@ -190,6 +191,7 @@ export function PosShell() {
       <UnsentDialog />
       <SendConfirmDialog />
       <KitchenNotices />
+      <TableNotices />
     </div>
   );
 }

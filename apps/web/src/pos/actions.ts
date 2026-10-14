@@ -135,6 +135,33 @@ export async function updateOrder(
   await record('order.update', orderId, fields);
 }
 
+/**
+ * Hands a table to another waiter, e.g. at a change of shift: from then on it is theirs, with
+ * its tips. A manager or an admin approves it with their PIN (DEC-039); it is audited.
+ */
+export async function handOverOrder(
+  orderId: string,
+  waiterUserId: string,
+  approval: OperationApproval | null = null,
+): Promise<void> {
+  await record('order.update', orderId, { waiterUserId }, { approval });
+}
+
+/**
+ * Whether the person on the device may work on this order (DEC-039): always, unless the location
+ * keeps tables with their waiter, it is someone else's table and they may not work on any table.
+ */
+export function mayWorkOn(order: { tableId: string | null; waiterUserId: string }): boolean {
+  const { bootstrap, user } = getPos();
+  if (!bootstrap || !user) return false;
+  if (bootstrap.location.settings.tableOwnership !== 'restricted') return true;
+  return (
+    order.tableId === null ||
+    order.waiterUserId === user.id ||
+    user.permissions.has('order.any_table')
+  );
+}
+
 /** Channel change before payment recalculates the MWST of every line (RN-05). */
 export async function changeChannel(orderId: string, channel: Channel): Promise<void> {
   const consumptionType = DEFAULT_CONSUMPTION_BY_CHANNEL[channel];

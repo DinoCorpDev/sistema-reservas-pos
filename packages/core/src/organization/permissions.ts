@@ -13,6 +13,10 @@ export const PERMISSIONS = [
   'order.discount',
   'order.reopen',
   'order.transfer',
+  /** Work on any table's order when tables belong to their waiter (DEC-039). */
+  'order.any_table',
+  /** Hand a table to another waiter, e.g. at a change of shift (DEC-039). */
+  'order.reassign',
   // payments and receipts
   'payment.take',
   'payment.refund',
@@ -69,6 +73,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<RoleKey, readonly Permiss
   cashier: [
     'order.create',
     'order.transfer',
+    'order.any_table',
     'payment.take',
     'receipt.reprint',
     'cash.movement',

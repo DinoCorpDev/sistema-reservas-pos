@@ -11,6 +11,7 @@ export const AUDIT_ACTIONS = [
   'order.discount_removed',
   'order.reopened',
   'order.channel_changed',
+  'order.waiter_changed',
   'order.items_transferred',
   'order.merged',
   'order.split',

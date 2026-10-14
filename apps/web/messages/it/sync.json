@@ -192,6 +192,11 @@
         "label": "Dopo la chiusura del giorno",
         "what": "L'operazione riguarda un giorno già chiuso (Z). È stata conservata e appare come correzione di quella chiusura.",
         "todo": "Verificate la correzione nella chiusura del giorno; la chiusura non cambia mai."
+      },
+      "not_table_owner": {
+        "label": "Tavolo di un altro",
+        "what": "Qualcuno ha lavorato sul tavolo di un altro cameriere benché in questa sede i tavoli siano assegnati. L'operazione è stata comunque registrata.",
+        "todo": "Chiarite con i due camerieri chi serve il tavolo e, se serve, passatelo con il PIN della direzione."
       }
     }
   }

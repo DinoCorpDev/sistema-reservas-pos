@@ -205,7 +205,9 @@
       "void": "Annuler des commandes entières",
       "discount": "Accorder des rabais",
       "reopen": "Rouvrir des commandes clôturées",
-      "transfer": "Transférer des commandes vers une autre table"
+      "transfer": "Transférer des commandes vers une autre table",
+      "any_table": "Travailler sur toutes les tables, même attribuées à leur serveur",
+      "reassign": "Remettre des tables à un autre serveur"
     },
     "payment": {
       "take": "Encaisser des paiements",

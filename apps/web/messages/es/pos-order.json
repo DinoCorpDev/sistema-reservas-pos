@@ -296,6 +296,11 @@
       "sulphites": "Sulfitos",
       "lupin": "Altramuces",
       "molluscs": "Moluscos"
+    },
+    "ownership": {
+      "banner": "Mesa de {name}. En esta sede solo el mesero encargado trabaja en sus mesas.",
+      "takeOver": "Tomar la mesa",
+      "addedByOther": "{name} agregó {count, plural, one {# producto} other {# productos}} a tu mesa {table}."
     }
   }
 }

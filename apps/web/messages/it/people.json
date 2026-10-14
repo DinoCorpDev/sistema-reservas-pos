@@ -205,7 +205,9 @@
       "void": "Stornare ordini interi",
       "discount": "Concedere sconti",
       "reopen": "Riaprire ordini chiusi",
-      "transfer": "Trasferire ordini su un altro tavolo"
+      "transfer": "Trasferire ordini su un altro tavolo",
+      "any_table": "Lavorare su qualsiasi tavolo, anche se assegnato al suo cameriere",
+      "reassign": "Passare tavoli a un altro cameriere"
     },
     "payment": {
       "take": "Incassare pagamenti",

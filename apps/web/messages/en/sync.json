@@ -192,6 +192,11 @@
         "label": "After the day closing",
         "what": "The operation belongs to a day that is already closed (Z). It was kept and shows as a correction of that closing.",
         "todo": "Check the correction in the day closing; the closing itself never changes."
+      },
+      "not_table_owner": {
+        "label": "Someone else's table",
+        "what": "Someone worked on another waiter's table although tables are assigned at this location. It was kept anyway.",
+        "todo": "Check with both waiters who serves the table and hand it over with a manager's PIN if needed."
       }
     }
   }

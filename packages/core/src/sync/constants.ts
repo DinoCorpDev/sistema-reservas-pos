@@ -36,6 +36,8 @@ export const CONFLICT_CODES = [
   'shift_already_open',
   'shift_count_mismatch',
   'day_closed',
+  // tables that belong to their waiter (DEC-039)
+  'not_table_owner',
 ] as const;
 export type ConflictCode = (typeof CONFLICT_CODES)[number];
 

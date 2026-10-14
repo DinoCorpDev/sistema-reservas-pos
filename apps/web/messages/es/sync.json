@@ -192,6 +192,11 @@
         "label": "Después del cierre del día",
         "what": "La operación es de un día ya cerrado (Z). Se guardó y aparece como corrección de ese cierre.",
         "todo": "Revise la corrección en el cierre del día; el cierre nunca se modifica."
+      },
+      "not_table_owner": {
+        "label": "Mesa de otro mesero",
+        "what": "Alguien trabajó en la mesa de otro mesero aunque en esta sede las mesas están asignadas. Se registró igual.",
+        "todo": "Aclare con los dos meseros quién atiende la mesa y, si hace falta, pásela con el PIN de la gerencia."
       }
     }
   }

@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useState } from 'react';
-import { changeChannel, checkAction, updateOrder, voidOrder } from '../../actions';
+import { changeChannel, checkAction, handOverOrder, updateOrder, voidOrder } from '../../actions';
 import { usePos } from '@/device/store';
 import { requestApproval, usePosUi } from '../../ui-store';
 import { MergePanel, SplitPanel, TransferPanel } from './bill-panels';
@@ -296,7 +296,10 @@ function GuestsPanel({ order, onDone }: { order: OrderState; onDone: () => void 
   );
 }
 
-/** Another waiter takes over the order, and its tips (RF-C03, RN-07). */
+/**
+ * Another waiter takes over the order, and its tips (RF-C03, RN-07). A manager or an admin
+ * approves it with their PIN (DEC-039).
+ */
 function WaiterPanel({ order, onDone }: { order: OrderState; onDone: () => void }) {
   const users = usePos((state) => state.bootstrap)?.users ?? [];
   const run = useRunner();
@@ -307,8 +310,12 @@ function WaiterPanel({ order, onDone }: { order: OrderState; onDone: () => void 
       onDone();
       return;
     }
+    const approval = await requestApproval({ kind: 'permission', permission: 'order.reassign' });
+    if (approval === null) return;
     setBusy(true);
-    const result = await run(() => updateOrder(order.id, { waiterUserId: userId }));
+    const result = await run(() =>
+      handOverOrder(order.id, userId, approval === 'allowed' ? null : approval),
+    );
     setBusy(false);
     if (result.ok) onDone();
   }

@@ -220,7 +220,8 @@
       "voided": "Ordine stornato",
       "discount_applied": "Sconto concesso",
       "reopened": "Ordine riaperto",
-      "channel_changed": "Canale dell’ordine modificato"
+      "channel_changed": "Canale dell’ordine modificato",
+      "waiter_changed": "Tavolo passato a un altro cameriere"
     },
     "payment": {
       "refunded": "Pagamento rimborsato"
@@ -229,10 +230,12 @@
       "reprinted": "Scontrino ristampato"
     },
     "cash": {
-      "drawer_opened": "Cassetto cassa aperto"
+      "drawer_opened": "Cassetto cassa aperto",
+      "movement_recorded": "Movimento di cassa registrato"
     },
     "shift": {
-      "closed": "Turno di cassa chiuso"
+      "closed": "Turno di cassa chiuso",
+      "opened": "Turno aperto"
     },
     "day": {
       "closed": "Chiusura giornaliera"

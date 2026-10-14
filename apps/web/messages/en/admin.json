@@ -220,7 +220,8 @@
       "voided": "Order voided",
       "discount_applied": "Discount granted",
       "reopened": "Order reopened",
-      "channel_changed": "Order channel changed"
+      "channel_changed": "Order channel changed",
+      "waiter_changed": "Table handed to another waiter"
     },
     "payment": {
       "refunded": "Payment refunded"
@@ -229,10 +230,12 @@
       "reprinted": "Receipt reprinted"
     },
     "cash": {
-      "drawer_opened": "Cash drawer opened"
+      "drawer_opened": "Cash drawer opened",
+      "movement_recorded": "Cash movement recorded"
     },
     "shift": {
-      "closed": "Shift closed"
+      "closed": "Shift closed",
+      "opened": "Shift opened"
     },
     "day": {
       "closed": "End-of-day closing"

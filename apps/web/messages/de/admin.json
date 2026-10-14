@@ -220,7 +220,8 @@
       "voided": "Bestellung storniert",
       "discount_applied": "Rabatt gewährt",
       "reopened": "Bestellung wieder geöffnet",
-      "channel_changed": "Kanal der Bestellung geändert"
+      "channel_changed": "Kanal der Bestellung geändert",
+      "waiter_changed": "Tisch einer anderen Servicekraft übergeben"
     },
     "payment": {
       "refunded": "Zahlung zurückerstattet"
@@ -229,10 +230,12 @@
       "reprinted": "Beleg erneut gedruckt"
     },
     "cash": {
-      "drawer_opened": "Kassenschublade geöffnet"
+      "drawer_opened": "Kassenschublade geöffnet",
+      "movement_recorded": "Kassenbewegung erfasst"
     },
     "shift": {
-      "closed": "Schicht abgeschlossen"
+      "closed": "Schicht abgeschlossen",
+      "opened": "Schicht eröffnet"
     },
     "day": {
       "closed": "Tagesabschluss"

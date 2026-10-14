@@ -33,6 +33,7 @@ export function SettingsForm({
   const tc = useTranslations('common');
   const [form, setForm] = useState({
     shiftMode: settings.shiftMode,
+    tableOwnership: settings.tableOwnership,
     discountAbovePercent: settings.managerApproval.discountAboveBp / 100,
     voidSentItem: settings.managerApproval.voidSentItem,
     refundAboveChf: settings.managerApproval.refundAboveRappen / 100,
@@ -64,6 +65,7 @@ export function SettingsForm({
           .filter((url) => url !== ''),
       },
       shiftMode: form.shiftMode,
+      tableOwnership: form.tableOwnership,
       managerApproval: {
         discountAboveBp: Math.round(form.discountAbovePercent * 100),
         voidSentItem: form.voidSentItem,
@@ -118,6 +120,23 @@ export function SettingsForm({
                 <SelectItem value="terminal">{t('shiftMode_terminal')}</SelectItem>
                 <SelectItem value="cashier">{t('shiftMode_cashier')}</SelectItem>
                 <SelectItem value="mixed">{t('shiftMode_mixed')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field label={t('tableOwnership')} hint={t('tableOwnershipHint')}>
+            <Select
+              value={form.tableOwnership}
+              onValueChange={(value) =>
+                setForm((f) => ({ ...f, tableOwnership: value as typeof f.tableOwnership }))
+              }
+              disabled={!canEdit}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="open">{t('tableOwnership_open')}</SelectItem>
+                <SelectItem value="restricted">{t('tableOwnership_restricted')}</SelectItem>
               </SelectContent>
             </Select>
           </Field>

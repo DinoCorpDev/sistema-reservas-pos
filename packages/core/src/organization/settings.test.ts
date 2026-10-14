@@ -5,6 +5,7 @@ describe('location settings', () => {
   it('uses the DEC-004 defaults from section 20', () => {
     expect(DEFAULT_LOCATION_SETTINGS).toEqual({
       shiftMode: 'terminal',
+      tableOwnership: 'open',
       businessDayStartsAt: '04:00',
       managerApproval: { discountAboveBp: 2000, voidSentItem: true, refundAboveRappen: 0 },
       reservations: { blockMinutesBefore: 15, noShowAfterMinutes: 20, defaultDurationMinutes: 120 },

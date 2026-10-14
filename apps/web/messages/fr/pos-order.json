@@ -296,6 +296,11 @@
       "sulphites": "Sulfites",
       "lupin": "Lupin",
       "molluscs": "Mollusques"
+    },
+    "ownership": {
+      "banner": "Table de {name}. Dans cet établissement, seul le serveur responsable travaille sur ses tables.",
+      "takeOver": "Reprendre la table",
+      "addedByOther": "{name} a ajouté {count, plural, one {# article} other {# articles}} à votre table {table}."
     }
   }
 }

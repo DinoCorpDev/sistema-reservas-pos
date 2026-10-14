@@ -192,6 +192,11 @@
         "label": "Nach dem Tagesabschluss",
         "what": "Der Vorgang betrifft einen Tag, der bereits abgeschlossen ist (Z). Er wurde übernommen und erscheint als Korrektur dieses Abschlusses.",
         "todo": "Prüfen Sie die Korrektur im Tagesabschluss; der Abschluss selbst wird nie geändert."
+      },
+      "not_table_owner": {
+        "label": "Fremder Tisch",
+        "what": "Jemand hat an einem Tisch einer anderen Servicekraft gearbeitet, obwohl die Tische an diesem Standort zugewiesen sind. Der Vorgang wurde trotzdem übernommen.",
+        "todo": "Klären Sie mit beiden Servicekräften, wer den Tisch bedient, und übergeben Sie ihn bei Bedarf mit dem PIN der Leitung."
       }
     }
   }

@@ -5,8 +5,9 @@ import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { getPos } from '@/device/store';
-import { usePosUi } from '../ui-store';
+import { getPos, usePos } from '@/device/store';
+import { handOverOrder, mayWorkOn } from '../actions';
+import { requestApproval, usePosUi } from '../ui-store';
 import { ActionBar } from './order/action-bar';
 import { BackButton } from './order/back-button';
 import { useLookups, useOrderData, useViewportFill } from './order/hooks';
@@ -16,6 +17,7 @@ import { OpenTableDialog } from './order/open-table-dialog';
 import { OrderHeader } from './order/order-header';
 import { ProductPanel } from './order/product-panel';
 import { RoutingNotice } from './order/routing-notice';
+import { useRunner } from './order/run';
 import { Ticket } from './order/ticket';
 
 type Pane = 'menu' | 'ticket';
@@ -52,7 +54,9 @@ function OrderScreen({ orderId }: { orderId: string }) {
   }
 
   const { order, items } = data;
-  const editable = order.status === 'open';
+  // Someone else's table where tables belong to their waiter (DEC-039): read only until taken over.
+  const foreign = order.status === 'open' && !mayWorkOn(order);
+  const editable = order.status === 'open' && !foreign;
   const validCount = items.filter((item) => item.prepStatus !== 'voided').length;
   // How many of each product the order has: the waiter sees every tap land on the menu itself.
   const counts = new Map<string, number>();
@@ -69,7 +73,14 @@ function OrderScreen({ orderId }: { orderId: string }) {
     <div ref={fill.ref} style={fill.style} className="flex min-h-0 flex-col">
       <OrderHeader order={order} lookups={lookups} />
 
-      {!editable && (
+      {foreign && (
+        <ForeignTableBanner
+          orderId={order.id}
+          waiterName={lookups.users.get(order.waiterUserId)?.displayName ?? '?'}
+        />
+      )}
+
+      {!editable && !foreign && (
         <div
           className="flex flex-wrap items-center gap-3 border-b bg-amber-50 px-4 py-2 text-amber-950"
           role="status"
@@ -160,6 +171,39 @@ function OrderScreen({ orderId }: { orderId: string }) {
         }}
       />
       <OpenTableDialog table={newOrderTable} onClose={() => setNewOrderTable(null)} />
+    </div>
+  );
+}
+
+/**
+ * Someone else's table where tables belong to their waiter (DEC-039): the order is shown but not
+ * changed here. Taking the table over needs a manager's or an admin's PIN, and is recorded.
+ */
+function ForeignTableBanner({ orderId, waiterName }: { orderId: string; waiterName: string }) {
+  const t = useTranslations('posOrder.ownership');
+  const userId = usePos((state) => state.user?.id);
+  const run = useRunner();
+  const [busy, setBusy] = useState(false);
+
+  async function takeOver() {
+    if (!userId) return;
+    const approval = await requestApproval({ kind: 'permission', permission: 'order.reassign' });
+    if (approval === null) return;
+    setBusy(true);
+    await run(() => handOverOrder(orderId, userId, approval === 'allowed' ? null : approval));
+    setBusy(false);
+  }
+
+  return (
+    <div
+      className="flex flex-wrap items-center gap-3 border-b bg-sky-50 px-4 py-2 text-sky-950"
+      role="status"
+      data-testid="foreign-table"
+    >
+      <span>{t('banner', { name: waiterName })}</span>
+      <Button variant="outline" disabled={busy} onClick={() => void takeOver()}>
+        {t('takeOver')}
+      </Button>
     </div>
   );
 }

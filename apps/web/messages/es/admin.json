@@ -220,7 +220,8 @@
       "voided": "Pedido anulado",
       "discount_applied": "Descuento aplicado",
       "reopened": "Pedido reabierto",
-      "channel_changed": "Canal del pedido cambiado"
+      "channel_changed": "Canal del pedido cambiado",
+      "waiter_changed": "Mesa pasada a otro mesero"
     },
     "payment": {
       "refunded": "Pago reembolsado"
@@ -229,10 +230,12 @@
       "reprinted": "Recibo reimpreso"
     },
     "cash": {
-      "drawer_opened": "Cajón de dinero abierto"
+      "drawer_opened": "Cajón de dinero abierto",
+      "movement_recorded": "Movimiento de caja registrado"
     },
     "shift": {
-      "closed": "Turno cerrado"
+      "closed": "Turno cerrado",
+      "opened": "Turno abierto"
     },
     "day": {
       "closed": "Cierre del día"

@@ -220,7 +220,8 @@
       "voided": "Commande annulée",
       "discount_applied": "Rabais accordé",
       "reopened": "Commande rouverte",
-      "channel_changed": "Canal de la commande modifié"
+      "channel_changed": "Canal de la commande modifié",
+      "waiter_changed": "Table remise à un autre serveur"
     },
     "payment": {
       "refunded": "Paiement remboursé"
@@ -229,10 +230,12 @@
       "reprinted": "Ticket réimprimé"
     },
     "cash": {
-      "drawer_opened": "Tiroir-caisse ouvert"
+      "drawer_opened": "Tiroir-caisse ouvert",
+      "movement_recorded": "Mouvement de caisse enregistré"
     },
     "shift": {
-      "closed": "Session de caisse clôturée"
+      "closed": "Session de caisse clôturée",
+      "opened": "Session ouverte"
     },
     "day": {
       "closed": "Clôture journalière"

@@ -333,6 +333,20 @@ Juan pidió que el modo de cobro se elija en el backoffice. Las demás reglas re
 - **Devoluciones en efectivo:** se redondean a 0,05 como el cobro y la diferencia queda como redondeo de la devolución (RN-06). Decidido con Juan; falta la validación de la fiduciaria.
 - **Impresión:** el hub abre el cajón al abrir turno, en cada movimiento y en cada devolución en efectivo, e imprime el informe de turno congelado. El Z lo imprime el navegador, porque es un dato de la nube.
 
+### DEC-039 · Quién atiende cada mesa: abierto o asignado, y pasar una mesa con PIN («Podría», amplía RF-C02 y RF-C03)
+
+Juan preguntó qué pasa si el mesero de una mesa no está y la mesa llama a otro. El documento no lo dice. Se configura por sede en el backoffice («Zuständigkeit für Tische», `settings.tableOwnership`):
+
+- **Abierto (por defecto):** cualquier mesero toma pedidos, envía y cobra en cualquier mesa, para que el cliente no espere.
+  - La mesa sigue siendo de quien la abrió: su nombre en el mapa y su propina.
+  - Cada línea guarda quién la agregó, y el mesero de la mesa recibe un aviso: «Lea agregó 2 productos a tu mesa 1».
+- **Asignado:** en una mesa ajena, el mesero ve el pedido en solo lectura con el botón «Tomar la mesa».
+  - Trabajan en cualquier mesa quienes tienen el permiso nuevo `order.any_table`, que por defecto tienen caja, gerencia y admin.
+  - Los pedidos de barra y para llevar se comparten siempre.
+  - Si igual ocurre (por ejemplo, sin conexión), se aplica y queda el conflicto `not_table_owner`.
+- **Pasar una mesa a otro mesero**, por ejemplo en el cambio de turno: en los dos modos pide el permiso nuevo `order.reassign`, que por defecto solo tienen gerencia y admin. En la práctica pide el **PIN de un gerente o del administrador**. Queda en la auditoría (`order.waiter_changed`, con quién la autorizó), y desde ese momento la mesa y su propina son del nuevo mesero.
+- Los roles existentes reciben los permisos con la migración 0012. Se pueden ajustar por rol en el backoffice.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

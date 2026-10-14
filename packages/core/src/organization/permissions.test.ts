@@ -23,6 +23,7 @@ describe('default role permissions', () => {
     for (const role of ['waiter', 'cashier'] as const) {
       for (const sensitive of [
         'order.reopen',
+        'order.reassign',
         'payment.refund',
         'day.close',
         'catalog.price_change',
