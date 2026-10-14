@@ -25,11 +25,15 @@ export function canonicalJson(value: unknown): string {
 }
 
 /**
- * SHA-256 of the canonical content (`receipts.content_hash`): proves a stored receipt is the one
- * printed (RN-10). Uses Web Crypto, available in browsers and in Node.
+ * SHA-256 of a value's canonical JSON: proves a stored record is the one printed or closed
+ * (RN-10). Uses Web Crypto, available in browsers and in Node.
  */
-export async function receiptContentHash(content: ReceiptContent): Promise<string> {
-  const bytes = new TextEncoder().encode(canonicalJson(content));
+export async function contentHash(value: unknown): Promise<string> {
+  const bytes = new TextEncoder().encode(canonicalJson(value));
   const digest = await subtle().digest('SHA-256', bytes);
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
+
+/** `receipts.content_hash`: the receipt's frozen content as printed. */
+export const receiptContentHash = (content: ReceiptContent): Promise<string> =>
+  contentHash(content);

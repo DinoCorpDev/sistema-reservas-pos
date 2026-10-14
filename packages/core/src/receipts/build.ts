@@ -56,6 +56,29 @@ export function receiptTaxes(
   // A rate with nothing left (e.g. only 100 %-discounted lines) is not printed in either path.
   const summary = summarizeByRate(lines).filter((rate) => rate.grossRappen !== 0);
   if (amountRappen === orderTotalRappen || summary.length === 0) return summary;
+  return allocateTaxes(summary, amountRappen);
+}
+
+/**
+ * MWST per rate of a refund (DEC-038): the refunded sale amount goes back over the rates of the
+ * receipt of the payment it refunds, in the same proportions (largest remainder), and the tax
+ * is extracted per rate. A full refund gives back exactly what the receipt showed, so a sale and
+ * its refund cancel out to the rappen in the MWST report. Deterministic: it is never frozen.
+ */
+export function refundTaxes(
+  paymentTaxes: readonly TaxSummaryLine[],
+  paymentAmountRappen: Rappen,
+  refundAmountRappen: Rappen,
+): TaxSummaryLine[] {
+  const summary = paymentTaxes.filter((rate) => rate.grossRappen !== 0);
+  if (refundAmountRappen === paymentAmountRappen || summary.length === 0) {
+    return summary.map((rate) => ({ ...rate }));
+  }
+  return allocateTaxes(summary, refundAmountRappen);
+}
+
+/** Splits `amount` over the rates in proportion to their gross and extracts the tax per rate. */
+function allocateTaxes(summary: readonly TaxSummaryLine[], amountRappen: Rappen): TaxSummaryLine[] {
   const shares = allocate(
     amountRappen,
     summary.map((rate) => Math.max(0, rate.grossRappen)),

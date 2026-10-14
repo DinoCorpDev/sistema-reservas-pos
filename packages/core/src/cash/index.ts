@@ -3,3 +3,4 @@
  * and cash book. Phase 4.
  */
 export * from './constants';
+export * from './count';

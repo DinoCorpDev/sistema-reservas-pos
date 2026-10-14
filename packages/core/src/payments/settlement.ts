@@ -62,6 +62,37 @@ export function settleCash(input: {
   };
 }
 
+/** What a refund pays out (`refunds`): paid out = sale amount + tip + rounding. */
+export interface RefundBreakdown {
+  amountRappen: Rappen;
+  tipRappen: Rappen;
+  roundingRappen: Rappen;
+  paidOutRappen: Rappen;
+}
+
+/**
+ * Cash refund (RN-06, DEC-038): there are no 1-rappen coins, so what goes back in cash (sale +
+ * tip) is rounded to CHF 0.05 like a cash payment and the difference recorded as the refund's
+ * rounding. Any other method pays back the exact amount.
+ */
+export function settleRefund(
+  method: 'cash' | 'other',
+  input: { amountRappen: Rappen; tipRappen?: Rappen },
+): RefundBreakdown {
+  const tip = input.tipRappen ?? (0 as Rappen);
+  assertNonNegative(input.amountRappen, 'amount');
+  assertNonNegative(tip, 'tip');
+  const total = addRappen(input.amountRappen, tip);
+  const { payable, rounding } =
+    method === 'cash' ? roundCashTo5(total) : { payable: total, rounding: 0 as Rappen };
+  return {
+    amountRappen: input.amountRappen,
+    tipRappen: tip,
+    roundingRappen: rounding,
+    paidOutRappen: payable,
+  };
+}
+
 /** Card, TWINT or any non-cash payment: no rounding, the tip stays outside the sale (RN-07). */
 export function settleNonCash(input: {
   amountRappen: Rappen;

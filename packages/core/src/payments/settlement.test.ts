@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { rappen } from '../shared/money';
 import { priceLine, summarizeByRate } from '../tax/calculation';
-import { PaymentRuleError, settleCash, settleNonCash } from './settlement';
+import { PaymentRuleError, settleCash, settleNonCash, settleRefund } from './settlement';
 
 describe('RN-06 · cash is rounded to CHF 0.05 and the difference is recorded as rounding', () => {
   it.each([
@@ -33,6 +33,40 @@ describe('RN-06 · cash is rounded to CHF 0.05 and the difference is recorded as
       expect.objectContaining({ code: 'INSUFFICIENT_TENDER' }),
     );
     expect(() => settleCash({ amountRappen: rappen(-5) })).toThrow(PaymentRuleError);
+  });
+
+  it.each([
+    [4720, 0, 4720, 0],
+    [4721, 0, 4720, -1],
+    [4722, 0, 4720, -2],
+    [4723, 0, 4725, 2],
+    [4724, 0, 4725, 1],
+    [4723, 500, 5225, 2],
+  ])(
+    'a cash refund of %i + tip %i pays out %i (rounding %i), like a cash payment (DEC-038)',
+    (amount, tip, paidOut, rounding) => {
+      const refund = settleRefund('cash', { amountRappen: rappen(amount), tipRappen: rappen(tip) });
+      expect(refund).toEqual({
+        amountRappen: amount,
+        tipRappen: tip,
+        roundingRappen: rounding,
+        paidOutRappen: paidOut,
+      });
+      // Symmetric with the payment it gives back.
+      const paid = settleCash({ amountRappen: rappen(amount), tipRappen: rappen(tip) });
+      expect(refund.roundingRappen).toBe(paid.roundingRappen);
+      expect(refund.paidOutRappen).toBe(paid.collectedRappen);
+    },
+  );
+
+  it('never rounds a refund by card or TWINT, and refuses negative ones', () => {
+    expect(settleRefund('other', { amountRappen: rappen(4723), tipRappen: rappen(2) })).toEqual({
+      amountRappen: 4723,
+      tipRappen: 2,
+      roundingRappen: 0,
+      paidOutRappen: 4725,
+    });
+    expect(() => settleRefund('cash', { amountRappen: rappen(-5) })).toThrow(PaymentRuleError);
   });
 
   it('never rounds non-cash payments', () => {

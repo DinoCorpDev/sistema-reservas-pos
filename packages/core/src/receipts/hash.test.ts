@@ -3,7 +3,7 @@ import { rappen } from '../shared/money';
 import { extractTax } from '../tax/calculation';
 import { buildReceipt } from './build';
 import type { ReceiptContent } from './content';
-import { canonicalJson, receiptContentHash } from './hash';
+import { canonicalJson, contentHash, receiptContentHash } from './hash';
 
 function sampleContent(): ReceiptContent {
   const total = rappen(2450);
@@ -124,6 +124,14 @@ describe('receiptContentHash (RN-10)', () => {
     expect(Object.keys(reordered)[0]).not.toBe(Object.keys(content)[0]);
     expect(await receiptContentHash(reordered)).toBe(await receiptContentHash(content));
     expect(await receiptContentHash(sampleContent())).toBe(await receiptContentHash(content));
+  });
+
+  it('is the same hash as contentHash, which also seals closings (RN-10)', async () => {
+    const content = sampleContent();
+    expect(await contentHash(content)).toBe(await receiptContentHash(content));
+    expect(await contentHash({ closingNumber: 1, totals: { a: 1 } })).toBe(
+      await contentHash({ totals: { a: 1 }, closingNumber: 1 }),
+    );
   });
 
   it('changes when anything printed changes, even by one rappen', async () => {

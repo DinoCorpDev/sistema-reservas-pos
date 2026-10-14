@@ -11,6 +11,7 @@ import {
   type ReceiptLineInput,
   type ReceiptLocation,
   receiptTaxes,
+  refundTaxes,
 } from './build';
 import { receiptContentSchema } from './content';
 
@@ -186,6 +187,37 @@ describe('receiptTaxes (RF-D20, DEC-016, DEC-024)', () => {
   it('has nothing to print without lines', () => {
     expect(receiptTaxes([], rappen(0), rappen(0))).toEqual([]);
     expect(receiptTaxes([], rappen(0), rappen(500))).toEqual([]);
+  });
+});
+
+describe('refundTaxes (DEC-038)', () => {
+  const paid = receiptTaxes(LINES, TOTAL, TOTAL);
+
+  it('a full refund gives back exactly the MWST of the receipt', () => {
+    expect(refundTaxes(paid, TOTAL, TOTAL)).toEqual(paid);
+    // A partial payment refunded in full cancels its own receipt, not the order's split.
+    const partial = receiptTaxes(LINES, TOTAL, rappen(2000));
+    expect(refundTaxes(partial, rappen(2000), rappen(2000))).toEqual(partial);
+  });
+
+  it('a partial refund splits over the receipt rates and adds up to the amount', () => {
+    // 10.00 over (13.00, 24.50): 3.4667 and 6.5333 → 347 and 653.
+    expect(refundTaxes(paid, TOTAL, rappen(1000))).toEqual([
+      { rateCode: 'normal', rateBp: 810, grossRappen: 347, taxRappen: 26, netRappen: 321 },
+      { rateCode: 'reduced', rateBp: 260, grossRappen: 653, taxRappen: 17, netRappen: 636 },
+    ]);
+    for (let amount = 1; amount < TOTAL; amount += 29) {
+      const taxes = refundTaxes(paid, TOTAL, rappen(amount));
+      expect(taxes.reduce((sum, t) => sum + t.grossRappen, 0)).toBe(amount);
+      for (const t of taxes) expect(t.netRappen + t.taxRappen).toBe(t.grossRappen);
+    }
+  });
+
+  it('never touches the receipt it reads', () => {
+    const copy = JSON.parse(JSON.stringify(paid)) as typeof paid;
+    refundTaxes(paid, TOTAL, TOTAL)[0]!.grossRappen = rappen(1);
+    expect(paid).toEqual(copy);
+    expect(refundTaxes([], rappen(0), rappen(100))).toEqual([]);
   });
 });
 
