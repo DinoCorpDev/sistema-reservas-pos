@@ -123,6 +123,8 @@ export function recalculateOrder(state: FoldState, order: OrderState): void {
     refundCount += 1;
     paid -= refund.amountRappen;
     tips -= refund.tipRappen;
+    // The cash rounding of a refund (RN-06) nets out the rounding collected.
+    rounding -= refund.roundingRappen;
   }
 
   order.subtotalRappen = rappen(subtotal);

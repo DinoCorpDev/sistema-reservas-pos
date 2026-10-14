@@ -479,6 +479,8 @@ export async function pay(orderId: string, input: PaymentInput): Promise<IssuedR
       customerName: content.customer?.name ?? null,
       customerAddress: content.customer?.address ?? null,
     },
+    shiftId: null,
+    businessDate: currentBusinessDate(),
   });
   return { paymentId, receiptId, content };
 }
@@ -502,8 +504,11 @@ export async function refundPayment(
       adapter: payment.adapter,
       amountRappen: input.amountRappen,
       tipRappen: input.tipRappen ?? 0,
+      roundingRappen: 0,
       reason: input.reason,
       externalReference: null,
+      shiftId: null,
+      businessDate: currentBusinessDate(),
     },
     { approval },
   );

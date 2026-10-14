@@ -1,4 +1,7 @@
 import type { AuditAction } from '../audit/constants';
+import type { ShiftScope } from '../cash/constants';
+import { sameShiftOwner, type ShiftOwner } from '../cash/owner';
+import { expectedCash, openShiftOf, ownerOf } from '../cash/shifts';
 import type { KitchenItemStatus } from '../kitchen/constants';
 import { authorize, type SensitiveAction } from '../organization/authorization';
 import type { Permission } from '../organization/permissions';
@@ -16,10 +19,13 @@ import {
   indexAdd,
   indexMove,
   itemsOf,
+  movementsOfShift,
   type OrderItemState,
   type OrderState,
   paymentsOf,
+  paymentsOfShift,
   refundsOf,
+  refundsOfShift,
   ticketKey,
 } from './state';
 import { discountAmount, isReadyToClose, lineGross, recalculateOrder } from './totals';
@@ -200,6 +206,12 @@ function sensitiveActionOf(state: FoldState, op: Operation): SensitiveAction | n
       return { kind: 'permission', permission: 'order.transfer' };
     case 'payment.record':
       return { kind: 'permission', permission: 'payment.take' };
+    case 'shift.open':
+      return { kind: 'permission', permission: 'shift.open' };
+    case 'shift.close':
+      return { kind: 'permission', permission: 'shift.close' };
+    case 'cash.movement':
+      return { kind: 'permission', permission: 'cash.movement' };
     case 'receipt.reprint':
       return { kind: 'permission', permission: 'receipt.reprint' };
     default:
@@ -316,7 +328,36 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
     item.voidReason = reason;
     item.voidedByUserId = op.userId;
     item.voidAuthorizedByUserId = op.approval?.approverUserId ?? null;
+    item.voidedTerminalId = op.terminalId;
   };
+
+  /**
+   * Money that names a shift is indexed there and checked (DEC-038): the shift must exist, be
+   * open and belong to who handled the money. Cash without a shift breaks RN-19 (version 3 on;
+   * before, payments had no shift, DEC-026). Recorded either way: money is never lost.
+   */
+  const intoShift = (
+    index: FoldState['paymentsByShift'],
+    shiftId: string | null,
+    id: string,
+    method: string,
+  ) => {
+    if (shiftId === null) {
+      if (method === 'cash' && op.schemaVersion >= 3) flag('cash_without_shift', id);
+      return;
+    }
+    indexAdd(index, shiftId, id);
+    const shift = state.shifts.get(shiftId);
+    if (!shift) flag('shift_not_found', shiftId);
+    else if (shift.status !== 'open') flag('shift_closed', shiftId);
+    else if (!sameShiftOwner(ownerOf(shift), handlerOf(shift.scope))) {
+      flag('shift_mismatch', shiftId);
+    }
+  };
+  const handlerOf = (scope: ShiftScope): ShiftOwner =>
+    scope === 'terminal'
+      ? { scope, terminalId: op.terminalId }
+      : { scope, userId: op.userId ?? '' };
 
   switch (op.type) {
     case 'order.open': {
@@ -458,6 +499,7 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
           voidReason: null,
           voidedByUserId: null,
           voidAuthorizedByUserId: null,
+          voidedTerminalId: null,
           transferredFromOrderId: null,
           modifiersRappen: rappen(0),
           grossRappen: rappen(0),
@@ -712,6 +754,7 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
         reasonText: p.reasonText,
         appliedByUserId: op.userId,
         authorizedByUserId: op.approval?.approverUserId ?? null,
+        terminalId: op.terminalId,
         appliedAt: op.deviceAt,
         removedAt: null,
         amountRappen: rappen(0),
@@ -777,8 +820,11 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
         terminalId: op.terminalId,
         completedAt: op.deviceAt,
         receiptId: p.receipt.receiptId,
+        shiftId: p.shiftId ?? null,
+        businessDate: p.businessDate ?? null,
       });
       indexAdd(state.paymentsByOrder, op.orderId, p.paymentId);
+      intoShift(state.paymentsByShift, p.shiftId ?? null, p.paymentId, p.method);
       if (!state.receipts.has(p.receipt.receiptId)) {
         state.receipts.set(p.receipt.receiptId, {
           id: p.receipt.receiptId,
@@ -826,14 +872,18 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
         adapter: p.adapter,
         amountRappen: rappen(p.amountRappen),
         tipRappen: rappen(p.tipRappen),
+        roundingRappen: rappen(p.roundingRappen ?? 0),
         reason: p.reason,
         externalReference: p.externalReference,
         userId: op.userId,
         authorizedByUserId: op.approval?.approverUserId ?? null,
         terminalId: op.terminalId,
         refundedAt: op.deviceAt,
+        shiftId: p.shiftId ?? null,
+        businessDate: p.businessDate ?? null,
       });
       indexAdd(state.refundsByOrder, orderId, p.refundId);
+      intoShift(state.refundsByShift, p.shiftId ?? null, p.refundId, p.method);
       if (!payment) {
         flag('item_not_found', p.paymentId);
       } else {
@@ -1059,6 +1109,129 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
     case 'drawer.open':
       audit('cash.drawer_opened', 'terminal', op.terminalId, null, null, op.payload.reason);
       break;
+
+    case 'shift.open': {
+      const p = op.payload;
+      if (state.shifts.has(p.shiftId)) {
+        flag('invalid', p.shiftId);
+        break;
+      }
+      const owner: ShiftOwner =
+        p.scope === 'terminal'
+          ? { scope: 'terminal', terminalId: op.terminalId }
+          : { scope: 'personal', userId: p.cashierUserId ?? '' };
+      // RN-19: one open shift per drawer or wallet. A second one opened offline elsewhere still
+      // happened; it is flagged for the manager.
+      const other = openShiftOf(state, owner);
+      if (other) flag('shift_already_open', other.id);
+      state.shifts.set(p.shiftId, {
+        id: p.shiftId,
+        scope: p.scope,
+        terminalId: op.terminalId,
+        cashierUserId: p.cashierUserId,
+        businessDate: p.businessDate,
+        status: 'open',
+        openedAt: op.deviceAt,
+        openedByUserId: op.userId,
+        openingFloatRappen: rappen(p.openingFloatRappen),
+        openingCount: p.openingCount,
+        closedAt: null,
+        closedByUserId: null,
+        expectedCashRappen: null,
+        countedCashRappen: null,
+        differenceRappen: null,
+        countByDenomination: null,
+        differenceComment: null,
+        report: null,
+      });
+      audit('shift.opened', 'shift', p.shiftId, null, {
+        scope: p.scope,
+        cashierUserId: p.cashierUserId,
+        businessDate: p.businessDate,
+        openingFloatRappen: p.openingFloatRappen,
+      });
+      break;
+    }
+
+    case 'cash.movement': {
+      const p = op.payload;
+      if (state.cashMovements.has(p.movementId)) {
+        flag('invalid', p.movementId);
+        break;
+      }
+      // Cash that moved is recorded first, then checked.
+      state.cashMovements.set(p.movementId, {
+        id: p.movementId,
+        shiftId: p.shiftId,
+        kind: p.kind,
+        amountRappen: rappen(p.amountRappen),
+        reason: p.reason,
+        dailyClosingId: p.dailyClosingId,
+        businessDate: p.businessDate,
+        userId: op.userId,
+        terminalId: op.terminalId,
+        occurredAt: op.deviceAt,
+      });
+      indexAdd(state.movementsByShift, p.shiftId, p.movementId);
+      const shift = state.shifts.get(p.shiftId);
+      if (!shift) flag('shift_not_found', p.shiftId);
+      else if (shift.status !== 'open') flag('shift_closed', p.shiftId);
+      audit(
+        'cash.movement_recorded',
+        'shift',
+        p.shiftId,
+        null,
+        { movementId: p.movementId, kind: p.kind, amountRappen: p.amountRappen },
+        p.reason,
+      );
+      break;
+    }
+
+    case 'shift.close': {
+      const p = op.payload;
+      const shift = state.shifts.get(p.shiftId);
+      if (!shift) {
+        flag('shift_not_found', p.shiftId);
+        break;
+      }
+      // The first close is the one that counts; a second one is flagged.
+      if (shift.status !== 'open') {
+        flag('shift_closed', shift.id);
+        break;
+      }
+      // What this node knows must match what the device saw when it closed: a payment of another
+      // device that sorts before the close but was not there is a difference to explain.
+      const expected = expectedCash({
+        openingFloatRappen: shift.openingFloatRappen,
+        payments: paymentsOfShift(state, shift.id),
+        refunds: refundsOfShift(state, shift.id),
+        movements: movementsOfShift(state, shift.id),
+      });
+      if (expected !== p.expectedCashRappen) flag('shift_count_mismatch', shift.id);
+      shift.status = 'closed';
+      shift.closedAt = op.deviceAt;
+      shift.closedByUserId = op.userId;
+      shift.expectedCashRappen = rappen(p.expectedCashRappen);
+      shift.countedCashRappen = rappen(p.countedCashRappen);
+      shift.differenceRappen = rappen(p.countedCashRappen - p.expectedCashRappen);
+      shift.countByDenomination = p.countByDenomination;
+      shift.differenceComment = p.differenceComment;
+      shift.report = p.report;
+      audit(
+        'shift.closed',
+        'shift',
+        shift.id,
+        { status: 'open' },
+        {
+          status: 'closed',
+          expectedCashRappen: p.expectedCashRappen,
+          countedCashRappen: p.countedCashRappen,
+          differenceRappen: p.countedCashRappen - p.expectedCashRappen,
+        },
+        p.differenceComment,
+      );
+      break;
+    }
   }
 
   for (const orderId of touched) {

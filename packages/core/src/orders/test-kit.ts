@@ -2,6 +2,8 @@
  * Test kit of the order engine (not exported from the package): ids, devices with their own
  * clocks, line snapshots and an operation factory. Only *.test.ts files import it.
  */
+import type { CashMovementKind } from '../cash/constants';
+import type { ShiftReport } from '../cash/report';
 import { DEFAULT_ROLE_PERMISSIONS, type Permission } from '../organization/permissions';
 import { DEFAULT_LOCATION_SETTINGS } from '../organization/settings';
 import type { ReceiptContent } from '../receipts/content';
@@ -11,6 +13,7 @@ import {
   type LineSnapshot,
   type Operation,
   type OperationApproval,
+  type OperationInput,
   type OperationOf,
   type OperationType,
   OPERATION_SCHEMA_VERSION,
@@ -90,7 +93,8 @@ export const beer = (overrides: Partial<LineSnapshot> = {}) =>
 /** Receipt content is opaque to the reducer; tests that check receipts build real ones. */
 export const DUMMY_RECEIPT = {} as ReceiptContent;
 
-type PayloadOf<T extends OperationType> = OperationOf<T>['payload'];
+/** What a device writes: fields with a default (newer than the operation) may be left out. */
+type PayloadOf<T extends OperationType> = Extract<OperationInput, { type: T }>['payload'];
 
 /** A terminal with its own clock and user; every `op()` ticks its HLC. */
 export class Device {
@@ -240,7 +244,81 @@ export class Device {
       },
     });
   }
+
+  /** Opens this terminal's till (or, with `cashierUserId`, that person's wallet). */
+  openShift(
+    shiftId = freshId(),
+    openingFloatRappen = 20000,
+    fields: Partial<PayloadOf<'shift.open'>> = {},
+  ) {
+    return this.op('shift.open', null, {
+      shiftId,
+      scope: 'terminal',
+      cashierUserId: null,
+      businessDate: BUSINESS_DATE,
+      openingFloatRappen,
+      openingCount: null,
+      ...fields,
+    });
+  }
+
+  movement(shiftId: string, kind: CashMovementKind, amountRappen: number, reason = 'test') {
+    return this.op('cash.movement', null, {
+      movementId: freshId(),
+      shiftId,
+      businessDate: BUSINESS_DATE,
+      kind,
+      amountRappen,
+      reason,
+      dailyClosingId: null,
+    });
+  }
+
+  /** Closes a shift counting `countedRappen` in 5-rappen coins (the count is not the point). */
+  closeShift(
+    shiftId: string,
+    expectedCashRappen: number,
+    countedRappen = expectedCashRappen,
+    differenceComment: string | null = countedRappen === expectedCashRappen ? null : 'test',
+  ) {
+    return this.op('shift.close', null, {
+      shiftId,
+      businessDate: BUSINESS_DATE,
+      countByDenomination: { '5': countedRappen / 5 },
+      countedCashRappen: countedRappen,
+      expectedCashRappen,
+      differenceComment,
+      hubPrint: false,
+      report: SAMPLE_SHIFT_REPORT,
+    });
+  }
 }
+
+/** A valid but empty shift report: the reducer only stores it; tests that check it build one. */
+export const SAMPLE_SHIFT_REPORT: ShiftReport = {
+  version: 1,
+  scope: 'terminal',
+  ownerName: 'Kasse 1',
+  businessDate: BUSINESS_DATE,
+  openedAt: new Date(T0).toISOString(),
+  closedAt: new Date(T0 + 3_600_000).toISOString(),
+  timeZone: 'Europe/Zurich',
+  payments: [],
+  refunds: [],
+  taxes: [],
+  discountsRappen: 0,
+  discountCount: 0,
+  voidsRappen: 0,
+  voidCount: 0,
+  movements: [],
+  cash: {
+    openingFloatRappen: 0,
+    collectedRappen: 0,
+    paidOutRappen: 0,
+    movementsRappen: 0,
+    expectedRappen: 0,
+  },
+};
 
 /** Plain, order-independent view of a fold, for comparing two folds. */
 export function projection(state: FoldState) {
@@ -254,6 +332,8 @@ export function projection(state: FoldState) {
     refunds: sorted(state.refunds),
     receipts: sorted(state.receipts),
     tickets: [...state.tickets.values()].sort((a, b) => (a.key < b.key ? -1 : 1)),
+    shifts: sorted(state.shifts),
+    cashMovements: sorted(state.cashMovements),
     outcomes: [...state.outcomes.entries()].sort(([a], [b]) => (a < b ? -1 : 1)),
     conflicts: [...state.conflicts].map((c) => `${c.opId}:${c.code}:${c.entityId}`).sort(),
   };

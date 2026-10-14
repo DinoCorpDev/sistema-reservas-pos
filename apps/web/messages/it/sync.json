@@ -74,6 +74,13 @@
       "terminal": {
         "unlocked": "Dispositivo sbloccato con PIN",
         "pin_failed": "PIN errato inserito"
+      },
+      "shift": {
+        "open": "Turno aperto",
+        "close": "Turno chiuso"
+      },
+      "cash": {
+        "movement": "Movimento di cassa"
       }
     },
     "unknownCode": {
@@ -150,6 +157,41 @@
         "label": "Operazione non valida",
         "what": "L’operazione era incompleta o apparteneva a un’altra sede. Non è stata accettata.",
         "todo": "Chiarisca con la persona al dispositivo cosa doveva essere registrato e, se necessario, lo registri di nuovo. Se succede spesso, si rivolga al supporto."
+      },
+      "cash_without_shift": {
+        "label": "Contanti senza turno",
+        "what": "Un pagamento o rimborso in contanti è stato registrato senza turno aperto. È stato conservato, ma non appartiene a nessun conteggio.",
+        "todo": "Verificate in quale cassa è finito il denaro e compensatelo con un movimento di cassa."
+      },
+      "shift_not_found": {
+        "label": "Turno sconosciuto",
+        "what": "L'operazione indica un turno che il sistema non conosce. Il denaro è stato comunque conservato.",
+        "todo": "Di solito il turno arriva ancora da un altro dispositivo. Se continua a mancare, verificate che tutti siano collegati."
+      },
+      "shift_closed": {
+        "label": "Turno già chiuso",
+        "what": "Del denaro è stato attribuito a un turno già chiuso, oppure è stato chiuso due volte. Vale la prima chiusura.",
+        "todo": "Verificate se il denaro è in cassa e compensatelo con un movimento nel turno in corso."
+      },
+      "shift_mismatch": {
+        "label": "Turno di un altro",
+        "what": "Del denaro è stato registrato nel turno di un'altra cassa o di un'altra persona. È stato comunque conservato.",
+        "todo": "Verificate chi ha il denaro e compensate i due turni con movimenti di cassa."
+      },
+      "shift_already_open": {
+        "label": "Secondo turno aperto",
+        "what": "È stato aperto un secondo turno per la stessa cassa o persona mentre il primo era ancora aperto (RN-19).",
+        "todo": "Chiudete entrambi i turni con un conteggio e verificate dove è stato contato il denaro."
+      },
+      "shift_count_mismatch": {
+        "label": "Importo atteso diverso",
+        "what": "Alla chiusura il dispositivo non conosceva tutti i pagamenti del turno: l'atteso firmato differisce da quello calcolato.",
+        "todo": "Confrontate il rapporto del turno con i pagamenti e spiegate la differenza."
+      },
+      "day_closed": {
+        "label": "Dopo la chiusura del giorno",
+        "what": "L'operazione riguarda un giorno già chiuso (Z). È stata conservata e appare come correzione di quella chiusura.",
+        "todo": "Verificate la correzione nella chiusura del giorno; la chiusura non cambia mai."
       }
     }
   }

@@ -74,6 +74,13 @@
       "terminal": {
         "unlocked": "Device unlocked with PIN",
         "pin_failed": "Wrong PIN entered"
+      },
+      "shift": {
+        "open": "Shift opened",
+        "close": "Shift closed"
+      },
+      "cash": {
+        "movement": "Cash movement"
       }
     },
     "unknownCode": {
@@ -150,6 +157,41 @@
         "label": "Invalid operation",
         "what": "The operation was incomplete or belonged to another location. It was not accepted.",
         "todo": "Check with the person at the device what was meant to be recorded and re-enter it if needed. If this happens often, contact support."
+      },
+      "cash_without_shift": {
+        "label": "Cash without a shift",
+        "what": "A cash payment or refund was recorded with no shift open. It was kept, but it belongs to no cash count.",
+        "todo": "Find out which drawer the money went into and balance it with a cash movement."
+      },
+      "shift_not_found": {
+        "label": "Unknown shift",
+        "what": "The operation names a shift the system does not know. The money was kept anyway.",
+        "todo": "The shift usually still arrives from another device. If it stays missing, check that all devices are connected."
+      },
+      "shift_closed": {
+        "label": "Shift already closed",
+        "what": "Money went into a shift that was already closed, or it was closed a second time. The first closing counts.",
+        "todo": "Check whether the money is in the drawer and balance it with a cash movement in the current shift."
+      },
+      "shift_mismatch": {
+        "label": "Someone else's shift",
+        "what": "Money was booked into the shift of another till or another person. It was kept anyway.",
+        "todo": "Find out who has the money and balance both shifts with cash movements."
+      },
+      "shift_already_open": {
+        "label": "Second open shift",
+        "what": "A second shift was opened for the same till or person while the first was still open (RN-19).",
+        "todo": "Close both shifts with a cash count and check where the money was counted."
+      },
+      "shift_count_mismatch": {
+        "label": "Expected cash differs",
+        "what": "When it closed, the device did not know all payments of the shift: the signed expected cash differs from the computed one.",
+        "todo": "Compare the shift report with the payments and explain the difference."
+      },
+      "day_closed": {
+        "label": "After the day closing",
+        "what": "The operation belongs to a day that is already closed (Z). It was kept and shows as a correction of that closing.",
+        "todo": "Check the correction in the day closing; the closing itself never changes."
       }
     }
   }

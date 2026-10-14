@@ -74,6 +74,13 @@
       "terminal": {
         "unlocked": "Appareil déverrouillé avec PIN",
         "pin_failed": "PIN incorrect saisi"
+      },
+      "shift": {
+        "open": "Session ouverte",
+        "close": "Session clôturée"
+      },
+      "cash": {
+        "movement": "Mouvement de caisse"
       }
     },
     "unknownCode": {
@@ -150,6 +157,41 @@
         "label": "Opération non valide",
         "what": "L’opération était incomplète ou appartenait à un autre établissement. Elle n’a pas été prise en compte.",
         "todo": "Clarifiez avec la personne à l’appareil ce qui devait être saisi et saisissez-le à nouveau si nécessaire. Si cela se produit souvent, contactez le support."
+      },
+      "cash_without_shift": {
+        "label": "Espèces sans session",
+        "what": "Un paiement ou remboursement en espèces a été saisi sans session ouverte. Il a été conservé, mais n'appartient à aucun comptage.",
+        "todo": "Vérifiez dans quelle caisse l'argent se trouve et compensez-le par un mouvement de caisse."
+      },
+      "shift_not_found": {
+        "label": "Session inconnue",
+        "what": "L'opération cite une session que le système ne connaît pas. L'argent a tout de même été conservé.",
+        "todo": "La session arrive souvent encore d'un autre appareil. Si elle manque toujours, vérifiez que tous les appareils sont connectés."
+      },
+      "shift_closed": {
+        "label": "Session déjà clôturée",
+        "what": "De l'argent a été attribué à une session déjà clôturée, ou elle a été clôturée deux fois. La première clôture fait foi.",
+        "todo": "Vérifiez si l'argent est dans la caisse et compensez-le par un mouvement dans la session en cours."
+      },
+      "shift_mismatch": {
+        "label": "Session d'un autre",
+        "what": "De l'argent a été saisi dans la session d'une autre caisse ou d'une autre personne. Il a tout de même été conservé.",
+        "todo": "Vérifiez qui a l'argent et compensez les deux sessions par des mouvements de caisse."
+      },
+      "shift_already_open": {
+        "label": "Deuxième session ouverte",
+        "what": "Une deuxième session a été ouverte pour la même caisse ou personne alors que la première était encore ouverte (RN-19).",
+        "todo": "Clôturez les deux sessions avec un comptage et vérifiez où l'argent a été compté."
+      },
+      "shift_count_mismatch": {
+        "label": "Montant attendu différent",
+        "what": "À la clôture, l'appareil ne connaissait pas tous les paiements de la session : le montant attendu signé diffère du calcul.",
+        "todo": "Comparez le rapport de session avec les paiements et expliquez l'écart."
+      },
+      "day_closed": {
+        "label": "Après la clôture du jour",
+        "what": "L'opération concerne un jour déjà clôturé (Z). Elle a été conservée et apparaît comme correction de cette clôture.",
+        "todo": "Vérifiez la correction dans la clôture du jour ; la clôture elle-même ne change jamais."
       }
     }
   }

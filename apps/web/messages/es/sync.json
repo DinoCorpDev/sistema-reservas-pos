@@ -74,6 +74,13 @@
       "terminal": {
         "unlocked": "Dispositivo desbloqueado con PIN",
         "pin_failed": "PIN incorrecto ingresado"
+      },
+      "shift": {
+        "open": "Turno abierto",
+        "close": "Turno cerrado"
+      },
+      "cash": {
+        "movement": "Movimiento de caja"
       }
     },
     "unknownCode": {
@@ -150,6 +157,41 @@
         "label": "Operación no válida",
         "what": "La operación estaba incompleta o pertenecía a otra sede. No se aceptó.",
         "todo": "Aclare con la persona del dispositivo qué se quería registrar y, si es necesario, vuelva a registrarlo. Si ocurre con frecuencia, comuníquese con soporte."
+      },
+      "cash_without_shift": {
+        "label": "Efectivo sin turno",
+        "what": "Se registró un cobro o devolución en efectivo sin turno abierto. Se guardó igual, pero no pertenece a ningún arqueo.",
+        "todo": "Averigüe en qué caja quedó el dinero y compénselo con un movimiento de caja."
+      },
+      "shift_not_found": {
+        "label": "Turno desconocido",
+        "what": "La operación nombra un turno que el sistema no conoce. El dinero se guardó igual.",
+        "todo": "Normalmente el turno aún llega desde otro dispositivo. Si sigue faltando, revise que todos estén conectados."
+      },
+      "shift_closed": {
+        "label": "Turno ya cerrado",
+        "what": "Entró dinero a un turno que ya estaba cerrado, o se cerró por segunda vez. Vale el primer cierre.",
+        "todo": "Revise si el dinero está en la caja y compénselo con un movimiento en el turno actual."
+      },
+      "shift_mismatch": {
+        "label": "Turno de otro",
+        "what": "Se registró dinero en el turno de otra caja o de otra persona. Se guardó igual.",
+        "todo": "Averigüe quién tiene el dinero y compense ambos turnos con movimientos de caja."
+      },
+      "shift_already_open": {
+        "label": "Segundo turno abierto",
+        "what": "Se abrió un segundo turno para la misma caja o persona mientras el primero seguía abierto (RN-19).",
+        "todo": "Cierre ambos turnos con arqueo y revise dónde se contó el dinero."
+      },
+      "shift_count_mismatch": {
+        "label": "Esperado distinto",
+        "what": "Al cerrar, el dispositivo no conocía todos los pagos del turno: el esperado firmado difiere del calculado.",
+        "todo": "Compare el informe del turno con los pagos y explique la diferencia."
+      },
+      "day_closed": {
+        "label": "Después del cierre del día",
+        "what": "La operación es de un día ya cerrado (Z). Se guardó y aparece como corrección de ese cierre.",
+        "todo": "Revise la corrección en el cierre del día; el cierre nunca se modifica."
       }
     }
   }

@@ -4,8 +4,18 @@ import { receiptContentHash } from '../receipts/hash';
 import { rappen } from '../shared/money';
 import { extractTax } from '../tax/calculation';
 import { orderNumber } from './numbering';
-import { type Operation, operationOrderIds, operationSchema, relatedOrderId } from './operations';
-import { beer, Device, freshId, line, TABLE, TERMINAL, USER } from './test-kit';
+import {
+  isShiftOperation,
+  newerOperationSchema,
+  type Operation,
+  OPERATION_SCHEMA_VERSION,
+  operationBusinessDate,
+  operationOrderIds,
+  operationSchema,
+  operationShiftId,
+  relatedOrderId,
+} from './operations';
+import { BUSINESS_DATE, beer, Device, freshId, line, TABLE, TERMINAL, USER } from './test-kit';
 
 /** A real receipt for one CHF 24.50 Rösti paid in cash, as the POS builds it. */
 async function realReceipt() {
@@ -81,6 +91,8 @@ async function cashPayment(device: Device, orderId: string) {
     externalReference: null,
     splitLabel: null,
     receipt: await realReceipt(),
+    shiftId: freshId(),
+    businessDate: BUSINESS_DATE,
   });
 }
 
@@ -128,8 +140,11 @@ function sampleOperations(): Operation[] {
       adapter: 'external-terminal',
       amountRappen: 500,
       tipRappen: 0,
+      roundingRappen: 0,
       reason: 'Gericht kalt',
       externalReference: 'TRX-1',
+      shiftId: null,
+      businessDate: BUSINESS_DATE,
     }),
     d.op('receipt.reprint', id, { receiptId: freshId(), copyId: freshId(), hubPrint: false }),
     d.op('items.transfer', id, { itemIds: [item.itemId], toOrderId: other.orderId }),
@@ -143,8 +158,13 @@ function sampleOperations(): Operation[] {
     d.op('order.void', id, { reason: 'other', reasonText: 'Test' }),
     d.op('terminal.unlocked', null, {}),
     d.op('terminal.pin_failed', null, { attempt: 2 }, { userId: null }),
+    d.openShift(SHIFT, 20000, { openingCount: { '10000': 2 } }),
+    d.movement(SHIFT, 'expense', -1250, 'Blumen'),
+    d.closeShift(SHIFT, 18750),
   ];
 }
+
+const SHIFT = freshId();
 
 const withoutField = (op: object, field: string) => {
   const copy: Record<string, unknown> = { ...op };
@@ -176,8 +196,128 @@ describe('operationSchema (docs/SYNC.md §2, DEC-021)', () => {
 
   it('rejects a schema version from the future', () => {
     const open = new Device(TERMINAL.H1).open();
-    expect(operationSchema.safeParse({ ...open, schemaVersion: 3 }).success).toBe(false);
+    const next = OPERATION_SCHEMA_VERSION + 1;
+    expect(operationSchema.safeParse({ ...open, schemaVersion: next }).success).toBe(false);
     expect(operationSchema.safeParse({ ...open, schemaVersion: 0 }).success).toBe(false);
+  });
+
+  it('only the hub keeps an operation of a newer schema, by its envelope', () => {
+    const open = new Device(TERMINAL.H1).open();
+    const newer = { ...open, schemaVersion: OPERATION_SCHEMA_VERSION + 1, type: 'table.rotate' };
+    expect(newerOperationSchema.safeParse(newer).success).toBe(true);
+    // The known schema is not "newer": it goes through the full validation.
+    expect(newerOperationSchema.safeParse(open).success).toBe(false);
+    expect(newerOperationSchema.safeParse({ ...newer, hlc: 'x' }).success).toBe(false);
+  });
+
+  describe('version 3: shifts and cash (DEC-038)', () => {
+    const d = new Device(TERMINAL.K1, USER.cashier);
+
+    it('reads a version 2 payment and refund without shift, day or rounding as null and 0', async () => {
+      const pay = await cashPayment(d, freshId());
+      const v2 = {
+        ...pay,
+        schemaVersion: 2,
+        payload: withoutField(withoutField(pay.payload, 'shiftId'), 'businessDate'),
+      };
+      const parsed = operationSchema.parse(v2);
+      expect(parsed.type === 'payment.record' && parsed.payload).toMatchObject({
+        shiftId: null,
+        businessDate: null,
+      });
+      const refund = d.op('refund.record', pay.orderId, {
+        refundId: freshId(),
+        paymentId: pay.payload.paymentId,
+        method: 'card',
+        adapter: 'external-terminal',
+        amountRappen: 500,
+        tipRappen: 0,
+        reason: 'kalt',
+        externalReference: null,
+      });
+      const parsedRefund = operationSchema.parse({ ...refund, schemaVersion: 2 });
+      expect(parsedRefund.type === 'refund.record' && parsedRefund.payload).toMatchObject({
+        roundingRappen: 0,
+        shiftId: null,
+        businessDate: null,
+      });
+    });
+
+    it('a wallet names its person and a till does not', () => {
+      const wallet = d.openShift(freshId(), 0, { scope: 'personal', cashierUserId: USER.waiter });
+      expect(operationSchema.safeParse(wallet).success).toBe(true);
+      const noPerson = d.openShift(freshId(), 0, { scope: 'personal' });
+      expect(operationSchema.safeParse(noPerson).success).toBe(false);
+      const tillWithPerson = d.openShift(freshId(), 0, { cashierUserId: USER.waiter });
+      expect(operationSchema.safeParse(tillWithPerson).success).toBe(false);
+    });
+
+    it('a counted float must be what was counted', () => {
+      const counted = d.openShift(freshId(), 20500, { openingCount: { '10000': 2, '500': 1 } });
+      expect(operationSchema.safeParse(counted).success).toBe(true);
+      const wrong = d.openShift(freshId(), 20000, { openingCount: { '10000': 1 } });
+      expect(operationSchema.safeParse(wrong).success).toBe(false);
+    });
+
+    it.each([
+      ['cash_in', 5000, true],
+      ['cash_in', -5000, false],
+      ['cash_out', -5000, true],
+      ['cash_out', 5000, false],
+      ['expense', -1250, true],
+      ['expense', 1250, false],
+    ] as const)('a %s of %i is %s', (kind, amount, valid) => {
+      expect(operationSchema.safeParse(d.movement(SHIFT, kind, amount)).success).toBe(valid);
+    });
+
+    it('a correction names the closing it corrects, and only a correction does', () => {
+      const correction = d.movement(SHIFT, 'correction', -300);
+      expect(operationSchema.safeParse(correction).success).toBe(false);
+      const named = {
+        ...correction,
+        payload: { ...correction.payload, dailyClosingId: freshId() },
+      };
+      expect(operationSchema.safeParse(named).success).toBe(true);
+      const out = d.movement(SHIFT, 'cash_out', -300);
+      const outNamed = { ...out, payload: { ...out.payload, dailyClosingId: freshId() } };
+      expect(operationSchema.safeParse(outNamed).success).toBe(false);
+      expect(operationSchema.safeParse(d.movement(SHIFT, 'cash_in', 0)).success).toBe(false);
+    });
+
+    it('closing: the counted cash is the count, and a difference needs a comment (RF-D14)', () => {
+      expect(operationSchema.safeParse(d.closeShift(SHIFT, 18750)).success).toBe(true);
+      expect(operationSchema.safeParse(d.closeShift(SHIFT, 18750, 18700)).success).toBe(true);
+      expect(operationSchema.safeParse(d.closeShift(SHIFT, 18750, 18700, null)).success).toBe(
+        false,
+      );
+      const close = d.closeShift(SHIFT, 18750);
+      const lying = { ...close, payload: { ...close.payload, countedCashRappen: 18755 } };
+      expect(operationSchema.safeParse(lying).success).toBe(false);
+    });
+
+    it('shift operations touch no order, and name their shift and day', () => {
+      for (const op of [
+        d.openShift(SHIFT),
+        d.movement(SHIFT, 'cash_in', 100),
+        d.closeShift(SHIFT, 0),
+      ]) {
+        expect(operationOrderIds(op)).toEqual([]);
+        expect(isShiftOperation(op.type)).toBe(true);
+        expect(operationShiftId(op)).toBe(SHIFT);
+        expect(operationBusinessDate(op)).toBe(BUSINESS_DATE);
+      }
+      const pay = d.pay(freshId(), 100, { shiftId: SHIFT, businessDate: BUSINESS_DATE });
+      expect(isShiftOperation(pay.type)).toBe(false);
+      expect(operationShiftId(pay)).toBe(SHIFT);
+      expect(operationBusinessDate(pay)).toBe(BUSINESS_DATE);
+      // A stored version 2 row has neither.
+      const old = {
+        ...pay,
+        payload: withoutField(withoutField(pay.payload, 'shiftId'), 'businessDate'),
+      };
+      expect(operationShiftId(old as Operation)).toBeNull();
+      expect(operationBusinessDate(old as Operation)).toBeNull();
+    });
   });
 
   it('accepts a version 1 send without tickets, as an old device sends it', () => {

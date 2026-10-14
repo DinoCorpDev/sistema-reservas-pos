@@ -1,4 +1,7 @@
 import type { AuditAction } from '../audit/constants';
+import type { CashMovementKind, ShiftScope, ShiftStatus } from '../cash/constants';
+import type { DenominationCount } from '../cash/count';
+import type { ShiftReport } from '../cash/report';
 import type { KitchenItemStatus } from '../kitchen/constants';
 import type { PaymentAdapterKey, PaymentMethod } from '../payments/constants';
 import type { ReceiptContent } from '../receipts/content';
@@ -69,6 +72,8 @@ export interface OrderItemState {
   voidReason: string | null;
   voidedByUserId: string | null;
   voidAuthorizedByUserId: string | null;
+  /** Where it was voided: a till's shift report counts its own voids (DEC-038). */
+  voidedTerminalId: string | null;
   transferredFromOrderId: string | null;
   /** Derived: surcharge of the modifiers per unit. */
   modifiersRappen: Rappen;
@@ -138,6 +143,8 @@ export interface DiscountState {
   reasonText: string | null;
   appliedByUserId: string;
   authorizedByUserId: string | null;
+  /** Where it was given: a till's shift report counts its own discounts (DEC-038). */
+  terminalId: string;
   appliedAt: string;
   removedAt: string | null;
   /** Derived: amount the discount takes off right now. */
@@ -161,6 +168,10 @@ export interface PaymentState {
   terminalId: string;
   completedAt: string;
   receiptId: string;
+  /** The drawer or wallet the money went into (DEC-038); null without a shift. */
+  shiftId: string | null;
+  /** The business day it counts for; null for operations of version 2. */
+  businessDate: IsoDate | null;
 }
 
 export interface RefundState {
@@ -171,12 +182,57 @@ export interface RefundState {
   adapter: PaymentAdapterKey;
   amountRappen: Rappen;
   tipRappen: Rappen;
+  /** CHF 0.05 rounding of a cash refund (RN-06): paid out = amount + tip + rounding. */
+  roundingRappen: Rappen;
   reason: string;
   externalReference: string | null;
   userId: string;
   authorizedByUserId: string | null;
   terminalId: string;
   refundedAt: string;
+  /** The drawer or wallet the money came out of (DEC-038); null without a shift. */
+  shiftId: string | null;
+  businessDate: IsoDate | null;
+}
+
+/** A till's or a person's cash between opening and closing (RF-D12…RF-D15, DEC-038). */
+export interface ShiftState {
+  id: string;
+  scope: ShiftScope;
+  /** Where it was opened: the owner of a till's shift. */
+  terminalId: string;
+  /** The owner of a wallet; null for a till. */
+  cashierUserId: string | null;
+  /** Frozen at the opening: all its money counts for this day. */
+  businessDate: IsoDate;
+  status: ShiftStatus;
+  openedAt: string;
+  openedByUserId: string;
+  openingFloatRappen: Rappen;
+  openingCount: DenominationCount | null;
+  closedAt: string | null;
+  closedByUserId: string | null;
+  /** Frozen by the device that closed it: what the cashier saw and signed. */
+  expectedCashRappen: Rappen | null;
+  countedCashRappen: Rappen | null;
+  differenceRappen: Rappen | null;
+  countByDenomination: DenominationCount | null;
+  differenceComment: string | null;
+  report: ShiftReport | null;
+}
+
+export interface CashMovementState {
+  id: string;
+  shiftId: string;
+  kind: CashMovementKind;
+  /** Signed: + into the drawer. */
+  amountRappen: Rappen;
+  reason: string;
+  dailyClosingId: string | null;
+  businessDate: IsoDate;
+  userId: string;
+  terminalId: string;
+  occurredAt: string;
 }
 
 export interface ReceiptState {
@@ -264,6 +320,12 @@ export interface FoldState {
   refundsByOrder: OrderIndex;
   /** Tickets by the order they were sent for. */
   ticketsByOrder: OrderIndex;
+  /** Shifts and their cash movements (DEC-038); payments and refunds indexed by shift too. */
+  shifts: Map<string, ShiftState>;
+  cashMovements: Map<string, CashMovementState>;
+  paymentsByShift: OrderIndex;
+  refundsByShift: OrderIndex;
+  movementsByShift: OrderIndex;
   /** Ids of the operations folded so far, with their outcome. */
   outcomes: Map<string, OperationOutcome>;
   conflicts: ConflictRecord[];
@@ -287,6 +349,11 @@ export function createFoldState(): FoldState {
     paymentsByOrder: new Map(),
     refundsByOrder: new Map(),
     ticketsByOrder: new Map(),
+    shifts: new Map(),
+    cashMovements: new Map(),
+    paymentsByShift: new Map(),
+    refundsByShift: new Map(),
+    movementsByShift: new Map(),
     outcomes: new Map(),
     conflicts: [],
     audits: [],
@@ -329,6 +396,13 @@ export const refundsOf = (state: FoldState, orderId: string) =>
 /** Kitchen tickets sent for an order, in the order they were sent. */
 export const ticketsOf = (state: FoldState, orderId: string) =>
   collect(state.ticketsByOrder, state.tickets, orderId);
+/** Payments, refunds and movements that went into a shift, in canonical order (DEC-038). */
+export const paymentsOfShift = (state: FoldState, shiftId: string) =>
+  collect(state.paymentsByShift, state.payments, shiftId);
+export const refundsOfShift = (state: FoldState, shiftId: string) =>
+  collect(state.refundsByShift, state.refunds, shiftId);
+export const movementsOfShift = (state: FoldState, shiftId: string) =>
+  collect(state.movementsByShift, state.cashMovements, shiftId);
 
 /** Key of the ticket of one send at one station. */
 export const ticketKey = (sendOperationId: string, stationId: string) =>

@@ -18,6 +18,8 @@ export const AUDIT_ACTIONS = [
   'receipt.reprinted',
   'cash.drawer_opened',
   'kitchen.ticket_reprinted',
+  'shift.opened',
+  'cash.movement_recorded',
   'shift.closed',
   'day.closed',
   // catalog and tax

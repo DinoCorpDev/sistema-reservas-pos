@@ -28,5 +28,22 @@ export const CONFLICT_CODES = [
   'duplicate_number',
   'clock_skew',
   'invalid',
+  // cash (DEC-038)
+  'cash_without_shift',
+  'shift_not_found',
+  'shift_closed',
+  'shift_mismatch',
+  'shift_already_open',
+  'shift_count_mismatch',
+  'day_closed',
 ] as const;
 export type ConflictCode = (typeof CONFLICT_CODES)[number];
+
+/** Conflicts about a shift: the refold of shifts owns them, the refold of orders the rest. */
+export const SHIFT_CONFLICT_CODES: readonly ConflictCode[] = [
+  'shift_not_found',
+  'shift_closed',
+  'shift_mismatch',
+  'shift_already_open',
+  'shift_count_mismatch',
+];

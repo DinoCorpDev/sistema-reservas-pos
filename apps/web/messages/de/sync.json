@@ -74,6 +74,13 @@
       "terminal": {
         "unlocked": "Gerät mit PIN entsperrt",
         "pin_failed": "Falsche PIN eingegeben"
+      },
+      "shift": {
+        "open": "Schicht eröffnet",
+        "close": "Schicht abgeschlossen"
+      },
+      "cash": {
+        "movement": "Kassenbewegung"
       }
     },
     "unknownCode": {
@@ -150,6 +157,41 @@
         "label": "Ungültiger Vorgang",
         "what": "Der Vorgang war unvollständig oder gehörte zu einem anderen Standort. Er wurde nicht übernommen.",
         "todo": "Klären Sie mit der Person am Gerät, was erfasst werden sollte, und erfassen Sie es bei Bedarf neu. Tritt das öfter auf, wenden Sie sich an den Support."
+      },
+      "cash_without_shift": {
+        "label": "Bargeld ohne Schicht",
+        "what": "Eine Barzahlung oder -rückerstattung wurde ohne offene Schicht erfasst. Sie wurde trotzdem übernommen, gehört aber zu keinem Kassensturz.",
+        "todo": "Klären Sie, in welche Kasse das Geld ging, und gleichen Sie es mit einer Kassenbewegung aus."
+      },
+      "shift_not_found": {
+        "label": "Schicht unbekannt",
+        "what": "Der Vorgang nennt eine Schicht, die das System nicht kennt. Das Geld wurde trotzdem übernommen.",
+        "todo": "Meist trifft die Schicht von einem anderen Gerät noch ein. Fehlt sie weiterhin, prüfen Sie, ob alle Geräte verbunden sind."
+      },
+      "shift_closed": {
+        "label": "Schicht bereits abgeschlossen",
+        "what": "Geld wurde einer Schicht zugeordnet, die schon abgeschlossen war, oder sie wurde ein zweites Mal abgeschlossen. Es zählt der erste Abschluss.",
+        "todo": "Zählen Sie nach, ob das Geld in der Kasse ist, und gleichen Sie es mit einer Kassenbewegung in der laufenden Schicht aus."
+      },
+      "shift_mismatch": {
+        "label": "Fremde Schicht",
+        "what": "Geld wurde in die Schicht einer anderen Kasse oder einer anderen Person gebucht. Es wurde trotzdem übernommen.",
+        "todo": "Klären Sie, wer das Geld hat, und gleichen Sie die beiden Schichten mit Kassenbewegungen aus."
+      },
+      "shift_already_open": {
+        "label": "Zweite offene Schicht",
+        "what": "Für dieselbe Kasse oder Person wurde eine zweite Schicht eröffnet, während die erste noch offen war (RN-19).",
+        "todo": "Schliessen Sie beide Schichten mit einem Kassensturz ab und prüfen Sie, wo das Geld gezählt wurde."
+      },
+      "shift_count_mismatch": {
+        "label": "Soll-Bestand abweichend",
+        "what": "Beim Abschluss kannte das Gerät nicht alle Zahlungen der Schicht: der unterschriebene Soll-Bestand weicht vom berechneten ab.",
+        "todo": "Vergleichen Sie den Schichtbericht mit den Zahlungen und erklären Sie die Differenz."
+      },
+      "day_closed": {
+        "label": "Nach dem Tagesabschluss",
+        "what": "Der Vorgang betrifft einen Tag, der bereits abgeschlossen ist (Z). Er wurde übernommen und erscheint als Korrektur dieses Abschlusses.",
+        "todo": "Prüfen Sie die Korrektur im Tagesabschluss; der Abschluss selbst wird nie geändert."
       }
     }
   }

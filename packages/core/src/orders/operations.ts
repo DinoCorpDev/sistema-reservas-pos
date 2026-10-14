@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { CASH_MOVEMENT_KINDS, SHIFT_SCOPES } from '../cash/constants';
+import { countTotal, denominationCountSchema } from '../cash/count';
+import { shiftReportSchema } from '../cash/report';
 import { ALLERGENS } from '../catalog/constants';
 import { PERMISSIONS } from '../organization/permissions';
 import { PAYMENT_ADAPTERS, PAYMENT_METHODS } from '../payments/constants';
@@ -18,9 +21,11 @@ import { DISCOUNT_KINDS, MAX_COURSE, MIN_COURSE, VOID_REASONS } from './constant
 
 /**
  * Version 2 (Phase 3): `items.send` carries the kitchen tickets it creates, and the kitchen,
- * printing and cash drawer operations exist. Version 1 operations are still accepted.
+ * printing and cash drawer operations exist.
+ * Version 3 (Phase 4, DEC-038): shifts and cash movements; payments and refunds name their shift
+ * and business day, and a refund carries its cash rounding. Older operations are still accepted.
  */
-export const OPERATION_SCHEMA_VERSION = 2;
+export const OPERATION_SCHEMA_VERSION = 3;
 
 const id = z.uuid();
 const isoDate = z.iso.date();
@@ -111,6 +116,20 @@ const orderOp = { ...envelope, orderId: id };
 
 /** Items of one ticket at one station: what the kitchen operations act on (RF-C22). */
 const kitchenItems = z.object({ stationId: id, itemIds: z.array(id).min(1).max(200) });
+
+/** Operations about a shift: they belong to no order (DEC-038). */
+const shiftOp = { ...envelope, orderId: z.null().default(null) };
+
+/**
+ * Since version 3, the money of a payment or refund names the shift whose drawer or wallet it
+ * went into (null without one: a card payment on a device with no shift open, or an operation
+ * of version 2) and the business day it counts for: the shift's, so a drawer is counted in one
+ * Z only (DEC-038). Stored version-2 rows lack both; readers use `?? null`.
+ */
+const shiftOfMoney = {
+  shiftId: id.nullable().default(null),
+  businessDate: isoDate.nullable().default(null),
+};
 
 export const operationSchema = z.discriminatedUnion('type', [
   z.object({
@@ -260,6 +279,7 @@ export const operationSchema = z.discriminatedUnion('type', [
       externalReference: optionalText(128),
       splitLabel: optionalText(32),
       receipt: receiptSchema,
+      ...shiftOfMoney,
     }),
   }),
   z.object({
@@ -272,8 +292,11 @@ export const operationSchema = z.discriminatedUnion('type', [
       adapter: z.enum(PAYMENT_ADAPTERS),
       amountRappen: positive,
       tipRappen: nonNegative,
+      /** Since version 3: the CHF 0.05 rounding of a cash refund (RN-06, DEC-038). */
+      roundingRappen: z.int().default(0),
       reason: shortText(500),
       externalReference: optionalText(128),
+      ...shiftOfMoney,
     }),
   }),
   z.object({
@@ -366,6 +389,87 @@ export const operationSchema = z.discriminatedUnion('type', [
     type: z.literal('drawer.open'),
     payload: z.object({ reason: optionalText(200).default(null) }),
   }),
+  z.object({
+    ...shiftOp,
+    /**
+     * Opens a shift with its counted float (RF-D12): the till's (owner: the terminal of the
+     * operation) or a person's wallet (owner: `cashierUserId`). One open per owner (RN-19).
+     */
+    type: z.literal('shift.open'),
+    payload: z
+      .object({
+        shiftId: id,
+        scope: z.enum(SHIFT_SCOPES),
+        cashierUserId: id.nullable(),
+        /** Frozen at the opening: all the shift's money counts for this day (DEC-038). */
+        businessDate: isoDate,
+        openingFloatRappen: nonNegative,
+        openingCount: denominationCountSchema.nullable().default(null),
+      })
+      .refine(
+        (p) => (p.scope === 'personal') === (p.cashierUserId !== null),
+        'A wallet names its person; a till does not',
+      )
+      .refine(
+        (p) => p.openingCount === null || countTotal(p.openingCount) === p.openingFloatRappen,
+        'The float is what was counted',
+      ),
+  }),
+  z.object({
+    ...shiftOp,
+    /** Cash in, cash out or a small expense during a shift (RF-D13); a correction after a Z (RN-21). */
+    type: z.literal('cash.movement'),
+    payload: z
+      .object({
+        movementId: id,
+        shiftId: id,
+        businessDate: isoDate,
+        kind: z.enum(CASH_MOVEMENT_KINDS),
+        /** Signed: + goes into the drawer, − comes out of it. */
+        amountRappen: z.int().refine((value) => value !== 0, 'A movement moves money'),
+        reason: shortText(500),
+        /** The Z this corrects (RF-D17, RN-21); only for corrections. */
+        dailyClosingId: id.nullable().default(null),
+      })
+      .refine(
+        (p) =>
+          p.kind === 'correction' ||
+          (p.kind === 'cash_in' ? p.amountRappen > 0 : p.amountRappen < 0),
+        'Cash in adds money; cash out and expenses take it out',
+      )
+      .refine(
+        (p) => (p.kind === 'correction') === (p.dailyClosingId !== null),
+        'A correction names the closing it corrects',
+      ),
+  }),
+  z.object({
+    ...shiftOp,
+    /**
+     * Closes a shift with the cash count (RF-D14, RF-D15). The expected cash and the report are
+     * frozen as the device computed them; a difference needs a comment.
+     */
+    type: z.literal('shift.close'),
+    payload: z
+      .object({
+        shiftId: id,
+        businessDate: isoDate,
+        countByDenomination: denominationCountSchema,
+        countedCashRappen: nonNegative,
+        expectedCashRappen: z.int(),
+        differenceComment: optionalText(500).default(null),
+        /** The hub prints the closing report on the terminal's printer (DEC-031). */
+        hubPrint: z.boolean().default(false),
+        report: shiftReportSchema,
+      })
+      .refine(
+        (p) => countTotal(p.countByDenomination) === p.countedCashRappen,
+        'The counted cash is the sum of the count',
+      )
+      .refine(
+        (p) => p.countedCashRappen === p.expectedCashRappen || Boolean(p.differenceComment),
+        'A difference needs a comment',
+      ),
+  }),
 ]);
 
 /**
@@ -388,12 +492,55 @@ export type OperationType = Operation['type'];
 export type OrderOperation = Exclude<Operation, { orderId: null }>;
 export type OperationOf<T extends OperationType> = Extract<Operation, { type: T }>;
 
+const SHIFT_OPERATION_TYPES = new Set<OperationType>([
+  'shift.open',
+  'cash.movement',
+  'shift.close',
+]);
+
+/** Operations about a shift itself (not the payments that go into it). */
+export const isShiftOperation = (type: string): boolean =>
+  SHIFT_OPERATION_TYPES.has(type as OperationType);
+
+/** The shift an operation belongs to or puts money into (`sync_operations.shift_id`). */
+export function operationShiftId(op: Operation): string | null {
+  switch (op.type) {
+    case 'shift.open':
+    case 'cash.movement':
+    case 'shift.close':
+      return op.payload.shiftId;
+    case 'payment.record':
+    case 'refund.record':
+      return op.payload.shiftId ?? null;
+    default:
+      return null;
+  }
+}
+
+/** The business day the money of an operation counts for, when it carries one (DEC-038). */
+export function operationBusinessDate(op: Operation): string | null {
+  switch (op.type) {
+    case 'shift.open':
+    case 'cash.movement':
+    case 'shift.close':
+      return op.payload.businessDate;
+    case 'payment.record':
+    case 'refund.record':
+      return op.payload.businessDate ?? null;
+    default:
+      return null;
+  }
+}
+
 /** Orders an operation touches: its own and, for transfer, merge and split, the other one. */
 export function operationOrderIds(op: Operation): string[] {
   switch (op.type) {
     case 'terminal.unlocked':
     case 'terminal.pin_failed':
     case 'drawer.open':
+    case 'shift.open':
+    case 'cash.movement':
+    case 'shift.close':
       return [];
     case 'items.transfer':
       return [op.orderId, op.payload.toOrderId];
