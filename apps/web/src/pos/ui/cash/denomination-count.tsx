@@ -36,8 +36,10 @@ export function DenominationCounter({
     { title: t('coins'), values: CHF_DENOMINATIONS.filter((d) => d < 1000).reverse() },
   ];
   return (
-    <div className="grid gap-4">
-      <div className="grid gap-4 md:grid-cols-2">
+    // Sized by its own width, not the screen's: inside a dialog the groups stack and every
+    // field keeps room for its number.
+    <div className="@container grid gap-4">
+      <div className="grid gap-4 @3xl:grid-cols-2">
         {groups.map((group) => (
           <fieldset key={group.title} className="grid content-start gap-1.5">
             <legend className="mb-1 text-sm font-medium text-muted-foreground">
@@ -50,7 +52,7 @@ export function DenominationCounter({
               return (
                 <div
                   key={key}
-                  className="grid grid-cols-[4.5rem_auto_1fr_auto_5.5rem] items-center gap-1.5"
+                  className="grid grid-cols-[4rem_2.75rem_minmax(4rem,1fr)_2.75rem] items-center gap-2 @md:grid-cols-[4.5rem_2.75rem_minmax(5rem,1fr)_2.75rem_6.5rem]"
                 >
                   <label htmlFor={id} className="font-medium tabular-nums">
                     {label(denomination)}
@@ -69,7 +71,7 @@ export function DenominationCounter({
                     id={id}
                     inputMode="numeric"
                     autoComplete="off"
-                    className="h-11 text-center text-lg tabular-nums"
+                    className="h-11 min-w-0 px-2 text-center text-xl font-semibold tabular-nums"
                     value={pieces === 0 ? '' : String(pieces)}
                     placeholder="0"
                     data-testid={`count-${key}`}
@@ -88,7 +90,7 @@ export function DenominationCounter({
                   >
                     <Plus />
                   </Button>
-                  <span className="text-right text-sm text-muted-foreground tabular-nums">
+                  <span className="hidden text-right text-sm text-muted-foreground tabular-nums @md:block">
                     {pieces > 0
                       ? formatChf(countTotalOf(denomination, pieces), { currency: false })
                       : ''}

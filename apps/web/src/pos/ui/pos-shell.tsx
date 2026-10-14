@@ -27,6 +27,9 @@ import { SendConfirmDialog } from './send-confirm-dialog';
 import { UnpairButton } from './unpair-button';
 import { UnsentDialog } from './unsent-dialog';
 
+/** Permissions that open the cash screen: running a shift, moving cash or closing the day. */
+const CASH_PERMISSIONS = ['shift.open', 'shift.close', 'cash.movement', 'day.close'] as const;
+
 /** Frame of every POS screen: location, navigation, connection status and the person (RF-C19). */
 export function PosShell() {
   const t = useTranslations('pos.shell');
@@ -76,6 +79,9 @@ export function PosShell() {
       testId={`ready-badge-${group}`}
     />
   );
+  // The cash screen is for whoever may run a shift or close the day (RF-D12, RF-D15): a role
+  // without those permissions in the backoffice does not see it.
+  const canCash = CASH_PERMISSIONS.some((permission) => user?.permissions.has(permission));
   const atCounter = (channel: 'bar' | 'takeaway') =>
     view.name === 'counter' && view.channel === channel;
   return (
@@ -85,7 +91,8 @@ export function PosShell() {
         <nav
           className={cn(
             'flex flex-wrap gap-1',
-            'max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:grid max-md:grid-cols-5 max-md:gap-0 max-md:border-t max-md:bg-card max-md:pb-[env(safe-area-inset-bottom)] max-md:shadow-[0_-1px_8px_rgb(0_0_0/0.06)]',
+            'max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:grid max-md:gap-0 max-md:border-t max-md:bg-card max-md:pb-[env(safe-area-inset-bottom)] max-md:shadow-[0_-1px_8px_rgb(0_0_0/0.06)]',
+            canCash ? 'max-md:grid-cols-5' : 'max-md:grid-cols-4',
             inOrder && 'max-md:hidden',
           )}
           aria-label={t('navigation')}
@@ -121,14 +128,16 @@ export function PosShell() {
             <ShoppingBag /> {t('takeaway')}
             {badge('takeaway')}
           </Button>
-          <Button
-            variant="ghost"
-            className={tab(view.name === 'cash')}
-            onClick={() => navigate({ name: 'cash' })}
-            data-testid="nav-cash"
-          >
-            <Wallet /> {t('cash')}
-          </Button>
+          {canCash && (
+            <Button
+              variant="ghost"
+              className={tab(view.name === 'cash')}
+              onClick={() => navigate({ name: 'cash' })}
+              data-testid="nav-cash"
+            >
+              <Wallet /> {t('cash')}
+            </Button>
+          )}
         </nav>
         <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:ml-auto md:flex-none md:gap-3">
           {drawer && (
@@ -163,7 +172,7 @@ export function PosShell() {
       >
         {view.name === 'floor' && <FloorView />}
         {view.name === 'orders' && <OrdersView />}
-        {view.name === 'cash' && <CashView />}
+        {view.name === 'cash' && (canCash ? <CashView /> : <FloorView />)}
         {view.name === 'counter' && <CounterView key={view.channel} channel={view.channel} />}
         {view.name === 'order' && <OrderView orderId={view.orderId} />}
         {view.name === 'payment' && <PaymentView orderId={view.orderId} />}

@@ -441,56 +441,59 @@ function CloseShiftDialog({
         </DialogHeader>
         <>
           <DenominationCounter idPrefix="close" value={count} onChange={setCount} />
-          <dl className="grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-lg border p-2">
-              <dt className="text-xs text-muted-foreground">{t('expected')}</dt>
-              <dd className="font-semibold tabular-nums">{chf(expected)}</dd>
-            </div>
-            <div className="rounded-lg border p-2">
-              <dt className="text-xs text-muted-foreground">{t('counted')}</dt>
-              <dd className="font-semibold tabular-nums">{chf(counted)}</dd>
-            </div>
-            <div
-              className={cn(
-                'rounded-lg border p-2',
-                difference !== 0 && 'border-destructive bg-destructive/10 text-destructive',
-              )}
-            >
-              <dt className="text-xs">{t('difference')}</dt>
-              <dd className="font-semibold tabular-nums" data-testid="close-difference">
-                {chf(difference)}
-              </dd>
-            </div>
-          </dl>
-          {difference !== 0 && (
-            <Field label={t('comment')} htmlFor="close-comment">
-              <Input
-                id="close-comment"
-                maxLength={500}
-                value={comment}
-                data-testid="close-comment"
-                onChange={(e) => {
-                  setComment(e.currentTarget.value);
-                  setError(null);
-                }}
-              />
-            </Field>
-          )}
-          {error && (
-            <p className="text-sm text-destructive" role="alert">
-              {error}
-            </p>
-          )}
-          <DialogFooter>
-            <Button
-              size="lg"
-              disabled={busy}
-              onClick={() => void confirm()}
-              data-testid="close-shift-confirm"
-            >
-              {t('confirm')}
-            </Button>
-          </DialogFooter>
+          {/* The totals and the button stay in view while the list scrolls. */}
+          <div className="sticky -bottom-6 z-10 -mx-6 -mb-6 grid gap-3 border-t bg-card px-6 pt-3 pb-6">
+            <dl className="grid grid-cols-3 gap-2 text-center">
+              <div className="rounded-lg border p-2">
+                <dt className="text-xs text-muted-foreground">{t('expected')}</dt>
+                <dd className="font-semibold tabular-nums">{chf(expected)}</dd>
+              </div>
+              <div className="rounded-lg border p-2">
+                <dt className="text-xs text-muted-foreground">{t('counted')}</dt>
+                <dd className="font-semibold tabular-nums">{chf(counted)}</dd>
+              </div>
+              <div
+                className={cn(
+                  'rounded-lg border p-2',
+                  difference !== 0 && 'border-destructive bg-destructive/10 text-destructive',
+                )}
+              >
+                <dt className="text-xs">{t('difference')}</dt>
+                <dd className="font-semibold tabular-nums" data-testid="close-difference">
+                  {chf(difference)}
+                </dd>
+              </div>
+            </dl>
+            {difference !== 0 && (
+              <Field label={t('comment')} htmlFor="close-comment">
+                <Input
+                  id="close-comment"
+                  maxLength={500}
+                  value={comment}
+                  data-testid="close-comment"
+                  onChange={(e) => {
+                    setComment(e.currentTarget.value);
+                    setError(null);
+                  }}
+                />
+              </Field>
+            )}
+            {error && (
+              <p className="text-sm text-destructive" role="alert">
+                {error}
+              </p>
+            )}
+            <DialogFooter>
+              <Button
+                size="lg"
+                disabled={busy}
+                onClick={() => void confirm()}
+                data-testid="close-shift-confirm"
+              >
+                {t('confirm')}
+              </Button>
+            </DialogFooter>
+          </div>
         </>
       </DialogContent>
     </Dialog>
