@@ -58,6 +58,7 @@
   },
   "nav": {
     "overview": "Aperçu",
+    "cash": "Caisse",
     "location": "Établissement",
     "floor": "Zones & tables",
     "devices": "Appareils & postes",
@@ -219,6 +220,7 @@
   },
   "navHint": {
     "overview": "Le site en un coup d’œil et la liste de ce qui manque encore pour l’exploitation.",
+    "cash": "Clôture du jour (Z) avec le rapprochement des terminaux de carte, les clôtures et le livre de caisse du jour.",
     "location": "Données du site (nom, raison sociale, adresse, IDE/TVA, langues) et ses règles : quand le gérant doit valider, essais de NIP, alerte cuisine, impression, reçus, réservations et hub local.",
     "floor": "Zones du restaurant (salle, terrasse…) et leurs tables avec places, forme et code QR.",
     "devices": "Caisses, appareils mobiles et écrans de cuisine (KDS) : les coupler avec un code, les activer ou désactiver. Aussi les postes de cuisine et les imprimantes.",

@@ -19,6 +19,7 @@ import {
   UserCogIcon,
   UsersIcon,
   UtensilsCrossedIcon,
+  WalletIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -33,7 +34,10 @@ interface NavItem {
 }
 
 const SECTIONS: NavItem[][] = [
-  [{ href: '/backoffice', key: 'overview', icon: LayoutDashboardIcon }],
+  [
+    { href: '/backoffice', key: 'overview', icon: LayoutDashboardIcon },
+    { href: '/backoffice/cash', key: 'cash', icon: WalletIcon, permission: 'report.view' },
+  ],
   [
     { href: '/backoffice/location', key: 'location', icon: StoreIcon },
     { href: '/backoffice/floor', key: 'floor', icon: LayoutGridIcon },

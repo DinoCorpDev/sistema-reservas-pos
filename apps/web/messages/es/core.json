@@ -58,6 +58,7 @@
   },
   "nav": {
     "overview": "Resumen",
+    "cash": "Caja",
     "location": "Sede",
     "floor": "Áreas y mesas",
     "devices": "Dispositivos y estaciones",
@@ -219,6 +220,7 @@
   },
   "navHint": {
     "overview": "Estado de la sede de un vistazo y la lista de lo que falta configurar para poder operar.",
+    "cash": "Cierre del día (Z) con la conciliación de los terminales de tarjeta, los cierres hechos y el libro de caja del día.",
     "location": "Datos de la sede (nombre, razón social, dirección, UID/MWST, idiomas) y sus reglas: cuándo hace falta un gerente, intentos de PIN, alerta de cocina, impresión, recibos, reservas y hub local.",
     "floor": "Áreas del local (salón, terraza…) y sus mesas con capacidad, forma y código QR.",
     "devices": "Cajas, handhelds y pantallas de cocina (KDS): vincularlas con un código, activarlas o desactivarlas. También estaciones de cocina e impresoras.",

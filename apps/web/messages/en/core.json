@@ -58,6 +58,7 @@
   },
   "nav": {
     "overview": "Overview",
+    "cash": "Cash",
     "location": "Location",
     "floor": "Areas & tables",
     "devices": "Devices & stations",
@@ -219,6 +220,7 @@
   },
   "navHint": {
     "overview": "The location at a glance and the list of what is still missing before it can operate.",
+    "cash": "Day closing (Z) with the card terminal reconciliation, the closings so far and the daily cash book.",
     "location": "Location data (name, legal name, address, UID/VAT, languages) and its rules: when a manager must approve, PIN attempts, kitchen alert, printing, receipts, reservations and the local hub.",
     "floor": "Areas of the restaurant (dining room, terrace…) and their tables with seats, shape and QR code.",
     "devices": "POS terminals, handhelds and kitchen displays (KDS): pair them with a code, activate or deactivate them. Also kitchen stations and printers.",

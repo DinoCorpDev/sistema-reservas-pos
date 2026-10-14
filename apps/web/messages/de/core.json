@@ -58,6 +58,7 @@
   },
   "nav": {
     "overview": "Übersicht",
+    "cash": "Kasse",
     "location": "Standort",
     "floor": "Bereiche & Tische",
     "devices": "Geräte & Stationen",
@@ -219,6 +220,7 @@
   },
   "navHint": {
     "overview": "Der Standort auf einen Blick und die Liste dessen, was für den Betrieb noch fehlt.",
+    "cash": "Tagesabschluss (Z) mit Abgleich der Kartenterminals, die bisherigen Abschlüsse und das Kassenbuch des Tages.",
     "location": "Daten des Standorts (Name, Firma, Adresse, UID/MWST, Sprachen) und seine Regeln: wann die Leitung freigeben muss, PIN-Versuche, Küchenalarm, Druck, Belege, Reservationen und lokaler Hub.",
     "floor": "Bereiche des Lokals (Saal, Terrasse …) und ihre Tische mit Plätzen, Form und QR-Code.",
     "devices": "Kassen, Handhelds und Küchenbildschirme (KDS): mit einem Code koppeln, aktivieren oder deaktivieren. Dazu Küchenstationen und Drucker.",

@@ -58,6 +58,7 @@
   },
   "nav": {
     "overview": "Panoramica",
+    "cash": "Cassa",
     "location": "Sede",
     "floor": "Zone & tavoli",
     "devices": "Dispositivi & postazioni",
@@ -219,6 +220,7 @@
   },
   "navHint": {
     "overview": "La sede a colpo d’occhio e l’elenco di ciò che manca per poter operare.",
+    "cash": "Chiusura giornaliera (Z) con il confronto dei terminali di carta, le chiusure e il libro di cassa del giorno.",
     "location": "Dati della sede (nome, ragione sociale, indirizzo, IDI/IVA, lingue) e le sue regole: quando serve il gerente, tentativi di PIN, allerta cucina, stampa, ricevute, prenotazioni e hub locale.",
     "floor": "Aree del locale (sala, terrazza…) e i loro tavoli con posti, forma e codice QR.",
     "devices": "Casse, palmari e schermi cucina (KDS): accoppiarli con un codice, attivarli o disattivarli. Anche postazioni di cucina e stampanti.",
