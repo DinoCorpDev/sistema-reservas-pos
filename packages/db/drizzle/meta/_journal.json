@@ -71,6 +71,20 @@
       "when": 1791941820121,
       "tag": "0009_waiter_shift_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1791942757122,
+      "tag": "0010_cash_shifts",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1791942764199,
+      "tag": "0011_money_business_date",
+      "breakpoints": true
     }
   ]
 }

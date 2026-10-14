@@ -1,4 +1,4 @@
-import { char, index, mysqlTable, text, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
+import { char, date, index, mysqlTable, text, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
 import {
   locationId,
   organizationId,
@@ -23,6 +23,8 @@ export const payments = mysqlTable(
     locationId: locationId(),
     orderId: uuid('order_id').notNull(),
     shiftId: uuid('shift_id'),
+    /** The business day it counts for (the shift's, DEC-038): the Z it belongs to. */
+    businessDate: date('business_date', { mode: 'string' }),
     terminalId: uuid('terminal_id'),
     userId: uuid('user_id').notNull(),
     method: varchar('method', { length: 16 }).notNull(),
@@ -53,6 +55,7 @@ export const payments = mysqlTable(
     uniqueIndex('uq_payments_idempotency').on(t.organizationId, t.idempotencyKey),
     index('idx_payments_order').on(t.orderId),
     index('idx_payments_shift').on(t.shiftId),
+    index('idx_payments_day').on(t.locationId, t.businessDate),
   ],
 );
 
@@ -66,10 +69,14 @@ export const refunds = mysqlTable(
     paymentId: uuid('payment_id').notNull(),
     orderId: uuid('order_id').notNull(),
     shiftId: uuid('shift_id'),
+    businessDate: date('business_date', { mode: 'string' }),
+    terminalId: uuid('terminal_id'),
     method: varchar('method', { length: 16 }).notNull(),
     adapter: varchar('adapter', { length: 32 }).notNull(),
     amountRappen: rappen('amount_rappen'),
     tipRappen: rappen('tip_rappen'),
+    /** CHF 0.05 rounding of a cash refund (RN-06): paid out = amount + tip + rounding. */
+    roundingRappen: rappen('rounding_rappen'),
     reason: text('reason').notNull(),
     userId: uuid('user_id').notNull(),
     authorizedByUserId: uuid('authorized_by_user_id'),
@@ -82,6 +89,8 @@ export const refunds = mysqlTable(
   (t) => [
     uniqueIndex('uq_refunds_idempotency').on(t.organizationId, t.idempotencyKey),
     index('idx_refunds_payment').on(t.paymentId),
+    index('idx_refunds_shift').on(t.shiftId),
+    index('idx_refunds_day').on(t.locationId, t.businessDate),
   ],
 );
 

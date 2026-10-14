@@ -23,20 +23,28 @@ import {
 /** Cash count: denomination in rappen → number of pieces (RF-D14). */
 export type DenominationCount = Record<string, number>;
 
-/** Cash shift per terminal or per cashier; one open at a time (RF-D12, RN-19). */
+/**
+ * Cash shift of a till (terminal) or of a person's wallet, one open per owner (RF-D12, RN-19,
+ * DEC-038). Written only by the projection of the shift operations.
+ */
 export const shifts = mysqlTable(
   'shifts',
   {
     id: primaryId(),
     organizationId: organizationId(),
     locationId: locationId(),
+    /** `terminal` (a till) or `personal` (a wallet). */
+    scope: varchar('scope', { length: 16 }).notNull().default('terminal'),
+    /** Where it was opened: the owner of a till's shift. */
     terminalId: uuid('terminal_id'),
+    /** The owner of a wallet. */
     cashierUserId: uuid('cashier_user_id'),
     businessDate: date('business_date', { mode: 'string' }).notNull(),
     status: varchar('status', { length: 16 }).notNull().default('open'),
     openedAt: utcDatetime('opened_at').notNull(),
     openedByUserId: uuid('opened_by_user_id').notNull(),
     openingFloatRappen: rappen('opening_float_rappen'),
+    openingCount: json('opening_count').$type<DenominationCount>(),
     closedAt: utcDatetime('closed_at'),
     closedByUserId: uuid('closed_by_user_id'),
     expectedCashRappen: int('expected_cash_rappen'),
@@ -45,10 +53,15 @@ export const shifts = mysqlTable(
     countByDenomination: json('count_by_denomination').$type<DenominationCount>(),
     /** Required when there is a difference (RF-D14). */
     differenceComment: text('difference_comment'),
+    /** The closing report as the device froze and printed it (RF-D15). */
+    report: json('report'),
     ...syncColumns(),
     ...timestamps(),
   },
-  (t) => [index('idx_shifts_location_status').on(t.locationId, t.status)],
+  (t) => [
+    index('idx_shifts_location_status').on(t.locationId, t.status),
+    index('idx_shifts_day').on(t.locationId, t.businessDate),
+  ],
 );
 
 /**
@@ -62,6 +75,9 @@ export const cashMovements = mysqlTable(
     organizationId: organizationId(),
     locationId: locationId(),
     shiftId: uuid('shift_id'),
+    /** The shift's business day: the Z it counts in (DEC-038). */
+    businessDate: date('business_date', { mode: 'string' }),
+    terminalId: uuid('terminal_id'),
     kind: varchar('kind', { length: 16 }).notNull(),
     /** Signed: positive goes into the drawer, negative comes out. */
     amountRappen: rappen('amount_rappen'),
@@ -73,7 +89,10 @@ export const cashMovements = mysqlTable(
     ...syncColumns(),
     ...timestamps(),
   },
-  (t) => [index('idx_cash_movements_shift').on(t.shiftId)],
+  (t) => [
+    index('idx_cash_movements_shift').on(t.shiftId),
+    index('idx_cash_movements_day').on(t.locationId, t.businessDate),
+  ],
 );
 
 /** Reconciliation of the POS total per method against the payment terminal closing (RF-D11). */

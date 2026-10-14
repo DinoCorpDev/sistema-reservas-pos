@@ -104,6 +104,8 @@ export const syncOperations = mysqlTable(
     entityId: uuid('entity_id').notNull(),
     /** Second order of a transfer, merge or split: links the group of orders. */
     relatedEntityId: uuid('related_entity_id'),
+    /** The shift an operation belongs to or puts money into: links the group of a shift (DEC-038). */
+    shiftId: uuid('shift_id'),
     /** The whole operation as the device sent it. */
     payload: json('payload').notNull(),
     baseVersion: int('base_version'),
@@ -123,5 +125,6 @@ export const syncOperations = mysqlTable(
     index('idx_sync_operations_status').on(t.locationId, t.status),
     index('idx_sync_operations_entity').on(t.locationId, t.entityId),
     index('idx_sync_operations_related').on(t.locationId, t.relatedEntityId),
+    index('idx_sync_operations_shift').on(t.locationId, t.shiftId),
   ],
 );
