@@ -1,3 +1,4 @@
+import type { DailyClosingTotals } from '@pos/core';
 import {
   char,
   date,
@@ -117,19 +118,6 @@ export const paymentReconciliations = mysqlTable(
   (t) => [index('idx_payment_reconciliations_day').on(t.locationId, t.businessDate)],
 );
 
-/** Frozen totals of the Z closing (RF-D15). */
-export interface DailyClosingTotals {
-  grossSalesRappen: number;
-  byPaymentMethod: Record<string, number>;
-  byTaxRate: Record<string, { rateBp: number; grossRappen: number; taxRappen: number }>;
-  tipsRappen: number;
-  discountsRappen: number;
-  voidsRappen: number;
-  refundsRappen: number;
-  roundingRappen: number;
-  orderCount: number;
-}
-
 /**
  * Daily Z closing: immutable (RF-D17, RN-21). APPEND-ONLY: the migration installs triggers
  * that reject UPDATE and DELETE (RN-10).
@@ -142,6 +130,7 @@ export const dailyClosings = mysqlTable(
     locationId: locationId(),
     businessDate: date('business_date', { mode: 'string' }).notNull(),
     closingNumber: int('closing_number').notNull(),
+    /** Frozen totals of the Z (RF-D15), as `closingTotals()` of @pos/core computed them. */
     totals: json('totals').$type<DailyClosingTotals>().notNull(),
     /** SHA-256 of the content, to detect tampering outside the application. */
     contentHash: char('content_hash', { length: 64 }).notNull(),

@@ -7,3 +7,6 @@ export * from './count';
 export * from './owner';
 export * from './report';
 export * from './shifts';
+export * from './closing';
+export * from './book';
+export * from './commands';
