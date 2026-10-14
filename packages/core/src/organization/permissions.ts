@@ -83,6 +83,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<RoleKey, readonly Permiss
     'order.discount',
     'order.transfer',
     'payment.take',
+    // Their own wallet when the location collects cash per person (DEC-038).
+    'shift.open',
+    'shift.close',
     'catalog.sold_out',
     'reservation.checkin',
     'customer.manage',

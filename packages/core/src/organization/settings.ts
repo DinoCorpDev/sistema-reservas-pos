@@ -18,6 +18,7 @@ export type DiscountPreset = z.infer<typeof discountPresetSchema>;
  * DEC-004 (section 20 of the document); all are editable from the backoffice without code (PA-11).
  */
 export const locationSettingsSchema = z.object({
+  /** Who collects cash: only the till, each waiter's wallet, or both (RF-D12, DEC-038). */
   shiftMode: z.enum(SHIFT_MODES).default('terminal'),
   /** Local time at which a new business day starts (DEC-022): order numbers and the Z closing. */
   businessDayStartsAt: z

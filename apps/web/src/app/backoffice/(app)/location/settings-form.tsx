@@ -103,7 +103,7 @@ export function SettingsForm({
           <CardDescription>{t('settingsHint')}</CardDescription>
         </CardHeader>
         <CardContent className="sm:grid-cols-2 lg:grid-cols-3">
-          <Field label={t('shiftMode')}>
+          <Field label={t('shiftMode')} hint={t('shiftModeHint')}>
             <Select
               value={form.shiftMode}
               onValueChange={(value) =>
@@ -117,6 +117,7 @@ export function SettingsForm({
               <SelectContent>
                 <SelectItem value="terminal">{t('shiftMode_terminal')}</SelectItem>
                 <SelectItem value="cashier">{t('shiftMode_cashier')}</SelectItem>
+                <SelectItem value="mixed">{t('shiftMode_mixed')}</SelectItem>
               </SelectContent>
             </Select>
           </Field>
