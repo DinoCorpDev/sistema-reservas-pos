@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
+import { PhonesManager } from './phones-manager';
 import { PrintersManager } from './printers-manager';
 import { StationsManager } from './stations-manager';
 import { TerminalsManager } from './terminals-manager';
@@ -13,7 +14,10 @@ export const metadata: Metadata = { title: 'Geräte & Stationen' };
 
 const TABS = ['terminals', 'stations', 'printers'] as const;
 
-/** Terminals, kitchen stations and printers of the current location (RF-A03, RF-A06, RF-F17). */
+/**
+ * Terminals, waiters' own phones (DEC-036), kitchen stations and printers of the current location
+ * (RF-A03, RF-A06, RF-F17).
+ */
 export default async function DevicesPage({
   searchParams,
 }: {
@@ -61,9 +65,13 @@ export default async function DevicesPage({
         </TabsList>
         <TabsContent value="terminals">
           <TerminalsManager
-            terminals={terminals}
+            terminals={terminals.filter((terminal) => terminal.type !== 'phone')}
             stations={stations}
             printers={printers}
+            canEdit={canEdit}
+          />
+          <PhonesManager
+            phones={terminals.filter((terminal) => terminal.type === 'phone')}
             canEdit={canEdit}
           />
         </TabsContent>

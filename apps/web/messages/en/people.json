@@ -18,7 +18,8 @@
     "types": {
       "pos": "POS register",
       "handheld": "Handheld",
-      "kds": "Kitchen display (KDS)"
+      "kds": "Kitchen display (KDS)",
+      "phone": "Service phone"
     },
     "prefix": "Prefix",
     "prefixLabel": "Prefix for order numbers when offline",
@@ -305,5 +306,30 @@
       "customers_write": "Create and change guest data.",
       "reservations_write": "Create and change reservations."
     }
+  },
+  "phones": {
+    "title": "Service phones",
+    "hint": "Service staff pair their own phone with a code (here or at the cashier) and their PIN. Signing out unpairs it and erases its data.",
+    "issue": "Code for a service phone",
+    "codeTitle": "Code for service phones",
+    "codeInstruction": "The server scans the QR code with their own phone (or types the code), then enters their PIN.",
+    "codeShared": "While it is valid, the code works for several phones. Each one also needs the server’s PIN.",
+    "qrLabel": "QR code to pair a service phone",
+    "waiter": "Server",
+    "pairedSince": "Paired since {date}",
+    "stale": "Paired since an earlier day: did someone forget to sign out?",
+    "empty": "No server has paired their phone yet. Create a code here, or at the cashier with the phone icon.",
+    "unpair": "Unpair",
+    "unpairTitle": "Unpair {name}’s phone?",
+    "unpairText": "The phone is unpaired at once. Anything not sent yet stays on the phone until it is paired again.",
+    "unpaired": "Phone unpaired",
+    "deactivate": "Deactivate",
+    "deactivateTitle": "Deactivate {name}’s phone?",
+    "deactivateText": "This person can no longer pair their own phone until you activate it again.",
+    "deactivated": "Phone deactivated",
+    "activate": "Activate",
+    "activateTitle": "Activate {name}’s phone?",
+    "activateText": "The person can pair their phone again with a code and their PIN.",
+    "activated": "Phone activated"
   }
 }

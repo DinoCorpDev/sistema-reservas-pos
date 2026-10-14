@@ -18,7 +18,8 @@
     "types": {
       "pos": "Caja",
       "handheld": "Dispositivo móvil",
-      "kds": "Pantalla de cocina (KDS)"
+      "kds": "Pantalla de cocina (KDS)",
+      "phone": "Teléfono de mesero"
     },
     "prefix": "Prefijo",
     "prefixLabel": "Prefijo para números de pedido sin internet",
@@ -305,5 +306,30 @@
       "customers_write": "Crear y modificar datos de clientes.",
       "reservations_write": "Crear y modificar reservas."
     }
+  },
+  "phones": {
+    "title": "Teléfonos de meseros",
+    "hint": "Cada mesero vincula su propio teléfono con un código (aquí o en la caja) y su PIN. Al cerrar sesión se desvincula y se borran sus datos.",
+    "issue": "Código para teléfono de mesero",
+    "codeTitle": "Código para teléfonos de meseros",
+    "codeInstruction": "El mesero escanea el código QR con su teléfono (o escribe el código) y luego ingresa su PIN.",
+    "codeShared": "Mientras esté vigente, el código sirve para varios teléfonos. Cada uno pide además el PIN del mesero.",
+    "qrLabel": "Código QR para vincular un teléfono de mesero",
+    "waiter": "Mesero",
+    "pairedSince": "Vinculado desde {date}",
+    "stale": "Vinculado desde un día anterior: ¿se olvidó de cerrar sesión?",
+    "empty": "Todavía ningún mesero vinculó su teléfono. Genera un código aquí, o en la caja con el ícono del teléfono.",
+    "unpair": "Desvincular",
+    "unpairTitle": "¿Desvincular el teléfono de {name}?",
+    "unpairText": "El teléfono se desvincula de inmediato. Lo que todavía no se haya enviado se queda en el teléfono hasta que se vuelva a vincular.",
+    "unpaired": "Teléfono desvinculado",
+    "deactivate": "Desactivar",
+    "deactivateTitle": "¿Desactivar el teléfono de {name}?",
+    "deactivateText": "Este mesero ya no podrá vincular su propio teléfono hasta que lo vuelvas a activar.",
+    "deactivated": "Teléfono desactivado",
+    "activate": "Activar",
+    "activateTitle": "¿Activar el teléfono de {name}?",
+    "activateText": "El mesero podrá volver a vincular su teléfono con un código y su PIN.",
+    "activated": "Teléfono activado"
   }
 }

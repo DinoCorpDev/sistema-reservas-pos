@@ -14,8 +14,15 @@ export function configureDevice(app: DeviceApp): void {
 
 export const deviceApp = (): DeviceApp => current;
 
-/** Terminal types each app accepts (RF-A03): a KDS pairing code does not open the POS. */
+/**
+ * Terminal types each app accepts (RF-A03): a KDS pairing code does not open the POS. A waiter's
+ * own phone runs the POS (DEC-036).
+ */
 export const TERMINAL_TYPES_OF: Readonly<Record<DeviceApp, readonly string[]>> = {
-  pos: ['pos', 'handheld'],
+  pos: ['pos', 'handheld', 'phone'],
   kds: ['kds'],
 };
+
+/** This device is a waiter's own phone (DEC-036). */
+export const isPhone = (device: { terminalType?: string } | null | undefined): boolean =>
+  device?.terminalType === 'phone';

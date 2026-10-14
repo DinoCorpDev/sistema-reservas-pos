@@ -210,7 +210,8 @@
       "tax_rate": "Tasa de impuesto",
       "tax_rule": "Regla de impuesto",
       "terminal": "Dispositivo",
-      "user": "Persona"
+      "user": "Persona",
+      "phone_pairing_code": "Código para teléfonos de meseros"
     }
   },
   "auditActions": {
@@ -272,7 +273,12 @@
       "pairing_code_issued": "Código de vinculación generado",
       "paired": "Dispositivo vinculado",
       "unlocked": "Dispositivo desbloqueado con PIN",
-      "pin_failed": "PIN incorrecto ingresado"
+      "pin_failed": "PIN incorrecto ingresado",
+      "unpaired": "Dispositivo desvinculado",
+      "phone_code_issued": "Código para teléfonos de meseros generado",
+      "phone_paired": "Teléfono de mesero vinculado",
+      "phone_pairing_failed": "Teléfono de mesero no vinculado (PIN incorrecto)",
+      "phone_logged_out": "Sesión cerrada en el teléfono de mesero"
     },
     "approval": {
       "granted": "Autorización otorgada"

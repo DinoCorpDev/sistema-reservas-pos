@@ -21,7 +21,15 @@
       "invalidCode": "Le code est incorrect ou a expiré.",
       "failed": "Appairage impossible. Vérifiez la connexion et réessayez.",
       "hubCode": "Ce code appartient au hub de l’établissement. Il se saisit sur le hub lui-même, pas ici.",
-      "pendingElsewhere": "Cet appareil a encore {count, plural, one {# opération} other {# opérations}} de l’ancien site qui ne sont pas dans le cloud. Couplez-le de nouveau à ce site pour ne rien perdre."
+      "pendingElsewhere": "Cet appareil a encore {count, plural, one {# opération} other {# opérations}} de l’ancien site qui ne sont pas dans le cloud. Couplez-le de nouveau à ce site pour ne rien perdre.",
+      "pinTitle": "Saisir votre PIN de service",
+      "pinDescription": "Ce téléphone vous sera attribué jusqu’à votre déconnexion.",
+      "pinEntered": "{count, plural, one {# chiffre saisi} other {# chiffres saisis}}",
+      "wrongPin": "PIN incorrect. {attemptsLeft, plural, one {Il reste # essai} other {Il reste # essais}} avec ce code.",
+      "codeUsedUp": "Trop de PIN incorrects avec ce code. Demandez un nouveau code à la caisse.",
+      "notWaiter": "Seul le personnel de service couple son propre téléphone.",
+      "phoneDeactivated": "Votre téléphone a été désactivé dans le backoffice. Adressez-vous à la direction.",
+      "otherCode": "Utiliser un autre code"
     },
     "pin": {
       "title": "Saisir le PIN",
@@ -33,7 +41,9 @@
       "invalid": "Le PIN comporte 4 à 6 chiffres.",
       "noCredentials": "Cet appareil n’a pas encore de données d’accès. Connectez-le une fois à Internet.",
       "notAllowedKitchen": "{name} n’a pas l’autorisation cuisine. Déverrouillez l’écran de cuisine avec le PIN d’une personne de la cuisine.",
-      "failed": "Cela n'a pas fonctionné. Saisissez à nouveau le PIN ou rechargez la page."
+      "failed": "Cela n'a pas fonctionné. Saisissez à nouveau le PIN ou rechargez la page.",
+      "notOwner": "Ce téléphone appartient à {name}. Il ne s’ouvre qu’avec son PIN.",
+      "phoneOf": "Téléphone de {name}"
     },
     "approval": {
       "title": "Validation par une personne responsable",
@@ -49,8 +59,6 @@
       "bar": "Bar",
       "takeaway": "À l’emporter",
       "lock": "Verrouiller",
-      "updateAvailable": "Une nouvelle version de la caisse est prête.",
-      "updateNow": "Mettre à jour",
       "drawer": "Tiroir",
       "drawerOpened": "Le tiroir s’ouvre.",
       "drawerFailed": "Impossible d’ouvrir le tiroir.",
@@ -77,6 +85,28 @@
     "update": {
       "available": "Une nouvelle version est prête.",
       "now": "Mettre à jour"
+    },
+    "phone": {
+      "pair": "Coupler un téléphone de service",
+      "title": "Coupler un téléphone de service",
+      "instruction": "La personne de service scanne le code QR avec son téléphone et saisit son PIN. Tant qu’il est valable, il sert à plusieurs téléphones.",
+      "loading": "Création du code…",
+      "failed": "Impossible de créer le code : une connexion Internet est nécessaire.",
+      "expired": "Le code a expiré.",
+      "newCode": "Nouveau code",
+      "qrLabel": "Code QR pour coupler un téléphone",
+      "remaining": "Valable {minutes}:{seconds}",
+      "close": "Fermer",
+      "signOut": "Se déconnecter",
+      "signOutTitle": "Se déconnecter ?",
+      "signOutDescription": "Termine votre service sur ce téléphone : il est découplé et ses données sont effacées. Pour le coupler de nouveau, scannez le code à la caisse.",
+      "signOutConfirm": "Se déconnecter",
+      "cancel": "Annuler",
+      "signOutPending": "{count, plural, one {# opération n’est pas encore} other {# opérations ne sont pas encore}} dans le cloud. Connectez-vous au Wi-Fi du restaurant et réessayez.",
+      "signOutFailed": "La déconnexion a échoué. Vérifiez la connexion et réessayez."
+    },
+    "language": {
+      "label": "Changer de langue"
     }
   }
 }

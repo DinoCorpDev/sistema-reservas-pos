@@ -21,7 +21,15 @@
       "invalidCode": "El código es incorrecto o ha vencido.",
       "failed": "No se pudo vincular. Revise la conexión e inténtelo de nuevo.",
       "hubCode": "Este código es del hub de la sede. Se ingresa en el propio hub, no aquí.",
-      "pendingElsewhere": "Este dispositivo todavía tiene {count, plural, one {# operación} other {# operaciones}} de su sede anterior que no llegaron a la nube. Vincúlalo de nuevo a esa sede para no perder nada."
+      "pendingElsewhere": "Este dispositivo todavía tiene {count, plural, one {# operación} other {# operaciones}} de su sede anterior que no llegaron a la nube. Vincúlalo de nuevo a esa sede para no perder nada.",
+      "pinTitle": "Ingresa tu PIN de mesero",
+      "pinDescription": "Este teléfono quedará vinculado a ti hasta que cierres sesión.",
+      "pinEntered": "{count, plural, one {# dígito ingresado} other {# dígitos ingresados}}",
+      "wrongPin": "PIN incorrecto. {attemptsLeft, plural, one {Queda # intento} other {Quedan # intentos}} con este código.",
+      "codeUsedUp": "Demasiados PIN incorrectos con este código. Pide un código nuevo en la caja.",
+      "notWaiter": "Solo los meseros pueden vincular su propio teléfono.",
+      "phoneDeactivated": "Tu teléfono fue desactivado en el backoffice. Habla con el gerente.",
+      "otherCode": "Usar otro código"
     },
     "pin": {
       "title": "Ingrese su PIN",
@@ -33,7 +41,9 @@
       "invalid": "El PIN debe tener de 4 a 6 dígitos.",
       "noCredentials": "Este dispositivo todavía no tiene datos de acceso. Conéctelo una vez a internet.",
       "notAllowedKitchen": "{name} no tiene permiso de cocina. Desbloquea la pantalla de cocina con el PIN de una persona de la cocina.",
-      "failed": "No funcionó. Ingrese el PIN de nuevo o recargue la página."
+      "failed": "No funcionó. Ingrese el PIN de nuevo o recargue la página.",
+      "notOwner": "Este teléfono es de {name}. Solo se abre con su PIN.",
+      "phoneOf": "Teléfono de {name}"
     },
     "approval": {
       "title": "Autorización de un gerente",
@@ -49,8 +59,6 @@
       "bar": "Barra",
       "takeaway": "Para llevar",
       "lock": "Bloquear",
-      "updateAvailable": "Una nueva versión de la caja está lista.",
-      "updateNow": "Actualizar ahora",
       "drawer": "Cajón",
       "drawerOpened": "El cajón se abre.",
       "drawerFailed": "No se pudo abrir el cajón.",
@@ -77,6 +85,28 @@
     "update": {
       "available": "Hay una versión nueva lista.",
       "now": "Actualizar ahora"
+    },
+    "phone": {
+      "pair": "Vincular teléfono de mesero",
+      "title": "Vincular teléfono de mesero",
+      "instruction": "El mesero escanea el código QR con su teléfono e ingresa su PIN. Mientras esté vigente, sirve para varios teléfonos.",
+      "loading": "Generando el código…",
+      "failed": "No se pudo generar el código: hace falta conexión a internet.",
+      "expired": "El código venció.",
+      "newCode": "Nuevo código",
+      "qrLabel": "Código QR para vincular un teléfono",
+      "remaining": "Vigente {minutes}:{seconds}",
+      "close": "Cerrar",
+      "signOut": "Cerrar sesión",
+      "signOutTitle": "¿Cerrar sesión?",
+      "signOutDescription": "Terminas tu turno en este teléfono: se desvincula y se borran sus datos. Para volver a vincularlo, escanea el código de la caja.",
+      "signOutConfirm": "Cerrar sesión",
+      "cancel": "Cancelar",
+      "signOutPending": "{count, plural, one {# operación todavía no llegó} other {# operaciones todavía no llegaron}} a la nube. Conéctate al Wi-Fi del restaurante e intenta de nuevo.",
+      "signOutFailed": "No se pudo cerrar sesión. Revisa la conexión e intenta de nuevo."
+    },
+    "language": {
+      "label": "Cambiar idioma"
     }
   }
 }

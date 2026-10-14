@@ -1,8 +1,15 @@
 import type { BootstrapDto, OfflineCredentials, PulledOperation, PushResult } from '@pos/api';
 import type { PresenceEntry } from '@pos/core';
-import { deviceApp } from './app';
+import { deviceApp, isPhone } from './app';
 import { observeHlc, recordServerTime } from './clock';
-import { deviceDb, getMeta, type OperationRow, setMeta } from './db';
+import {
+  deviceDb,
+  getMeta,
+  type OperationRow,
+  resetDeviceData,
+  setMeta,
+  unconfirmedCount,
+} from './db';
 import { ingest, isKnown, prune, refold } from './engine';
 import { CLOUD, callNode, NodeError } from './http';
 import { getPos, usePos } from './store';
@@ -55,6 +62,13 @@ function candidates(): string[] {
 
 /** The cloud refused the device token: the device was deactivated or unpaired (DEC-035). */
 async function markRevoked(): Promise<void> {
+  // A waiter's own phone keeps nothing of the shift once the cloud has all of it (DEC-036).
+  if (isPhone(getPos().device) && (await unconfirmedCount()) === 0) {
+    usePos.setState({ device: null, user: null });
+    await resetDeviceData();
+    window.location.reload();
+    return;
+  }
   await setMeta('revoked', { at: new Date().toISOString() });
   node = null;
   watchHub(null, '');
@@ -338,6 +352,24 @@ function watchHub(current: string | null, deviceToken: string): void {
  * follows right after it instead of at the next tick (a hint must not wait 2 s, RNF-07).
  */
 let again = false;
+
+/**
+ * Sends straight to the cloud everything the cloud has not confirmed, and returns how many
+ * operations of THIS device are still missing there: 0 means signing out loses nothing. Used
+ * before a waiter signs out of their phone (DEC-036); never throws.
+ */
+export async function flushToCloud(): Promise<number> {
+  const device = getPos().device;
+  if (!device) return 0;
+  await inFlight;
+  try {
+    await push(CLOUD, device.deviceToken);
+  } catch {
+    // No network or a refusal: what is left is counted below.
+  }
+  await updateCounts();
+  return getPos().sync.pending;
+}
 
 /** Runs one sync cycle now (or joins the one in flight and runs again after it). */
 export function syncNow(): Promise<void> {

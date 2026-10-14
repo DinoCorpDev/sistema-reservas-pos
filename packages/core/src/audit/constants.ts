@@ -44,6 +44,12 @@ export const AUDIT_ACTIONS = [
   'terminal.paired',
   'terminal.unlocked',
   'terminal.pin_failed',
+  'terminal.unpaired',
+  // waiters' own phones (DEC-036)
+  'terminal.phone_code_issued',
+  'terminal.phone_paired',
+  'terminal.phone_pairing_failed',
+  'terminal.phone_logged_out',
   'approval.granted',
   'api_key.created',
   'api_key.revoked',

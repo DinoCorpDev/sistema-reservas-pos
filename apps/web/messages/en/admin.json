@@ -210,7 +210,8 @@
       "tax_rate": "Tax rate",
       "tax_rule": "Tax rule",
       "terminal": "Device",
-      "user": "Person"
+      "user": "Person",
+      "phone_pairing_code": "Code for service phones"
     }
   },
   "auditActions": {
@@ -272,7 +273,12 @@
       "pairing_code_issued": "Pairing code generated",
       "paired": "Device paired",
       "unlocked": "Device unlocked with PIN",
-      "pin_failed": "Wrong PIN entered"
+      "pin_failed": "Wrong PIN entered",
+      "unpaired": "Device unpaired",
+      "phone_code_issued": "Code for service phones generated",
+      "phone_paired": "Service phone paired",
+      "phone_pairing_failed": "Service phone not paired (wrong PIN)",
+      "phone_logged_out": "Signed out of a service phone"
     },
     "approval": {
       "granted": "Approval granted"

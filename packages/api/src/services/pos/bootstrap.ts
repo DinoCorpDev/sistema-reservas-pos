@@ -183,6 +183,8 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
       orderNumberPrefix: terminal.orderNumberPrefix,
       receiptPrinterId: terminal.receiptPrinterId,
       kitchenStationId: terminal.kitchenStationId,
+      /** A waiter's own phone opens only with its owner's PIN (DEC-036). */
+      userId: terminal.userId,
     },
     location,
     areas,

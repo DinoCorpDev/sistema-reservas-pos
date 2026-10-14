@@ -135,7 +135,11 @@
       "title": "Carte",
       "categories": "Catégories",
       "empty": "Aucun produit n’est disponible pour ce canal.",
-      "options": "Options"
+      "options": "Options",
+      "search": "Chercher un produit",
+      "searchPlaceholder": "Chercher un produit…",
+      "closeSearch": "Fermer la recherche",
+      "noMatch": "Aucun produit trouvé."
     },
     "product": {
       "variant": "Variante",

@@ -21,7 +21,15 @@
       "invalidCode": "Der Code ist falsch oder abgelaufen.",
       "failed": "Koppeln nicht möglich. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
       "hubCode": "Dieser Code gehört zum Standort-Hub. Er wird auf dem Hub selbst eingegeben, nicht hier.",
-      "pendingElsewhere": "Dieses Gerät hat noch {count, plural, one {# Vorgang} other {# Vorgänge}} des bisherigen Standorts, die noch nicht in der Cloud sind. Koppeln Sie es wieder mit diesem Standort, damit nichts verloren geht."
+      "pendingElsewhere": "Dieses Gerät hat noch {count, plural, one {# Vorgang} other {# Vorgänge}} des bisherigen Standorts, die noch nicht in der Cloud sind. Koppeln Sie es wieder mit diesem Standort, damit nichts verloren geht.",
+      "pinTitle": "Service-PIN eingeben",
+      "pinDescription": "Dieses Telefon gehört dann Ihnen, bis Sie sich abmelden.",
+      "pinEntered": "{count, plural, one {# Ziffer eingegeben} other {# Ziffern eingegeben}}",
+      "wrongPin": "Falscher PIN. Mit diesem Code {attemptsLeft, plural, one {bleibt # Versuch} other {bleiben # Versuche}}.",
+      "codeUsedUp": "Zu viele falsche PINs mit diesem Code. Holen Sie an der Kasse einen neuen Code.",
+      "notWaiter": "Nur Servicemitarbeitende koppeln ihr eigenes Telefon.",
+      "phoneDeactivated": "Ihr Telefon wurde im Backoffice deaktiviert. Wenden Sie sich an die Geschäftsführung.",
+      "otherCode": "Anderen Code verwenden"
     },
     "pin": {
       "title": "PIN eingeben",
@@ -33,7 +41,9 @@
       "invalid": "Die PIN hat 4 bis 6 Ziffern.",
       "noCredentials": "Dieses Gerät hat noch keine Zugangsdaten. Verbinden Sie es einmal mit dem Internet.",
       "notAllowedKitchen": "{name} hat keine Küchenberechtigung. Entsperren Sie den Küchenbildschirm mit der PIN einer Person aus der Küche.",
-      "failed": "Das hat nicht geklappt. Bitte PIN erneut eingeben oder die Seite neu laden."
+      "failed": "Das hat nicht geklappt. Bitte PIN erneut eingeben oder die Seite neu laden.",
+      "notOwner": "Dieses Telefon gehört {name}. Nur {name} öffnet es mit dem eigenen PIN.",
+      "phoneOf": "Telefon von {name}"
     },
     "approval": {
       "title": "Freigabe durch Führungsperson",
@@ -49,8 +59,6 @@
       "bar": "Theke",
       "takeaway": "Take-away",
       "lock": "Sperren",
-      "updateAvailable": "Eine neue Version der Kasse ist bereit.",
-      "updateNow": "Jetzt aktualisieren",
       "drawer": "Schublade",
       "drawerOpened": "Die Schublade wird geöffnet.",
       "drawerFailed": "Die Schublade konnte nicht geöffnet werden.",
@@ -77,6 +85,28 @@
     "update": {
       "available": "Eine neue Version ist bereit.",
       "now": "Jetzt aktualisieren"
+    },
+    "phone": {
+      "pair": "Service-Telefon koppeln",
+      "title": "Service-Telefon koppeln",
+      "instruction": "Die Servicekraft scannt den QR-Code mit dem eigenen Telefon und gibt ihren PIN ein. Solange er gültig ist, dient er für mehrere Telefone.",
+      "loading": "Code wird erstellt…",
+      "failed": "Der Code konnte nicht erstellt werden. Dafür braucht es eine Internetverbindung.",
+      "expired": "Der Code ist abgelaufen.",
+      "newCode": "Neuer Code",
+      "qrLabel": "QR-Code zum Koppeln eines Telefons",
+      "remaining": "Gültig {minutes}:{seconds}",
+      "close": "Schliessen",
+      "signOut": "Abmelden",
+      "signOutTitle": "Abmelden?",
+      "signOutDescription": "Beendet Ihre Schicht auf diesem Telefon: Es wird entkoppelt und seine Daten werden gelöscht. Zum erneuten Koppeln scannen Sie den Code an der Kasse.",
+      "signOutConfirm": "Abmelden",
+      "cancel": "Abbrechen",
+      "signOutPending": "{count, plural, one {# Vorgang ist} other {# Vorgänge sind}} noch nicht in der Cloud. Verbinden Sie sich mit dem WLAN des Restaurants und versuchen Sie es erneut.",
+      "signOutFailed": "Abmelden hat nicht geklappt. Prüfen Sie die Verbindung und versuchen Sie es erneut."
+    },
+    "language": {
+      "label": "Sprache ändern"
     }
   }
 }

@@ -13,8 +13,11 @@ import { type DeviceApp, deviceApp } from './app';
 export interface PairedDevice {
   terminalId: string;
   terminalName: string;
-  /** pos, handheld or kds (devices paired before Phase 3 lack it: they are POS). */
+  /** pos, handheld, kds or phone (devices paired before Phase 3 lack it: they are POS). */
   terminalType?: string;
+  /** A waiter's own phone opens only with this waiter's PIN (DEC-036). */
+  ownerUserId?: string | null;
+  ownerName?: string | null;
   deviceToken: string;
   organizationId: string;
   locationId: string;
@@ -48,6 +51,8 @@ export interface MetaValues {
   storagePersisted: boolean;
   /** The cloud no longer accepts this device's token: deactivated or unpaired (DEC-035). */
   revoked: { at: string };
+  /** Language each person chose on this device, by user id (RF-A08). */
+  languages: Record<string, string>;
 }
 
 export type MetaKey = keyof MetaValues;

@@ -18,7 +18,8 @@
     "types": {
       "pos": "Kasse",
       "handheld": "Handgerät",
-      "kds": "Küchenbildschirm (KDS)"
+      "kds": "Küchenbildschirm (KDS)",
+      "phone": "Service-Telefon"
     },
     "prefix": "Präfix",
     "prefixLabel": "Präfix für Bestellnummern ohne Internet",
@@ -305,5 +306,30 @@
       "customers_write": "Gästedaten anlegen und ändern.",
       "reservations_write": "Reservationen anlegen und ändern."
     }
+  },
+  "phones": {
+    "title": "Service-Telefone",
+    "hint": "Die Servicekräfte koppeln ihr eigenes Telefon mit einem Code (hier oder an der Kasse) und ihrem PIN. Beim Abmelden wird es entkoppelt und seine Daten werden gelöscht.",
+    "issue": "Code für Service-Telefon",
+    "codeTitle": "Code für Service-Telefone",
+    "codeInstruction": "Die Servicekraft scannt den QR-Code mit dem eigenen Telefon (oder gibt den Code ein) und dann ihren PIN.",
+    "codeShared": "Solange er gültig ist, dient der Code für mehrere Telefone. Jedes braucht zusätzlich den PIN der Servicekraft.",
+    "qrLabel": "QR-Code zum Koppeln eines Service-Telefons",
+    "waiter": "Servicekraft",
+    "pairedSince": "Gekoppelt seit {date}",
+    "stale": "Seit einem früheren Tag gekoppelt: Wurde das Abmelden vergessen?",
+    "empty": "Noch hat keine Servicekraft ihr Telefon gekoppelt. Erstellen Sie hier einen Code, oder an der Kasse mit dem Telefon-Symbol.",
+    "unpair": "Entkoppeln",
+    "unpairTitle": "Telefon von {name} entkoppeln?",
+    "unpairText": "Das Telefon wird sofort entkoppelt. Was dort noch nicht gesendet wurde, bleibt auf dem Telefon, bis es wieder gekoppelt wird.",
+    "unpaired": "Telefon entkoppelt",
+    "deactivate": "Deaktivieren",
+    "deactivateTitle": "Telefon von {name} deaktivieren?",
+    "deactivateText": "Diese Servicekraft kann kein eigenes Telefon mehr koppeln, bis Sie es wieder aktivieren.",
+    "deactivated": "Telefon deaktiviert",
+    "activate": "Aktivieren",
+    "activateTitle": "Telefon von {name} aktivieren?",
+    "activateText": "Die Servicekraft kann ihr Telefon wieder mit einem Code und ihrem PIN koppeln.",
+    "activated": "Telefon aktiviert"
   }
 }

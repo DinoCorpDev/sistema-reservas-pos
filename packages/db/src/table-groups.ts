@@ -10,7 +10,15 @@ export const TABLE_GROUPS = {
   /** DINOLABS platform level, outside every organization (support staff). */
   platform: [s.platformStaff],
   /** Location configuration: FK, soft delete, required `location_id` (except `locations`). */
-  config: [s.locations, s.areas, s.diningTables, s.terminals, s.kitchenStations, s.printers],
+  config: [
+    s.locations,
+    s.areas,
+    s.diningTables,
+    s.terminals,
+    s.phonePairingCodes,
+    s.kitchenStations,
+    s.printers,
+  ],
   /** Organization master data: FK, soft delete; `location_id` only when applicable. */
   master: [
     s.users,

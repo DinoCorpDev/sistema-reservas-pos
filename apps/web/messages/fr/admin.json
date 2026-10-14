@@ -210,7 +210,8 @@
       "tax_rate": "Taux d’imposition",
       "tax_rule": "Règle fiscale",
       "terminal": "Appareil",
-      "user": "Personne"
+      "user": "Personne",
+      "phone_pairing_code": "Code pour téléphones de service"
     }
   },
   "auditActions": {
@@ -272,7 +273,12 @@
       "pairing_code_issued": "Code d’appairage généré",
       "paired": "Appareil appairé",
       "unlocked": "Appareil déverrouillé avec PIN",
-      "pin_failed": "PIN erroné saisi"
+      "pin_failed": "PIN erroné saisi",
+      "unpaired": "Appareil découplé",
+      "phone_code_issued": "Code pour téléphones de service généré",
+      "phone_paired": "Téléphone de service couplé",
+      "phone_pairing_failed": "Téléphone de service non couplé (PIN erroné)",
+      "phone_logged_out": "Déconnexion du téléphone de service"
     },
     "approval": {
       "granted": "Validation accordée"

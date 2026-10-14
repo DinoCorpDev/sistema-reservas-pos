@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { CONTENT_LANGUAGES, UI_LANGUAGES } from '../shared/languages';
 import { QR_MODES } from '../tables/constants';
-import { PRINTER_KINDS, PRINTER_PROTOCOLS, TERMINAL_TYPES } from './constants';
+import { CREATABLE_TERMINAL_TYPES, PRINTER_KINDS, PRINTER_PROTOCOLS } from './constants';
 import { PERMISSIONS, ROLE_KEYS } from './permissions';
 import { isValidSwissUid } from './uid';
 
@@ -121,7 +121,7 @@ export const updatePrinterSchema = patchOf(createPrinterSchema);
 
 export const createTerminalSchema = z.object({
   name: text(100),
-  type: z.enum(TERMINAL_TYPES),
+  type: z.enum(CREATABLE_TERMINAL_TYPES),
   /** Offline order-number prefix, unique per location (RN-16). */
   orderNumberPrefix: z
     .string()
@@ -173,6 +173,8 @@ export const createApiKeySchema = z.object({
 export const pairTerminalSchema = z.object({
   code: z.string().trim().min(8).max(12),
   appVersion: z.string().max(32).optional(),
+  /** A code for a waiter's phone also needs the waiter's PIN: the phone becomes theirs (DEC-036). */
+  pin: pin.optional(),
 });
 export const unlockSchema = z.object({ pin });
 export const approvalRequestSchema = z.object({

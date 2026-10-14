@@ -1,4 +1,5 @@
-import { deviceApp, TERMINAL_TYPES_OF } from './app';
+import type { Permission } from '@pos/core';
+import { deviceApp, isPhone, TERMINAL_TYPES_OF } from './app';
 import { loadClock } from './clock';
 import {
   deleteMeta,
@@ -9,8 +10,10 @@ import {
   storePairedDeviceFor,
   unconfirmedCount,
 } from './db';
-import { refold } from './engine';
-import { CLOUD, callNode } from './http';
+import { dispatch, refold } from './engine';
+import { CLOUD, callNode, NodeError } from './http';
+import { preferredLanguage } from './language';
+import { makeOperation } from './operations';
 import { registerPosWorker } from './service-worker';
 import { usePos } from './store';
 import { refreshConfiguration, startSync } from './sync';
@@ -29,6 +32,13 @@ export async function bootDevice(): Promise<void> {
     getMeta('credentials'),
     getMeta('revoked'),
   ]);
+  // A waiter's phone unpaired in the backoffice keeps nothing of the shift once the cloud has
+  // all of it: it starts over at the pairing screen (DEC-036).
+  if (revoked && isPhone(device) && (await unconfirmedCount()) === 0) {
+    await resetDeviceData();
+    usePos.setState({ ready: true });
+    return;
+  }
   usePos.setState({
     device: device ?? null,
     bootstrap: bootstrap ?? null,
@@ -57,23 +67,51 @@ export class PendingElsewhereError extends Error {
   }
 }
 
+/** The code is for a waiter's phone: the waiter's PIN is needed too (DEC-036). */
+export class PinRequiredError extends Error {
+  override readonly name = 'PinRequiredError';
+}
+
+/** Why the server refused a phone pairing (DEC-036), from `error.details.reason`. */
+export const phonePairingRefusal = (cause: unknown): string | null => {
+  if (!(cause instanceof NodeError)) return null;
+  const reason = (cause.details as { reason?: unknown } | undefined)?.reason;
+  return typeof reason === 'string' ? reason : null;
+};
+
 /**
  * Pairs this device with a code from the backoffice (RF-A06): it receives its device token and
  * its location, downloads the configuration and asks the browser to keep the data (§8). A code
  * of a kitchen display entered in the POS (or the other way round) is not lost: the pairing is
- * handed to the right app, which opens (DEC-030).
+ * handed to the right app, which opens (DEC-030). A code for a waiter's phone also takes the
+ * waiter's PIN: the phone becomes theirs and opens unlocked (DEC-036).
  */
-export async function pairDevice(code: string): Promise<void> {
+export async function pairDevice(code: string, pin?: string): Promise<void> {
   const paired = await callNode<{
     deviceToken: string;
-    terminal: { id: string; name: string; type: string; orderNumberPrefix: string };
+    terminal: {
+      id: string;
+      name: string;
+      type: string;
+      orderNumberPrefix: string;
+      userId: string | null;
+    };
     location: { id: string };
     organizationId: string;
-  }>(CLOUD, '/terminals/pair', { method: 'POST', body: { code } });
+    user?: { id: string; displayName: string; uiLanguage: string; permissions: Permission[] };
+  }>(CLOUD, '/terminals/pair', { method: 'POST', body: pin ? { code, pin } : { code } }).catch(
+    (cause: unknown) => {
+      throw phonePairingRefusal(cause) === 'pin_required'
+        ? new PinRequiredError('This code pairs a waiter phone')
+        : cause;
+    },
+  );
   const device: PairedDevice = {
     terminalId: paired.terminal.id,
     terminalName: paired.terminal.name,
     terminalType: paired.terminal.type,
+    ownerUserId: paired.terminal.userId,
+    ownerName: paired.user?.displayName ?? null,
     deviceToken: paired.deviceToken,
     organizationId: paired.organizationId,
     locationId: paired.location.id,
@@ -109,4 +147,16 @@ export async function pairDevice(code: string): Promise<void> {
       : false;
   await setMeta('storagePersisted', persisted);
   startSync();
+  // The waiter just proved their PIN to the server: their phone opens without asking again.
+  if (paired.user) {
+    usePos.setState({
+      user: {
+        id: paired.user.id,
+        displayName: paired.user.displayName,
+        uiLanguage: await preferredLanguage(paired.user.id, paired.user.uiLanguage),
+        permissions: new Set(paired.user.permissions),
+      },
+    });
+    await dispatch(await makeOperation('terminal.unlocked', null, {}));
+  }
 }

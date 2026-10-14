@@ -21,7 +21,15 @@
       "invalidCode": "The code is wrong or has expired.",
       "failed": "Pairing failed. Check the connection and try again.",
       "hubCode": "This code belongs to the location hub. It is entered on the hub itself, not here.",
-      "pendingElsewhere": "This device still has {count, plural, one {# operation} other {# operations}} of its previous location that are not in the cloud yet. Pair it with that location again so nothing is lost."
+      "pendingElsewhere": "This device still has {count, plural, one {# operation} other {# operations}} of its previous location that are not in the cloud yet. Pair it with that location again so nothing is lost.",
+      "pinTitle": "Enter your service PIN",
+      "pinDescription": "This phone will be yours until you sign out.",
+      "pinEntered": "{count, plural, one {# digit entered} other {# digits entered}}",
+      "wrongPin": "Wrong PIN. {attemptsLeft, plural, one {# attempt} other {# attempts}} left with this code.",
+      "codeUsedUp": "Too many wrong PINs with this code. Get a new code at the cashier.",
+      "notWaiter": "Only service staff pair their own phone.",
+      "phoneDeactivated": "Your phone was deactivated in the backoffice. Please talk to the manager.",
+      "otherCode": "Use another code"
     },
     "pin": {
       "title": "Enter PIN",
@@ -33,7 +41,9 @@
       "invalid": "The PIN has 4 to 6 digits.",
       "noCredentials": "This device has no access data yet. Connect it to the internet once.",
       "notAllowedKitchen": "{name} has no kitchen permission. Unlock the kitchen display with the PIN of someone from the kitchen.",
-      "failed": "That did not work. Enter the PIN again or reload the page."
+      "failed": "That did not work. Enter the PIN again or reload the page.",
+      "notOwner": "This phone belongs to {name}. It opens only with their PIN.",
+      "phoneOf": "{name}’s phone"
     },
     "approval": {
       "title": "Manager approval",
@@ -49,8 +59,6 @@
       "bar": "Bar",
       "takeaway": "Takeaway",
       "lock": "Lock",
-      "updateAvailable": "A new version of the POS is ready.",
-      "updateNow": "Update now",
       "drawer": "Drawer",
       "drawerOpened": "The drawer opens.",
       "drawerFailed": "The drawer could not be opened.",
@@ -77,6 +85,28 @@
     "update": {
       "available": "A new version is ready.",
       "now": "Update now"
+    },
+    "phone": {
+      "pair": "Pair a service phone",
+      "title": "Pair a service phone",
+      "instruction": "The server scans the QR code with their own phone and enters their PIN. While it is valid, it works for several phones.",
+      "loading": "Creating the code…",
+      "failed": "The code could not be created: this needs an internet connection.",
+      "expired": "The code has expired.",
+      "newCode": "New code",
+      "qrLabel": "QR code to pair a phone",
+      "remaining": "Valid {minutes}:{seconds}",
+      "close": "Close",
+      "signOut": "Sign out",
+      "signOutTitle": "Sign out?",
+      "signOutDescription": "Ends your shift on this phone: it is unpaired and its data is erased. To pair it again, scan the code at the cashier.",
+      "signOutConfirm": "Sign out",
+      "cancel": "Cancel",
+      "signOutPending": "{count, plural, one {# operation has} other {# operations have}} not reached the cloud yet. Connect to the restaurant Wi-Fi and try again.",
+      "signOutFailed": "Signing out did not work. Check the connection and try again."
+    },
+    "language": {
+      "label": "Change language"
     }
   }
 }

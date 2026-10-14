@@ -3,6 +3,7 @@
 import { Button } from '@pos/ui/button';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { isPhone } from '../app';
 import { unlock } from '../pin';
 import { usePos } from '../store';
 import { NumPad } from './num-pad';
@@ -14,7 +15,11 @@ const MAX_PIN = 6;
 export function PinScreen() {
   const t = useTranslations('pos.pin');
   const location = usePos((state) => state.bootstrap?.location.name);
-  const terminal = usePos((state) => state.device?.terminalName);
+  const device = usePos((state) => state.device);
+  // A waiter's own phone says whose it is: it keeps no other waiter's PIN (DEC-036).
+  const terminal = isPhone(device)
+    ? t('phoneOf', { name: device?.ownerName ?? device?.terminalName ?? '' })
+    : device?.terminalName;
   const [pin, setPin] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -35,6 +40,7 @@ export function PinScreen() {
     else if (result.status === 'no_credentials') setMessage(t('noCredentials'));
     else if (result.status === 'not_allowed')
       setMessage(t('notAllowedKitchen', { name: result.displayName }));
+    else if (result.status === 'not_owner') setMessage(t('notOwner', { name: result.ownerName }));
     else if (result.status === 'invalid') setMessage(t('invalid'));
   }
 

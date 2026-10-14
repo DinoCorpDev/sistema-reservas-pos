@@ -210,7 +210,8 @@
       "tax_rate": "Steuersatz",
       "tax_rule": "Steuerregel",
       "terminal": "Gerät",
-      "user": "Person"
+      "user": "Person",
+      "phone_pairing_code": "Code für Service-Telefone"
     }
   },
   "auditActions": {
@@ -272,7 +273,12 @@
       "pairing_code_issued": "Kopplungscode erstellt",
       "paired": "Gerät gekoppelt",
       "unlocked": "Gerät mit PIN entsperrt",
-      "pin_failed": "Falsche PIN eingegeben"
+      "pin_failed": "Falsche PIN eingegeben",
+      "unpaired": "Gerät entkoppelt",
+      "phone_code_issued": "Code für Service-Telefone erstellt",
+      "phone_paired": "Service-Telefon gekoppelt",
+      "phone_pairing_failed": "Service-Telefon nicht gekoppelt (falscher PIN)",
+      "phone_logged_out": "Vom Service-Telefon abgemeldet"
     },
     "approval": {
       "granted": "Freigabe erteilt"

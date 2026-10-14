@@ -1,7 +1,7 @@
 'use client';
 
 import type { people } from '@pos/api';
-import { TERMINAL_TYPES } from '@pos/core';
+import { CREATABLE_TERMINAL_TYPES } from '@pos/core';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@pos/ui/card';
@@ -62,7 +62,10 @@ export function TerminalsManager({
     async (terminal: { id: string; name: string }): Promise<ActionResult<Pairing>> => {
       const result = await actions.issuePairingCode(terminal.id);
       if (!result.ok) return result;
-      return { ok: true, data: { ...result.data, terminalId: terminal.id, name: terminal.name } };
+      return {
+        ok: true,
+        data: { ...result.data, kind: 'device', terminalId: terminal.id, name: terminal.name },
+      };
     },
     { successMessage: false, onSuccess: setPairing },
   );
@@ -77,7 +80,10 @@ export function TerminalsManager({
       if (!activated.ok) return activated;
       const result = await actions.issuePairingCode(terminal.id);
       if (!result.ok) return result;
-      return { ok: true, data: { ...result.data, terminalId: terminal.id, name: terminal.name } };
+      return {
+        ok: true,
+        data: { ...result.data, kind: 'device', terminalId: terminal.id, name: terminal.name },
+      };
     },
     { successMessage: t('activated'), onSuccess: setPairing },
   );
@@ -255,7 +261,10 @@ export function TerminalsManager({
       <PairingDialog
         pairing={pairing}
         renewing={pair.pending}
-        onRenew={() => pairing && void pair.run({ id: pairing.terminalId, name: pairing.name })}
+        onRenew={() =>
+          pairing?.kind === 'device' &&
+          void pair.run({ id: pairing.terminalId, name: pairing.name })
+        }
         onClose={() => {
           setPairing(null);
           // The device may have paired meanwhile.
@@ -327,7 +336,7 @@ function TerminalForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {TERMINAL_TYPES.map((type) => (
+              {CREATABLE_TERMINAL_TYPES.map((type) => (
                 <SelectItem key={type} value={type}>
                   {t(`types.${type}`)}
                 </SelectItem>

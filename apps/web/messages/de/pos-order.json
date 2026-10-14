@@ -135,7 +135,11 @@
       "title": "Speisekarte",
       "categories": "Kategorien",
       "empty": "Für diesen Kanal sind keine Produkte verfügbar.",
-      "options": "Optionen"
+      "options": "Optionen",
+      "search": "Produkt suchen",
+      "searchPlaceholder": "Produkt suchen…",
+      "closeSearch": "Suche schliessen",
+      "noMatch": "Kein Produkt gefunden."
     },
     "product": {
       "variant": "Variante",

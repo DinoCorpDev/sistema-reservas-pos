@@ -107,6 +107,11 @@ const TerminalSchema = z
       .openapi({ description: 'Expiry of the pending pairing code' }),
     isActive: z.boolean(),
     deactivatedAt: z.string().nullable(),
+    userId: z
+      .uuid()
+      .nullable()
+      .openapi({ description: 'The waiter who owns this phone (type phone, DEC-036)' }),
+    userName: z.string().nullable().openapi({ description: 'Name of that waiter, in lists' }),
   })
   .openapi('Terminal');
 
@@ -129,6 +134,15 @@ const PairedTerminalSchema = z
       kitchenLanguage: z.string(),
     }),
     organizationId: z.uuid(),
+    user: z
+      .object({
+        id: z.uuid(),
+        displayName: z.string(),
+        uiLanguage: z.string().openapi({ enum: [...UI_LANGUAGES] }),
+        permissions: z.array(z.string().openapi({ enum: [...PERMISSIONS] })),
+      })
+      .optional()
+      .openapi({ description: 'For a waiter phone: its owner, already unlocked (DEC-036)' }),
   })
   .openapi('PairedTerminal');
 
@@ -434,7 +448,9 @@ function registerTerminalRoutes(app: ApiApp) {
       summary: 'Pair a device with the code from the backoffice',
       description:
         'Anonymous: the one-time code is the credential. Returns the device token once and the location ' +
-        'the terminal belongs to. 401 for a wrong or expired code.',
+        'the terminal belongs to. 401 for a wrong or expired code. A code for a waiter phone (DEC-036) ' +
+        'also needs the waiter PIN: 400 with `details.reason = pin_required` without it, 401 ' +
+        '`wrong_pin` (5 wrong PINs kill the code), 403 `not_waiter` or `phone_deactivated`.',
       request: { body: jsonBody(pairTerminalSchema) },
       responses: { 200: jsonResponse(PairedTerminalSchema, 'Paired terminal'), ...ERROR_RESPONSES },
     }),
@@ -527,6 +543,43 @@ function registerTerminalRoutes(app: ApiApp) {
 
   app.openapi(
     createRoute({
+      method: 'post',
+      path: '/terminals/phone-pairing-code',
+      tags,
+      security: [...DEVICE, ...security],
+      summary: 'Issue a code for waiter phones (DEC-036)',
+      description:
+        'From the cashier POS (X-Terminal-Token of a `pos` terminal) or the backoffice ' +
+        '(`location.manage`). Valid 5 minutes for any number of phones; each phone also needs the ' +
+        "waiter's PIN.",
+      responses: {
+        201: jsonResponse(PairingCodeSchema, 'Phone pairing code'),
+        ...ERROR_RESPONSES,
+      },
+    }),
+    async (c) => c.json(await service.issuePhonePairingCode({ db: c.get('db') }, actorOf(c)), 201),
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/terminals/logout',
+      tags,
+      security: DEVICE,
+      summary: 'Sign out of a waiter phone: it unpairs itself (DEC-036)',
+      description:
+        'Only a `phone` terminal. Its device token stops working at once; the terminal stays active ' +
+        'for the next pairing.',
+      responses: { 204: NoContent, ...ERROR_RESPONSES },
+    }),
+    async (c) => {
+      await service.logoutPhone({ db: c.get('db') }, actorOf(c));
+      return c.body(null, 204);
+    },
+  );
+
+  app.openapi(
+    createRoute({
       method: 'get',
       path: '/terminals',
       tags,
@@ -595,6 +648,24 @@ function registerTerminalRoutes(app: ApiApp) {
       c.json(
         await service.issuePairingCode({ db: c.get('db') }, actorOf(c), c.req.valid('param').id),
         201,
+      ),
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/terminals/{id}/unpair',
+      tags,
+      security,
+      summary: 'Unpair a device without deactivating it (DEC-036)',
+      description: 'Its device token stops working at once; it can be paired again.',
+      request: { params: UuidParam },
+      responses: { 200: jsonResponse(TerminalSchema, 'Unpaired terminal'), ...ERROR_RESPONSES },
+    }),
+    async (c) =>
+      c.json(
+        await service.unpairTerminal({ db: c.get('db') }, actorOf(c), c.req.valid('param').id),
+        200,
       ),
   );
 }

@@ -29,6 +29,7 @@ import {
 import { ratesFor, translatedName } from './catalog';
 import { correctedNow } from '@/device/clock';
 import { dispatch } from '@/device/engine';
+import { CLOUD, callNode } from '@/device/http';
 import { currentBusinessDate, nextOrderNumber, nextReceiptNumber } from './numbers';
 import { makeOperation } from '@/device/operations';
 import { identify } from '@/device/pin';
@@ -551,6 +552,24 @@ export async function openDrawer(
 ): Promise<void> {
   await record('drawer.open', null, { reason }, { approval });
 }
+
+// ── Waiters' own phones (DEC-036) ───────────────────────────────────────────
+
+/** A code for waiters' phones, shown as a QR on this cashier POS; needs the cloud. */
+export async function issuePhoneCode(): Promise<{ code: string; expiresAt: string }> {
+  const device = getPos().device;
+  if (!device) throw new Error('This device is not paired');
+  return callNode(CLOUD, '/terminals/phone-pairing-code', {
+    method: 'POST',
+    deviceToken: device.deviceToken,
+  });
+}
+
+/** What a waiter's phone opens to pair with this code: the POS, straight at the PIN. */
+export const phonePairingUrl = (code: string): string =>
+  `${window.location.origin}/pos?phone=${encodeURIComponent(code)}`;
+
+export { signOutPhone, UnsentOperationsError } from '@/device/phone';
 
 /** True when nothing has been paid yet: transfer, merge and split are allowed (DEC-025). */
 export const hasPayments = (orderId: string) => paymentsOf(getPos().fold, orderId).length > 0;

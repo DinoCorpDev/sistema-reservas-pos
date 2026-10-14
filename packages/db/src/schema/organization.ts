@@ -186,11 +186,40 @@ export const terminals = mysqlTable(
     pairedAt: utcDatetime('paired_at'),
     isActive: boolean('is_active').notNull().default(true),
     deactivatedAt: utcDatetime('deactivated_at'),
+    /**
+     * The waiter whose own phone this is (type `phone`, DEC-036): one row per waiter and location,
+     * reused at every pairing. No FK: `users` imports this module.
+     */
+    userId: uuid('user_id'),
     ...timestamps(),
   },
   (t) => [
     uniqueIndex('uq_terminals_location_prefix').on(t.locationId, t.orderNumberPrefix),
     uniqueIndex('uq_terminals_pairing_code').on(t.pairingCodeHash),
     uniqueIndex('uq_terminals_device_token').on(t.deviceTokenHash),
+    uniqueIndex('uq_terminals_location_user').on(t.locationId, t.userId),
   ],
+);
+
+/**
+ * Code to pair a waiter's own phone (DEC-036), shown as a QR on the cashier POS or in the
+ * backoffice. Several phones may use it while it is valid (5 minutes); each one also needs the
+ * waiter's PIN, and too many wrong PINs kill the code. Out of the configuration version.
+ */
+export const phonePairingCodes = mysqlTable(
+  'phone_pairing_codes',
+  {
+    id: primaryId(),
+    organizationId: organizationId().references(() => organizations.id),
+    locationId: locationId().references(() => locations.id),
+    /** SHA-256 of the normalized code. */
+    codeHash: char('code_hash', { length: 64 }).notNull(),
+    expiresAt: utcDatetime('expires_at').notNull(),
+    /** The cashier POS that showed it, or the backoffice user who asked for it. */
+    issuedByTerminalId: uuid('issued_by_terminal_id').references(() => terminals.id),
+    issuedByUserId: uuid('issued_by_user_id'),
+    failedAttempts: smallint('failed_attempts').notNull().default(0),
+    ...timestamps(),
+  },
+  (t) => [uniqueIndex('uq_phone_pairing_codes_code').on(t.codeHash)],
 );

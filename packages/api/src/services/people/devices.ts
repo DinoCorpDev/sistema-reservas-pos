@@ -24,6 +24,7 @@ import type { z } from 'zod';
 import { type Actor, assertPermission, requireLocationId } from '../../actor';
 import { ApiError, isDuplicateKey, notFound } from '../../errors';
 import { changedFields, definedOnly, iso, type ServiceDeps } from '../shared';
+import { findPhoneCode, pairPhone } from './phones';
 
 // ── Printers (RF-F17) ───────────────────────────────────────────────────────
 
@@ -313,7 +314,8 @@ export async function deleteKitchenStation(
 
 export type TerminalRow = typeof s.terminals.$inferSelect;
 
-export const toTerminalDto = (row: TerminalRow) => ({
+/** `userName`: the waiter who owns a phone (DEC-036), when the list joins it. */
+export const toTerminalDto = (row: TerminalRow, userName: string | null = null) => ({
   id: row.id,
   locationId: row.locationId,
   name: row.name,
@@ -328,6 +330,8 @@ export const toTerminalDto = (row: TerminalRow) => ({
   pairingExpiresAt: iso(row.pairingCodeHash ? row.pairingExpiresAt : null),
   isActive: row.isActive,
   deactivatedAt: iso(row.deactivatedAt),
+  userId: row.userId,
+  userName,
 });
 export type TerminalDto = ReturnType<typeof toTerminalDto>;
 
@@ -364,11 +368,15 @@ function prefixTaken(error: unknown): never {
 export async function listTerminals(deps: ServiceDeps, actor: Actor): Promise<TerminalDto[]> {
   requireLocationId(actor);
   const rows = await deps.db
-    .select()
+    .select({ terminal: s.terminals, userName: s.users.displayName })
     .from(s.terminals)
+    .leftJoin(
+      s.users,
+      and(eq(s.users.id, s.terminals.userId), eq(s.users.organizationId, actor.organizationId)),
+    )
     .where(inLocation(s.terminals, actor, notDeleted(s.terminals)))
     .orderBy(asc(s.terminals.name));
-  return rows.map(toTerminalDto);
+  return rows.map((row) => toTerminalDto(row.terminal, row.userName));
 }
 
 export async function createTerminal(
@@ -401,6 +409,9 @@ export async function updateTerminal(
 ): Promise<TerminalDto> {
   assertPermission(actor, 'location.manage');
   const current = await loadTerminal(deps, actor, id);
+  if (current.type === 'phone' && input.type !== undefined) {
+    throw new ApiError('CONFLICT', 'A waiter phone stays a phone (DEC-036)', { field: 'type' });
+  }
   await assertTerminalRefs(deps, actor, input);
   const patch: Partial<TerminalRow> = definedOnly(input);
   if (input.isActive === false && current.isActive) {
@@ -439,6 +450,12 @@ export async function issuePairingCode(
   const terminal = await loadTerminal(deps, actor, id);
   if (!terminal.isActive)
     throw new ApiError('CONFLICT', 'Reactivate the terminal before pairing it');
+  if (terminal.type === 'phone') {
+    throw new ApiError(
+      'CONFLICT',
+      'A waiter phone pairs with a phone code and the waiter PIN (DEC-036)',
+    );
+  }
   const code = pairingCode();
   const expiresAt = new Date(Date.now() + PAIRING_CODE_TTL_MINUTES * 60_000);
   await runCommand(deps.db, { ...actor, terminalId: id }, async (tx, recorder) => {
@@ -456,12 +473,42 @@ export async function issuePairingCode(
   return { code, expiresAt: expiresAt.toISOString() };
 }
 
-const unknownCode = () => new ApiError('UNAUTHENTICATED', 'The pairing code is invalid or expired');
+/**
+ * "Unpair" in the backoffice: the device token stops working at once, but the terminal stays
+ * active, ready for a new pairing (DEC-036: a waiter who forgot to sign out of their phone).
+ */
+export async function unpairTerminal(
+  deps: ServiceDeps,
+  actor: Actor,
+  id: string,
+): Promise<TerminalDto> {
+  assertPermission(actor, 'location.manage');
+  const current = await loadTerminal(deps, actor, id);
+  if (current.deviceTokenHash !== null) {
+    await runCommand(deps.db, { ...actor, terminalId: id }, async (tx, recorder) => {
+      await tx
+        .update(s.terminals)
+        .set({ deviceTokenHash: null })
+        .where(inLocation(s.terminals, actor, eq(s.terminals.id, id)));
+      recorder.audit({
+        action: 'terminal.unpaired',
+        entityType: 'terminal',
+        entityId: id,
+        after: { userId: current.userId },
+      });
+    });
+  }
+  return toTerminalDto(await loadTerminal(deps, actor, id));
+}
+
+export const unknownCode = () =>
+  new ApiError('UNAUTHENTICATED', 'The pairing code is invalid or expired');
 
 /**
  * Pairs a device with the code from the backoffice (anonymous call: the code is the credential).
  * Returns the device token ONCE; the terminal sends it as `X-Terminal-Token` from now on and
- * remembers its location (RF-A06). Pairing again replaces the previous device.
+ * remembers its location (RF-A06). Pairing again replaces the previous device. A code for a
+ * waiter's phone also needs the waiter's PIN (DEC-036, `pairPhone`).
  */
 export async function pairTerminal(
   deps: ServiceDeps,
@@ -473,12 +520,12 @@ export async function pairTerminal(
     .select()
     .from(s.terminals)
     .where(and(eq(s.terminals.pairingCodeHash, codeHash), notDeleted(s.terminals)));
-  if (
-    !terminal ||
-    !terminal.isActive ||
-    !terminal.pairingExpiresAt ||
-    terminal.pairingExpiresAt <= new Date()
-  ) {
+  if (!terminal) {
+    const phoneCode = await findPhoneCode(deps, codeHash);
+    if (phoneCode) return pairPhone(deps, phoneCode, input, requestId);
+    throw unknownCode();
+  }
+  if (!terminal.isActive || !terminal.pairingExpiresAt || terminal.pairingExpiresAt <= new Date()) {
     throw unknownCode();
   }
   const tenant = { organizationId: terminal.organizationId, locationId: terminal.locationId };
@@ -529,16 +576,23 @@ export async function pairTerminal(
     .select()
     .from(s.terminals)
     .where(inLocation(s.terminals, tenant, eq(s.terminals.id, terminal.id)));
-  return {
-    deviceToken,
-    terminal: toTerminalDto(paired!),
-    location: {
-      id: location.id,
-      name: location.name,
-      timezone: location.timezone,
-      defaultLanguage: location.defaultLanguage,
-      kitchenLanguage: location.kitchenLanguage,
-    },
-    organizationId: terminal.organizationId,
-  };
+  return toPairedDto(deviceToken, paired!, location);
 }
+
+/** What a freshly paired device receives, once: its token, its terminal and its location. */
+export const toPairedDto = (
+  deviceToken: string,
+  terminal: TerminalRow,
+  location: typeof s.locations.$inferSelect,
+) => ({
+  deviceToken,
+  terminal: toTerminalDto(terminal),
+  location: {
+    id: location.id,
+    name: location.name,
+    timezone: location.timezone,
+    defaultLanguage: location.defaultLanguage,
+    kitchenLanguage: location.kitchenLanguage,
+  },
+  organizationId: terminal.organizationId,
+});

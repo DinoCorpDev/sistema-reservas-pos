@@ -8,6 +8,7 @@ import { Archive, Beer, LayoutGrid, ListOrdered, Lock, ShoppingBag } from 'lucid
 import { useTranslations } from 'next-intl';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
+import { LanguageMenu } from '@/device/ui/language-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import { hasCashDrawer, hubReceiptPrinter, openDrawer } from '../actions';
 import { requestApproval, usePosUi } from '../ui-store';
@@ -19,6 +20,7 @@ import { useFoldMemo } from './order/hooks';
 import { OrderView } from './order-view';
 import { OrdersView } from './orders-view';
 import { PaymentView } from './payment-view';
+import { PhonePairingButton, SignOutButton } from './phone-access';
 import { ReceiptView } from './receipt-view';
 import { SendConfirmDialog } from './send-confirm-dialog';
 import { UnsentDialog } from './unsent-dialog';
@@ -30,6 +32,8 @@ export function PosShell() {
   const navigate = usePosUi((state) => state.navigate);
   const user = usePos((state) => state.user);
   const location = usePos((state) => state.bootstrap?.location.name);
+  // The cashier POS pairs waiters' phones; a waiter's phone signs out of its shift (DEC-036).
+  const terminalType = usePos((state) => state.bootstrap?.terminal.type);
   // The hub's printers and the connection decide what the header offers (DEC-031).
   usePos((state) => state.printers);
   usePos((state) => state.sync.level);
@@ -53,7 +57,16 @@ export function PosShell() {
     }
   }
 
-  const tab = (active: boolean) => cn('relative gap-2', active && 'bg-accent');
+  // On a phone held upright (DEC-036) the places are a tab bar at the bottom, in reach of the
+  // thumb, and hide inside an order, which has its own action bar there. From md up they sit in
+  // the header, as on the tablets.
+  const inOrder = view.name === 'order' || view.name === 'payment' || view.name === 'receipt';
+  const tab = (active: boolean) =>
+    cn(
+      'relative gap-2',
+      'max-md:h-16 max-md:flex-col max-md:gap-0.5 max-md:rounded-none max-md:px-1 max-md:text-xs',
+      active && 'bg-accent max-md:bg-transparent max-md:text-primary',
+    );
   const badge = (group: ServiceGroup) => (
     <ReadyBadge
       count={ready[group]}
@@ -65,9 +78,16 @@ export function PosShell() {
     view.name === 'counter' && view.channel === channel;
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="flex flex-wrap items-center gap-2 border-b bg-card px-3 py-2">
-        <span className="mr-2 font-semibold">{location}</span>
-        <nav className="flex flex-wrap gap-1" aria-label={t('navigation')}>
+      <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 max-md:min-h-14 md:static md:flex-wrap">
+        <span className="mr-2 hidden font-semibold md:inline">{location}</span>
+        <nav
+          className={cn(
+            'flex flex-wrap gap-1',
+            'max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:grid max-md:grid-cols-4 max-md:gap-0 max-md:border-t max-md:bg-card max-md:pb-[env(safe-area-inset-bottom)] max-md:shadow-[0_-1px_8px_rgb(0_0_0/0.06)]',
+            inOrder && 'max-md:hidden',
+          )}
+          aria-label={t('navigation')}
+        >
           <Button
             variant="ghost"
             className={tab(view.name === 'floor')}
@@ -100,19 +120,22 @@ export function PosShell() {
             {badge('takeaway')}
           </Button>
         </nav>
-        <div className="ml-auto flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:ml-auto md:flex-none md:gap-3">
           {drawer && (
             <Button variant="outline" className="gap-2" onClick={() => void drawerOpen()}>
-              <Archive /> {t('drawer')}
+              <Archive /> <span className="max-md:sr-only">{t('drawer')}</span>
             </Button>
           )}
-          <StatusIndicator />
-          <span className="text-sm font-medium" data-testid="pos-user">
+          {terminalType === 'pos' && <PhonePairingButton />}
+          <StatusIndicator className="max-md:mr-auto" />
+          <span className="truncate text-sm font-medium" data-testid="pos-user">
             {user?.displayName}
           </span>
+          <LanguageMenu />
           <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
             <Lock />
           </Button>
+          {terminalType === 'phone' && <SignOutButton />}
         </div>
       </header>
       {printer?.health && !printer.health.ok && (
@@ -120,7 +143,13 @@ export function PosShell() {
           {t('printerDown', { printer: printer.name, error: printer.health.error ?? '' })}
         </div>
       )}
-      <main className="flex min-h-0 flex-1 flex-col">
+      <main
+        className={cn(
+          'flex min-h-0 flex-1 flex-col',
+          // Room for the bottom tab bar on a phone.
+          !inOrder && 'max-md:pb-[calc(4rem+env(safe-area-inset-bottom))]',
+        )}
+      >
         {view.name === 'floor' && <FloorView />}
         {view.name === 'orders' && <OrdersView />}
         {view.name === 'counter' && <CounterView key={view.channel} channel={view.channel} />}
@@ -151,7 +180,7 @@ function ReadyBadge({ count, label, testId }: { count: number; label: string; te
     <span
       data-testid={testId}
       title={label}
-      className="absolute -top-1.5 -right-1.5 flex h-6 min-w-6 items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white tabular-nums shadow-sm ring-2 ring-card"
+      className="absolute -top-1.5 -right-1.5 flex h-6 min-w-6 max-md:top-1 max-md:right-[calc(50%-1.75rem)] items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-bold text-white tabular-nums shadow-sm ring-2 ring-card"
     >
       <span aria-hidden>{count}</span>
       <span className="sr-only">{label}</span>

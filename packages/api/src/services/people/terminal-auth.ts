@@ -212,6 +212,12 @@ export async function unlockTerminal(
     input.pin,
     (candidate) => ({ ...tenant, userId: candidate?.id ?? null }),
     async (tx, recorder, { user, permissions }) => {
+      // A waiter's own phone opens only with its owner's PIN (DEC-036).
+      if (terminal.type === 'phone' && user.id !== terminal.userId) {
+        throw new ApiError('FORBIDDEN', 'This phone belongs to another waiter', {
+          reason: 'not_owner',
+        });
+      }
       const now = new Date();
       await tx
         .update(s.users)
@@ -387,7 +393,8 @@ export async function locationUserPermissions(
  * The deliberate cache that lets a paired terminal unlock without network: the organization's
  * PIN key and, for every active user of the terminal's location with a PIN, the argon2 hash, a
  * 4-bit bucket of the PIN lookup and the permissions at that location. Only for a valid device
- * token (DEC-015, DEC-023).
+ * token (DEC-015, DEC-023). A waiter's own phone gets only its owner and the people who approve
+ * with their PIN (RN-15): the other PINs never leave on someone's phone (DEC-036).
  */
 export async function getOfflineCredentials(
   deps: ServiceDeps,
@@ -425,10 +432,15 @@ export async function getOfflineCredentials(
     users.map((user) => user.id),
   );
 
+  const onThisDevice = (userId: string) =>
+    terminal.type !== 'phone' ||
+    userId === terminal.userId ||
+    byUser.get(userId)!.has('approval.grant');
+
   return {
     pinKey,
     users: users
-      .filter((user) => byUser.has(user.id))
+      .filter((user) => byUser.has(user.id) && onThisDevice(user.id))
       .map((user) => ({
         id: user.id,
         displayName: user.displayName,

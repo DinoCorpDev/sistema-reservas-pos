@@ -135,7 +135,11 @@
       "title": "Menu",
       "categories": "Categories",
       "empty": "No products are available for this channel.",
-      "options": "Options"
+      "options": "Options",
+      "search": "Search products",
+      "searchPlaceholder": "Search products…",
+      "closeSearch": "Close search",
+      "noMatch": "No product found."
     },
     "product": {
       "variant": "Variant",

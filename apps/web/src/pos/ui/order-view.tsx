@@ -54,6 +54,12 @@ function OrderScreen({ orderId }: { orderId: string }) {
   const { order, items } = data;
   const editable = order.status === 'open';
   const validCount = items.filter((item) => item.prepStatus !== 'voided').length;
+  // How many of each product the order has: the waiter sees every tap land on the menu itself.
+  const counts = new Map<string, number>();
+  for (const item of items) {
+    if (item.prepStatus === 'voided') continue;
+    counts.set(item.productId, (counts.get(item.productId) ?? 0) + item.quantity);
+  }
   const pendingCount = items.filter((item) => item.prepStatus === 'pending').length;
   const mergedInto = order.mergedIntoOrderId
     ? getPos().fold.orders.get(order.mergedIntoOrderId)
@@ -103,7 +109,7 @@ function OrderScreen({ orderId }: { orderId: string }) {
               aria-selected={pane === value}
               onClick={() => setPane(value)}
               className={cn(
-                'min-h-11 rounded-md px-3 text-base font-medium',
+                'min-h-11 rounded-md px-3 text-sm leading-tight font-medium sm:text-base',
                 pane === value ? 'bg-background shadow-sm' : 'text-muted-foreground',
               )}
             >
@@ -117,8 +123,9 @@ function OrderScreen({ orderId }: { orderId: string }) {
 
       <div
         className={cn(
-          // One bounded row: the menu and the ticket scroll on their own.
-          'grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)]',
+          // One bounded row and column: the menu and the ticket scroll on their own, and a long
+          // row of categories never widens the page on a phone.
+          'grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)]',
           editable && 'lg:grid-cols-[minmax(0,1fr)_minmax(22rem,28rem)]',
         )}
       >
@@ -126,6 +133,7 @@ function OrderScreen({ orderId }: { orderId: string }) {
           <ProductPanel
             orderId={order.id}
             channel={order.channel}
+            counts={counts}
             className={cn(pane !== 'menu' && 'hidden', 'lg:flex')}
           />
         )}

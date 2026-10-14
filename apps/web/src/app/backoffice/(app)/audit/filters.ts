@@ -36,6 +36,7 @@ export const AUDIT_ENTITY_TYPES = [
   'user',
   'role',
   'terminal',
+  'phone_pairing_code',
   'approval',
   'api_key',
   'support_grant',

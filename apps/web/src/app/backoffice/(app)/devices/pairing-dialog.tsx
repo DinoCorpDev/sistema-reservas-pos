@@ -9,12 +9,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@pos/ui/dialog';
+import { QrCode } from '@pos/ui/qr-code';
 import { cn } from '@pos/ui/utils';
 import { RefreshCwIcon } from 'lucide-react';
 import { useNow, useTranslations } from 'next-intl';
 import { useDateTime } from '@/components/backoffice/people/use-date-time';
 
-export type Pairing = { terminalId: string; name: string; code: string; expiresAt: string };
+/**
+ * A code for one device, or (`phone`) a code for waiters' own phones, shown with its QR and
+ * valid for several phones (DEC-036).
+ */
+export type Pairing =
+  | { kind: 'device'; terminalId: string; name: string; code: string; expiresAt: string }
+  | { kind: 'phone'; code: string; expiresAt: string };
 
 /**
  * Shows a freshly issued pairing code (RF-A06) large enough to read across the counter, with a
@@ -55,6 +62,7 @@ function PairingCode({
   onClose: () => void;
 }) {
   const t = useTranslations('terminals');
+  const tp = useTranslations('phones');
   const formatDate = useDateTime();
   const now = useNow({ updateInterval: 1000 });
   const remainingMs = Math.max(0, new Date(pairing.expiresAt).getTime() - now.getTime());
@@ -62,14 +70,26 @@ function PairingCode({
   const minutes = Math.floor(remainingMs / 60_000);
   const seconds = Math.floor((remainingMs % 60_000) / 1000);
   const remaining = `${minutes}:${String(seconds).padStart(2, '0')}`;
+  const phone = pairing.kind === 'phone';
 
   return (
     <>
       <DialogHeader>
-        <DialogTitle>{t('pairingTitle', { name: pairing.name })}</DialogTitle>
-        <DialogDescription>{t('pairingInstruction')}</DialogDescription>
+        <DialogTitle>
+          {phone ? tp('codeTitle') : t('pairingTitle', { name: pairing.name })}
+        </DialogTitle>
+        <DialogDescription>
+          {phone ? tp('codeInstruction') : t('pairingInstruction')}
+        </DialogDescription>
       </DialogHeader>
       <div className="grid gap-2 rounded-xl border bg-muted/50 px-4 py-6 text-center">
+        {phone && !expired ? (
+          <QrCode
+            value={`${window.location.origin}/pos?phone=${encodeURIComponent(pairing.code)}`}
+            label={tp('qrLabel')}
+            className="mx-auto w-full max-w-56"
+          />
+        ) : null}
         <p
           className={cn(
             'font-mono text-4xl font-semibold tracking-[0.15em] break-all select-all sm:text-5xl',
@@ -89,7 +109,7 @@ function PairingCode({
           <p className="text-sm font-medium tabular-nums">{t('pairingRemaining', { remaining })}</p>
         )}
       </div>
-      <p className="text-sm text-muted-foreground">{t('pairingOnce')}</p>
+      <p className="text-sm text-muted-foreground">{phone ? tp('codeShared') : t('pairingOnce')}</p>
       <DialogFooter>
         {expired ? (
           <Button variant="outline" onClick={onRenew} disabled={renewing}>

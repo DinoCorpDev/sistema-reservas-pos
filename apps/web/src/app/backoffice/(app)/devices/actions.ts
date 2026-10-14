@@ -59,6 +59,18 @@ export async function issuePairingCode(id: string) {
   });
 }
 
+/** Unpairs a device without deactivating it, e.g. a phone whose waiter forgot to sign out. */
+export async function unpairTerminal(id: string) {
+  return runAction(async () => done(await people.unpairTerminal(deps(), await currentActor(), id)));
+}
+
+/** Code for waiters' own phones, valid 5 minutes for several phones (DEC-036). */
+export async function issuePhonePairingCode() {
+  return runAction(async () =>
+    done(await people.issuePhonePairingCode(deps(), await currentActor())),
+  );
+}
+
 // ── Kitchen stations (RF-A03, RF-C24, RF-C25) ───────────────────────────────
 
 export async function createKitchenStation(input: unknown) {

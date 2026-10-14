@@ -1,7 +1,8 @@
 import { isValidPin, type Permission } from '@pos/core';
-import { type DeviceApp, deviceApp } from './app';
+import { type DeviceApp, deviceApp, isPhone } from './app';
 import { getMeta, setMeta } from './db';
 import { dispatch } from './engine';
+import { preferredLanguage } from './language';
 import { makeOperation } from './operations';
 import { getPos, type PosUser, usePos } from './store';
 
@@ -84,7 +85,9 @@ export type PinResult =
   | { status: 'invalid' }
   | { status: 'no_credentials' }
   /** The PIN is right, but this person may not work on this kind of device. */
-  | { status: 'not_allowed'; displayName: string };
+  | { status: 'not_allowed'; displayName: string }
+  /** The PIN is right, but this is another waiter's own phone (DEC-036). */
+  | { status: 'not_owner'; ownerName: string };
 
 /**
  * What a person needs to unlock each app (RNF-10): the kitchen display is for the kitchen, so
@@ -154,9 +157,17 @@ export async function unlock(pin: string): Promise<PinResult> {
   if (required && !user.permissions.has(required)) {
     return { status: 'not_allowed', displayName: user.displayName };
   }
-  usePos.setState({ user });
+  // A waiter's own phone opens only with its owner's PIN; a manager's PIN still approves on it.
+  const { device } = getPos();
+  const owner = device?.ownerUserId ?? bootstrap?.terminal.userId ?? null;
+  if (isPhone(device) && owner && user.id !== owner) {
+    return { status: 'not_owner', ownerName: device?.ownerName ?? device?.terminalName ?? '' };
+  }
+  // The language this person chose on this device (RF-A08).
+  const opened = { ...user, uiLanguage: await preferredLanguage(user.id, user.uiLanguage) };
+  usePos.setState({ user: opened });
   await dispatch(await makeOperation('terminal.unlocked', null, {}));
-  return { status: 'ok', user };
+  return { status: 'ok', user: opened };
 }
 
 /** Locks the terminal: the next person enters their own PIN. */

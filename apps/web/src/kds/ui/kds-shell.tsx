@@ -9,6 +9,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
+import { LanguageMenu } from '@/device/ui/language-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import {
   advanceItem,
@@ -130,6 +131,7 @@ export function KdsShell() {
           <span className="text-sm font-medium" data-testid="kds-user">
             {user?.displayName}
           </span>
+          <LanguageMenu />
           <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
             <Lock />
           </Button>

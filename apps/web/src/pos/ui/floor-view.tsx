@@ -214,9 +214,10 @@ function AreaMap({
     <div
       ref={ref}
       className={cn(
-        'grid gap-3',
+        'grid gap-2 sm:gap-3',
+        // Three tables per row on a phone held upright (DEC-036), more on a tablet.
         !positioned &&
-          'auto-rows-[minmax(6rem,auto)] grid-cols-[repeat(auto-fill,minmax(7.5rem,1fr))]',
+          'auto-rows-[minmax(5.25rem,auto)] grid-cols-[repeat(auto-fill,minmax(6.25rem,1fr))] sm:auto-rows-[minmax(6rem,auto)] sm:grid-cols-[repeat(auto-fill,minmax(7.5rem,1fr))]',
       )}
       style={
         positioned
@@ -303,7 +304,8 @@ function TableTile({
         )}
       </span>
       <span id={detailsId} className="flex min-w-0 flex-col gap-0.5 text-xs font-medium">
-        <span className="truncate">
+        {/* Two lines on a narrow phone tile rather than a cut word. */}
+        <span className="line-clamp-2 leading-tight sm:truncate">
           {joinedToLabel ? t('joinedTo', { label: joinedToLabel }) : ts(state)}
         </span>
         {(guests > 0 || minutes !== null || joinedToLabel) && (

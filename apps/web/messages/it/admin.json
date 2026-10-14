@@ -210,7 +210,8 @@
       "tax_rate": "Aliquota",
       "tax_rule": "Regola fiscale",
       "terminal": "Dispositivo",
-      "user": "Persona"
+      "user": "Persona",
+      "phone_pairing_code": "Codice per telefoni di servizio"
     }
   },
   "auditActions": {
@@ -272,7 +273,12 @@
       "pairing_code_issued": "Codice di abbinamento generato",
       "paired": "Dispositivo abbinato",
       "unlocked": "Dispositivo sbloccato con PIN",
-      "pin_failed": "PIN errato inserito"
+      "pin_failed": "PIN errato inserito",
+      "unpaired": "Dispositivo disaccoppiato",
+      "phone_code_issued": "Codice per telefoni di servizio generato",
+      "phone_paired": "Telefono di servizio abbinato",
+      "phone_pairing_failed": "Telefono di servizio non abbinato (PIN errato)",
+      "phone_logged_out": "Disconnessione dal telefono di servizio"
     },
     "approval": {
       "granted": "Autorizzazione concessa"

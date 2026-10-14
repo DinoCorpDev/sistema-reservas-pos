@@ -18,7 +18,8 @@
     "types": {
       "pos": "Caisse",
       "handheld": "Terminal mobile",
-      "kds": "Écran de cuisine (KDS)"
+      "kds": "Écran de cuisine (KDS)",
+      "phone": "Téléphone de service"
     },
     "prefix": "Préfixe",
     "prefixLabel": "Préfixe des numéros de commande hors ligne",
@@ -305,5 +306,30 @@
       "customers_write": "Créer et modifier des données clients.",
       "reservations_write": "Créer et modifier des réservations."
     }
+  },
+  "phones": {
+    "title": "Téléphones de service",
+    "hint": "Le personnel de service couple son propre téléphone avec un code (ici ou à la caisse) et son PIN. À la déconnexion, il est découplé et ses données sont effacées.",
+    "issue": "Code pour téléphone de service",
+    "codeTitle": "Code pour téléphones de service",
+    "codeInstruction": "La personne de service scanne le code QR avec son téléphone (ou saisit le code), puis son PIN.",
+    "codeShared": "Tant qu’il est valable, le code sert à plusieurs téléphones. Chacun a aussi besoin du PIN de la personne de service.",
+    "qrLabel": "Code QR pour coupler un téléphone de service",
+    "waiter": "Service",
+    "pairedSince": "Couplé depuis {date}",
+    "stale": "Couplé depuis un jour précédent : la déconnexion a-t-elle été oubliée ?",
+    "empty": "Personne n’a encore couplé son téléphone. Créez un code ici, ou à la caisse avec l’icône du téléphone.",
+    "unpair": "Découpler",
+    "unpairTitle": "Découpler le téléphone de {name} ?",
+    "unpairText": "Le téléphone est découplé immédiatement. Ce qui n’a pas encore été envoyé reste sur le téléphone jusqu’à ce qu’il soit couplé de nouveau.",
+    "unpaired": "Téléphone découplé",
+    "deactivate": "Désactiver",
+    "deactivateTitle": "Désactiver le téléphone de {name} ?",
+    "deactivateText": "Cette personne ne peut plus coupler son propre téléphone jusqu’à ce que vous le réactiviez.",
+    "deactivated": "Téléphone désactivé",
+    "activate": "Activer",
+    "activateTitle": "Activer le téléphone de {name} ?",
+    "activateText": "La personne peut de nouveau coupler son téléphone avec un code et son PIN.",
+    "activated": "Téléphone activé"
   }
 }

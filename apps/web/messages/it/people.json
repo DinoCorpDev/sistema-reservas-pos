@@ -18,7 +18,8 @@
     "types": {
       "pos": "Cassa",
       "handheld": "Palmare",
-      "kds": "Schermo cucina (KDS)"
+      "kds": "Schermo cucina (KDS)",
+      "phone": "Telefono di servizio"
     },
     "prefix": "Prefisso",
     "prefixLabel": "Prefisso per i numeri d’ordine senza Internet",
@@ -305,5 +306,30 @@
       "customers_write": "Creare e modificare i dati dei clienti.",
       "reservations_write": "Creare e modificare le riservazioni."
     }
+  },
+  "phones": {
+    "title": "Telefoni di servizio",
+    "hint": "Il personale di servizio abbina il proprio telefono con un codice (qui o alla cassa) e il suo PIN. Alla disconnessione viene disaccoppiato e i suoi dati vengono cancellati.",
+    "issue": "Codice per telefono di servizio",
+    "codeTitle": "Codice per telefoni di servizio",
+    "codeInstruction": "La persona di servizio scansiona il codice QR con il proprio telefono (o inserisce il codice) e poi il suo PIN.",
+    "codeShared": "Finché è valido, il codice serve per più telefoni. Ognuno richiede anche il PIN della persona di servizio.",
+    "qrLabel": "Codice QR per abbinare un telefono di servizio",
+    "waiter": "Servizio",
+    "pairedSince": "Abbinato dal {date}",
+    "stale": "Abbinato da un giorno precedente: è stata dimenticata la disconnessione?",
+    "empty": "Nessuno ha ancora abbinato il proprio telefono. Crei un codice qui, o alla cassa con l’icona del telefono.",
+    "unpair": "Disaccoppia",
+    "unpairTitle": "Disaccoppiare il telefono di {name}?",
+    "unpairText": "Il telefono viene disaccoppiato subito. Ciò che non è ancora stato inviato resta sul telefono finché non viene abbinato di nuovo.",
+    "unpaired": "Telefono disaccoppiato",
+    "deactivate": "Disattiva",
+    "deactivateTitle": "Disattivare il telefono di {name}?",
+    "deactivateText": "Questa persona non può più abbinare il proprio telefono finché non lo riattiva.",
+    "deactivated": "Telefono disattivato",
+    "activate": "Attiva",
+    "activateTitle": "Attivare il telefono di {name}?",
+    "activateText": "La persona può di nuovo abbinare il telefono con un codice e il suo PIN.",
+    "activated": "Telefono attivato"
   }
 }
