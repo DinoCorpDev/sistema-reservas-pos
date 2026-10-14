@@ -1,3 +1,4 @@
+import { OPERATION_SCHEMA_VERSION, PERMISSIONS } from '@pos/core';
 import { type Database, schema as s, sha256Hex } from '@pos/db';
 import { sql } from 'drizzle-orm';
 import { getTableConfig, type MySqlTable } from 'drizzle-orm/mysql-core';
@@ -73,9 +74,12 @@ export async function configVersion(
   const [rows] = (await db.execute(query)) as unknown as [
     { t: string; m: Date | null; c: number }[],
   ];
-  const fingerprint = rows
-    .map((row) => `${row.t}:${row.m ? new Date(row.m).getTime() : 0}:${row.c}`)
-    .join('|');
+  // What the code knows counts too: a release that adds a permission or an operation version
+  // must make every terminal fetch its credentials and bootstrap again, even if no row changed.
+  const fingerprint = [
+    `code:${PERMISSIONS.join(',')}:${OPERATION_SCHEMA_VERSION}`,
+    ...rows.map((row) => `${row.t}:${row.m ? new Date(row.m).getTime() : 0}:${row.c}`),
+  ].join('|');
   const value = sha256Hex(fingerprint).slice(0, 16);
   memo.set(key, { value, expires: Date.now() + MEMO_MS });
   return value;
