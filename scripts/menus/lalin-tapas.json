@@ -1,0 +1,2214 @@
+{
+  "source": "https://www.lalintapas.ch/carta (Speisen, Getränke, Weine)",
+  "retrievedAt": "2026-10-13",
+  "stations": {
+    "kitchen": "Küche",
+    "bar": "Bar",
+    "dessert": "Patisserie"
+  },
+  "categories": [
+    {
+      "name": "Tapas zum Teilen",
+      "en": "Tapas to share",
+      "es": "Tapas para compartir",
+      "station": "kitchen",
+      "course": 1,
+      "products": [
+        {
+          "sku": "TAPAS-ZUM-TEILEN-TAPAS-VARIADAS",
+          "name": "Tapas Variadas",
+          "description": "Ab 2 Personen. Verschiedene kleine Tapas zum Teilen und Probieren.",
+          "en": {
+            "name": "Tapas Variadas",
+            "description": "For 2 people or more. A selection of small tapas to share and discover new flavours."
+          },
+          "priceChf": "24.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-ZUM-TEILEN-FRITURA-ANDALUZA",
+          "name": "Fritura Andaluza",
+          "description": "Ab 2 Personen. Eine Auswahl verschiedener Fisch- und Meeresfrüchtespezialitäten, auf andalusische Art goldbraun frittiert und mit Zitronen serviert.",
+          "en": {
+            "name": "Fritura Andaluza",
+            "description": "For 2 people or more. A selection of Andalusian-style battered fish and seafood — crisp, golden and served with lemon."
+          },
+          "priceChf": "26.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-ZUM-TEILEN-ENTREMES-IBERICOS",
+          "name": "Entremés Ibéricos",
+          "description": "Platte mit iberischen Aufschnitt-Spezialitäten, von Hand geschnitten.",
+          "en": {
+            "name": "Entremés Ibéricos",
+            "description": "Board of hand-carved Ibérico cold cuts."
+          },
+          "priceChf": "28.00",
+          "taxCategory": "food",
+          "variants": [
+            {
+              "name": "Klein",
+              "en": "Small",
+              "priceChf": "28.00"
+            },
+            {
+              "name": "Gross",
+              "en": "Large",
+              "priceChf": "35.00"
+            }
+          ]
+        },
+        {
+          "sku": "TAPAS-ZUM-TEILEN-BANDEJA-DE-QUESOS",
+          "name": "Bandeja de Quesos",
+          "description": "Drei verschiedene gereifte Käsesorten aus Spanien.",
+          "en": {
+            "name": "Bandeja de Quesos",
+            "description": "Three cured cheeses, classics of Spain."
+          },
+          "priceChf": "22.00",
+          "taxCategory": "food",
+          "variants": [
+            {
+              "name": "Klein",
+              "en": "Small",
+              "priceChf": "22.00"
+            },
+            {
+              "name": "Gross",
+              "en": "Large",
+              "priceChf": "29.00"
+            }
+          ]
+        },
+        {
+          "sku": "TAPAS-ZUM-TEILEN-BROTKORB",
+          "name": "Zusätzlicher Brotkorb",
+          "description": "1–3 Tapas: inkl. 1 Brotkorb · 4–6 Tapas: inkl. 2 · 7–9 Tapas: inkl. 3.",
+          "en": {
+            "name": "Extra bread basket",
+            "description": "1–3 tapas include 1 bread basket · 4–6: 2 · 7–9: 3."
+          },
+          "priceChf": "2.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Tapas",
+      "en": "Tapas",
+      "es": "Tapas",
+      "station": "kitchen",
+      "course": 1,
+      "products": [
+        {
+          "sku": "TAPAS-PAN-TUMACA",
+          "name": "Pan Tumaca",
+          "description": "Knuspriges Brot mit Tomaten, Olivenöl und Meersalz.",
+          "en": {
+            "name": "Pan Tumaca",
+            "description": "Crisp bread with tomato, olive oil and sea salt."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "food",
+          "variants": [
+            {
+              "name": "Klassisch",
+              "en": "Classic",
+              "priceChf": "12.00"
+            },
+            {
+              "name": "Mit Serrano-Schinken",
+              "en": "With Serrano ham",
+              "priceChf": "16.00"
+            }
+          ]
+        },
+        {
+          "sku": "TAPAS-PATATAS-BRAVAS",
+          "name": "Patatas bravas",
+          "description": "Knusprige Kartoffelwürfel mit würziger Brava-Sauce.",
+          "en": {
+            "name": "Patatas bravas",
+            "description": "Crispy potatoes with spicy brava sauce."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-PATATAS-FRITAS",
+          "name": "Patatas fritas",
+          "description": "Frische, goldene Pommes mit hausgemachter Sauce.",
+          "en": {
+            "name": "Patatas fritas",
+            "description": "Golden fries with our house sauce."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-TORTILLA-DE-PATATA-MINI",
+          "name": "Tortilla de patata mini",
+          "description": "Klassische spanische Kartoffel-Tortilla.",
+          "en": {
+            "name": "Tortilla de patata mini",
+            "description": "Classic Spanish potato omelette, mini size."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-CROQUETAS-DE-JAMON-IBERICO",
+          "name": "Croquetas de jamón ibérico",
+          "description": "Kroketten mit feinem Ibérico-Schinken.",
+          "en": {
+            "name": "Croquetas de jamón ibérico",
+            "description": "Croquettes with fine Ibérico ham."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-CHORIZOS-AL-VINO-TINTO",
+          "name": "Chorizos al vino tinto",
+          "description": "Würzige Chorizo-Wurst geschmort in Rotwein.",
+          "en": {
+            "name": "Chorizos al vino tinto",
+            "description": "Spicy chorizo braised in red wine."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-ALITAS-DE-POLLO-A-LA-ESPANOLA",
+          "name": "Alitas de pollo a la española",
+          "description": "Marinierte Hähnchenflügel mit mediterranen Gewürzen.",
+          "en": {
+            "name": "Alitas de pollo a la española",
+            "description": "Chicken wings marinated in Mediterranean spices."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-ALBONDIGAS-EN-SALSA-ESPANOLA",
+          "name": "Albóndigas en salsa española",
+          "description": "Spanische Fleischbällchen in Tomatensauce.",
+          "en": {
+            "name": "Albóndigas en salsa española",
+            "description": "Spanish meatballs in tomato sauce."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-PIMIENTOS-DE-PADRON",
+          "name": "Pimientos de padrón",
+          "description": "Kleine grüne Paprikaschoten — manche mild, manche scharf.",
+          "en": {
+            "name": "Pimientos de padrón",
+            "description": "Padrón peppers — some mild, some hot."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-TEMPURA-DE-VERDURA",
+          "name": "Tempura de verdura",
+          "description": "Frisches Gemüse im leichten Tempurateig.",
+          "en": {
+            "name": "Tempura de verdura",
+            "description": "Fresh vegetables in a light tempura batter."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-GAMBAS-AL-AJILLO",
+          "name": "Gambas al ajillo",
+          "description": "In Olivenöl mit Knoblauch und Chili gebratene Garnelen.",
+          "en": {
+            "name": "Gambas al ajillo",
+            "description": "Prawns sautéed in olive oil with garlic and chilli."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-GAMBAS-CON-GULAS",
+          "name": "Gambas con gulas",
+          "description": "Garnelen mit Baby-Aalen — ein traditionelles Gericht aus dem Norden Spaniens.",
+          "en": {
+            "name": "Gambas con gulas",
+            "description": "Prawns with baby eels — a traditional dish from northern Spain."
+          },
+          "priceChf": "18.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-ALMEJAS-EN-SALSA-MARINERA",
+          "name": "Almejas en salsa marinera",
+          "description": "Venusmuscheln in würziger Meeresfrüchte-Sauce.",
+          "en": {
+            "name": "Almejas en salsa marinera",
+            "description": "Clams in a spiced marinera sauce."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-MEJILLONES-EN-SALSA-MARINERA",
+          "name": "Mejillones en salsa marinera",
+          "description": "Miesmuscheln in pikanter Tomaten-Weisswein-Sauce.",
+          "en": {
+            "name": "Mejillones en salsa marinera",
+            "description": "Mussels in a spicy tomato and white-wine sauce."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-CALAMARES-A-LA-ANDALUZA",
+          "name": "Calamares a la andaluza",
+          "description": "Knusprig frittierte Tintenfischringe im andalusischen Stil.",
+          "en": {
+            "name": "Calamares a la andaluza",
+            "description": "Crispy fried squid rings, Andalusian style."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-CHIPIRONES-A-LA-PLANCHA",
+          "name": "Chipirones a la plancha",
+          "description": "Gegrillte kleine Tintenfische mit Knoblauchöl und frischer Petersilie.",
+          "en": {
+            "name": "Chipirones a la plancha",
+            "description": "Grilled baby squid with garlic oil and fresh parsley."
+          },
+          "priceChf": "18.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-SEPIA-LALIN",
+          "name": "Sepia Lalin",
+          "description": "Zart gegrillter Sepia mit hausgemachter Alioli.",
+          "en": {
+            "name": "Sepia Lalin",
+            "description": "Tender grilled cuttlefish with homemade aioli."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TAPAS-PULPO-A-LA-GALLEGA",
+          "name": "Pulpo a la gallega",
+          "description": "Galicischer Oktopus mit Paprika, Olivenöl und Meersalz.",
+          "en": {
+            "name": "Pulpo a la gallega",
+            "description": "Galician-style octopus with paprika, olive oil and sea salt."
+          },
+          "priceChf": "24.00",
+          "taxCategory": "food",
+          "variants": [
+            {
+              "name": "Klein",
+              "en": "Small",
+              "priceChf": "24.00"
+            },
+            {
+              "name": "Gross",
+              "en": "Large",
+              "priceChf": "32.00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Saucen",
+      "en": "Sauces",
+      "es": "Salsas",
+      "station": "kitchen",
+      "course": 1,
+      "products": [
+        {
+          "sku": "SAUCEN-ALI-OLI",
+          "name": "Ali-oli",
+          "description": null,
+          "en": {
+            "name": "Ali-oli",
+            "description": null
+          },
+          "priceChf": "2.50",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "SAUCEN-SALSA-TARTARA",
+          "name": "Salsa tártara",
+          "description": null,
+          "en": {
+            "name": "Salsa tártara",
+            "description": null
+          },
+          "priceChf": "2.50",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "SAUCEN-SALSA-BRAVA",
+          "name": "Salsa brava",
+          "description": null,
+          "en": {
+            "name": "Salsa brava",
+            "description": null
+          },
+          "priceChf": "2.50",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "SAUCEN-KETCHUP",
+          "name": "Ketchup",
+          "description": null,
+          "en": {
+            "name": "Ketchup",
+            "description": null
+          },
+          "priceChf": "2.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "SAUCEN-MAYONESA",
+          "name": "Mayonesa",
+          "description": null,
+          "en": {
+            "name": "Mayonesa",
+            "description": null
+          },
+          "priceChf": "2.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Paellas & Reisgerichte",
+      "en": "Paellas & rice dishes",
+      "es": "Paellas y arroces",
+      "station": "kitchen",
+      "course": 2,
+      "products": [
+        {
+          "sku": "PAELLAS-REISGERICHTE-PAELLA-DE-MARISCO",
+          "name": "Paella de Marisco",
+          "description": "Traditionelle Meeresfrüchte-Paella mit Garnelen, Muscheln und Calamarringen.",
+          "en": {
+            "name": "Paella de Marisco",
+            "description": "Traditional seafood paella with prawns, mussels and squid."
+          },
+          "priceChf": "36.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-PAELLA-VEGETARIANA",
+          "name": "Paella Vegetariana",
+          "description": "Bunte Gemüsepaella mit frischen mediterranen Zutaten.",
+          "en": {
+            "name": "Paella Vegetariana",
+            "description": "Colourful vegetable paella with fresh Mediterranean ingredients."
+          },
+          "priceChf": "34.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-ARROZ-DE-ENTRECOTE",
+          "name": "Arroz de Entrecôte",
+          "description": "Reis mit zartem Rindsentrecôte — kräftig und aromatisch.",
+          "en": {
+            "name": "Arroz de Entrecôte",
+            "description": "Rice with tender beef entrecôte — rich and aromatic."
+          },
+          "priceChf": "45.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-ARROZ-SENYORET",
+          "name": "Arroz Senyoret",
+          "description": "Reisgericht mit geschälten Meeresfrüchten — elegant und sauber zu geniessen.",
+          "en": {
+            "name": "Arroz Senyoret",
+            "description": "Rice with peeled seafood — elegant and easy to enjoy."
+          },
+          "priceChf": "35.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-PAELLA-MIXTA",
+          "name": "Paella Mixta",
+          "description": "Ab 2 Personen. Paella mit Fleisch und Meeresfrüchten — das Beste aus zwei Welten.",
+          "en": {
+            "name": "Paella Mixta",
+            "description": "For 2 people or more. Mixed meat and seafood paella — the best of both worlds."
+          },
+          "priceChf": "39.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-ARROZ-NEGRO",
+          "name": "Arroz Negro",
+          "description": "Ab 2 Personen. Schwarzer Reis mit Tintenfischtinte — intensiv und maritim.",
+          "en": {
+            "name": "Arroz Negro",
+            "description": "For 2 people or more. Black rice with squid ink — intense and briny."
+          },
+          "priceChf": "35.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-ARROZ-DE-BOGAVANTE",
+          "name": "Arroz de Bogavante",
+          "description": "Ab 2 Personen. Reis mit Hummer — luxuriös und unvergleichlich.",
+          "en": {
+            "name": "Arroz de Bogavante",
+            "description": "For 2 people or more. Lobster rice — luxurious and unmatched."
+          },
+          "priceChf": "44.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-ARROZ-CON-PATO-Y-FOIE",
+          "name": "Arroz con Pato y Foie ★",
+          "description": "Ab 2 Personen. Reisgericht mit Ente und Foie Gras — eine Gourmet-Spezialität, exklusiv aus unserer Küche.",
+          "en": {
+            "name": "Arroz con Pato y Foie ★",
+            "description": "For 2 people or more. Rice with duck and foie gras — a house speciality, full of flavour and elegance."
+          },
+          "priceChf": "46.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-FIDEUA-DE-MARISCOS",
+          "name": "Fideuà de Mariscos",
+          "description": "Ab 2 Personen. Katalanisches Nudelgericht mit Meeresfrüchten — die Paella ohne Reis.",
+          "en": {
+            "name": "Fideuà de Mariscos",
+            "description": "For 2 people or more. Catalan noodle dish with seafood — paella without the rice."
+          },
+          "priceChf": "35.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "PAELLAS-REISGERICHTE-FIDEUA-NEGRA-SENYORET",
+          "name": "Fideuà Negra | Senyoret",
+          "description": "Variante mit Tintenfischtinte und geschälten Meeresfrüchten.",
+          "en": {
+            "name": "Fideuà Negra | Senyoret",
+            "description": "Squid-ink variant with peeled seafood."
+          },
+          "priceChf": "34.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Teigwaren",
+      "en": "Pasta",
+      "es": "Pastas",
+      "station": "kitchen",
+      "course": 2,
+      "products": [
+        {
+          "sku": "TEIGWAREN-PASTA-MADRILENA",
+          "name": "Pasta Madrileña",
+          "description": "Mit pikanter Tomaten-Chorizo-Sauce und einem Hauch Paprika.",
+          "en": {
+            "name": "Pasta Madrileña",
+            "description": "Pasta in a tomato, chorizo and paprika sauce, Madrid style."
+          },
+          "priceChf": "24.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TEIGWAREN-PASTA-IBERICA",
+          "name": "Pasta Ibérica",
+          "description": "Feine Pasta mit zartem Lomo Ibérico, gebratenen roten Paprika und hauchdünnem Jamón Ibérico — ein authentisches Geschmackserlebnis der Iberischen Halbinsel.",
+          "en": {
+            "name": "Pasta Ibérica",
+            "description": "Fine pasta with tender Ibérico loin, sautéed red peppers and Ibérico ham — an authentic taste of the Iberian peninsula."
+          },
+          "priceChf": "26.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "TEIGWAREN-PASTA-A-LA-MARINERA",
+          "name": "Pasta a la Marinera",
+          "description": "Ein echter Küstenklassiker mit maritimen Aromen.",
+          "en": {
+            "name": "Pasta a la Marinera",
+            "description": "Seafood pasta with clams and prawns — the sea in every bite."
+          },
+          "priceChf": "25.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Meer",
+      "en": "From the sea",
+      "es": "Mar",
+      "station": "kitchen",
+      "course": 2,
+      "products": [
+        {
+          "sku": "MEER-CAZUELA-DE-PESCADO-Y-MARISCOS",
+          "name": "Cazuela de Pescado y Mariscos",
+          "description": "Traditioneller Fisch- und Meeresfrüchte-Eintopf mit Garnelen, Muscheln und Calamares.",
+          "en": {
+            "name": "Cazuela de Pescado y Mariscos",
+            "description": "Traditional fish and seafood stew with prawns, mussels and squid."
+          },
+          "priceChf": "42.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "MEER-LANGOSTINOS-A-LA-PLANCHA",
+          "name": "Langostinos a la Plancha",
+          "description": "Mit Meersalz und einem Hauch Olivenöl, auf den Punkt gegrillt.",
+          "en": {
+            "name": "Langostinos a la Plancha",
+            "description": "Grilled king prawns with sea salt and olive oil."
+          },
+          "priceChf": "30.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "MEER-PARRILLADA-DE-PESCADO-Y-MARISCOS",
+          "name": "Parrillada de Pescado y Mariscos",
+          "description": "Ab 2 Personen. Gegrillte Fisch- und Meeresfrüchtespezialitäten, serviert mit Gemüse und Zitrone.",
+          "en": {
+            "name": "Parrillada de Pescado y Mariscos",
+            "description": "For 2 people or more. A selection of grilled fish and seafood, served with vegetables and lemon."
+          },
+          "priceChf": "45.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "MEER-LUBINA-A-LA-VIZCAINA",
+          "name": "Lubina a la Vizcaína",
+          "description": "Zarter Wolfsbarsch, nach traditioneller baskischer Art zubereitet, serviert mit aromatischen Kartoffeln.",
+          "en": {
+            "name": "Lubina a la Vizcaína",
+            "description": "Sea bass prepared Basque style, served with aromatic potatoes."
+          },
+          "priceChf": "33.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Fleischgerichte",
+      "en": "Meat",
+      "es": "Carnes",
+      "station": "kitchen",
+      "course": 2,
+      "products": [
+        {
+          "sku": "FLEISCHGERICHTE-ENTRECOTE-280-300-G",
+          "name": "Entrecôte 280–300 g",
+          "description": "Saftiges Rindsentrecôte, auf den Punkt gegrillt, serviert mit saisonalem Gemüse und Kartoffeln.",
+          "en": {
+            "name": "Entrecôte 280–300 g",
+            "description": "Grilled beef entrecôte with seasonal vegetables and potatoes."
+          },
+          "priceChf": "44.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "FLEISCHGERICHTE-COSTILLITAS-HONEY-BBQ",
+          "name": "Costillitas Honey | BBQ",
+          "description": "Zart geschmorte Spareribs, glasiert mit Honig-BBQ-Sauce, serviert mit Beilagen.",
+          "en": {
+            "name": "Costillitas Honey | BBQ",
+            "description": "Pork ribs glazed in honey-BBQ sauce."
+          },
+          "priceChf": "33.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "FLEISCHGERICHTE-FLAMINGUITO-DE-POLLO-MANCHEGO-Y-JAMON-SERRANO",
+          "name": "Flaminguito de Pollo · Manchego y Jamón Serrano",
+          "description": "Saftiges Hähnchenfilet, gefüllt mit feinem Manchego-Käse und Serrano-Schinken — ein Klassiker aus Nordspanien.",
+          "en": {
+            "name": "Flaminguito de Pollo · Manchego y Jamón Serrano",
+            "description": "Chicken breast stuffed with Manchego cheese and Serrano ham — a northern Spanish classic."
+          },
+          "priceChf": "30.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "FLEISCHGERICHTE-FLAMINGUITO-DE-POLLO-MANCHEGO-VIEJO-JAMON-IBERIC",
+          "name": "Flaminguito de Pollo · Manchego Viejo, Jamón Ibérico y Boletus",
+          "description": "Eine Gourmet-Variante: zartes Hähnchenfilet, gefüllt mit gereiftem Manchego, edlem Jamón Ibérico und aromatischen Steinpilzen.",
+          "en": {
+            "name": "Flaminguito de Pollo · Manchego Viejo, Jamón Ibérico y Boletus",
+            "description": "Chicken breast stuffed with aged Manchego, Ibérico ham and porcini — a gourmet take with deep, elegant flavours."
+          },
+          "priceChf": "34.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "FLEISCHGERICHTE-HUEVOS-ROTOS-CON-JAMON-SERRANO",
+          "name": "Huevos Rotos con Jamón Serrano",
+          "description": "Spiegelei auf knusprigen Kartoffeln, garniert mit Serrano-Schinken.",
+          "en": {
+            "name": "Huevos Rotos con Jamón Serrano",
+            "description": "Fried eggs over potatoes with Serrano ham — simple and delicious."
+          },
+          "priceChf": "25.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Kindermenü",
+      "en": "Kids' menu",
+      "es": "Menú infantil",
+      "station": "kitchen",
+      "course": 2,
+      "products": [
+        {
+          "sku": "KINDERMENU-NUGGETS-Y-PATATAS-FRITAS",
+          "name": "Nuggets y patatas fritas",
+          "description": null,
+          "en": {
+            "name": "Nuggets y patatas fritas",
+            "description": null
+          },
+          "priceChf": "18.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "KINDERMENU-TORTILLA-FRANCESA-Y-PATATAS-FRITAS",
+          "name": "Tortilla francesa y patatas fritas",
+          "description": null,
+          "en": {
+            "name": "Tortilla francesa y patatas fritas",
+            "description": null
+          },
+          "priceChf": "18.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "KINDERMENU-TIRAS-DE-PESCADO-Y-PATATAS-FRITAS",
+          "name": "Tiras de pescado y patatas fritas",
+          "description": null,
+          "en": {
+            "name": "Tiras de pescado y patatas fritas",
+            "description": null
+          },
+          "priceChf": "18.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Desserts",
+      "en": "Desserts",
+      "es": "Postres",
+      "station": "dessert",
+      "course": 3,
+      "products": [
+        {
+          "sku": "DESSERTS-FLAN-CASERO",
+          "name": "Flan Casero",
+          "description": "Klassischer, cremiger Vanillepudding — mild und süss.",
+          "en": {
+            "name": "Flan Casero",
+            "description": "Classic creamy flan — soft and sweet."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "DESSERTS-CREMA-CATALANA",
+          "name": "Crema Catalana",
+          "description": "Süsse Vanillecreme mit karamellisierter Kruste — aromatisch und zart.",
+          "en": {
+            "name": "Crema Catalana",
+            "description": "Vanilla cream with a caramelised crust — aromatic and delicate."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "DESSERTS-TARTA-HELADA",
+          "name": "Tarta Helada",
+          "description": "Gefrorener Kuchen — erfrischend, süss und cremig.",
+          "en": {
+            "name": "Tarta Helada",
+            "description": "Ice-cream cake — refreshing, sweet and creamy."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "DESSERTS-COEUR-FONDANT",
+          "name": "Coeur Fondant",
+          "description": "Warmer Schokoladenkuchen mit flüssigem Kern — intensiv und schokoladig.",
+          "en": {
+            "name": "Coeur Fondant",
+            "description": "Warm chocolate cake with a molten centre — intense and chocolatey."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "DESSERTS-TARTA-DE-SANTIAGO",
+          "name": "Tarta de Santiago",
+          "description": "Traditionelle galicische Mandeltorte — aromatisch, saftig und mit Zimt verfeinert.",
+          "en": {
+            "name": "Tarta de Santiago",
+            "description": "Galician almond cake — aromatic, moist, with a touch of cinnamon."
+          },
+          "priceChf": "8.00",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "DESSERTS-COUPE-DANEMARK",
+          "name": "Coupe Dänemark",
+          "description": "Eisbecher mit Sahne, Schokolade und Früchten — klassisch und köstlich.",
+          "en": {
+            "name": "Coupe Dänemark",
+            "description": "Ice-cream sundae with cream, chocolate and fruit — a delicious classic."
+          },
+          "priceChf": "8.00",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Alkoholfreie Getränke",
+      "en": "Soft drinks & water",
+      "es": "Refrescos y aguas",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-ZUMO-DE-NARANJA",
+          "name": "Zumo de Naranja",
+          "description": "3.3 dl.",
+          "en": {
+            "name": "Zumo de Naranja",
+            "description": "3.3 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-ZUMO-DE-PINA",
+          "name": "Zumo de Piña",
+          "description": "3.3 dl.",
+          "en": {
+            "name": "Zumo de Piña",
+            "description": "3.3 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-COCA-COLA",
+          "name": "Coca-Cola",
+          "description": "3.3 dl.",
+          "en": {
+            "name": "Coca-Cola",
+            "description": "3.3 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-COCA-COLA-ZERO",
+          "name": "Coca-Cola Zero",
+          "description": "3.3 dl.",
+          "en": {
+            "name": "Coca-Cola Zero",
+            "description": "3.3 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-ZURI-WASSER",
+          "name": "Züri Wasser",
+          "description": "1.0 l. Krug Zürcher Hahnenwasser.",
+          "en": {
+            "name": "Züri Wasser",
+            "description": "1.0 l. Jug of Zurich tap water."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-MINERALWASSER",
+          "name": "Mineralwasser",
+          "description": "5.0 dl.",
+          "en": {
+            "name": "Mineralwasser",
+            "description": "5.0 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-SCHWEPPES-TONIC",
+          "name": "Schweppes Tonic",
+          "description": "3.3 dl.",
+          "en": {
+            "name": "Schweppes Tonic",
+            "description": "3.3 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-SCHWEPPES-BITTER-LEMON",
+          "name": "Schweppes Bitter Lemon",
+          "description": "3.3 dl.",
+          "en": {
+            "name": "Schweppes Bitter Lemon",
+            "description": "3.3 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-RED-BULL",
+          "name": "Red Bull",
+          "description": "2.5 dl.",
+          "en": {
+            "name": "Red Bull",
+            "description": "2.5 dl."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-SAN-BITTER",
+          "name": "San Bitter",
+          "description": "2.5 dl.",
+          "en": {
+            "name": "San Bitter",
+            "description": "2.5 dl."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-AQUARIUS-NARANJA-LIMON",
+          "name": "Aquarius Naranja | Limón",
+          "description": "3.3 dl.",
+          "en": {
+            "name": "Aquarius Naranja | Limón",
+            "description": "3.3 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-FANTA-NARANJA-LIMON",
+          "name": "Fanta Naranja | Limón",
+          "description": "3.0 dl.",
+          "en": {
+            "name": "Fanta Naranja | Limón",
+            "description": "3.0 dl."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-SIRUP",
+          "name": "Sirup",
+          "description": "2.0 dl.",
+          "en": {
+            "name": "Sirup",
+            "description": "2.0 dl."
+          },
+          "priceChf": "3.50",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-CAPRI-SUN",
+          "name": "Capri Sun",
+          "description": "3.0 dl.",
+          "en": {
+            "name": "Capri Sun",
+            "description": "3.0 dl."
+          },
+          "priceChf": "3.50",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "ALKOHOLFREIE-GETRANKE-AGUA-MINERAL",
+          "name": "Agua Mineral",
+          "description": "1 l.",
+          "en": {
+            "name": "Agua Mineral",
+            "description": "1 l."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "non_alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Biere",
+      "en": "Beers",
+      "es": "Cervezas",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "BIERE-ESTRELLA-GALICIA-SIN-ALCOHOL",
+          "name": "Estrella Galicia Sin Alcohol",
+          "description": "2.5 dl. Alkoholfreies spanisches Bier – leicht, frisch und ausgewogen.",
+          "en": {
+            "name": "Estrella Galicia Sin Alcohol",
+            "description": "2.5 dl. Spanish alcohol-free beer — light, fresh and balanced."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "BIERE-ESTRELLA-GALICIA-QUINTO",
+          "name": "Estrella Galicia (Quinto)",
+          "description": "2.5 dl · 5.5 %. Klassisches spanisches Lagerbier – mild, rund und erfrischend.",
+          "en": {
+            "name": "Estrella Galicia (Quinto)",
+            "description": "2.5 dl · 5.5 %. Spanish lager — smooth and refreshing."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "BIERE-ESTRELLA-GALICIA-CANA",
+          "name": "Estrella Galicia (Caña)",
+          "description": "3.3 dl · 5.5 %. Frisch gezapftes Estrella Galicia – klassisch, leicht und erfrischend.",
+          "en": {
+            "name": "Estrella Galicia (Caña)",
+            "description": "3.3 dl · 5.5 %. Estrella Galicia on tap — light and refreshing."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Stange",
+              "en": "Stange",
+              "priceChf": "4.00"
+            },
+            {
+              "name": "Gross",
+              "en": "Large",
+              "priceChf": "7.00"
+            }
+          ]
+        },
+        {
+          "sku": "BIERE-1906-RED-VINTAGE",
+          "name": "1906 Red Vintage",
+          "description": "3.3 dl · 8 %. Starkbier aus Galicien – malzig, aromatisch und vollmundig.",
+          "en": {
+            "name": "1906 Red Vintage",
+            "description": "3.3 dl · 8 %. Strong Galician beer — malty and full-bodied."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "BIERE-1906-ESTRELLA-GALICIA-CANA",
+          "name": "1906 Estrella Galicia (Caña)",
+          "description": "3.3 dl · 6.5 %. Frisch gezapftes 1906 – kräftig und ausgewogen im Geschmack.",
+          "en": {
+            "name": "1906 Estrella Galicia (Caña)",
+            "description": "3.3 dl · 6.5 %. 1906 on tap — strong and well balanced."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Stange",
+              "en": "Stange",
+              "priceChf": "5.00"
+            },
+            {
+              "name": "Gross",
+              "en": "Large",
+              "priceChf": "9.00"
+            }
+          ]
+        },
+        {
+          "sku": "BIERE-1906-ESTRELLA-GALICIA-TERCIO",
+          "name": "1906 Estrella Galicia (Tercio)",
+          "description": "3.3 dl · 6.5 %. Premiumbier mit kräftigem Charakter und feinem Schaum.",
+          "en": {
+            "name": "1906 Estrella Galicia (Tercio)",
+            "description": "3.3 dl · 6.5 %. Premium beer with character and a fine head."
+          },
+          "priceChf": "9.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "BIERE-HEINEKEN",
+          "name": "Heineken",
+          "description": "2.5 dl · 4.5 %. Niederländisches Premium-Bier – feinherb mit klarer Malznote.",
+          "en": {
+            "name": "Heineken",
+            "description": "2.5 dl · 4.5 %. Dutch premium beer — smooth, with a clear malt note."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "BIERE-CORONA",
+          "name": "Corona",
+          "description": "3.5 dl · 5.5 %. Mexikanisches Bier – leicht, fruchtig und perfekt mit Limette.",
+          "en": {
+            "name": "Corona",
+            "description": "3.5 dl · 5.5 %. Mexican beer — light, fruity and perfect with lime."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Aperitifs",
+      "en": "Aperitifs",
+      "es": "Aperitivos",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "APERITIFS-CAVA",
+          "name": "Cava",
+          "description": "Spanischer Schaumwein – feinperlig, elegant und erfrischend trocken.",
+          "en": {
+            "name": "Cava",
+            "description": "Spanish sparkling wine — elegant, fresh, with fine bubbles."
+          },
+          "priceChf": "9.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-TINTO-DE-VERANO",
+          "name": "Tinto de Verano",
+          "description": "Sommerdrink aus Rotwein und Zitronenlimonade – leicht und spritzig.",
+          "en": {
+            "name": "Tinto de Verano",
+            "description": "Red wine with lemon soda — light and refreshing."
+          },
+          "priceChf": "10.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-LIMONCELLO-SPRITZ",
+          "name": "Limoncello Spritz",
+          "description": "Zitronenlikör mit Prosecco und Soda – sonnig und frisch.",
+          "en": {
+            "name": "Limoncello Spritz",
+            "description": "Lemon liqueur with prosecco and soda — sunny and fresh."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-APEROL-SPRITZ",
+          "name": "Aperol Spritz",
+          "description": "Italienischer Klassiker – bittersüß, prickelnd, perfekt zum Start in den Abend.",
+          "en": {
+            "name": "Aperol Spritz",
+            "description": "The Italian classic — bittersweet, sparkling, made for starting the evening."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-CAMPARI-SPRITZ",
+          "name": "Campari Spritz",
+          "description": "Herb-fruchtig mit Campari, Prosecco und Soda – stilvoll und aromatisch.",
+          "en": {
+            "name": "Campari Spritz",
+            "description": "Campari, prosecco and soda — elegant and aromatic."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-OCEAN-SPRITZ",
+          "name": "Ocean Spritz",
+          "description": "Spritz mit blauer Zitrusnote – leicht, exotisch und sommerlich.",
+          "en": {
+            "name": "Ocean Spritz",
+            "description": "Spritz with blue citrus notes — light, exotic and summery."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-CALIMOCHO",
+          "name": "Calimocho",
+          "description": "Rotwein mit Cola – süffig, unkompliziert und typisch spanisch.",
+          "en": {
+            "name": "Calimocho",
+            "description": "Red wine with cola — easy, simple and very Spanish."
+          },
+          "priceChf": "10.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-SMIRNOFF-ICE",
+          "name": "Smirnoff Ice",
+          "description": "Spritziger Wodka-Mix mit Zitrusgeschmack – eiskalt serviert.",
+          "en": {
+            "name": "Smirnoff Ice",
+            "description": "Citrus vodka cooler — served ice cold."
+          },
+          "priceChf": "8.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-MOJITO",
+          "name": "Mojito",
+          "description": "Rum, Minze und Limette – der frische kubanische Klassiker.",
+          "en": {
+            "name": "Mojito",
+            "description": "Rum, mint and lime — the refreshing Cuban classic."
+          },
+          "priceChf": "13.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-MARTINI-ROJO-O-BLANCO",
+          "name": "Martini Rojo o Blanco",
+          "description": "Italienischer Wermut – klassisch, elegant, rot oder weiß.",
+          "en": {
+            "name": "Martini Rojo o Blanco",
+            "description": "Italian vermouth — classic and elegant, red or white."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-MARTINI-ROJO-BLANCO-CON-GIN",
+          "name": "Martini Rojo | Blanco con Gin",
+          "description": "Wermut mit einem Hauch Gin – kräftiger und aromatischer.",
+          "en": {
+            "name": "Martini Rojo | Blanco con Gin",
+            "description": "Vermouth with a dash of gin — stronger and more aromatic."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "APERITIFS-MARTINI-ROJO-BLANCO-CON-CERVEZA",
+          "name": "Martini Rojo | Blanco con Cerveza",
+          "description": "Wermut mit Bier – ungewöhnlich, aber überraschend harmonisch.",
+          "en": {
+            "name": "Martini Rojo | Blanco con Cerveza",
+            "description": "Vermouth with beer — unusual, but surprisingly balanced."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Cocktails",
+      "en": "Cocktails",
+      "es": "Cócteles",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "COCKTAILS-SANGRIA",
+          "name": "Sangría",
+          "description": "Fruchtiger spanischer Klassiker aus Rotwein, frischen Früchten und Gewürzen.",
+          "en": {
+            "name": "Sangría",
+            "description": "The Spanish classic — red wine, fresh fruit and spices."
+          },
+          "priceChf": "10.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "10.00"
+            },
+            {
+              "name": "Krug",
+              "en": "Jug",
+              "priceChf": "36.00"
+            }
+          ]
+        },
+        {
+          "sku": "COCKTAILS-SANGRIA-BLANCA",
+          "name": "Sangría Blanca",
+          "description": "Weiße Sangría mit Weißwein, Zitrusfrüchten und einem Hauch Pfirsichlikör.",
+          "en": {
+            "name": "Sangría Blanca",
+            "description": "White sangría with white wine, citrus and a touch of peach liqueur."
+          },
+          "priceChf": "11.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "11.00"
+            },
+            {
+              "name": "Krug",
+              "en": "Jug",
+              "priceChf": "38.00"
+            }
+          ]
+        },
+        {
+          "sku": "COCKTAILS-SANGRIA-DE-CAVA",
+          "name": "Sangría de Cava",
+          "description": "Edle Variante mit Cava, frischen Früchten und spritzigem Flair.",
+          "en": {
+            "name": "Sangría de Cava",
+            "description": "The elegant version — cava, fresh fruit and bubbles."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "12.00"
+            },
+            {
+              "name": "Krug",
+              "en": "Jug",
+              "priceChf": "40.00"
+            }
+          ]
+        },
+        {
+          "sku": "COCKTAILS-AGUA-DE-VALENCIA",
+          "name": "Agua de Valencia",
+          "description": "Spritziger Mix aus Cava, Orangensaft, Wodka und Gin – typisch valencianisch.",
+          "en": {
+            "name": "Agua de Valencia",
+            "description": "Cava, orange juice, vodka and gin — the taste of Valencia."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-GIN-TONIC",
+          "name": "Gin Tonic",
+          "description": "Erfrischender Evergreen – Gin und Tonic Water mit Zitrusnote.",
+          "en": {
+            "name": "Gin Tonic",
+            "description": "The refreshing evergreen — gin and tonic with a citrus twist."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-AMERICANO",
+          "name": "Americano",
+          "description": "Bitter und spritzig – Campari, roter Wermut und Soda.",
+          "en": {
+            "name": "Americano",
+            "description": "Campari, red vermouth and soda — bitter and elegant."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-AMARETTO-SOUR",
+          "name": "Amaretto Sour",
+          "description": "Mandellikör, Zitronensaft und Zucker – süß-sauer und samtig.",
+          "en": {
+            "name": "Amaretto Sour",
+            "description": "Almond liqueur, lemon juice and sugar — sweet and sharp."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-CAIPIRINA",
+          "name": "Caipiriña",
+          "description": "Brasilianischer Cocktail mit Cachaça, Limette und Rohrzucker – frisch und lebendig.",
+          "en": {
+            "name": "Caipiriña",
+            "description": "Cachaça, lime and cane sugar — refreshing and tropical."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-ESPRESSO-MARTINI",
+          "name": "Espresso Martini",
+          "description": "Wodka, Kaffeelikör und Espresso – cremig, stark und elegant.",
+          "en": {
+            "name": "Espresso Martini",
+            "description": "Vodka, coffee liqueur and espresso — intense and sophisticated."
+          },
+          "priceChf": "13.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-CUBATA-WHISKY-COLA",
+          "name": "Cubata Whisky-Cola",
+          "description": "Whisky mit Cola – klassisch, kräftig und unkompliziert.",
+          "en": {
+            "name": "Cubata Whisky-Cola",
+            "description": "Whisky and cola — strong and simple."
+          },
+          "priceChf": "13.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-CUBATA-RON-COLA",
+          "name": "Cubata Ron-Cola",
+          "description": "Rum mit Cola – der karibische Dauerbrenner.",
+          "en": {
+            "name": "Cubata Ron-Cola",
+            "description": "Rum and cola — the Caribbean staple."
+          },
+          "priceChf": "13.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-CARIBBEAN-SUNSET",
+          "name": "Caribbean Sunset",
+          "description": "Rum, Ananas, Orange und Grenadine – süß, tropisch und farbenfroh.",
+          "en": {
+            "name": "Caribbean Sunset",
+            "description": "Rum, pineapple, orange and grenadine — sweet and tropical."
+          },
+          "priceChf": "13.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-LONG-ISLAND-ICED-TEA",
+          "name": "Long Island Iced Tea",
+          "description": "Mix aus Wodka, Rum, Gin, Tequila und Cola – stark und ausgewogen.",
+          "en": {
+            "name": "Long Island Iced Tea",
+            "description": "A potent mix of vodka, rum, gin, tequila and cola."
+          },
+          "priceChf": "15.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-BLUE-LAGOON-ISLAND",
+          "name": "Blue Lagoon Island",
+          "description": "Wodka, Blue Curaçao und Zitrone – fruchtig-blaues Sommerfeeling.",
+          "en": {
+            "name": "Blue Lagoon Island",
+            "description": "Vodka, blue curaçao and lemon — tropical and fresh."
+          },
+          "priceChf": "15.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-SKINNY-BITCH",
+          "name": "Skinny Bitch",
+          "description": "Wodka mit Soda und Limette – leicht, frisch und kalorienarm.",
+          "en": {
+            "name": "Skinny Bitch",
+            "description": "Vodka with soda and lime — light and refreshing."
+          },
+          "priceChf": "13.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-SOUR-43",
+          "name": "Sour 43",
+          "description": "Licor 43, Zitronensaft und Eiweiß – cremig, süß und aromatisch.",
+          "en": {
+            "name": "Sour 43",
+            "description": "Licor 43, lemon juice and egg white — creamy and fragrant."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-CARAJILLO-43",
+          "name": "Carajillo 43",
+          "description": "Espresso mit Licor 43 – heiß, süß und belebend.",
+          "en": {
+            "name": "Carajillo 43",
+            "description": "Espresso with Licor 43 — sweet and energising."
+          },
+          "priceChf": "11.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-GOD-FATHER",
+          "name": "God Father",
+          "description": "Edler Klassiker aus Whisky und Amaretto – sanft, nussig und charaktervoll.",
+          "en": {
+            "name": "God Father",
+            "description": "An elegant classic of whisky and amaretto — smooth, with character."
+          },
+          "priceChf": "13.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-VODKA-TONIC",
+          "name": "Vodka Tonic",
+          "description": "Klassiker aus Wodka und Tonic – klar, spritzig und erfrischend.",
+          "en": {
+            "name": "Vodka Tonic",
+            "description": "Vodka and tonic — clean, crisp and refreshing."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "COCKTAILS-BRAMULE",
+          "name": "Bramule",
+          "description": "Fruchtiger Mix auf Basis von Rum – süß, leicht und aromatisch.",
+          "en": {
+            "name": "Bramule",
+            "description": "A fruity rum-based cocktail — sweet and aromatic."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Spirituosen",
+      "en": "Spirits",
+      "es": "Licores",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "SPIRITUOSEN-BAILEYS",
+          "name": "Baileys",
+          "description": "0.4 dl · 17 %. Cremiger irischer Sahnelikör – süß, samtig und vollmundig.",
+          "en": {
+            "name": "Baileys",
+            "description": "0.4 dl · 17 %. Irish cream liqueur — sweet, smooth and moreish."
+          },
+          "priceChf": "10.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-BRANDY-CARLOS-I",
+          "name": "Brandy Carlos I",
+          "description": "0.4 dl · 40 %. Spanischer Brandy – kräftig, aromatisch und elegant.",
+          "en": {
+            "name": "Brandy Carlos I",
+            "description": "0.4 dl · 40 %. Spanish brandy — strong, aromatic and elegant."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-RON-LEYENDA",
+          "name": "Ron Leyenda",
+          "description": "0.4 dl · 38 %. Karibischer Rum – vollmundig mit feiner Süße.",
+          "en": {
+            "name": "Ron Leyenda",
+            "description": "0.4 dl · 38 %. Caribbean rum — full-bodied with a fine sweetness."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-CHIVAS",
+          "name": "Chivas",
+          "description": "0.4 dl · 40 %. Schottischer Whisky – weich, rund und leicht süßlich.",
+          "en": {
+            "name": "Chivas",
+            "description": "0.4 dl · 40 %. Scotch whisky — smooth and balanced."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-CHIVAS-18-ANOS",
+          "name": "Chivas 18 años",
+          "description": "0.4 dl · 40 %. Premium-Whisky – komplex, reichhaltig und elegant gereift.",
+          "en": {
+            "name": "Chivas 18 años",
+            "description": "0.4 dl · 40 %. Premium whisky — complex, rich and elegantly aged."
+          },
+          "priceChf": "18.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-CONAC-GRAN-DUQUE-DE-ALBA",
+          "name": "Coñac Gran Duque de Alba",
+          "description": "0.4 dl · 40 %. Spanischer Cognac – edel, intensiv und aromatisch.",
+          "en": {
+            "name": "Coñac Gran Duque de Alba",
+            "description": "0.4 dl · 40 %. Spanish cognac — refined, intense and aromatic."
+          },
+          "priceChf": "14.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-RON-BRUGAL",
+          "name": "Ron Brugal",
+          "description": "0.4 dl · 38 %. Dominikanischer Rum – aromatisch, ausgewogen und samtig.",
+          "en": {
+            "name": "Ron Brugal",
+            "description": "0.4 dl · 38 %. Dominican rum — aromatic and balanced."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-RON-BARCELO",
+          "name": "Ron Barceló",
+          "description": "0.4 dl · 38 %. Premium-Rum aus der Karibik – weich, süß und vollmundig.",
+          "en": {
+            "name": "Ron Barceló",
+            "description": "0.4 dl · 38 %. Premium Caribbean rum — smooth, sweet and full-bodied."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-JOHNNIE-WALKER-BLACK-LABEL",
+          "name": "Johnnie Walker Black Label",
+          "description": "0.4 dl · 40 %. Scotch Whisky – tief, rauchig und komplex.",
+          "en": {
+            "name": "Johnnie Walker Black Label",
+            "description": "0.4 dl · 40 %. Scotch whisky — deep, smoky and complex."
+          },
+          "priceChf": "16.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SPIRITUOSEN-JOHNNIE-WALKER-RED-LABEL",
+          "name": "Johnnie Walker Red Label",
+          "description": "0.4 dl · 40 %. Scotch Whisky – leicht, würzig und klassisch.",
+          "en": {
+            "name": "Johnnie Walker Red Label",
+            "description": "0.4 dl · 40 %. Scotch whisky — light, spicy and classic."
+          },
+          "priceChf": "12.00",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Digestifs",
+      "en": "Digestifs",
+      "es": "Digestivos",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "DIGESTIFS-LICOR-DE-HIERBAS",
+          "name": "Licor de Hierbas",
+          "description": "0.4 dl. Aromatischer Kräuterlikör – würzig, frisch und verdauungsfördernd.",
+          "en": {
+            "name": "Licor de Hierbas",
+            "description": "0.4 dl. Herbal liqueur — aromatic, fresh and digestive."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "DIGESTIFS-LICOR-DE-CAFE",
+          "name": "Licor de Café",
+          "description": "0.4 dl. Intensiver Kaffeelikör – süß, kräftig und aromatisch.",
+          "en": {
+            "name": "Licor de Café",
+            "description": "0.4 dl. Coffee liqueur — intense, sweet and aromatic."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "DIGESTIFS-ANIS",
+          "name": "Anís",
+          "description": "0.4 dl. Klassischer Anislikör – süß, mild und leicht würzig.",
+          "en": {
+            "name": "Anís",
+            "description": "0.4 dl. Anise liqueur — sweet, mild and lightly spiced."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "DIGESTIFS-CREMA-DE-ORUJO",
+          "name": "Crema de Orujo",
+          "description": "0.4 dl. Cremiger Likör aus Orujo – samtig, süß und aromatisch.",
+          "en": {
+            "name": "Crema de Orujo",
+            "description": "0.4 dl. Creamy orujo liqueur — smooth, sweet and aromatic."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Shots",
+      "en": "Shots",
+      "es": "Chupitos",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "SHOTS-LICOR-DE-CAFE",
+          "name": "Licor de Café · Shot",
+          "description": "0.2 dl. Intensiver Kaffeelikör – süß, kräftig und aromatisch.",
+          "en": {
+            "name": "Licor de Café · Shot",
+            "description": "0.2 dl. Coffee liqueur — intense, sweet and aromatic."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-TEQUILA",
+          "name": "Tequila",
+          "description": "0.2 dl. Klassischer Tequila – kräftig, würzig und pur genießbar.",
+          "en": {
+            "name": "Tequila",
+            "description": "0.2 dl. Classic tequila — strong, spicy, best neat."
+          },
+          "priceChf": "8.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-CREMA-DE-ORUJO",
+          "name": "Crema de Orujo · Shot",
+          "description": "0.2 dl. Cremiger Likör aus Orujo – samtig, süß und aromatisch.",
+          "en": {
+            "name": "Crema de Orujo · Shot",
+            "description": "0.2 dl. Creamy orujo liqueur — smooth, sweet and aromatic."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-BLACK-SOUR-KISS",
+          "name": "Black Sour Kiss",
+          "description": "0.2 dl. Intensiver, fruchtig-saurer Shot – aromatisch und kräftig.",
+          "en": {
+            "name": "Black Sour Kiss",
+            "description": "0.2 dl. An intense fruity-sour shot — aromatic and punchy."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-LICOR-DE-HIERBAS",
+          "name": "Licor de Hierbas · Shot",
+          "description": "0.2 dl. Aromatischer Kräuterlikör – würzig, frisch und verdauungsfördernd.",
+          "en": {
+            "name": "Licor de Hierbas · Shot",
+            "description": "0.2 dl. Herbal liqueur — aromatic, fresh and digestive."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-BALAS-DE-PLATA",
+          "name": "Balas de Plata",
+          "description": "0.2 dl. Süßer und kräftiger Shot – aromatisch und intensiv.",
+          "en": {
+            "name": "Balas de Plata",
+            "description": "0.2 dl. A sweet, potent shot — aromatic and intense."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-LICOR-43",
+          "name": "Licor 43",
+          "description": "0.2 dl. Süßer Vanillelikör – mild, aromatisch und cremig.",
+          "en": {
+            "name": "Licor 43",
+            "description": "0.2 dl. Sweet vanilla liqueur — mild, aromatic and creamy."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-BLUE-KAMIKAZE",
+          "name": "Blue Kamikaze",
+          "description": "0.2 dl. Spritziger Wodka-Likör-Shot – fruchtig und kräftig.",
+          "en": {
+            "name": "Blue Kamikaze",
+            "description": "0.2 dl. A fruity vodka shot — refreshing and strong."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-TEQUILA-SUNRISE-SHOT",
+          "name": "Tequila Sunrise Shot",
+          "description": "0.2 dl. Fruchtiger Tequila-Shot mit Orangengeschmack – frisch und intensiv.",
+          "en": {
+            "name": "Tequila Sunrise Shot",
+            "description": "0.2 dl. Tequila shot with orange — fresh and intense."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-LIMONCELLO",
+          "name": "Limoncello",
+          "description": "0.2 dl. Italienischer Zitronenlikör – süß, frisch und belebend.",
+          "en": {
+            "name": "Limoncello",
+            "description": "0.2 dl. Italian lemon liqueur — sweet, fresh and lively."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-JAGERMEISTER",
+          "name": "Jägermeister",
+          "description": "0.2 dl. Deutscher Kräuterlikör – würzig, süß-bitter und intensiv.",
+          "en": {
+            "name": "Jägermeister",
+            "description": "0.2 dl. German herbal liqueur — spicy, bittersweet and intense."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "SHOTS-ANIS",
+          "name": "Anís · Shot",
+          "description": "0.2 dl. Klassischer Anislikör – süß, mild und leicht würzig.",
+          "en": {
+            "name": "Anís · Shot",
+            "description": "0.2 dl. Anise liqueur — sweet, mild and lightly spiced."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Kaffee",
+      "en": "Coffee",
+      "es": "Cafés",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "KAFFEE-CAFE-BOMBON",
+          "name": "Café Bombón",
+          "description": "Espresso mit süßer Kondensmilch – cremig und intensiv.",
+          "en": {
+            "name": "Café Bombón",
+            "description": "Espresso with condensed milk — creamy and intense."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-CAFE-DE-LA-CASA",
+          "name": "Café de la Casa",
+          "description": "Hauskaffee verfeinert mit Baileys – samtig und aromatisch.",
+          "en": {
+            "name": "Café de la Casa",
+            "description": "House coffee with Baileys — smooth and aromatic."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-ESPRESSO",
+          "name": "Espresso",
+          "description": "Klassischer italienischer Espresso – kräftig und aromatisch.",
+          "en": {
+            "name": "Espresso",
+            "description": "Classic espresso — strong and aromatic."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-DOBLE-ESPRESSO",
+          "name": "Doble Espresso",
+          "description": "Doppelte Portion Espresso – stark und belebend.",
+          "en": {
+            "name": "Doble Espresso",
+            "description": "Double espresso — intense and invigorating."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-CAFE-CON-LECHE",
+          "name": "Café con Leche",
+          "description": "Espresso mit heißer Milch – mild, cremig und klassisch.",
+          "en": {
+            "name": "Café con Leche",
+            "description": "Espresso with hot milk — mild, creamy and classic."
+          },
+          "priceChf": "4.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-CAPPUCCINO",
+          "name": "Cappuccino",
+          "description": "Espresso mit Milchschaum – cremig, leicht und aromatisch.",
+          "en": {
+            "name": "Cappuccino",
+            "description": "Espresso with milk foam — creamy and aromatic."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-MOCHA",
+          "name": "Mocha",
+          "description": "Espresso mit Schokolade und Milch – süß, cremig und köstlich.",
+          "en": {
+            "name": "Mocha",
+            "description": "Espresso with chocolate and milk — sweet, creamy and delicious."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-ESPRESSO-MACCHIATO",
+          "name": "Espresso Macchiato",
+          "description": "Espresso mit einem Hauch Milchschaum – kräftig und mild zugleich.",
+          "en": {
+            "name": "Espresso Macchiato",
+            "description": "Espresso with a touch of milk foam — strong and mild at once."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-LATTE-MACCHIATO",
+          "name": "Latte Macchiato",
+          "description": "Espresso mit viel Milch und Milchschaum – mild und cremig.",
+          "en": {
+            "name": "Latte Macchiato",
+            "description": "Espresso with plenty of milk and foam — mild and creamy."
+          },
+          "priceChf": "5.00",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-CARAJILLO-NORMAL",
+          "name": "Carajillo Normal",
+          "description": "Espresso mit Brandy – aromatisch, kräftig und warm.",
+          "en": {
+            "name": "Carajillo Normal",
+            "description": "Coffee with brandy — aromatic, strong and hot."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-CARAJILLO-CARLOS-I",
+          "name": "Carajillo Carlos I",
+          "description": "Espresso verfeinert mit spanischem Brandy – kräftig und aromatisch.",
+          "en": {
+            "name": "Carajillo Carlos I",
+            "description": "Coffee with Spanish brandy — strong and aromatic."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "KAFFEE-CARAJILLO-SPECIAL-RUM",
+          "name": "Carajillo Special Rum",
+          "description": "Espresso mit Rum – süß, kräftig und intensiv.",
+          "en": {
+            "name": "Carajillo Special Rum",
+            "description": "Coffee with rum — sweet, strong and intense."
+          },
+          "priceChf": "8.00",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Rotwein",
+      "en": "Red wine",
+      "es": "Vino tinto",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "ROTWEIN-HACIENDA-MONASTERIO",
+          "name": "Hacienda Monasterio",
+          "description": "Tinto Fino, Cabernet Sauvignon, Merlot, Malbec · Ribera del Duero.",
+          "en": {
+            "name": "Hacienda Monasterio",
+            "description": "Tinto Fino, Cabernet Sauvignon, Merlot, Malbec · Ribera del Duero."
+          },
+          "priceChf": "95.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "ROTWEIN-MAURO",
+          "name": "Mauro",
+          "description": "Tempranillo & Syrah · Ribera del Duero.",
+          "en": {
+            "name": "Mauro",
+            "description": "Tempranillo & Syrah · Ribera del Duero."
+          },
+          "priceChf": "84.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Flasche",
+              "en": "Bottle",
+              "priceChf": "84.00"
+            },
+            {
+              "name": "Magnum",
+              "en": "Magnum",
+              "priceChf": "168.00"
+            }
+          ]
+        },
+        {
+          "sku": "ROTWEIN-MATARROMERA-CRIANZA",
+          "name": "Matarromera Crianza",
+          "description": "Tempranillo · Ribera del Duero.",
+          "en": {
+            "name": "Matarromera Crianza",
+            "description": "Tempranillo · Ribera del Duero."
+          },
+          "priceChf": "54.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "ROTWEIN-MARQUES-DE-RISCAL-RESERVA-XR",
+          "name": "Marqués de Riscal Reserva XR",
+          "description": "Tempranillo · Rioja.",
+          "en": {
+            "name": "Marqués de Riscal Reserva XR",
+            "description": "Tempranillo · Rioja."
+          },
+          "priceChf": "54.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "ROTWEIN-PORTIA-GALA-RESERVA",
+          "name": "Portia Gala Reserva",
+          "description": "Tempranillo · Ribera del Duero.",
+          "en": {
+            "name": "Portia Gala Reserva",
+            "description": "Tempranillo · Ribera del Duero."
+          },
+          "priceChf": "52.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "ROTWEIN-RAMON-BILBAO-EDICION-LIMITADA",
+          "name": "Ramón Bilbao Edición Limitada",
+          "description": "Tempranillo · Rioja.",
+          "en": {
+            "name": "Ramón Bilbao Edición Limitada",
+            "description": "Tempranillo · Rioja."
+          },
+          "priceChf": "45.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "ROTWEIN-PORTIA-ROBLE",
+          "name": "Portia Roble",
+          "description": "Tempranillo · Ribera del Duero.",
+          "en": {
+            "name": "Portia Roble",
+            "description": "Tempranillo · Ribera del Duero."
+          },
+          "priceChf": "6.50",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "6.50"
+            },
+            {
+              "name": "Flasche",
+              "en": "Bottle",
+              "priceChf": "39.00"
+            }
+          ]
+        },
+        {
+          "sku": "ROTWEIN-VALDOURO",
+          "name": "Valdouro",
+          "description": "Mencía, Garnacha · Valdeorras.",
+          "en": {
+            "name": "Valdouro",
+            "description": "Mencía, Garnacha · Valdeorras."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "6.00"
+            },
+            {
+              "name": "Flasche",
+              "en": "Bottle",
+              "priceChf": "36.00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Weisswein",
+      "en": "White wine",
+      "es": "Vino blanco",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "WEISSWEIN-MAR-DE-FRADES",
+          "name": "Mar de Frades",
+          "description": "Albariño · Rías Baixas.",
+          "en": {
+            "name": "Mar de Frades",
+            "description": "Albariño · Rías Baixas."
+          },
+          "priceChf": "47.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "WEISSWEIN-ENTREMUNDOS",
+          "name": "Entremundos",
+          "description": "Albariño · Rías Baixas.",
+          "en": {
+            "name": "Entremundos",
+            "description": "Albariño · Rías Baixas."
+          },
+          "priceChf": "44.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "WEISSWEIN-TERRAS-GAUDA",
+          "name": "Terras Gauda",
+          "description": "Albariño, Loureiro & Caiño Blanco · Rías Baixas.",
+          "en": {
+            "name": "Terras Gauda",
+            "description": "Albariño, Loureiro & Caiño Blanco · Rías Baixas."
+          },
+          "priceChf": "7.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "7.00"
+            },
+            {
+              "name": "Flasche",
+              "en": "Bottle",
+              "priceChf": "40.00"
+            }
+          ]
+        },
+        {
+          "sku": "WEISSWEIN-FINCA-MONTICO-GRAN-RUEDA",
+          "name": "Finca Montico Gran Rueda",
+          "description": "Verdejo · Rueda.",
+          "en": {
+            "name": "Finca Montico Gran Rueda",
+            "description": "Verdejo · Rueda."
+          },
+          "priceChf": "38.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "WEISSWEIN-VINA-ABAD",
+          "name": "Viña Abad",
+          "description": "Godello · Valdeorras.",
+          "en": {
+            "name": "Viña Abad",
+            "description": "Godello · Valdeorras."
+          },
+          "priceChf": "6.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "6.00"
+            },
+            {
+              "name": "Flasche",
+              "en": "Bottle",
+              "priceChf": "36.00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cava",
+      "en": "Cava",
+      "es": "Cava",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "CAVA-JUVE-CAMPS-RESERVA-DE-LA-FAMILIA-BRUT",
+          "name": "Juvé & Camps Reserva de la Familia Brut",
+          "description": "Cava.",
+          "en": {
+            "name": "Juvé & Camps Reserva de la Familia Brut",
+            "description": "Cava."
+          },
+          "priceChf": "53.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "CAVA-FAUSTINO-CAVA-RESERVA-BRUT",
+          "name": "Faustino Cava Reserva Brut",
+          "description": "Cava.",
+          "en": {
+            "name": "Faustino Cava Reserva Brut",
+            "description": "Cava."
+          },
+          "priceChf": "40.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "CAVA-CAVA-DE-LA-CASA",
+          "name": "Cava de la Casa",
+          "description": "Cava.",
+          "en": {
+            "name": "Cava de la Casa",
+            "description": "Cava."
+          },
+          "priceChf": "9.00",
+          "taxCategory": "alcoholic_beverage",
+          "variants": [
+            {
+              "name": "Glas",
+              "en": "Glass",
+              "priceChf": "9.00"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

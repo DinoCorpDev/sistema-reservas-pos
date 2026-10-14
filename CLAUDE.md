@@ -80,6 +80,7 @@ pnpm e2e                 # Playwright en :3100 contra su propia base `<db>_e2e` 
 pnpm --filter @pos/db outbox:work   # publicador del outbox (sin consumidores externos hasta la Fase 5)
 pnpm --filter @pos/hub dev          # hub de la LAN en :4100 (HUB_PAIRING_CODE la primera vez; ver docs/SYNC.md §11.2)
 pnpm --filter @pos/hub fake-printer # impresora ESC/POS simulada en :9100 que muestra las comandas en la consola
+pnpm --filter @pos/api menu:import ../../scripts/menus/lalin-tapas.json --replace  # carga una carta (por SKU, repetible) con los casos de uso del backoffice
 pnpm check:trace         # TRAZABILIDAD.md cubre todos los IDs del documento con su prioridad
 ```
 
