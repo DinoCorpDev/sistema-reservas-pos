@@ -10,3 +10,5 @@ export * from './shifts';
 export * from './closing';
 export * from './book';
 export * from './commands';
+export * from './shift-report';
+export * from './report-print';
