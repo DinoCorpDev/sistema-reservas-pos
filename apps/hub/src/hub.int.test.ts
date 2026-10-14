@@ -206,6 +206,29 @@ describe('terminal → hub → cloud (RNF-03, RNF-05)', () => {
     };
     expect(page.configVersion).toBe(pulled.configVersion);
   });
+
+  it('keeps an operation of a newer schema for the cloud instead of losing it', async () => {
+    // A device updated before the hub: an operation type this hub does not know yet.
+    const newer = {
+      ...device.op('drawer.open', null, { reason: null }),
+      schemaVersion: 99,
+      type: 'future.thing',
+      payload: { anything: 1 },
+    };
+    expect((await pushTo('hub', [newer])).results[0]!.status).toBe('applied');
+    const [stored] = await hubDb
+      .select({ operation: s.syncOperations.operation, status: s.syncOperations.status })
+      .from(s.syncOperations)
+      .where(eq(s.syncOperations.id, newer.id as string));
+    expect(stored).toMatchObject({ operation: 'future.thing' });
+    // The cloud, which knows every schema, still refuses a malformed one.
+    expect((await pushTo('cloud', [{ ...newer, id: newId() }])).results[0]!.status).toBe(
+      'rejected',
+    );
+    // An envelope that is not an operation at all is refused by the hub too.
+    const broken = { ...newer, id: newId(), hlc: 'nope' };
+    expect((await pushTo('hub', [broken])).results[0]!.status).toBe('rejected');
+  });
 });
 
 describe('numbering on the hub (RN-16, DEC-022)', () => {

@@ -368,6 +368,20 @@ export const operationSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
+/**
+ * An operation of a schema newer than this code knows: a device updated before the hub. The hub
+ * only keeps and forwards it (it does not fold), so it is checked as far as storing needs: the
+ * envelope. Losing it would lose a sale; the cloud, always the newest, validates it fully.
+ */
+export const newerOperationSchema = z.looseObject({
+  ...envelope,
+  schemaVersion: z.int().min(OPERATION_SCHEMA_VERSION + 1),
+  userId: id.nullable(),
+  orderId: id.nullable().default(null),
+  type: z.string().regex(/^[a-z]+(\.[a-z_]+)+$/),
+  payload: z.record(z.string(), z.unknown()),
+});
+
 export type Operation = z.infer<typeof operationSchema>;
 export type OperationInput = z.input<typeof operationSchema>;
 export type OperationType = Operation['type'];
@@ -388,7 +402,8 @@ export function operationOrderIds(op: Operation): string[] {
     case 'order.split':
       return [op.orderId, op.payload.newOrderId];
     default:
-      return [op.orderId];
+      // An operation of a newer schema kept by the hub may have no order.
+      return op.orderId ? [op.orderId] : [];
   }
 }
 

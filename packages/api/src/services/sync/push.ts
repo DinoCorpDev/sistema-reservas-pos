@@ -3,6 +3,7 @@ import {
   type EventType,
   type FoldState,
   foldOperations,
+  newerOperationSchema,
   type Operation,
   operationOrderIds,
   operationSchema,
@@ -102,8 +103,11 @@ export async function pushOperations(
       };
     };
     const parsed = operationSchema.safeParse(raw);
-    if (!parsed.success) return reject('Invalid operation');
-    const op = parsed.data;
+    // The hub keeps what a newer device made, untouched, for the cloud (newerOperationSchema).
+    const newer =
+      !parsed.success && node.kind === 'hub' ? newerOperationSchema.safeParse(raw) : null;
+    if (!parsed.success && !newer?.success) return reject('Invalid operation');
+    const op = parsed.success ? parsed.data : (newer!.data as unknown as Operation);
     if (op.organizationId !== scope.organizationId || op.locationId !== scope.locationId) {
       return reject('The operation belongs to another location');
     }
