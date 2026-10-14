@@ -448,6 +448,7 @@ function orderRow(scope: SyncScope, o: OrderState, displayNumber: string, now: D
     paymentStatus: o.paymentStatus,
     customerName: o.customerName,
     note: o.note,
+    allergies: o.allergies,
     subtotalRappen: o.subtotalRappen,
     discountTotalRappen: o.discountTotalRappen,
     totalRappen: o.totalRappen,

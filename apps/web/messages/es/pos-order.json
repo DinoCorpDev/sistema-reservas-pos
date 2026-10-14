@@ -91,7 +91,8 @@
       "joinedTo": "Unida a la mesa {label}",
       "sinceSent": "{minutes, plural, one {# minuto} other {# minutos}} desde el último envío",
       "chooseDescription": "En esta mesa hay varios pedidos abiertos que se pagan por separado.",
-      "newOrder": "Nuevo pedido"
+      "newOrder": "Nuevo pedido",
+      "allergy": "Alergia en la mesa"
     },
     "openTable": {
       "title": "Abrir mesa {label}",
@@ -266,6 +267,35 @@
       "confirm": "Sí, enviar a {targets}",
       "sent": "{count, plural, one {# posición de {from} se envió} other {# posiciones de {from} se enviaron}} a {to}.",
       "notice": "No hay nadie en {from}: sus posiciones irán a {to}."
+    },
+    "allergy": {
+      "button": "Alergias",
+      "title": "Alergias en la mesa",
+      "description": "Marca a qué es alérgico alguien de la mesa. La cocina lo verá en cada comanda de este pedido, aunque el plato no lo lleve, para evitar la contaminación cruzada.",
+      "allergens": "Alérgenos",
+      "other": "Otra alergia",
+      "otherPlaceholder": "p. ej. kiwi, fresa, asiento 2: mariscos",
+      "save": "Guardar",
+      "remove": "Quitar",
+      "cancel": "Cancelar",
+      "banner": "Alergia: {list}",
+      "clash": "{product} contiene {allergens}: en esta mesa hay alergia."
+    },
+    "allergens": {
+      "gluten": "Gluten",
+      "crustaceans": "Crustáceos",
+      "eggs": "Huevo",
+      "fish": "Pescado",
+      "peanuts": "Cacahuete",
+      "soy": "Soja",
+      "milk": "Leche",
+      "tree_nuts": "Frutos secos",
+      "celery": "Apio",
+      "mustard": "Mostaza",
+      "sesame": "Sésamo",
+      "sulphites": "Sulfitos",
+      "lupin": "Altramuces",
+      "molluscs": "Moluscos"
     }
   }
 }

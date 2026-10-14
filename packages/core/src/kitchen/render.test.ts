@@ -8,7 +8,7 @@ import { columnsAt, columnsFor, type PrintDocument } from '../printing/document'
 import { ticketView } from './board';
 import { kitchenCatalog } from './catalog';
 import { KITCHEN_LABELS } from './labels';
-import { renderKitchenTicket, renderTestPage } from './render';
+import { renderAllergyNotice, renderKitchenTicket, renderTestPage } from './render';
 
 const PRODUCT = uid(500);
 const MODIFIER = uid(600);
@@ -49,7 +49,13 @@ const SNAPSHOT: Pick<
   },
 };
 
-function ticket(options: { quantity?: number; voidOne?: boolean } = {}) {
+function ticket(
+  options: {
+    quantity?: number;
+    voidOne?: boolean;
+    allergies?: { allergens: ('gluten' | 'tree_nuts' | 'fish')[]; note: string | null };
+  } = {},
+) {
   const waiter = new Device(TERMINAL.H1, USER.waiter);
   const open = waiter.open(freshId(), {}, 42);
   const rosti = line({
@@ -101,9 +107,14 @@ function ticket(options: { quantity?: number; voidOne?: boolean } = {}) {
       ),
     );
   }
+  // Noted after the items were sent: the ticket reads it live (DEC-037).
+  if (options.allergies) {
+    ops.push(waiter.op('order.update', open.orderId, { allergies: options.allergies }));
+  }
   const state = foldOperations(ops, CONTEXT);
   return {
     state,
+    orderId: open.orderId,
     voidedItemId,
     key: ticketKey(send.id, STATION.kitchen),
     at: ops[ops.length - 1]!.deviceAt,
@@ -115,6 +126,67 @@ const text = (doc: PrintDocument) => doc.lines.map((l) => l.text);
 function fitsPaper(doc: PrintDocument, width: number) {
   for (const l of doc.lines) expect(l.text.length).toBeLessThanOrEqual(columnsAt(width, l.size));
 }
+
+describe('allergies at the table on the kitchen tickets (DEC-037)', () => {
+  const allergies = {
+    allergens: ['gluten', 'tree_nuts'] as ('gluten' | 'tree_nuts')[],
+    note: 'Kiwi',
+  };
+  const options = {
+    width: 48,
+    labels: KITCHEN_LABELS.de,
+    timeZone: 'Europe/Zurich',
+    stationName: 'Küche',
+    tableLabel: '5',
+    waiterName: 'Anna Huber',
+  };
+
+  it('the ticket reads them live from the order, even when noted after sending', () => {
+    const { state, key, at } = ticket({ allergies });
+    const view = ticketView(state, state.tickets.get(key)!, { now: at, alertAfterMinutes: 12 });
+    expect(view.allergies).toEqual({ allergens: ['gluten', 'tree_nuts'], note: 'Kiwi' });
+  });
+
+  it('every printed ticket of the order carries the warning above everything else', () => {
+    const { state, key, at } = ticket({ allergies });
+    const view = ticketView(state, state.tickets.get(key)!, { now: at, alertAfterMinutes: 12 });
+    const doc = renderKitchenTicket(view, { ...options, kind: 'ticket', at });
+    expect(text(doc).slice(0, 6)).toEqual([
+      'KÜCHE',
+      '*'.repeat(48),
+      '!!! ALLERGIE AM TISCH !!!',
+      'Gluten, Nüsse · Kiwi',
+      'Kreuzkontamination vermeiden',
+      '*'.repeat(48),
+    ]);
+    expect(doc.lines[3]).toMatchObject({ bold: true, size: 'tall' });
+    fitsPaper(doc, 48);
+  });
+
+  it('without allergies the ticket has no warning', () => {
+    const { state, key, at } = ticket();
+    const view = ticketView(state, state.tickets.get(key)!, { now: at, alertAfterMinutes: 12 });
+    expect(text(renderKitchenTicket(view, { ...options, kind: 'ticket', at }))).not.toContain(
+      '!!! ALLERGIE AM TISCH !!!',
+    );
+  });
+
+  it('a notice warns a station that already has the items, in its language and on 58 mm', () => {
+    const { state, orderId, at } = ticket({ allergies });
+    const order = state.orders.get(orderId)!;
+    const doc = renderAllergyNotice(
+      { channel: order.channel, displayNumber: order.displayNumber, allergies: order.allergies! },
+      { ...options, width: columnsFor(58), labels: KITCHEN_LABELS.fr, stationName: 'Cuisine', at },
+    );
+    const lines = text(doc);
+    expect(lines[0]).toBe('CUISINE');
+    expect(lines.join(' ')).toContain('AVIS D’ALLERGIE');
+    expect(lines.join(' ')).toContain('Gluten, Fruits à coque · Kiwi');
+    expect(lines).toContain('!!! ALLERGIE À LA TABLE !!!');
+    expect(doc).toMatchObject({ cut: true, openDrawer: false });
+    fitsPaper(doc, 32);
+  });
+});
 
 describe('kitchen ticket print (RF-C26, RF-C25, RF-C20)', () => {
   it('prints station, table, course, items, modifiers, note, seat and allergens in the kitchen language', () => {

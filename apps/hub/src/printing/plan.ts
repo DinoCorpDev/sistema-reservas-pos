@@ -8,10 +8,14 @@ import {
   type KitchenCatalog,
   type KitchenTicketState,
   kitchenCatalog,
+  normalizeAllergies,
   type Operation,
+  type OperationOf,
   type PrintDocument,
   receiptDocument,
+  renderAllergyNotice,
   renderKitchenTicket,
+  ticketsOf,
   ticketView,
 } from '@pos/core';
 import type { PrintConfig } from './config';
@@ -28,9 +32,11 @@ import type { PrintConfig } from './config';
  * | kitchen.reprint                   | the ticket again, marked (RF-C26)      | the station's           |
  * | receipt.print / receipt.reprint   | the frozen receipt (DEC-024)           | the terminal's receipt  |
  * | payment.record in cash, drawer.open | drawer kick (RF-D18)                 | the terminal's, if any  |
+ * | order.update with allergies after send | allergy notice (DEC-037)        | each station's          |
  */
 
-export type PrintJobKind = 'kitchen' | 'storno' | 'reprint' | 'receipt' | 'drawer' | 'test';
+export type PrintJobKind =
+  'kitchen' | 'storno' | 'reprint' | 'allergy' | 'receipt' | 'drawer' | 'test';
 
 export interface PrintJobDraft {
   jobKey: string;
@@ -49,6 +55,7 @@ export const PRINTING_OPERATIONS = new Set<Operation['type']>([
   'item.void',
   'order.void',
   'kitchen.reprint',
+  'order.update',
   'receipt.print',
   'receipt.reprint',
   'payment.record',
@@ -160,6 +167,52 @@ function stornoJobs(
   return jobs;
 }
 
+/**
+ * Allergies noted on an order whose items already reached the kitchen (DEC-037): one notice per
+ * station that got them, so nobody relies on a ticket printed before the warning existed.
+ */
+function allergyJobs(
+  op: OperationOf<'order.update'>,
+  state: FoldState,
+  config: PrintConfig,
+): PrintJobDraft[] {
+  const allergies = normalizeAllergies(op.payload.allergies ?? null);
+  const order = state.orders.get(op.orderId);
+  if (!allergies || !order) return [];
+  const sentBefore = Date.parse(op.deviceAt);
+  const stationIds = new Set(
+    ticketsOf(state, order.id)
+      .filter((ticket) => Date.parse(ticket.sentAt) <= sentBefore)
+      .map((ticket) => ticket.stationId),
+  );
+  const jobs: PrintJobDraft[] = [];
+  for (const stationId of stationIds) {
+    const station = config.stations.find((s) => s.id === stationId);
+    const printer = activePrinter(config, station?.printerId);
+    if (!station || !printer) continue;
+    const language = kitchenLanguageOf(config, station.language);
+    jobs.push({
+      jobKey: `allergy:${op.id}:${stationId}`,
+      kind: 'allergy',
+      printerId: printer.id,
+      stationId,
+      document: renderAllergyNotice(
+        { channel: order.channel, displayNumber: order.displayNumber, allergies },
+        {
+          width: columnsFor(printer.paperWidthMm),
+          labels: KITCHEN_LABELS[language],
+          timeZone: config.location.timezone,
+          stationName: station.name,
+          tableLabel: config.tables.find((t) => t.id === order.tableId)?.label ?? null,
+          waiterName: config.users.find((u) => u.id === order.waiterUserId)?.displayName ?? null,
+          at: op.deviceAt,
+        },
+      ),
+    });
+  }
+  return jobs;
+}
+
 export function planPrintJobs(op: Operation, state: FoldState, config: PrintConfig): PrintPlan {
   const ready = (jobs: PrintJobDraft[]): PrintPlan => ({ status: 'ready', jobs });
   switch (op.type) {
@@ -213,6 +266,8 @@ export function planPrintJobs(op: Operation, state: FoldState, config: PrintConf
           : [],
       );
     }
+    case 'order.update':
+      return ready(op.payload.allergies ? allergyJobs(op, state, config) : []);
     case 'receipt.print':
     case 'receipt.reprint': {
       const receipt = state.receipts.get(op.payload.receiptId);

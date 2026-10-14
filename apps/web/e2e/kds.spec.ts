@@ -229,3 +229,67 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
     await pastryContext.close();
   }
 });
+
+test('an allergy at the table reaches the kitchen screen and the printed ticket (DEC-037)', async ({
+  browser,
+}) => {
+  test.setTimeout(180_000);
+  const posContext = await browser.newContext();
+  const kdsContext = await browser.newContext();
+  const pos = await posContext.newPage();
+  const kds = await kdsContext.newPage();
+  try {
+    await pairOwnPos(pos);
+    await unlockPos(pos, '4001');
+    await pairKds(kds, 'D1', '5000');
+    await expect(kds.getByTestId('kds-station')).toHaveText('Küche');
+
+    // Table 2: the waiter notes gluten and "Kiwi" before ordering.
+    await pos.getByTestId('table-2').click();
+    await pos.getByRole('button', { name: 'Öffnen' }).click();
+    await pos.getByTestId('allergy-button').click();
+    const dialog = pos.getByRole('dialog', { name: 'Allergien am Tisch' });
+    await dialog.getByRole('button', { name: 'Gluten', exact: true }).click();
+    await dialog.getByLabel('Andere Allergie').fill('Kiwi');
+    await dialog.getByRole('button', { name: 'Speichern' }).click();
+    await expect(dialog).toBeHidden();
+    await expect(pos.getByTestId('order-allergy')).toHaveText('Allergie: Gluten · Kiwi');
+
+    // A schnitzel contains gluten: the waiter is warned, the line is added anyway.
+    await pos.getByRole('button', { name: 'Hauptgerichte', exact: true }).click();
+    await pos
+      .getByTestId('product')
+      .filter({ hasText: 'Wiener Schnitzel mit Pommes frites' })
+      .first()
+      .click();
+    await expect(pos.getByText('Wiener Schnitzel mit Pommes frites enthält Gluten')).toBeVisible();
+    await expect(pos.getByTestId('line')).toHaveCount(1);
+    await pos.getByRole('button', { name: 'Senden', exact: true }).click();
+
+    // The kitchen screen shows it in red on the ticket, the printer on paper.
+    const ticket = kds.getByTestId('kds-ticket').filter({ hasText: 'Tisch 2' });
+    await expect(ticket.getByTestId('kds-allergy')).toContainText('ALLERGIE AM TISCH', {
+      timeout: 10_000,
+    });
+    await expect(ticket.getByTestId('kds-allergy')).toContainText('Gluten · Kiwi');
+    await expect
+      .poll(
+        () =>
+          printedText().some(
+            (text) => text.includes('Tisch 2') && text.includes('!!! ALLERGIE AM TISCH !!!'),
+          ),
+        { timeout: 15_000 },
+      )
+      .toBe(true);
+
+    // On the floor, the table carries the warning too.
+    await pos
+      .getByRole('navigation', { name: 'Kasse' })
+      .getByRole('button', { name: 'Tische' })
+      .click();
+    await expect(pos.getByTestId('table-2').getByTestId('table-allergy')).toBeVisible();
+  } finally {
+    await posContext.close();
+    await kdsContext.close();
+  }
+});

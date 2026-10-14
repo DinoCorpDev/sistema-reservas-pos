@@ -37,31 +37,31 @@ Cada acción del POS genera una **operación inmutable**. Nunca se edita ni se b
 
 ### 2.2 Tipos
 
-| Tipo                                        | Qué hace                                                                                                                        |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `order.open`                                | Abre una orden: canal, tipo de consumo, mesa, comensales, mesero, número asignado.                                              |
-| `order.update`                              | Cambia campos de la orden (comensales, mesero, mesa, mesas unidas, nombre del cliente, nota). Solo trae los campos que cambian. |
-| `order.change_channel`                      | Cambia el canal antes de pagar y recalcula la MWST de las líneas (RN-05). Trae el mapa de tasas.                                |
-| `items.add`                                 | Agrega líneas con su precio, modificadores, nota, asiento, curso y MWST ya calculados.                                          |
-| `item.update`                               | Cambia cantidad, nota, asiento o curso de una línea **pendiente**.                                                              |
-| `items.send`                                | Envía a cocina las líneas indicadas (todo lo pendiente o un curso; "marchar" es enviar el curso siguiente).                     |
-| `items.serve`                               | Marca servidas o entregadas las líneas (también "entregado" en barra y takeaway, RF-C17).                                       |
-| `item.void`                                 | Anula una línea o parte de su cantidad, con motivo (RF-C10). Una anulación parcial trae el ID de la línea nueva.                |
-| `discount.apply` / `discount.remove`        | Descuento por línea u orden, en % o monto, con motivo (RF-C11).                                                                 |
-| `payment.record`                            | Registra un pago ya completado (efectivo o terminal independiente) **con su recibo congelado**.                                 |
-| `refund.record`                             | Devolución ligada a un pago, con motivo (RF-D07, RN-14).                                                                        |
-| `receipt.reprint`                           | Reimpresión marcada como copia (RF-D24).                                                                                        |
-| `items.transfer`                            | Mueve líneas a otra orden (RF-C13).                                                                                             |
-| `order.merge`                               | Une una orden en otra (RF-C13).                                                                                                 |
-| `order.split`                               | Crea una orden hija con las líneas elegidas o las de un asiento (RF-C12).                                                       |
-| `order.reopen`                              | Reabre una orden cerrada, con permiso de gerente y motivo (RF-C14).                                                             |
-| `order.void`                                | Anula una orden sin pagos (RN-12: una orden sin ítems válidos ni pagos se anula, no se cierra).                                 |
-| `terminal.unlocked` / `terminal.pin_failed` | Desbloqueos e intentos fallidos de PIN en la terminal: solo dejan auditoría.                                                    |
-| `kitchen.start` / `kitchen.ready`           | La estación empieza o termina ítems de un ticket (RF-C22, DEC-029). El estado es por ítem **y por estación**.                   |
-| `kitchen.recall`                            | Devuelve al tablero ítems que estaban listos (RF-C28).                                                                          |
-| `kitchen.reprint`                           | Reimprime un ticket en su estación (RF-C26). Un ticket es `(items.send, estación)`.                                             |
-| `receipt.print`                             | Pide al hub imprimir el recibo original en la impresora de la terminal (DEC-031). No cambia el estado.                          |
-| `drawer.open`                               | Abre el cajón sin venta, con permiso o aprobación (RF-D18). No pertenece a una orden.                                           |
+| Tipo                                        | Qué hace                                                                                                                                                       |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `order.open`                                | Abre una orden: canal, tipo de consumo, mesa, comensales, mesero, número asignado.                                                                             |
+| `order.update`                              | Cambia campos de la orden (comensales, mesero, mesa, mesas unidas, nombre del cliente, nota, alergias de la mesa —DEC-037—). Solo trae los campos que cambian. |
+| `order.change_channel`                      | Cambia el canal antes de pagar y recalcula la MWST de las líneas (RN-05). Trae el mapa de tasas.                                                               |
+| `items.add`                                 | Agrega líneas con su precio, modificadores, nota, asiento, curso y MWST ya calculados.                                                                         |
+| `item.update`                               | Cambia cantidad, nota, asiento o curso de una línea **pendiente**.                                                                                             |
+| `items.send`                                | Envía a cocina las líneas indicadas (todo lo pendiente o un curso; "marchar" es enviar el curso siguiente).                                                    |
+| `items.serve`                               | Marca servidas o entregadas las líneas (también "entregado" en barra y takeaway, RF-C17).                                                                      |
+| `item.void`                                 | Anula una línea o parte de su cantidad, con motivo (RF-C10). Una anulación parcial trae el ID de la línea nueva.                                               |
+| `discount.apply` / `discount.remove`        | Descuento por línea u orden, en % o monto, con motivo (RF-C11).                                                                                                |
+| `payment.record`                            | Registra un pago ya completado (efectivo o terminal independiente) **con su recibo congelado**.                                                                |
+| `refund.record`                             | Devolución ligada a un pago, con motivo (RF-D07, RN-14).                                                                                                       |
+| `receipt.reprint`                           | Reimpresión marcada como copia (RF-D24).                                                                                                                       |
+| `items.transfer`                            | Mueve líneas a otra orden (RF-C13).                                                                                                                            |
+| `order.merge`                               | Une una orden en otra (RF-C13).                                                                                                                                |
+| `order.split`                               | Crea una orden hija con las líneas elegidas o las de un asiento (RF-C12).                                                                                      |
+| `order.reopen`                              | Reabre una orden cerrada, con permiso de gerente y motivo (RF-C14).                                                                                            |
+| `order.void`                                | Anula una orden sin pagos (RN-12: una orden sin ítems válidos ni pagos se anula, no se cierra).                                                                |
+| `terminal.unlocked` / `terminal.pin_failed` | Desbloqueos e intentos fallidos de PIN en la terminal: solo dejan auditoría.                                                                                   |
+| `kitchen.start` / `kitchen.ready`           | La estación empieza o termina ítems de un ticket (RF-C22, DEC-029). El estado es por ítem **y por estación**.                                                  |
+| `kitchen.recall`                            | Devuelve al tablero ítems que estaban listos (RF-C28).                                                                                                         |
+| `kitchen.reprint`                           | Reimprime un ticket en su estación (RF-C26). Un ticket es `(items.send, estación)`.                                                                            |
+| `receipt.print`                             | Pide al hub imprimir el recibo original en la impresora de la terminal (DEC-031). No cambia el estado.                                                         |
+| `drawer.open`                               | Abre el cajón sin venta, con permiso o aprobación (RF-D18). No pertenece a una orden.                                                                          |
 
 **Versión 2 (Fase 3).** `items.send` trae `tickets: [{ ticketId, stationId, language }]`: una entrada por estación activa que recibe ítems, con el ID y el idioma de cocina congelados (RF-C21, RF-C25). Una operación de versión 1 (sin `tickets`) va a todas las estaciones del ítem, con tickets sin ID. `receipt.reprint` trae `hubPrint`: el hub imprime la copia solo si el POS lo pidió.
 
@@ -222,6 +222,12 @@ Todos los endpoints viven en `/api/v1/sync` y responden igual en el hub y en la 
     - olvida el token y queda solo con `/health`;
     - espera un reinicio con `HUB_PAIRING_CODE`.
     - Las terminales dejan de alcanzarlo y siguen con la nube.
+- **Teléfono del mesero (DEC-036).** Es una terminal `phone` atada a un mesero (`terminals.user_id`), con su propio prefijo `T*`, y se reutiliza en cada turno.
+  - **Cerrar sesión:** el teléfono envía **directo a la nube** todo lo propio que no tenga `cloudAcked` (`flushToCloud()`).
+    - Solo si no queda nada pendiente llama a `POST /terminals/logout`, que anula su token, y borra su base local.
+    - Sin red se niega.
+  - **Si el gerente lo desvincula:** ante el `401` de la nube, el teléfono borra sus datos si no tiene pendientes. Si los tiene, los conserva como cualquier terminal desactivada.
+  - **Credenciales sin conexión:** solo las de su dueño y las de quienes autorizan.
 
 ### 11.3 WebSocket `/ws`
 

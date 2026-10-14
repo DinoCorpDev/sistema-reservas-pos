@@ -1,5 +1,6 @@
 import type { Channel } from '../shared/channels';
 import type { ContentLanguage } from '../shared/languages';
+import type { OrderAllergies } from '../orders/allergies';
 import type { FoldState, KitchenTicketState } from '../orders/state';
 import type { KitchenAllergen, KitchenCatalog } from './catalog';
 import type { KitchenItemStatus } from './constants';
@@ -53,6 +54,8 @@ export interface KitchenTicketView extends TicketProgress {
   alert: boolean;
   /** Something on it was voided after it reached the kitchen (RN-13). */
   hasStorno: boolean;
+  /** A guest's allergies, read live from the order (DEC-037). */
+  allergies: OrderAllergies | null;
 }
 
 export interface StationBoard {
@@ -141,6 +144,7 @@ export function ticketView(
     elapsedMinutes,
     alert: progress.finishedAt === null && elapsedMinutes >= options.alertAfterMinutes,
     hasStorno: items.some((i) => i.status === 'voided'),
+    allergies: order?.allergies ?? null,
   };
 }
 

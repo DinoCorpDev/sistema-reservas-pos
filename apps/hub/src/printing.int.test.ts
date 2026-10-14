@@ -284,6 +284,49 @@ describe('kitchen tickets on the station printer (RF-C26, RF-C25, RF-C20)', () =
     await worker().runOnce();
     expect(kitchenPrinter.jobs).toHaveLength(1);
   });
+
+  it('an allergy noted after sending prints one notice per station; later tickets carry it (DEC-037)', async () => {
+    const order = tableOrder(305);
+    const send = pos.send(order.orderId, [order.schnitzel.itemId], [ids.kitchen]);
+    await pushToHub(pos, [order.open, order.add, send]);
+    kitchenPrinter.jobs.length = 0;
+    await worker().runOnce();
+    expect(kitchenPrinter.jobs).toHaveLength(1);
+    expect(kitchenPrinter.jobs[0]!.lines).not.toContain('!!! ALLERGIE AM TISCH !!!');
+
+    const guests = pos.op('order.update', order.orderId, { guestCount: 3 });
+    const allergy = pos.op('order.update', order.orderId, {
+      allergies: { allergens: ['tree_nuts', 'gluten'], note: 'Kiwi' },
+    });
+    await pushToHub(pos, [guests, allergy]);
+    await worker().runOnce();
+    // The guest count prints nothing; the allergy prints one notice at the kitchen printer.
+    expect(kitchenPrinter.jobs).toHaveLength(2);
+    const notice = kitchenPrinter.jobs[1]!.lines;
+    expect(notice.join(' ')).toMatch(/\*\*\* ALLERGIE-HINWEIS \d\d:\d\d \*\*\*/);
+    expect(notice).toEqual(
+      expect.arrayContaining(['Tisch 5', '!!! ALLERGIE AM TISCH !!!', 'Gluten, Nüsse · Kiwi']),
+    );
+
+    // Again and from scratch: still one notice.
+    await pushToHub(pos, [allergy]);
+    state.update({ printCursor: 0 });
+    await worker().runOnce();
+    expect(kitchenPrinter.jobs).toHaveLength(2);
+
+    // What is sent afterwards carries the warning on the ticket itself.
+    const dessert = testLine({
+      productId: ids.schnitzel.id,
+      name: ids.schnitzel.name,
+      stationIds: [ids.kitchen],
+    });
+    const addMore = pos.op('items.add', order.orderId, { items: [dessert] });
+    const sendMore = pos.send(order.orderId, [dessert.itemId], [ids.kitchen]);
+    await pushToHub(pos, [addMore, sendMore]);
+    await worker().runOnce();
+    expect(kitchenPrinter.jobs).toHaveLength(3);
+    expect(kitchenPrinter.jobs[2]!.lines).toContain('!!! ALLERGIE AM TISCH !!!');
+  });
 });
 
 describe('receipts and the cash drawer at the terminal (RF-D20, RF-D18)', () => {

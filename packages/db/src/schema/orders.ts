@@ -1,3 +1,4 @@
+import type { OrderAllergies } from '@pos/core';
 import {
   date,
   index,
@@ -52,6 +53,8 @@ export const orders = mysqlTable(
     pickupAt: utcDatetime('pickup_at'),
     customerName: varchar('customer_name', { length: 200 }),
     note: text('note'),
+    /** A guest's allergies, warned on every kitchen ticket of the order (DEC-037). */
+    allergies: json('allergies').$type<OrderAllergies>(),
     /** Totals in rappen, MWST included. The tip is separate and is not a sale (RN-07). */
     subtotalRappen: rappen('subtotal_rappen'),
     discountTotalRappen: rappen('discount_total_rappen'),

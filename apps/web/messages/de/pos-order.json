@@ -91,7 +91,8 @@
       "joinedTo": "Verbunden mit Tisch {label}",
       "sinceSent": "{minutes, plural, one {# Minute} other {# Minuten}} seit dem letzten Senden",
       "chooseDescription": "An diesem Tisch sind mehrere Bestellungen offen, die getrennt bezahlt werden.",
-      "newOrder": "Neue Bestellung"
+      "newOrder": "Neue Bestellung",
+      "allergy": "Allergie am Tisch"
     },
     "openTable": {
       "title": "Tisch {label} öffnen",
@@ -266,6 +267,35 @@
       "confirm": "Ja, an {targets} senden",
       "sent": "{count, plural, one {# Position von {from} ging} other {# Positionen von {from} gingen}} an {to}.",
       "notice": "Niemand angemeldet: {from}. Die Positionen gehen an {to}."
+    },
+    "allergy": {
+      "button": "Allergien",
+      "title": "Allergien am Tisch",
+      "description": "Markieren Sie, worauf jemand am Tisch allergisch ist. Die Küche sieht es auf jedem Bon dieser Bestellung, auch wenn das Gericht es nicht enthält – gegen Kreuzkontamination.",
+      "allergens": "Allergene",
+      "other": "Andere Allergie",
+      "otherPlaceholder": "z. B. Kiwi, Erdbeeren, Platz 2: Meeresfrüchte",
+      "save": "Speichern",
+      "remove": "Entfernen",
+      "cancel": "Abbrechen",
+      "banner": "Allergie: {list}",
+      "clash": "{product} enthält {allergens}: Am Tisch gibt es eine Allergie."
+    },
+    "allergens": {
+      "gluten": "Gluten",
+      "crustaceans": "Krebstiere",
+      "eggs": "Ei",
+      "fish": "Fisch",
+      "peanuts": "Erdnüsse",
+      "soy": "Soja",
+      "milk": "Milch",
+      "tree_nuts": "Nüsse",
+      "celery": "Sellerie",
+      "mustard": "Senf",
+      "sesame": "Sesam",
+      "sulphites": "Sulfite",
+      "lupin": "Lupinen",
+      "molluscs": "Weichtiere"
     }
   }
 }

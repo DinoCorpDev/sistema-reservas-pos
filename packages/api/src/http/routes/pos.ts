@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { presenceReportSchema, printerStatusReportSchema } from '@pos/core';
+import { ALLERGENS, presenceReportSchema, printerStatusReportSchema } from '@pos/core';
 import * as orders from '../../services/orders';
 import { getBootstrap } from '../../services/pos/bootstrap';
 import * as sync from '../../services/sync';
@@ -34,6 +34,13 @@ const OrderSummarySchema = z
     status: z.string().openapi({ enum: ['open', 'closed', 'voided'] }),
     paymentStatus: z.string().openapi({ enum: ['unpaid', 'partial', 'paid', 'refunded'] }),
     customerName: z.string().nullable(),
+    allergies: z
+      .object({
+        allergens: z.array(z.string().openapi({ enum: [...ALLERGENS] })),
+        note: z.string().nullable(),
+      })
+      .nullable()
+      .openapi({ description: "A guest's allergies, warned on every kitchen ticket (DEC-037)" }),
     subtotalRappen: z.number().int(),
     discountTotalRappen: z.number().int(),
     totalRappen: z.number().int(),

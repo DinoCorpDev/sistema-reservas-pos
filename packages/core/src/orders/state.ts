@@ -8,6 +8,7 @@ import type { Rappen } from '../shared/money';
 import type { ConflictCode } from '../sync/constants';
 import type { IsoDate } from '../tax/calculation';
 import type { TaxCategoryKey, TaxRateCode } from '../tax/constants';
+import type { OrderAllergies } from './allergies';
 import type { DiscountKind, ItemPrepStatus, OrderPaymentStatus, OrderStatus } from './constants';
 
 /**
@@ -99,6 +100,8 @@ export interface OrderState {
   waiterUserId: string;
   customerName: string | null;
   note: string | null;
+  /** A guest's allergies: every kitchen ticket of the order warns about them (DEC-037). */
+  allergies: OrderAllergies | null;
   status: OrderStatus;
   paymentStatus: OrderPaymentStatus;
   openedAt: string;

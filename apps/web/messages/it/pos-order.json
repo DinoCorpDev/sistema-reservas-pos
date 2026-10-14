@@ -91,7 +91,8 @@
       "joinedTo": "Unito al tavolo {label}",
       "sinceSent": "{minutes, plural, one {# minuto} other {# minuti}} dall’ultimo invio",
       "chooseDescription": "A questo tavolo sono aperti più ordini, che vengono pagati separatamente.",
-      "newOrder": "Nuovo ordine"
+      "newOrder": "Nuovo ordine",
+      "allergy": "Allergia al tavolo"
     },
     "openTable": {
       "title": "Apri tavolo {label}",
@@ -266,6 +267,35 @@
       "confirm": "Sì, invia a {targets}",
       "sent": "{count, plural, one {# posizione di {from} inviata} other {# posizioni di {from} inviate}} a {to}.",
       "notice": "Nessuno è connesso: {from}. Le posizioni andranno a {to}."
+    },
+    "allergy": {
+      "button": "Allergie",
+      "title": "Allergie al tavolo",
+      "description": "Indichi a cosa è allergico qualcuno al tavolo. La cucina lo vede su ogni comanda di questo ordine, anche se il piatto non lo contiene, per evitare la contaminazione crociata.",
+      "allergens": "Allergeni",
+      "other": "Altra allergia",
+      "otherPlaceholder": "p. es. kiwi, fragole, posto 2: frutti di mare",
+      "save": "Salva",
+      "remove": "Rimuovi",
+      "cancel": "Annulla",
+      "banner": "Allergia: {list}",
+      "clash": "{product} contiene {allergens}: al tavolo c’è un’allergia."
+    },
+    "allergens": {
+      "gluten": "Glutine",
+      "crustaceans": "Crostacei",
+      "eggs": "Uova",
+      "fish": "Pesce",
+      "peanuts": "Arachidi",
+      "soy": "Soia",
+      "milk": "Latte",
+      "tree_nuts": "Frutta a guscio",
+      "celery": "Sedano",
+      "mustard": "Senape",
+      "sesame": "Sesamo",
+      "sulphites": "Solfiti",
+      "lupin": "Lupini",
+      "molluscs": "Molluschi"
     }
   }
 }

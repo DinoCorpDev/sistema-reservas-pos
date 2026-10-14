@@ -91,7 +91,8 @@
       "joinedTo": "Jointe à la table {label}",
       "sinceSent": "{minutes, plural, one {# minute} other {# minutes}} depuis le dernier envoi",
       "chooseDescription": "Plusieurs commandes sont ouvertes à cette table et sont payées séparément.",
-      "newOrder": "Nouvelle commande"
+      "newOrder": "Nouvelle commande",
+      "allergy": "Allergie à la table"
     },
     "openTable": {
       "title": "Ouvrir la table {label}",
@@ -266,6 +267,35 @@
       "confirm": "Oui, envoyer à {targets}",
       "sent": "{count, plural, one {# position de {from} envoyée} other {# positions de {from} envoyées}} à {to}.",
       "notice": "Personne n’est connecté : {from}. Les positions partiront vers {to}."
+    },
+    "allergy": {
+      "button": "Allergies",
+      "title": "Allergies à la table",
+      "description": "Indiquez à quoi quelqu’un à la table est allergique. La cuisine le voit sur chaque bon de cette commande, même si le plat n’en contient pas, pour éviter la contamination croisée.",
+      "allergens": "Allergènes",
+      "other": "Autre allergie",
+      "otherPlaceholder": "p. ex. kiwi, fraises, place 2 : fruits de mer",
+      "save": "Enregistrer",
+      "remove": "Retirer",
+      "cancel": "Annuler",
+      "banner": "Allergie : {list}",
+      "clash": "{product} contient {allergens} : quelqu’un à cette table est allergique."
+    },
+    "allergens": {
+      "gluten": "Gluten",
+      "crustaceans": "Crustacés",
+      "eggs": "Œufs",
+      "fish": "Poisson",
+      "peanuts": "Arachides",
+      "soy": "Soja",
+      "milk": "Lait",
+      "tree_nuts": "Fruits à coque",
+      "celery": "Céleri",
+      "mustard": "Moutarde",
+      "sesame": "Sésame",
+      "sulphites": "Sulfites",
+      "lupin": "Lupin",
+      "molluscs": "Mollusques"
     }
   }
 }

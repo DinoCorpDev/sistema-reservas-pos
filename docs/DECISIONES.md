@@ -260,6 +260,51 @@ Juan desactivó una caja en el backoffice: la caja siguió funcionando y solo mo
     - solo responde `/health` hasta reiniciarlo con `HUB_PAIRING_CODE=<código nuevo>`.
   - Las terminales pasan solas a la nube con todo lo que no estaba confirmado.
 
+### DEC-036 · Los meseros trabajan desde su propio teléfono («Podría», amplía RF-A06 y RF-A12)
+
+El cliente quiere que los meseros usen **su propio teléfono** en vez de handhelds del restaurante. El documento no lo prevé: los aparatos se crean a mano en el backoffice y cualquier PIN de la sede abre cualquiera. Decidido con Juan:
+
+- **Vincular sin trabajo del gerente.**
+  - La **caja** (terminal `pos`) muestra «Vincular teléfono» con un **QR** que abre `/pos?phone=<código>`. El backoffice también da el código.
+  - El código dura **5 minutos** y sirve para **varios teléfonos**, pero cada uno pide el **PIN del mesero**. Con 5 PIN errados el código muere.
+  - Solo un usuario con **rol de mesero** puede vincular su teléfono.
+- **El teléfono es del mesero.**
+  - Hay un tipo de terminal nuevo, `phone`, que nunca se crea a mano. Se crea una fila por mesero y sede la primera vez que vincula, guardando su dueño en `terminals.user_id`, y se reutiliza en cada turno.
+  - Su prefijo para numerar sin conexión se asigna solo: `T1`, `T2`… (RN-16).
+  - Si vincula otro teléfono, el anterior deja de funcionar.
+  - Solo se abre con el PIN de su dueño.
+  - Guarda únicamente las huellas de PIN de su dueño y de quienes autorizan (RN-15), no las de todo el personal.
+- **Cerrar sesión desvincula en el acto, sin vencimiento automático.**
+  - El botón de apagar envía primero todo a la nube. Si algo no llegó, se niega y pide conectarse al Wi-Fi del local, para que un pedido o un cobro no se vaya en el bolsillo.
+  - Con todo enviado, el teléfono anula su token (`POST /terminals/logout`) y borra sus datos.
+- **El gerente** ve en «Dispositivos» quién tiene cada teléfono y desde cuándo. Si un teléfono viene vinculado de un día anterior, se resalta.
+  - **Desvincular** anula el token sin desactivar. El teléfono borra sus datos solo si no tiene pendientes.
+  - **Desactivar** impide que ese mesero vuelva a vincular su teléfono.
+- **Límite conocido:** sin internet, un teléfono que cargó la app desde la nube no alcanza al hub hasta que el hub tenga HTTPS (SYNC §11.5, Fase 6). Mientras tanto toma pedidos y cobra, pero sus pedidos llegan a cocina al volver la conexión. Para probar con teléfonos reales hace falta HTTPS.
+
+### DEC-037 · Alergias en la mesa, avisadas en cada comanda («Podría», amplía RF-C20 y RF-B05)
+
+Juan pidió poder anotar en el pedido que un comensal es alérgico a algo, aunque lo que pida no lo lleve, para que la cocina evite la **contaminación cruzada**. El documento solo prevé los alérgenos de cada plato (RF-B05, RF-C20).
+
+- **Qué se anota:**
+  - va en el pedido (`orders.allergies`, JSON);
+  - se marca cualquiera de los 14 alérgenos y/o un texto libre de hasta 200 caracteres («kiwi», «asiento 2: fresa»);
+  - se escribe con `order.update`; el último cambio gana y `null` lo quita.
+- **Nunca se pierde:**
+  - al dividir la cuenta, la parte nueva hereda las alergias;
+  - al unir pedidos, se suman.
+- **Cocina:**
+  - el KDS muestra una franja roja en **cada ticket** del pedido («ALLERGIE AM TISCH … Kreuzkontamination vermeiden»), en el idioma de la estación;
+  - lo lee del pedido en vivo, así que una alergia anotada tarde aparece al instante.
+- **Papel:**
+  - toda comanda impresa del pedido la lleva arriba, entre líneas de `*`;
+  - si se anota **después** de enviar, el hub imprime un **aviso de alergia** por estación con impresora, con clave `allergy:<op>:<estación>`, sin duplicados.
+- **Caja:**
+  - botón «Alergias» en el pedido, a un toque, y franja roja mientras haya alergia;
+  - escudo rojo en la mesa del salón;
+  - aviso naranja, que **no bloquea**, al agregar un producto que contenga o pueda contener un alérgeno marcado.
+- **Límite:** el aviso al agregar depende de que la carta tenga sus alérgenos cargados. La de Lalín todavía no los tiene; la franja en cocina funciona igual.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                | Antes de | Quién decide      |

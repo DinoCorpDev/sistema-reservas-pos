@@ -6,6 +6,7 @@ import type { LocationSettings } from '../organization/settings';
 import { compareOperations } from '../shared/hlc';
 import { type Rappen, rappen } from '../shared/money';
 import type { ConflictCode } from '../sync/constants';
+import { mergeAllergies, normalizeAllergies } from './allergies';
 import type { Operation, OperationOf } from './operations';
 import {
   type ConflictRecord,
@@ -113,6 +114,7 @@ function newOrder(
     waiterUserId: fields.waiterUserId,
     customerName: fields.customerName,
     note: null,
+    allergies: null,
     status: 'open',
     paymentStatus: 'unpaid',
     openedAt: op.deviceAt,
@@ -360,6 +362,7 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
       if (p.joinedTableIds !== undefined) order.joinedTableIds = [...p.joinedTableIds];
       if (p.customerName !== undefined) order.customerName = p.customerName;
       if (p.note !== undefined) order.note = p.note;
+      if (p.allergies !== undefined) order.allergies = normalizeAllergies(p.allergies);
       touched.add(order.id);
       break;
     }
@@ -928,6 +931,8 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
         break;
       }
       for (const item of itemsOf(state, source.id)) moveItem(item, target.id);
+      // The guests come along: no allergy warning may get lost (DEC-037).
+      target.allergies = mergeAllergies(target.allergies, source.allergies);
       // An order discount belonged to the old order; it does not carry over.
       for (const discount of discountsOf(state, source.id)) {
         if (discount.itemId === null && discount.removedAt === null)
@@ -973,6 +978,8 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
         splitFromOrderId: source.id,
         number: p.number,
       });
+      // Same table, same guests: the allergy warning goes with the new part (DEC-037).
+      child.allergies = mergeAllergies(source.allergies, null);
       state.orders.set(child.id, child);
       const moved: string[] = [];
       for (const itemId of p.itemIds) {

@@ -24,6 +24,8 @@ const toOrderSummary = (row: OrderRow) => ({
   status: row.status,
   paymentStatus: row.paymentStatus,
   customerName: row.customerName,
+  /** A guest's allergies, warned to the kitchen (DEC-037). */
+  allergies: row.allergies ?? null,
   subtotalRappen: row.subtotalRappen,
   discountTotalRappen: row.discountTotalRappen,
   totalRappen: row.totalRappen,

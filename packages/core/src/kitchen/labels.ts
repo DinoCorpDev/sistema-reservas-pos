@@ -22,6 +22,12 @@ export interface KitchenLabels {
   sentBy: string;
   /** Before the name of the station an item comes from (DEC-033). */
   fromStation: string;
+  /** A guest of the order is allergic (DEC-037): on every ticket, and as a notice. */
+  allergyAlert: string;
+  /** What the kitchen does about it. */
+  allergyCare: string;
+  /** Title of the notice printed when the allergy comes after the items were sent. */
+  allergyNotice: string;
   testPage: string;
   testPageBody: string;
   channels: Record<Channel, string>;
@@ -42,6 +48,9 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     reprint: 'NACHDRUCK',
     sentBy: 'Service',
     fromStation: 'für',
+    allergyAlert: 'ALLERGIE AM TISCH',
+    allergyCare: 'Kreuzkontamination vermeiden',
+    allergyNotice: 'ALLERGIE-HINWEIS',
     testPage: 'TESTDRUCK',
     testPageBody: 'Der Drucker ist bereit.',
     channels: {
@@ -82,6 +91,9 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     reprint: 'RÉIMPRESSION',
     sentBy: 'Serveur',
     fromStation: 'pour',
+    allergyAlert: 'ALLERGIE À LA TABLE',
+    allergyCare: 'Éviter toute contamination croisée',
+    allergyNotice: 'AVIS D’ALLERGIE',
     testPage: 'PAGE DE TEST',
     testPageBody: 'L’imprimante est prête.',
     channels: {
@@ -122,6 +134,9 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     reprint: 'RISTAMPA',
     sentBy: 'Servizio',
     fromStation: 'per',
+    allergyAlert: 'ALLERGIA AL TAVOLO',
+    allergyCare: 'Evitare la contaminazione crociata',
+    allergyNotice: 'AVVISO ALLERGIA',
     testPage: 'STAMPA DI PROVA',
     testPageBody: 'La stampante è pronta.',
     channels: {
@@ -162,6 +177,9 @@ export const KITCHEN_LABELS: Readonly<Record<ContentLanguage, KitchenLabels>> = 
     reprint: 'REPRINT',
     sentBy: 'Server',
     fromStation: 'for',
+    allergyAlert: 'ALLERGY AT THE TABLE',
+    allergyCare: 'Avoid cross-contamination',
+    allergyNotice: 'ALLERGY NOTICE',
     testPage: 'TEST PAGE',
     testPageBody: 'The printer is ready.',
     channels: {
@@ -198,4 +216,13 @@ export function courseLabel(labels: KitchenLabels, course: number): string {
 
 export function allergenName(labels: KitchenLabels, allergen: string): string {
   return labels.allergenNames[allergen as Allergen] ?? allergen;
+}
+
+/** A guest's allergies in the kitchen language: "Gluten, Nüsse · Kiwi" (DEC-037). */
+export function allergySummary(
+  labels: KitchenLabels,
+  allergies: { allergens: readonly string[]; note: string | null },
+): string {
+  const names = allergies.allergens.map((allergen) => allergenName(labels, allergen)).join(', ');
+  return [names, allergies.note ?? ''].filter((part) => part !== '').join(' · ');
 }

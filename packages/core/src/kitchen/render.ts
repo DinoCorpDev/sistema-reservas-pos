@@ -1,7 +1,8 @@
 import { columnsAt, type PrintDocument, type PrintLine, rule, wrapped } from '../printing/document';
 import { localMoment } from '../shared/time';
+import type { OrderAllergies } from '../orders/allergies';
 import type { KitchenTicketView } from './board';
-import { allergenName, courseLabel, type KitchenLabels } from './labels';
+import { allergenName, allergySummary, courseLabel, type KitchenLabels } from './labels';
 
 /**
  * The kitchen ticket as printed at the station (RF-C26), in the kitchen language (RF-C25):
@@ -31,6 +32,60 @@ export interface KitchenRenderOptions {
 const hhmm = (iso: string, timeZone: string) =>
   localMoment(new Date(iso), timeZone).time.slice(0, 5);
 
+type Where = Pick<KitchenTicketView, 'channel' | 'displayNumber'>;
+
+/** "Tisch 4", or the channel and the number at the counter. */
+const whereOf = (view: Where, options: { labels: KitchenLabels; tableLabel: string | null }) =>
+  view.channel === 'table' && options.tableLabel
+    ? `${options.labels.table} ${options.tableLabel}`
+    : `${options.labels.channels[view.channel]} ${view.displayNumber}`;
+
+/**
+ * A guest's allergies (DEC-037) between rows of stars, above everything else: whatever the
+ * ticket lists, the kitchen keeps those ingredients away from this order.
+ */
+function allergyBlock(allergies: OrderAllergies, width: number, l: KitchenLabels): PrintLine[] {
+  return [
+    rule(width, '*'),
+    ...wrapped(`!!! ${l.allergyAlert} !!!`, width, { bold: true, align: 'center' }),
+    ...wrapped(allergySummary(l, allergies), width, { bold: true, size: 'tall' }),
+    ...wrapped(l.allergyCare, width, { bold: true }),
+    rule(width, '*'),
+  ];
+}
+
+/**
+ * The allergy was noted after the items had reached the station (DEC-037): a short notice to
+ * every station of the order, so nobody relies on a ticket printed before it.
+ */
+export function renderAllergyNotice(
+  order: Where & { allergies: OrderAllergies },
+  options: Omit<KitchenRenderOptions, 'kind' | 'itemIds' | 'stationNames'>,
+): PrintDocument {
+  const { width, labels: l } = options;
+  const lines: PrintLine[] = [
+    { text: options.stationName.toUpperCase(), bold: true, align: 'center' },
+    // Large letters wrap on narrow paper instead of running off it.
+    ...wrapped(`*** ${l.allergyNotice} ${hhmm(options.at, options.timeZone)} ***`, width, {
+      bold: true,
+      size: 'large',
+      align: 'center',
+    }),
+    ...wrapped(whereOf(order, options), width, { bold: true, size: 'large' }),
+    ...wrapped(
+      [
+        order.channel === 'table' ? `${l.order} ${order.displayNumber}` : null,
+        options.waiterName ? `${l.sentBy}: ${options.waiterName}` : null,
+      ]
+        .filter((part): part is string => part !== null)
+        .join(' · '),
+      width,
+    ),
+    ...allergyBlock(order.allergies, width, l),
+  ];
+  return { lines, cut: true, openDrawer: false };
+}
+
 export function renderKitchenTicket(
   view: KitchenTicketView,
   options: KitchenRenderOptions,
@@ -52,11 +107,8 @@ export function renderKitchenTicket(
       align: 'center',
     });
   }
-  const where =
-    view.channel === 'table' && options.tableLabel
-      ? `${l.table} ${options.tableLabel}`
-      : `${l.channels[view.channel]} ${view.displayNumber}`;
-  lines.push(...wrapped(where, width, { bold: true, size: 'large' }));
+  if (view.allergies) lines.push(...allergyBlock(view.allergies, width, l));
+  lines.push(...wrapped(whereOf(view, options), width, { bold: true, size: 'large' }));
   const meta = [
     view.channel === 'table' ? `${l.order} ${view.displayNumber}` : null,
     hhmm(view.sentAt, options.timeZone),

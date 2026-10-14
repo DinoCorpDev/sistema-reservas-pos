@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ALLERGENS } from '../catalog/constants';
 import { PERMISSIONS } from '../organization/permissions';
 import { PAYMENT_ADAPTERS, PAYMENT_METHODS } from '../payments/constants';
 import { receiptContentSchema } from '../receipts/content';
@@ -27,6 +28,15 @@ const nonNegative = z.int().min(0);
 const positive = z.int().min(1);
 const shortText = (max: number) => z.string().trim().min(1).max(max);
 const optionalText = (max: number) => z.string().trim().max(max).nullable();
+
+/** Allergies at the table (DEC-037): the 14 allergens and/or free text such as "kiwi". */
+export const orderAllergiesSchema = z.object({
+  allergens: z
+    .array(z.enum(ALLERGENS))
+    .max(ALLERGENS.length)
+    .refine((list) => new Set(list).size === list.length, 'Duplicate allergens'),
+  note: optionalText(200),
+});
 
 /** The order number assigned when an order is opened (RN-16, RF-C15, DEC-022). */
 export const orderNumberSchema = z.object({
@@ -128,6 +138,8 @@ export const operationSchema = z.discriminatedUnion('type', [
         joinedTableIds: z.array(id).max(10),
         customerName: optionalText(200),
         note: optionalText(500),
+        /** A guest's allergies, warned on every kitchen ticket (DEC-037); null clears them. */
+        allergies: orderAllergiesSchema.nullable(),
       })
       .partial()
       .refine((fields) => Object.keys(fields).length > 0, 'Nothing to update'),

@@ -1,10 +1,16 @@
 'use client';
 
-import { allergenName, courseLabel, type KitchenLabels, type KitchenTicketView } from '@pos/core';
+import {
+  allergenName,
+  allergySummary,
+  courseLabel,
+  type KitchenLabels,
+  type KitchenTicketView,
+} from '@pos/core';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
-import { Check, ChefHat, HandPlatter, Printer, RotateCcw } from 'lucide-react';
+import { Check, ChefHat, HandPlatter, Printer, RotateCcw, ShieldAlert } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 
 const ITEM_STYLES: Record<string, string> = {
@@ -103,6 +109,24 @@ export function TicketCard({
           {ticket.reprintCount > 0 && <Badge variant="outline">{labels.reprint}</Badge>}
         </div>
       </header>
+
+      {/* A guest is allergic: whatever this ticket lists, keep it away from them (DEC-037). */}
+      {ticket.allergies && (
+        <div
+          role="alert"
+          data-testid="kds-allergy"
+          className="flex items-start gap-2 bg-destructive px-3 py-2 text-white"
+        >
+          <ShieldAlert className="mt-0.5 size-6 shrink-0" aria-hidden />
+          <div className="min-w-0">
+            <p className="text-sm font-bold tracking-wide">{labels.allergyAlert}</p>
+            <p className="text-lg leading-tight font-bold">
+              {allergySummary(labels, ticket.allergies)}
+            </p>
+            <p className="text-sm text-white/90">{labels.allergyCare}</p>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-1 flex-col gap-1 p-2">
         {ticket.courses.map((course) => (

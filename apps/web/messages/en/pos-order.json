@@ -91,7 +91,8 @@
       "joinedTo": "Joined to table {label}",
       "sinceSent": "{minutes, plural, one {# minute} other {# minutes}} since last sent",
       "chooseDescription": "Several orders are open at this table and are paid separately.",
-      "newOrder": "New order"
+      "newOrder": "New order",
+      "allergy": "Allergy at the table"
     },
     "openTable": {
       "title": "Open table {label}",
@@ -266,6 +267,35 @@
       "confirm": "Yes, send to {targets}",
       "sent": "{count, plural, one {# item} other {# items}} from {from} sent to {to}.",
       "notice": "Nobody logged in: {from}. Its items will go to {to}."
+    },
+    "allergy": {
+      "button": "Allergies",
+      "title": "Allergies at the table",
+      "description": "Mark what someone at the table is allergic to. The kitchen sees it on every ticket of this order, even when the dish does not contain it, to avoid cross-contamination.",
+      "allergens": "Allergens",
+      "other": "Other allergy",
+      "otherPlaceholder": "e.g. kiwi, strawberries, seat 2: seafood",
+      "save": "Save",
+      "remove": "Remove",
+      "cancel": "Cancel",
+      "banner": "Allergy: {list}",
+      "clash": "{product} contains {allergens}: someone at this table is allergic."
+    },
+    "allergens": {
+      "gluten": "Gluten",
+      "crustaceans": "Crustaceans",
+      "eggs": "Egg",
+      "fish": "Fish",
+      "peanuts": "Peanuts",
+      "soy": "Soy",
+      "milk": "Milk",
+      "tree_nuts": "Tree nuts",
+      "celery": "Celery",
+      "mustard": "Mustard",
+      "sesame": "Sesame",
+      "sulphites": "Sulphites",
+      "lupin": "Lupin",
+      "molluscs": "Molluscs"
     }
   }
 }

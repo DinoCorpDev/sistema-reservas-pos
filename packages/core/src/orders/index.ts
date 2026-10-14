@@ -3,6 +3,7 @@
  * an operation; the state of the orders is the deterministic fold of their operations.
  */
 export * from './constants';
+export * from './allergies';
 export * from './channel';
 export * from './operations';
 export * from './state';

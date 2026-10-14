@@ -13,6 +13,7 @@ import {
   type LineSelection,
   newId,
   type OperationApproval,
+  type OrderAllergies,
   type PaymentAdapterKey,
   type PaymentMethod,
   PAYMENT_ADAPTER_REGISTRY,
@@ -116,6 +117,8 @@ export async function updateOrder(
     joinedTableIds?: string[];
     customerName?: string | null;
     note?: string | null;
+    /** A guest's allergies, warned on every kitchen ticket (DEC-037); null clears them. */
+    allergies?: OrderAllergies | null;
   },
 ): Promise<void> {
   await record('order.update', orderId, fields);

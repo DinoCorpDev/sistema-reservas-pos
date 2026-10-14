@@ -12,7 +12,7 @@ import {
 } from '@pos/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pos/ui/tabs';
 import { cn } from '@pos/ui/utils';
-import { Clock, Link2, Plus, Users } from 'lucide-react';
+import { Clock, Link2, Plus, ShieldAlert, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type CSSProperties, useId, useMemo, useState } from 'react';
 import { getPos, usePos } from '@/device/store';
@@ -50,11 +50,14 @@ export function FloorView() {
   const floor = useFoldMemo((fold) => {
     const views = tableViews(fold);
     const guests = new Map<string, number>();
+    // Tables where a guest is allergic (DEC-037): the waiter sees it before opening the order.
+    const allergy = new Set<string>();
     for (const order of fold.orders.values()) {
       if (order.status !== 'open' || order.tableId === null) continue;
       guests.set(order.tableId, (guests.get(order.tableId) ?? 0) + (order.guestCount ?? 0));
+      if (order.allergies) allergy.add(order.tableId);
     }
-    return { views, guests };
+    return { views, guests, allergy };
   });
 
   const areas = useMemo(() => {
@@ -144,6 +147,7 @@ export function FloorView() {
               tables={tables}
               views={floor.views}
               guests={floor.guests}
+              allergy={floor.allergy}
               tableById={tableById}
               now={now}
               onSelect={select}
@@ -196,6 +200,7 @@ function AreaMap({
   tables,
   views,
   guests,
+  allergy,
   tableById,
   now,
   onSelect,
@@ -203,6 +208,7 @@ function AreaMap({
   tables: FloorTable[];
   views: Map<string, TableView>;
   guests: Map<string, number>;
+  allergy: Set<string>;
   tableById: Map<string, FloorTable>;
   now: number;
   onSelect: (table: FloorTable) => void;
@@ -238,6 +244,7 @@ function AreaMap({
             state={view?.state ?? 'free'}
             orderCount={joinedTo ? 0 : (view?.orderIds.length ?? 0)}
             guests={joinedTo ? 0 : (guests.get(table.id) ?? 0)}
+            allergy={!joinedTo && allergy.has(table.id)}
             minutes={minutesSince(view?.lastSentAt ?? null, now)}
             joinedToLabel={joinedTo?.label ?? null}
             style={
@@ -261,6 +268,7 @@ function TableTile({
   state,
   orderCount,
   guests,
+  allergy,
   minutes,
   joinedToLabel,
   style,
@@ -270,6 +278,8 @@ function TableTile({
   state: TableState;
   orderCount: number;
   guests: number;
+  /** A guest at the table is allergic (DEC-037). */
+  allergy: boolean;
   minutes: number | null;
   joinedToLabel: string | null;
   style?: CSSProperties;
@@ -297,6 +307,15 @@ function TableTile({
     >
       <span className="flex items-start justify-between gap-1">
         <span className="text-2xl leading-none font-bold">{table.label}</span>
+        {allergy && (
+          <span
+            className="ml-auto rounded-full bg-destructive p-1 text-white"
+            data-testid="table-allergy"
+          >
+            <ShieldAlert className="size-4" aria-hidden />
+            <span className="sr-only">{t('allergy')}</span>
+          </span>
+        )}
         {orderCount > 1 && (
           <span className="rounded-full bg-black/10 px-1.5 text-xs font-semibold">
             ×{orderCount}
