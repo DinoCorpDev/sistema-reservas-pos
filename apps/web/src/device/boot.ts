@@ -10,7 +10,7 @@ import {
   storePairedDeviceFor,
   unconfirmedCount,
 } from './db';
-import { dispatch, refold } from './engine';
+import { dispatch, listenToOtherTabs, refold } from './engine';
 import { CLOUD, callNode, NodeError } from './http';
 import { preferredLanguage } from './language';
 import { makeOperation } from './operations';
@@ -47,6 +47,8 @@ export async function bootDevice(): Promise<void> {
     revoked: revoked !== undefined,
   });
   await refold();
+  // Another tab of this app on the device may record operations too (engine.ts).
+  listenToOtherTabs();
   usePos.setState({ ready: true });
   if (device && !revoked) startSync();
 }

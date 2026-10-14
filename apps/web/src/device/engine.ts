@@ -62,6 +62,38 @@ function absorb(ops: readonly Operation[]): void {
 }
 
 /**
+ * Other tabs or windows of the same app on this device share its database, and with it the pull
+ * cursor: an operation one of them made or pulled never reaches the others through the network.
+ * Each tab tells the others what it stored, so all of them fold the same operations at once.
+ */
+let tabs: BroadcastChannel | null | undefined;
+
+function otherTabs(): BroadcastChannel | null {
+  if (tabs === undefined) {
+    tabs =
+      typeof BroadcastChannel === 'undefined'
+        ? null
+        : new BroadcastChannel(`ops:${deviceDb().name}`);
+    if (tabs) {
+      // Already stored by the tab that sent them: only the in-memory state catches up.
+      tabs.onmessage = (event: MessageEvent<{ ops?: Operation[] }>) => {
+        if (Array.isArray(event.data?.ops)) absorb(event.data.ops);
+      };
+    }
+  }
+  return tabs;
+}
+
+function tellOtherTabs(ops: readonly Operation[]): void {
+  if (ops.length > 0) otherTabs()?.postMessage({ ops });
+}
+
+/** Starts listening to the other tabs of this app on the device (called at boot). */
+export function listenToOtherTabs(): void {
+  otherTabs();
+}
+
+/**
  * Records an operation made on this device: stored first (so nothing is lost if the tablet
  * restarts), then applied. Returns once both are done.
  */
@@ -78,6 +110,7 @@ export async function dispatch(op: Operation): Promise<void> {
   };
   await deviceDb().ops.put(row);
   absorb([op]);
+  tellOtherTabs([op]);
   usePos.setState((state) => ({ sync: { ...state.sync, pending: state.sync.pending + 1 } }));
 }
 
@@ -85,7 +118,9 @@ export async function dispatch(op: Operation): Promise<void> {
 export async function ingest(rows: readonly OperationRow[]): Promise<void> {
   if (rows.length === 0) return;
   await deviceDb().ops.bulkPut([...rows]);
-  absorb(rows.filter((row) => !row.rejected).map((row) => row.op));
+  const ops = rows.filter((row) => !row.rejected).map((row) => row.op);
+  absorb(ops);
+  tellOtherTabs(ops);
 }
 
 /** True when the operation is already known (pull of an operation made here). */
