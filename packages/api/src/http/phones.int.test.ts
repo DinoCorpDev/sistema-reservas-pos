@@ -226,11 +226,30 @@ describe('signing out and unpairing a waiter phone (DEC-036)', () => {
     expect(next.terminal.id).toBe(anna.terminal.id);
   });
 
-  it('only a phone signs out by itself', async () => {
+  it('a handheld or a kitchen display does not unpair itself', async () => {
+    for (const paired of [handheld, kds]) {
+      const response = await api.request('POST', '/terminals/logout', {
+        headers: device(paired.deviceToken),
+      });
+      expect(response.status).toBe(403);
+    }
+  });
+
+  it('a cashier POS unpairs itself, whoever holds it, and can be paired again', async () => {
+    const till = await pairTerminal(api, admin, { prefix: 'PU', type: 'pos' });
     const response = await api.request('POST', '/terminals/logout', {
-      headers: device(kasse.deviceToken),
+      headers: device(till.deviceToken),
     });
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(204);
+    const gone = await api.request('GET', '/pos/bootstrap', { headers: device(till.deviceToken) });
+    expect(gone.status).toBe(401);
+    const audited = await api.db
+      .select()
+      .from(s.auditEvents)
+      .where(
+        and(eq(s.auditEvents.entityId, till.id), eq(s.auditEvents.action, 'terminal.unpaired')),
+      );
+    expect(audited).toHaveLength(1);
   });
 
   it('is unpaired in the backoffice, or deactivated so it cannot pair again', async () => {

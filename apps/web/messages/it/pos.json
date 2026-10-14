@@ -108,6 +108,15 @@
     },
     "language": {
       "label": "Cambia lingua"
+    },
+    "unpair": {
+      "button": "Scollega dispositivo",
+      "title": "Scollegare questa cassa?",
+      "description": "La cassa invia prima tutto al cloud, poi lascia la sede, viene cancellata e chiede di nuovo un codice di abbinamento.",
+      "confirm": "Scollega",
+      "cancel": "Annulla",
+      "pending": "{count, plural, one {# operazione non è} other {# operazioni non sono}} ancora nel cloud. Controllate la connessione e riprovate.",
+      "offline": "Nessuna connessione al cloud. Per scollegare serve internet."
     }
   }
 }

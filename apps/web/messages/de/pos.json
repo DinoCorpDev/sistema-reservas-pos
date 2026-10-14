@@ -108,6 +108,15 @@
     },
     "language": {
       "label": "Sprache ändern"
+    },
+    "unpair": {
+      "button": "Gerät entkoppeln",
+      "title": "Diese Kasse entkoppeln?",
+      "description": "Die Kasse sendet zuerst alles an die Cloud, wird dann vom Standort getrennt und gelöscht und fragt wieder nach einem Kopplungscode.",
+      "confirm": "Entkoppeln",
+      "cancel": "Abbrechen",
+      "pending": "{count, plural, one {# Vorgang ist} other {# Vorgänge sind}} noch nicht in der Cloud. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
+      "offline": "Keine Verbindung zur Cloud. Zum Entkoppeln braucht es Internet."
     }
   }
 }

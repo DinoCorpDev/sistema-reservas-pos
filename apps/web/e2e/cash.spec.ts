@@ -142,3 +142,12 @@ test('a manager closes a business day from the POS with their PIN (Z)', async ({
   await dialog.getByTestId('day-close-confirm').click();
   await expect(dialog.getByTestId('day-closed')).toContainText(`vom ${yesterday}`);
 });
+
+test('whoever holds the till unpairs it and it asks for a pairing code again', async ({ page }) => {
+  test.setTimeout(120_000);
+  await pairPos(page, 'K1');
+  await unlockPos(page, '4001');
+  await page.getByTestId('unpair-device').click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Entkoppeln' }).click();
+  await expect(page.getByLabel('Kopplungscode')).toBeVisible({ timeout: 30_000 });
+});

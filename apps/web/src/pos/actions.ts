@@ -789,7 +789,12 @@ export async function issuePhoneCode(): Promise<{ code: string; expiresAt: strin
 export const phonePairingUrl = (code: string): string =>
   `${window.location.origin}/pos?phone=${encodeURIComponent(code)}`;
 
-export { signOutPhone, UnsentOperationsError } from '@/device/phone';
+/** The device unpairs itself, after sending everything to the cloud (DEC-036): phones and tills. */
+export {
+  signOutPhone as unpairThisDevice,
+  signOutPhone,
+  UnsentOperationsError,
+} from '@/device/phone';
 
 /** True when nothing has been paid yet: transfer, merge and split are allowed (DEC-025). */
 export const hasPayments = (orderId: string) => paymentsOf(getPos().fold, orderId).length > 0;

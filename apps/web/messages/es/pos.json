@@ -108,6 +108,15 @@
     },
     "language": {
       "label": "Cambiar idioma"
+    },
+    "unpair": {
+      "button": "Desvincular dispositivo",
+      "title": "¿Desvincular esta caja?",
+      "description": "La caja primero envía todo a la nube, luego se separa de la sede, se borra y vuelve a pedir un código de vinculación.",
+      "confirm": "Desvincular",
+      "cancel": "Cancelar",
+      "pending": "{count, plural, one {# operación aún no está} other {# operaciones aún no están}} en la nube. Revise la conexión e inténtelo de nuevo.",
+      "offline": "Sin conexión con la nube. Para desvincular se necesita internet."
     }
   }
 }

@@ -108,6 +108,15 @@
     },
     "language": {
       "label": "Changer de langue"
+    },
+    "unpair": {
+      "button": "Dissocier l'appareil",
+      "title": "Dissocier cette caisse ?",
+      "description": "La caisse envoie d'abord tout au cloud, puis quitte l'établissement, est effacée et redemande un code d'appairage.",
+      "confirm": "Dissocier",
+      "cancel": "Annuler",
+      "pending": "{count, plural, one {# opération n'est} other {# opérations ne sont}} pas encore dans le cloud. Vérifiez la connexion et réessayez.",
+      "offline": "Pas de connexion au cloud. La dissociation nécessite internet."
     }
   }
 }

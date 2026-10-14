@@ -4,9 +4,10 @@ import { getPos, usePos } from './store';
 import { flushToCloud } from './sync';
 
 /**
- * Signing out of a waiter's own phone (DEC-036): the phone unpairs itself and forgets the shift.
- * Nothing it did may stay behind in someone's pocket, so it first sends everything to the cloud
- * and refuses while anything is missing there.
+ * A personal device unpairs itself (DEC-036): a waiter signing out of their phone, or whoever
+ * holds the cashier POS unpairing it. It forgets everything and asks for a pairing code again.
+ * Nothing it did may be lost, so it first sends everything to the cloud and refuses while
+ * anything is missing there.
  */
 
 /** Operations of this phone have not reached the cloud yet (no network, or the cloud refused). */

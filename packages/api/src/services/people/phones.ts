@@ -294,17 +294,21 @@ export async function pairPhone(
   };
 }
 
+/** Devices that may unpair themselves: personal devices, whoever holds them (DEC-036). */
+const SELF_UNPAIRING_TYPES = new Set(['phone', 'pos']);
+
 /**
- * "Sign out" on a waiter's phone: the phone unpairs itself and its token stops working at once.
- * The terminal stays active for the next shift. The phone only calls this once everything it did
- * reached the cloud (DEC-036).
+ * "Sign out" on a waiter's phone, or "unpair" on a cashier POS: the device unpairs itself and its
+ * token stops working at once. The terminal stays active for the next pairing. The device only
+ * calls this once everything it did reached the cloud (DEC-036). Handhelds, kitchen displays and
+ * hubs are unpaired in the backoffice.
  */
 export async function logoutPhone(deps: ServiceDeps, actor: Actor): Promise<void> {
   const { terminalId } = requireTerminal(actor);
-  if (actor.terminalType !== 'phone') {
+  if (!SELF_UNPAIRING_TYPES.has(actor.terminalType ?? '')) {
     throw new ApiError(
       'FORBIDDEN',
-      'Only a waiter phone signs out by itself; other devices are unpaired in the backoffice',
+      'Only a waiter phone or a cashier POS unpairs itself; other devices are unpaired in the backoffice',
     );
   }
   await runCommand(deps.db, actor, async (tx, recorder) => {
@@ -313,9 +317,10 @@ export async function logoutPhone(deps: ServiceDeps, actor: Actor): Promise<void
       .set({ deviceTokenHash: null })
       .where(inLocation(s.terminals, actor, eq(s.terminals.id, terminalId)));
     recorder.audit({
-      action: 'terminal.phone_logged_out',
+      action: actor.terminalType === 'phone' ? 'terminal.phone_logged_out' : 'terminal.unpaired',
       entityType: 'terminal',
       entityId: terminalId,
+      ...(actor.terminalType === 'phone' ? {} : { reason: 'Unpaired on the device itself' }),
     });
   });
 }

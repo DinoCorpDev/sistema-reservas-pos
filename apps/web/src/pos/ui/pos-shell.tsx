@@ -24,6 +24,7 @@ import { PaymentView } from './payment-view';
 import { PhonePairingButton, SignOutButton } from './phone-access';
 import { ReceiptView } from './receipt-view';
 import { SendConfirmDialog } from './send-confirm-dialog';
+import { UnpairButton } from './unpair-button';
 import { UnsentDialog } from './unsent-dialog';
 
 /** Frame of every POS screen: location, navigation, connection status and the person (RF-C19). */
@@ -145,6 +146,7 @@ export function PosShell() {
             <Lock />
           </Button>
           {terminalType === 'phone' && <SignOutButton />}
+          {terminalType === 'pos' && <UnpairButton />}
         </div>
       </header>
       {printer?.health && !printer.health.ok && (

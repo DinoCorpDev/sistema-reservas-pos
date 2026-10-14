@@ -108,6 +108,15 @@
     },
     "language": {
       "label": "Change language"
+    },
+    "unpair": {
+      "button": "Unpair device",
+      "title": "Unpair this till?",
+      "description": "The till first sends everything to the cloud, then leaves the location, is wiped and asks for a pairing code again.",
+      "confirm": "Unpair",
+      "cancel": "Cancel",
+      "pending": "{count, plural, one {# operation is} other {# operations are}} not in the cloud yet. Check the connection and try again.",
+      "offline": "No connection to the cloud. Unpairing needs internet."
     }
   }
 }
