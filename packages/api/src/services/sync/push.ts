@@ -3,8 +3,11 @@ import {
   type EventType,
   type FoldState,
   foldOperations,
+  isShiftOperation,
+  type LocationSettings,
   newerOperationSchema,
   type Operation,
+  operationBusinessDate,
   operationOrderIds,
   operationSchema,
   type OrderState,
@@ -17,12 +20,13 @@ import {
   schema as s,
   type Transaction,
 } from '@pos/db';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { type Actor, requireTerminal } from '../../actor';
 import { ApiError } from '../../errors';
 import { locationUserPermissions } from '../people/terminal-auth';
 import type { ServiceDeps } from '../shared';
 import { type ProjectionResult, writeProjection } from './projection';
+import { refoldShifts } from './shifts';
 import {
   existingOperations,
   insertOperations,
@@ -164,6 +168,22 @@ export async function pushOperations(
       }
       if (fresh.length === 0) return;
 
+      // Money for a day whose Z is done still happened: it is kept and flagged, and shows as a
+      // correction of that closing (RF-D17, RN-21). Only the cloud closes days.
+      if (node.kind === 'cloud') {
+        const closings = await closingsOf(
+          tx,
+          scope,
+          fresh.flatMap((f) => operationBusinessDate(f.op) ?? []),
+        );
+        for (const f of fresh) {
+          const day = operationBusinessDate(f.op);
+          const closingId = day === null ? undefined : closings.get(day);
+          if (closingId)
+            f.conflicts.push({ code: 'day_closed', entityId: closingId, stored: true });
+        }
+      }
+
       const firstSeq = (await lastSeq(tx, scope)) + 1;
       await insertOperations(tx, scope, fresh, firstSeq, receivedAt, {
         cloudAcked: node.kind === 'cloud',
@@ -179,14 +199,17 @@ export async function pushOperations(
       // The hub only keeps the log; the cloud folds and projects (DEC-028).
       if (node.kind !== 'cloud') return;
 
-      const outcome = await refoldAndProject(
+      const freshOps = fresh.map((f) => f.op);
+      const { statusById: outcome, settings } = await refoldAndProject(
         tx,
         scope,
-        fresh.map((f) => f.op),
+        freshOps,
         recorder,
       );
+      // The shifts refold last: what it says about money in a shift is the final word.
+      const shiftOutcome = await refoldShifts(tx, scope, freshOps, settings, recorder);
       for (const f of fresh) {
-        const conflicts = outcome.get(f.op.id) ?? f.conflicts;
+        const conflicts = shiftOutcome.get(f.op.id) ?? outcome.get(f.op.id) ?? f.conflicts;
         results[f.index] = { ...results[f.index]!, status: statusOf(conflicts), conflicts };
       }
     },
@@ -210,7 +233,7 @@ async function refoldAndProject(
   scope: SyncScope,
   fresh: readonly Operation[],
   recorder: CommandRecorder,
-): Promise<Map<string, StoredConflict[]>> {
+): Promise<{ statusById: Map<string, StoredConflict[]>; settings: LocationSettings }> {
   const freshIds = new Set(fresh.map((op) => op.id));
   const [location] = await tx
     .select({ settings: s.locations.settings })
@@ -223,7 +246,8 @@ async function refoldAndProject(
     seeds.length > 0
       ? await loadGroup(tx, scope, seeds)
       : { rows: [], orderIds: new Set<string>() };
-  // PIN unlocks and failures touch no order: they only leave audit entries.
+  // PIN unlocks, failures and the drawer touch no order: they only leave audit entries. Shift
+  // operations have their own refold (refoldShifts).
   const rows: OperationStatusRow[] = [
     ...group.rows.map((row) => ({
       id: row.id,
@@ -232,7 +256,7 @@ async function refoldAndProject(
       op: row.payload as Operation,
     })),
     ...fresh
-      .filter((op) => operationOrderIds(op).length === 0)
+      .filter((op) => operationOrderIds(op).length === 0 && !isShiftOperation(op.type))
       .map((op) => ({ id: op.id, status: 'received', conflict: null, op })),
   ];
   const ops = rows.map((row) => row.op);
@@ -270,7 +294,12 @@ async function refoldAndProject(
   const statusById = new Map<string, StoredConflict[]>();
   const now = new Date();
   for (const row of rows) {
-    let conflicts = mergeConflicts(row.conflict, foldConflicts.get(row.id) ?? []);
+    let conflicts = mergeConflicts(
+      row.conflict,
+      foldConflicts.get(row.id) ?? [],
+      'order',
+      row.op.type,
+    );
     const renumbered = renumberedBy.get(row.id);
     if (renumbered && !conflicts.some((c) => c.code === 'duplicate_number')) {
       conflicts = [...conflicts, { code: 'duplicate_number', entityId: renumbered, stored: true }];
@@ -327,7 +356,26 @@ async function refoldAndProject(
   for (const event of domainEvents(fresh, statusById, state, projection, group.orderIds)) {
     recorder.event(event);
   }
-  return statusById;
+  return { statusById, settings };
+}
+
+/** The Z closings of these business days, by day (RN-21). */
+async function closingsOf(
+  tx: Transaction,
+  scope: SyncScope,
+  days: readonly string[],
+): Promise<Map<string, string>> {
+  if (days.length === 0) return new Map();
+  const rows = await tx
+    .select({ id: s.dailyClosings.id, businessDate: s.dailyClosings.businessDate })
+    .from(s.dailyClosings)
+    .where(
+      and(
+        eq(s.dailyClosings.locationId, scope.locationId),
+        inArray(s.dailyClosings.businessDate, [...new Set(days)]),
+      ),
+    );
+  return new Map(rows.map((row) => [row.businessDate, row.id]));
 }
 
 const OPERATION_EVENTS: Partial<Record<Operation['type'], EventType>> = {
@@ -372,6 +420,8 @@ function domainEvents(
         amountRappen: op.payload.amountRappen,
         tipRappen: op.payload.tipRappen,
         roundingRappen: op.payload.roundingRappen,
+        shiftId: op.payload.shiftId ?? null,
+        businessDate: op.payload.businessDate ?? null,
       };
       for (const type of ['payment.created', 'payment.completed'] as const) {
         events.push({

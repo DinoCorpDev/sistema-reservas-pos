@@ -258,6 +258,9 @@ export async function writeProjection(
       })),
   );
 
+  // Money counts for the day of its shift; before shifts (version 2), for the day of its order.
+  const dayOf = (money: { businessDate: string | null; orderId: string }) =>
+    money.businessDate ?? state.orders.get(money.orderId)?.businessDate ?? null;
   const payments = [...state.payments.values()].filter((p) => orderIds.has(p.orderId));
   await upsert(
     tx,
@@ -267,6 +270,8 @@ export async function writeProjection(
       organizationId: scope.organizationId,
       locationId: scope.locationId,
       orderId: p.orderId,
+      shiftId: p.shiftId,
+      businessDate: dayOf(p),
       terminalId: p.terminalId,
       userId: p.userId,
       method: p.method,
@@ -314,10 +319,14 @@ export async function writeProjection(
         locationId: scope.locationId,
         paymentId: r.paymentId,
         orderId: r.orderId,
+        shiftId: r.shiftId,
+        businessDate: dayOf(r),
+        terminalId: r.terminalId,
         method: r.method,
         adapter: r.adapter,
         amountRappen: r.amountRappen,
         tipRappen: r.tipRappen,
+        roundingRappen: r.roundingRappen,
         reason: r.reason,
         userId: r.userId,
         authorizedByUserId: r.authorizedByUserId,

@@ -336,6 +336,84 @@ export class TestDevice {
       },
     });
   }
+
+  /** A cash payment into a shift: `amount` paid with a CHF 100 note, rounded to 0.05. */
+  cashPay(orderId: string, amountRappen: number, shiftId: string | null, tipRappen = 0) {
+    const total = amountRappen + tipRappen;
+    const rounded = Math.round(total / 5) * 5;
+    return this.pay(orderId, amountRappen, {
+      method: 'cash',
+      adapter: 'cash',
+      tipRappen,
+      roundingRappen: rounded - total,
+      tenderedRappen: 10000,
+      changeRappen: 10000 - rounded,
+      shiftId,
+      businessDate: this.businessDate,
+    });
+  }
+
+  /** Opens this terminal's till, or with `cashierUserId` that person's wallet (DEC-038). */
+  openShift(shiftId: string = newId(), openingFloatRappen = 20000, cashierUserId?: string) {
+    return this.op('shift.open', null, {
+      shiftId,
+      scope: cashierUserId ? 'personal' : 'terminal',
+      cashierUserId: cashierUserId ?? null,
+      businessDate: this.businessDate,
+      openingFloatRappen,
+      openingCount: null,
+    });
+  }
+
+  movement(shiftId: string, kind: string, amountRappen: number, reason = 'Test') {
+    return this.op('cash.movement', null, {
+      movementId: newId(),
+      shiftId,
+      businessDate: this.businessDate,
+      kind,
+      amountRappen,
+      reason,
+      dailyClosingId: null,
+    });
+  }
+
+  /** Closes a shift counting `counted` in CHF 0.05 coins; a difference gets a comment. */
+  closeShift(shiftId: string, expectedCashRappen: number, countedCashRappen = expectedCashRappen) {
+    const now = new Date().toISOString();
+    return this.op('shift.close', null, {
+      shiftId,
+      businessDate: this.businessDate,
+      countByDenomination: { '5': countedCashRappen / 5 },
+      countedCashRappen,
+      expectedCashRappen,
+      differenceComment: countedCashRappen === expectedCashRappen ? null : 'Differenz',
+      hubPrint: false,
+      report: {
+        version: 1,
+        scope: 'terminal',
+        ownerName: 'Test',
+        businessDate: this.businessDate,
+        openedAt: now,
+        closedAt: now,
+        timeZone: 'Europe/Zurich',
+        payments: [],
+        refunds: [],
+        taxes: [],
+        discountsRappen: 0,
+        discountCount: 0,
+        voidsRappen: 0,
+        voidCount: 0,
+        movements: [],
+        cash: {
+          openingFloatRappen: 0,
+          collectedRappen: 0,
+          paidOutRappen: 0,
+          movementsRappen: 0,
+          expectedRappen: expectedCashRappen,
+        },
+      },
+    });
+  }
 }
 
 /**

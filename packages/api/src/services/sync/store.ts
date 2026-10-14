@@ -1,4 +1,12 @@
-import { type ConflictRecord, type Operation, operationOrderIds, relatedOrderId } from '@pos/core';
+import {
+  type ConflictRecord,
+  isShiftOperation,
+  type Operation,
+  operationOrderIds,
+  operationShiftId,
+  relatedOrderId,
+  SHIFT_CONFLICT_CODES,
+} from '@pos/core';
 import { schema as s, type Transaction } from '@pos/db';
 import { and, eq, inArray, max, or } from 'drizzle-orm';
 
@@ -80,6 +88,8 @@ export async function insertOperations(
   await tx.insert(s.syncOperations).values(
     ops.map(({ op, conflicts }, index) => {
       const orderIds = operationOrderIds(op);
+      const shiftId = operationShiftId(op);
+      const ofShift = isShiftOperation(op.type) && shiftId !== null;
       return {
         id: op.id,
         organizationId: scope.organizationId,
@@ -91,9 +101,10 @@ export async function insertOperations(
         operation: op.type,
         schemaVersion: op.schemaVersion,
         hlc: op.hlc,
-        entityType: orderIds.length > 0 ? 'order' : 'terminal',
-        entityId: orderIds[0] ?? op.terminalId,
+        entityType: orderIds.length > 0 ? 'order' : ofShift ? 'shift' : 'terminal',
+        entityId: orderIds[0] ?? (ofShift ? shiftId : op.terminalId),
         relatedEntityId: relatedOrderId(op),
+        shiftId,
         payload: op,
         deviceCreatedAt: new Date(op.deviceAt),
         receivedAt,
@@ -146,10 +157,52 @@ export async function loadGroup(
   return { rows: [...rows.values()], orderIds };
 }
 
-/** Conflicts found while storing are kept across refolds; fold conflicts are recomputed. */
-export function mergeConflicts(stored: unknown, fold: readonly ConflictRecord[]): StoredConflict[] {
-  const kept = Array.isArray(stored)
-    ? (stored as StoredConflict[]).filter((c) => c.stored === true)
-    : [];
-  return [...kept, ...fold.map((c) => ({ code: c.code, entityId: c.entityId }))];
+/**
+ * Every operation of a shift (its own operations and the money that went into it), so the shift
+ * is refolded as a whole (DEC-038). Payments come without their orders: their order conflicts
+ * belong to the refold of orders and are filtered out by `mergeConflicts`.
+ */
+export async function loadShiftGroup(
+  tx: Transaction,
+  scope: SyncScope,
+  shiftIds: readonly string[],
+): Promise<StoredOperationRow[]> {
+  if (shiftIds.length === 0) return [];
+  return tx
+    .select()
+    .from(s.syncOperations)
+    .where(
+      and(
+        eq(s.syncOperations.locationId, scope.locationId),
+        inArray(s.syncOperations.shiftId, [...shiftIds]),
+      ),
+    );
+}
+
+/** Which refold decides a conflict: the shift's (DEC-038) or the orders'. */
+export type ConflictOwner = 'order' | 'shift';
+
+export const conflictOwner = (operation: string, code: string): ConflictOwner =>
+  isShiftOperation(operation) || (SHIFT_CONFLICT_CODES as readonly string[]).includes(code)
+    ? 'shift'
+    : 'order';
+
+/**
+ * Conflicts found while storing are kept across refolds; fold conflicts are recomputed by the
+ * refold that owns them (`owner`), and the ones of the other refold are left as they were.
+ */
+export function mergeConflicts(
+  stored: unknown,
+  fold: readonly ConflictRecord[],
+  owner: ConflictOwner,
+  operation: string,
+): StoredConflict[] {
+  const previous = Array.isArray(stored) ? (stored as StoredConflict[]) : [];
+  const kept = previous.filter(
+    (c) => c.stored === true || conflictOwner(operation, c.code) !== owner,
+  );
+  const recomputed = fold
+    .filter((c) => conflictOwner(operation, c.code) === owner)
+    .map((c) => ({ code: c.code, entityId: c.entityId }));
+  return [...kept, ...recomputed];
 }
