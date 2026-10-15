@@ -400,6 +400,30 @@ Juan pidió que sea a prueba de errores: al tocar «Küche» el sistema pregunta
   - Sumar otro idioma es agregar su carpeta en `apps/web/messages` y su código en `UI_LOCALES`.
 - **Demo:** se agrega «KDS Allgemein» (D4), que pregunta la estación. Las tres pantallas fijas siguen igual.
 
+## DEC-043 · Los reportes salen de las tablas proyectadas, con la regla del Z
+
+Esta decisión reemplaza el comentario del módulo `reports` («alimentado por eventos»). Va con el plan aprobado de la Fase 4 (4b).
+
+- **El dinero sale de la misma fuente que el Z** (DEC-038). Esto vale para las ventas, el MWST, el CSV contable y las propinas:
+  - se toman los pagos completados de los días de negocio del período y las devoluciones de esos días;
+  - cada uno lleva el MWST de su recibo.
+
+  Así, un período de días enteros da exactamente la suma de sus Z. El cálculo de MWST lo comparten los dos (`netTaxes`) y las pruebas lo verifican al rappen.
+
+- **Las ventas por categoría y producto** salen de las líneas de las órdenes **cerradas** del período. Una línea no tiene pago propio, así que no pueden coincidir siempre con el Z:
+  - quedan afuera las devoluciones, los pagos parciales y las órdenes pagadas otro día;
+  - el reporte muestra esa diferencia en vez de esconderla.
+- **El tablero del dueño** (RF-F10) va en la portada del backoffice para quien tiene `report.view`. Se actualiza cada 30 s y está pensado para el celular.
+- **Formatos:**
+  - **CSV:** separador `;`, UTF-8 con BOM para Excel en Suiza, montos en CHF con dos decimales y encabezados en el idioma de quien exporta. Por la API, `/api/v1/reports/accounting.csv` lleva encabezados fijos en inglés.
+  - **JSON:** recibos, cierres y auditoría, tal como se guardaron.
+  - **PDF:** se saca desde la impresión del navegador; al imprimir se ocultan el menú y la barra superior.
+  - No se agregó ninguna dependencia nueva.
+- **Límites:**
+  - un reporte cubre como máximo 366 días;
+  - la exportación de auditoría trae como máximo 20 000 eventos por archivo.
+- **Permisos:** se usan los que ya existían, `report.view` y `audit.view`; no se agregó ninguno.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |
