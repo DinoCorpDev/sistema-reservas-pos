@@ -144,6 +144,28 @@ function addTaxes(
   }
 }
 
+/** MWST of a refund: its share of the refunded payment's receipt (RN-07, DEC-024). */
+export const taxesOfRefund = (
+  refund: Pick<ClosingRefund, 'paymentTaxes' | 'paymentAmountRappen' | 'amountRappen'>,
+) =>
+  refundTaxes(refund.paymentTaxes, rappen(refund.paymentAmountRappen), rappen(refund.amountRappen));
+
+/**
+ * MWST by rate of payments net of their refunds, highest rate first (RF-D15, RF-F02): the
+ * receipts' MWST minus the share of each refund. The Z and the MWST report both use it.
+ */
+export function netTaxes(
+  payments: readonly Pick<ClosingPayment, 'taxes'>[],
+  refunds: readonly Pick<ClosingRefund, 'paymentTaxes' | 'paymentAmountRappen' | 'amountRappen'>[],
+): TaxSummaryLine[] {
+  const taxes = new Map<string, TaxSummaryLine>();
+  for (const payment of payments) addTaxes(taxes, payment.taxes, 1);
+  for (const refund of refunds) addTaxes(taxes, taxesOfRefund(refund), -1);
+  return [...taxes.values()]
+    .filter((rate) => rate.grossRappen !== 0 || rate.taxRappen !== 0)
+    .sort((a, b) => b.rateBp - a.rateBp);
+}
+
 /** The frozen totals of a Z (RF-D15). */
 export function closingTotals(input: ClosingInput): DailyClosingTotals {
   const byMethod = new Map<PaymentMethod, ClosingMethodLine>();
@@ -163,7 +185,6 @@ export function closingTotals(input: ClosingInput): DailyClosingTotals {
     }
     return current;
   };
-  const taxes = new Map<string, TaxSummaryLine>();
   for (const payment of input.payments) {
     const current = line(payment.method);
     current.paymentCount += 1;
@@ -171,7 +192,6 @@ export function closingTotals(input: ClosingInput): DailyClosingTotals {
     current.tipsRappen += payment.tipRappen;
     current.roundingRappen += payment.roundingRappen;
     current.totalRappen += moved(payment);
-    addTaxes(taxes, payment.taxes, 1);
   }
   for (const refund of input.refunds) {
     const current = line(refund.method);
@@ -180,20 +200,9 @@ export function closingTotals(input: ClosingInput): DailyClosingTotals {
     current.tipsRappen -= refund.tipRappen;
     current.roundingRappen -= refund.roundingRappen;
     current.totalRappen -= moved(refund);
-    addTaxes(
-      taxes,
-      refundTaxes(
-        refund.paymentTaxes,
-        rappen(refund.paymentAmountRappen),
-        rappen(refund.amountRappen),
-      ),
-      -1,
-    );
   }
   const methods = PAYMENT_METHODS.flatMap((method) => byMethod.get(method) ?? []);
-  const byTaxRate = [...taxes.values()]
-    .filter((rate) => rate.grossRappen !== 0 || rate.taxRappen !== 0)
-    .sort((a, b) => b.rateBp - a.rateBp);
+  const byTaxRate = netTaxes(input.payments, input.refunds);
 
   const isCash = (money: { method: PaymentMethod }) => money.method === 'cash';
   const cashPayments = input.payments.filter(isCash);
