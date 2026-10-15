@@ -1,6 +1,7 @@
 import {
   businessDate,
   buildReceipt,
+  extractTax,
   formatHlc,
   HLC_ZERO,
   type HlcState,
@@ -255,8 +256,12 @@ export class TestDevice {
     return this.op(type, orderId, { stationId, itemIds });
   }
 
+  /** A payment with its receipt: one line at 8.1 % whose MWST is extracted (RN-01). */
   async pay(orderId: string, amountRappen: number, fields: Record<string, unknown> = {}) {
     this.receipts += 1;
+    const method = (fields.method as 'cash' | 'card' | undefined) ?? 'card';
+    const tipRappen = (fields.tipRappen as number | undefined) ?? 0;
+    const roundingRappen = (fields.roundingRappen as number | undefined) ?? 0;
     const receiptNumber = formatReceiptNumber(
       this.terminal.prefix,
       this.businessDate,
@@ -294,16 +299,16 @@ export class TestDevice {
           modifiers: [],
           discountRappen: rappen(0),
           lineTotalRappen: rappen(amountRappen),
-          taxRappen: rappen(0),
+          taxRappen: extractTax(rappen(amountRappen), 810),
           taxRateCode: 'normal',
           taxRateBp: 810,
         },
       ],
       payment: {
-        method: 'card',
+        method,
         amountRappen: rappen(amountRappen),
-        tipRappen: rappen(0),
-        roundingRappen: rappen(0),
+        tipRappen: rappen(tipRappen),
+        roundingRappen: rappen(roundingRappen),
         tenderedRappen: null,
         changeRappen: rappen(0),
         splitLabel: null,

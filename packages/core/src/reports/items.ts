@@ -1,5 +1,5 @@
 /**
- * Sales by category and product (RF-F01): the valid lines of the paid orders of the period,
+ * Sales by category and product (RF-F01): the valid lines of the closed orders of the period,
  * after their discounts (MWST included). A line has no payment of its own, so this view follows
  * the orders: it matches the Zs except for refunds, orders paid in part and orders paid on another
  * business day, and the report shows that difference instead of hiding it.

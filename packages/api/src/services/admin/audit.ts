@@ -131,3 +131,25 @@ export async function listAuditEvents(
     nextCursor: rows.length > limit ? encodeCursor(page.at(-1)!) : null,
   };
 }
+
+/** The most rows one export carries; narrow the filter for more (RF-F12, RNF-15). */
+export const AUDIT_EXPORT_MAX_ROWS = 20_000;
+
+/**
+ * Every event matching the filter, newest first, for the CSV/JSON export (RF-F12, RF-F13):
+ * the same query as the list, page after page. `truncated` says the filter has more.
+ */
+export async function exportAuditEvents(
+  deps: ServiceDeps,
+  actor: Actor,
+  query: Omit<AuditQuery, 'cursor' | 'limit'> = {},
+): Promise<{ items: AuditEventDto[]; truncated: boolean }> {
+  const items: AuditEventDto[] = [];
+  let cursor: string | undefined;
+  do {
+    const page = await listAuditEvents(deps, actor, { ...query, cursor, limit: 200 });
+    items.push(...page.items);
+    cursor = page.nextCursor ?? undefined;
+  } while (cursor && items.length < AUDIT_EXPORT_MAX_ROWS);
+  return { items: items.slice(0, AUDIT_EXPORT_MAX_ROWS), truncated: cursor !== undefined };
+}
