@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { isPhone } from '../app';
 import { unlock } from '../pin';
 import { usePos } from '../store';
+import { ErrorDialog } from './error-dialog';
 import { NumPad } from './num-pad';
 import { StatusIndicator } from './status-indicator';
 
@@ -42,6 +43,8 @@ export function PinScreen() {
       setMessage(t('notAllowedKitchen', { name: result.displayName }));
     else if (result.status === 'not_owner') setMessage(t('notOwner', { name: result.ownerName }));
     else if (result.status === 'invalid') setMessage(t('invalid'));
+    else if (result.status === 'elsewhere')
+      setMessage(t('elsewhere', { name: result.displayName, terminal: result.terminalName }));
   }
 
   return (
@@ -72,11 +75,12 @@ export function PinScreen() {
       <Button size="lg" onClick={() => void submit()} disabled={pin.length < 4 || busy}>
         {busy ? t('checking') : t('unlock')}
       </Button>
-      {message && (
-        <p className="text-center text-destructive" role="alert">
-          {message}
-        </p>
-      )}
+      <ErrorDialog
+        title={t('errorTitle')}
+        message={message}
+        okLabel={t('ok')}
+        onClose={() => setMessage(null)}
+      />
     </main>
   );
 }

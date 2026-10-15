@@ -194,7 +194,8 @@
     "pinLockMinutes": "Blocage PIN (minutes)",
     "printMaxDelay": "Ne plus imprimer après (minutes)",
     "hubUrls": "Adresses des hubs",
-    "hubUrlsHint": "Une adresse par ligne, dans l’ordre. Le premier hub attribue les numéros de commande ; vide = aucun hub."
+    "hubUrlsHint": "Une adresse par ligne, dans l’ordre. Le premier hub attribue les numéros de commande ; vide = aucun hub.",
+    "oneDevicePerPerson": "Une personne connectée sur un seul appareil à la fois"
   },
   "floor": {
     "title": "Zones & tables",

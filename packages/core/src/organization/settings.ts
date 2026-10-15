@@ -74,6 +74,8 @@ export const locationSettingsSchema = z.object({
       /** Failed PIN attempts before the user is locked out on the terminal (RNF-10). */
       maxPinAttempts: z.int().min(3).default(5),
       pinLockMinutes: z.int().min(1).default(5),
+      /** A person is signed in on one device at a time (DEC-040). */
+      oneDevicePerPerson: z.boolean().default(true),
     })
     .prefault({}),
   pos: z

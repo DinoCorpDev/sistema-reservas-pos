@@ -34,6 +34,9 @@ export interface PresenceEntry {
   unlocked: boolean;
   /** Server time of its last pull. */
   lastSeenAt: string;
+  /** Who is signed in there (DEC-040); null when locked. */
+  userId?: string | null;
+  terminalName?: string | null;
 }
 
 /** What the last pull said about the displays, and when it arrived (device clock). */

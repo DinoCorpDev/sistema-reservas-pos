@@ -136,9 +136,11 @@ async function push(target: string, deviceToken: string): Promise<void> {
   }
 }
 
-/** A kitchen display tells whether someone unlocked it with their PIN (DEC-033). */
-function presenceHeaders(): Record<string, string> | undefined {
-  if (deviceApp() !== 'kds') return undefined;
+/**
+ * Every device tells whether someone unlocked it with their PIN: kitchen displays for the routing
+ * (DEC-033), every device so a person is signed in on one device at a time (DEC-040).
+ */
+function presenceHeaders(): Record<string, string> {
   const user = getPos().user;
   return user
     ? { 'x-presence': 'unlocked', 'x-presence-user': user.id }

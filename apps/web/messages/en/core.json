@@ -194,7 +194,8 @@
     "pinLockMinutes": "PIN lockout (minutes)",
     "printMaxDelay": "Stop printing after (minutes)",
     "hubUrls": "Hub addresses",
-    "hubUrlsHint": "One address per line, in order. The first hub numbers the orders; empty = no hub."
+    "hubUrlsHint": "One address per line, in order. The first hub numbers the orders; empty = no hub.",
+    "oneDevicePerPerson": "A person is signed in on one device at a time"
   },
   "floor": {
     "title": "Areas & tables",

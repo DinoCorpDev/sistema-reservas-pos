@@ -8,8 +8,14 @@ import { and, eq, inArray } from 'drizzle-orm';
  * (issuing a pairing code), and drive the POS like a waiter: the keypad, never the keyboard.
  */
 
-/** A fresh pairing code for a seeded terminal of the demo location (e.g. "Kasse 1", K1). */
-export async function issuePairingCode(prefix = 'K1'): Promise<string> {
+/**
+ * A fresh pairing code for a seeded terminal of the demo location (e.g. "Kasse 1", K1). Like the
+ * backoffice, it unpairs the terminal first: a paired one refuses a new device (DEC-041).
+ */
+export async function issuePairingCode(
+  prefix = 'K1',
+  { keepDevice = false }: { keepDevice?: boolean } = {},
+): Promise<string> {
   const { db, pool } = createDb(testDatabaseUrl(), { connectionLimit: 1 });
   try {
     const [terminal] = await db
@@ -21,6 +27,7 @@ export async function issuePairingCode(prefix = 'K1'): Promise<string> {
     await db
       .update(s.terminals)
       .set({
+        ...(keepDevice ? {} : { deviceTokenHash: null }),
         pairingCodeHash: sha256Hex(normalizePairingCode(code)),
         pairingExpiresAt: new Date(Date.now() + 15 * 60_000),
       })
@@ -114,4 +121,37 @@ export async function openShift(page: Page, hundreds = 2): Promise<void> {
   await page.getByTestId('count-10000').fill(String(hundreds));
   await page.getByTestId('open-shift-confirm').click();
   await expect(page.getByTestId('shift-open')).toBeVisible({ timeout: 15_000 });
+}
+
+/** Closes the sign-in error modal (PIN or pairing) and returns to the keypad. */
+export async function closeSignInError(page: Page): Promise<void> {
+  await page.getByTestId('sign-in-error').getByRole('button', { name: 'OK' }).last().click();
+  await expect(page.getByTestId('sign-in-error')).toBeHidden();
+}
+
+/**
+ * Turns "one device per person" (DEC-040) on or off for the demo location. The suites sign the
+ * same people in on many devices and close pages without locking them, so it is off by default
+ * in the E2E database; the sessions spec turns it on.
+ */
+export async function setOneDevicePerPerson(enabled: boolean): Promise<void> {
+  const { db, pool } = createDb(testDatabaseUrl(), { connectionLimit: 1 });
+  try {
+    const locations = await db.select().from(s.locations);
+    for (const location of locations) {
+      const settings = (location.settings ?? {}) as { security?: Record<string, unknown> };
+      await db
+        .update(s.locations)
+        .set({
+          settings: {
+            ...settings,
+            security: { ...settings.security, oneDevicePerPerson: enabled },
+          } as typeof location.settings,
+          updatedAt: new Date(),
+        })
+        .where(eq(s.locations.id, location.id));
+    }
+  } finally {
+    await pool.end();
+  }
 }

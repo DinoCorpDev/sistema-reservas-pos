@@ -456,6 +456,9 @@ export async function issuePairingCode(
       'A waiter phone pairs with a phone code and the waiter PIN (DEC-036)',
     );
   }
+  if (terminal.deviceTokenHash !== null && TAKEN_OVER_ONLY_WHEN_FREE.has(terminal.type)) {
+    throw alreadyPaired(terminal.name);
+  }
   const code = pairingCode();
   const expiresAt = new Date(Date.now() + PAIRING_CODE_TTL_MINUTES * 60_000);
   await runCommand(deps.db, { ...actor, terminalId: id }, async (tx, recorder) => {
@@ -505,10 +508,23 @@ export const unknownCode = () =>
   new ApiError('UNAUTHENTICATED', 'The pairing code is invalid or expired');
 
 /**
+ * A POS, handheld or kitchen display already paired on a device is not taken over by another one
+ * (DEC-041): it is unpaired first, on the device itself or in the backoffice. The hub is set up
+ * by an admin and a reinstall pairs it again; a waiter's phone follows DEC-036.
+ */
+const TAKEN_OVER_ONLY_WHEN_FREE: ReadonlySet<string> = new Set(['pos', 'handheld', 'kds']);
+
+const alreadyPaired = (name: string) =>
+  new ApiError('CONFLICT', 'This terminal is already paired on another device', {
+    reason: 'already_paired',
+    name,
+  });
+
+/**
  * Pairs a device with the code from the backoffice (anonymous call: the code is the credential).
  * Returns the device token ONCE; the terminal sends it as `X-Terminal-Token` from now on and
- * remembers its location (RF-A06). Pairing again replaces the previous device. A code for a
- * waiter's phone also needs the waiter's PIN (DEC-036, `pairPhone`).
+ * remembers its location (RF-A06). A terminal still paired on another device refuses the code
+ * (DEC-041). A code for a waiter's phone also needs the waiter's PIN (DEC-036, `pairPhone`).
  */
 export async function pairTerminal(
   deps: ServiceDeps,
@@ -527,6 +543,9 @@ export async function pairTerminal(
   }
   if (!terminal.isActive || !terminal.pairingExpiresAt || terminal.pairingExpiresAt <= new Date()) {
     throw unknownCode();
+  }
+  if (terminal.deviceTokenHash !== null && TAKEN_OVER_ONLY_WHEN_FREE.has(terminal.type)) {
+    throw alreadyPaired(terminal.name);
   }
   const tenant = { organizationId: terminal.organizationId, locationId: terminal.locationId };
   const [location] = await deps.db

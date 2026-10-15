@@ -1,5 +1,5 @@
 import { parseLocationSettings, PERMISSIONS } from '@pos/core';
-import { schema as s } from '@pos/db';
+import { normalizePairingCode, pairingCode, schema as s, sha256Hex } from '@pos/db';
 import { and, eq, isNull } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { verifyApproval } from '../auth/tokens';
@@ -254,6 +254,44 @@ describe('terminals: pairing and PIN unlock (RF-A03, RF-A06, RN-16)', () => {
       headers: posHeaders(session.token, second.deviceToken),
     });
     expect(mixed.status).toBe(401);
+  });
+
+  it('does not hand a paired terminal to another device until it is unpaired (DEC-041)', async () => {
+    const terminal = await pairedTerminal();
+    const issued = await api.request('POST', `/terminals/${terminal.id}/pairing-code`, {
+      headers: admin,
+    });
+    expect(issued.status).toBe(409);
+    expect(await json(issued)).toMatchObject({ error: { details: { reason: 'already_paired' } } });
+
+    // A code left over from before the rule: the second device is refused all the same.
+    const leftover = pairingCode();
+    await api.db
+      .update(s.terminals)
+      .set({
+        pairingCodeHash: sha256Hex(normalizePairingCode(leftover)),
+        pairingExpiresAt: new Date(Date.now() + 60_000),
+      })
+      .where(eq(s.terminals.id, terminal.id));
+    const refused = await api.request('POST', '/terminals/pair', { body: { code: leftover } });
+    expect(refused.status).toBe(409);
+    expect(await json(refused)).toMatchObject({
+      error: { details: { reason: 'already_paired', name: expect.stringMatching(/^Test handheld/) } },
+    });
+    expect((await unlock(terminal.deviceToken, PIN.waiter)).status).toBe(200);
+
+    // Unpaired in the backoffice, the place is free for the next device.
+    const unpaired = await api.request('POST', `/terminals/${terminal.id}/unpair`, {
+      headers: admin,
+    });
+    expect(await json(unpaired)).toMatchObject({ isPaired: false });
+    const fresh = await api.request('POST', `/terminals/${terminal.id}/pairing-code`, {
+      headers: admin,
+    });
+    expect(fresh.status).toBe(201);
+    const { code } = await json<{ code: string }>(fresh);
+    expect((await api.request('POST', '/terminals/pair', { body: { code } })).status).toBe(200);
+    expect((await unlock(terminal.deviceToken, PIN.waiter)).status).toBe(401);
   });
 
   it('needs the device token to unlock', async () => {

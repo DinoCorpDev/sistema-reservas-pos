@@ -44,6 +44,7 @@ export function SettingsForm({
     customerNameFromChf: settings.receipts.customerNameFromRappen / 100,
     maxPinAttempts: settings.security.maxPinAttempts,
     pinLockMinutes: settings.security.pinLockMinutes,
+    oneDevicePerPerson: settings.security.oneDevicePerPerson,
     printMaxDelayMinutes: settings.printing.maxDelayMinutes,
   });
   // LAN hubs of the location, one per line, in order (docs/SYNC.md §1, §11.4).
@@ -78,7 +79,11 @@ export function SettingsForm({
       },
       kitchen: { alertAfterMinutes: form.alertAfterMinutes },
       receipts: { customerNameFromRappen: Math.round(form.customerNameFromChf * 100) },
-      security: { maxPinAttempts: form.maxPinAttempts, pinLockMinutes: form.pinLockMinutes },
+      security: {
+        maxPinAttempts: form.maxPinAttempts,
+        pinLockMinutes: form.pinLockMinutes,
+        oneDevicePerPerson: form.oneDevicePerPerson,
+      },
     });
   };
 
@@ -158,6 +163,15 @@ export function SettingsForm({
           {numberField('customerNameFromChf', t('customerNameFrom'), 0.05)}
           {numberField('maxPinAttempts', t('maxPinAttempts'))}
           {numberField('pinLockMinutes', t('pinLockMinutes'))}
+          <div className="flex items-center gap-3 sm:col-span-2 lg:col-span-3">
+            <Switch
+              id="set-oneDevicePerPerson"
+              checked={form.oneDevicePerPerson}
+              onCheckedChange={(checked) => setForm((f) => ({ ...f, oneDevicePerPerson: checked }))}
+              disabled={!canEdit}
+            />
+            <Label htmlFor="set-oneDevicePerPerson">{t('oneDevicePerPerson')}</Label>
+          </div>
           {numberField('printMaxDelayMinutes', t('printMaxDelay'))}
           <Field
             label={t('hubUrls')}

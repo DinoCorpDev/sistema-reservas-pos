@@ -11,7 +11,7 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { LinkIcon, PencilIcon, PlusIcon, PowerIcon, PowerOffIcon } from 'lucide-react';
+import { LinkIcon, PencilIcon, PlusIcon, PowerIcon, PowerOffIcon, UnlinkIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useNow, useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -69,6 +69,10 @@ export function TerminalsManager({
     },
     { successMessage: false, onSuccess: setPairing },
   );
+  // A paired device is not taken over by another one (DEC-041): it is unpaired first.
+  const unpair = useServerAction((id: string) => actions.unpairTerminal(id), {
+    successMessage: t('unpaired'),
+  });
   const deactivate = useServerAction(
     (id: string) => actions.updateTerminal(id, { isActive: false }),
     { successMessage: t('deactivated') },
@@ -177,7 +181,21 @@ export function TerminalsManager({
                 </TableCell>
                 {canEdit ? (
                   <TableCell className="text-right whitespace-nowrap">
-                    {terminal.isActive ? (
+                    {terminal.isActive && terminal.isPaired && terminal.type !== 'hub' ? (
+                      <ConfirmButton
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t('unpair')}
+                        disabled={unpair.pending}
+                        title={t('unpairTitle', { name: terminal.name })}
+                        description={t('unpairText')}
+                        confirmLabel={t('unpair')}
+                        cancelLabel={tc('cancel')}
+                        onConfirm={() => unpair.run(terminal.id)}
+                      >
+                        <UnlinkIcon />
+                      </ConfirmButton>
+                    ) : terminal.isActive ? (
                       <Button
                         variant="ghost"
                         size="icon"

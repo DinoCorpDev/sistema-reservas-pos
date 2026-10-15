@@ -29,7 +29,7 @@ export async function pullOperations(
   query: {
     after: number;
     limit?: number;
-    /** A kitchen display says whether someone is logged in on it (DEC-033). */
+    /** Whether someone is signed in on the device: kitchen routing (DEC-033), one session per person (DEC-040). */
     presence?: { unlocked: boolean; userId: string | null } | null;
   },
 ): Promise<{
@@ -43,7 +43,8 @@ export async function pullOperations(
   const { terminalId, locationId } = requireTerminal(actor);
   const scope = { organizationId: actor.organizationId, locationId };
   const now = new Date();
-  if (query.presence && actor.terminalType === 'kds') {
+  // The hub forwards others' operations with its own token: it is nobody's session.
+  if (query.presence && actor.terminalType !== 'hub') {
     await recordPresence(deps.db, scope, [
       {
         terminalId,

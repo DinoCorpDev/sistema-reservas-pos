@@ -13,6 +13,7 @@ import {
   pairDevice,
   phonePairingRefusal,
 } from '../boot';
+import { ErrorDialog } from './error-dialog';
 import { NumPad } from './num-pad';
 
 const MAX_PIN = 6;
@@ -54,6 +55,8 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
   useEffect(() => onPinStep?.(pinStep), [pinStep, onPinStep]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** The terminal of the code runs on another device (DEC-041): no place here, back to `/`. */
+  const [noPlace, setNoPlace] = useState(false);
 
   useEffect(() => {
     const fromQr = new URLSearchParams(window.location.search).get('phone');
@@ -67,6 +70,7 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
   async function pair(withPin?: string) {
     setBusy(true);
     setError(null);
+    setNoPlace(false);
     try {
       await pairDevice(code.trim(), withPin);
     } catch (cause) {
@@ -81,6 +85,12 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
       // A dead or expired code needs a new one: back to the code step.
       const codeGone = status === 401 && (reason !== 'wrong_pin' || attemptsLeft === 0);
       setPin(withPin === undefined || codeGone ? null : '');
+      if (reason === 'already_paired') {
+        const name = (cause as { details?: { name?: string } }).details?.name ?? code.trim();
+        setNoPlace(true);
+        setError(t('alreadyPaired', { name }));
+        return;
+      }
       setError(
         cause instanceof HubCodeError
           ? t('hubCode')
@@ -102,6 +112,16 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
       setBusy(false);
     }
   }
+
+  // Every pairing problem shows in a modal that cannot be missed.
+  const errorDialog = (
+    <ErrorDialog
+      title={noPlace ? t('alreadyPairedTitle') : t('errorTitle')}
+      message={error}
+      okLabel={noPlace ? t('backToStart') : t('ok')}
+      onClose={noPlace ? () => window.location.assign('/') : () => setError(null)}
+    />
+  );
 
   if (pin !== null) {
     return (
@@ -136,11 +156,7 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
           onBackspace={() => setPin((value) => (value ? value.slice(0, -1) : value))}
           onClear={() => setPin('')}
         />
-        {error && (
-          <p className="text-center text-destructive" role="alert">
-            {error}
-          </p>
-        )}
+        {errorDialog}
         <Button type="submit" size="lg" disabled={busy || pin.length < 4}>
           {busy ? t('pairing') : t('pair')}
         </Button>
@@ -166,7 +182,8 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
       }}
       className="flex flex-col gap-4"
     >
-      <Field label={t('code')} htmlFor="pairing-code" error={error ?? undefined}>
+      {errorDialog}
+      <Field label={t('code')} htmlFor="pairing-code">
         <Input
           id="pairing-code"
           value={code}

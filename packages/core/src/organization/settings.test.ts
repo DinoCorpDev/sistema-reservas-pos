@@ -12,7 +12,7 @@ describe('location settings', () => {
       kitchen: { alertAfterMinutes: 12 },
       printing: { maxDelayMinutes: 15 },
       receipts: { customerNameFromRappen: 40000 },
-      security: { maxPinAttempts: 5, pinLockMinutes: 5 },
+      security: { maxPinAttempts: 5, pinLockMinutes: 5, oneDevicePerPerson: true },
       pos: {
         discountPresets: [
           { code: 'staff', label: null, kind: 'percent', value: 5000 },

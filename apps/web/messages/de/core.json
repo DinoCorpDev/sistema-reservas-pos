@@ -194,7 +194,8 @@
     "pinLockMinutes": "PIN-Sperre (Minuten)",
     "printMaxDelay": "Nicht mehr drucken nach (Minuten)",
     "hubUrls": "Hub-Adressen",
-    "hubUrlsHint": "Eine Adresse pro Zeile, in Reihenfolge. Der erste Hub vergibt die Bestellnummern; leer = kein Hub."
+    "hubUrlsHint": "Eine Adresse pro Zeile, in Reihenfolge. Der erste Hub vergibt die Bestellnummern; leer = kein Hub.",
+    "oneDevicePerPerson": "Eine Person nur auf einem Gerät gleichzeitig angemeldet"
   },
   "floor": {
     "title": "Bereiche & Tische",

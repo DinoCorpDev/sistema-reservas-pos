@@ -41,7 +41,7 @@
     "pairingValidUntil": "Válido hasta {time} (15 minutos)",
     "pairingRemaining": "Válido por {remaining} más",
     "pairingExpired": "El código ha vencido.",
-    "pairingOnce": "El código solo se muestra ahora y sirve para una sola vinculación. Un código nuevo reemplaza al anterior; si el dispositivo ya está vinculado, la nueva vinculación reemplaza a la anterior.",
+    "pairingOnce": "El código solo se muestra ahora y vale para una vinculación. Un código nuevo reemplaza al anterior.",
     "pairingNew": "Generar nuevo código",
     "pairingDone": "Listo",
     "reactivateFirst": "Active el dispositivo antes de vincularlo.",
@@ -52,7 +52,11 @@
     "activate": "Activar dispositivo",
     "activateTitle": "¿Volver a activar {name}?",
     "activateText": "Al activarlo se genera un código de vinculación nuevo para escribir en el dispositivo.",
-    "activated": "Dispositivo activado."
+    "activated": "Dispositivo activado.",
+    "unpair": "Desvincular",
+    "unpairTitle": "¿Desvincular {name}?",
+    "unpairText": "El aparato donde funciona {name} ahora se cierra de inmediato. Después puede generar un código nuevo y vincular {name} en otro aparato. Las órdenes y los recibos se conservan.",
+    "unpaired": "Dispositivo desvinculado. Ya se puede volver a vincular."
   },
   "stations": {
     "title": "Estaciones de cocina",

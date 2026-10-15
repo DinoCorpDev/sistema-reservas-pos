@@ -41,7 +41,7 @@
     "pairingValidUntil": "Valido fino alle {time} (15 minuti)",
     "pairingRemaining": "Valido ancora {remaining}",
     "pairingExpired": "Il codice è scaduto.",
-    "pairingOnce": "Il codice viene mostrato solo ora e vale per un solo abbinamento. Un nuovo codice sostituisce il precedente; se il dispositivo è già abbinato, il nuovo abbinamento sostituisce quello vecchio.",
+    "pairingOnce": "Il codice viene mostrato solo ora e vale per un solo abbinamento. Un nuovo codice sostituisce il precedente.",
     "pairingNew": "Genera nuovo codice",
     "pairingDone": "Fatto",
     "reactivateFirst": "Attivi il dispositivo prima di abbinarlo.",
@@ -52,7 +52,11 @@
     "activate": "Attiva dispositivo",
     "activateTitle": "Riattivare {name}?",
     "activateText": "L’attivazione genera un nuovo codice di accoppiamento da inserire sul dispositivo.",
-    "activated": "Dispositivo attivato."
+    "activated": "Dispositivo attivato.",
+    "unpair": "Scollega",
+    "unpairTitle": "Scollegare {name}?",
+    "unpairText": "L'apparecchio su cui funziona ora {name} viene disconnesso subito. Poi potete creare un nuovo codice e abbinare {name} su un altro apparecchio. Ordini e ricevute restano salvati.",
+    "unpaired": "Dispositivo scollegato. Ora può essere abbinato di nuovo."
   },
   "stations": {
     "title": "Postazioni di cucina",

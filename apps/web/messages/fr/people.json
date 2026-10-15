@@ -41,7 +41,7 @@
     "pairingValidUntil": "Valable jusqu’à {time} (15 minutes)",
     "pairingRemaining": "Encore valable {remaining}",
     "pairingExpired": "Le code a expiré.",
-    "pairingOnce": "Le code n’est affiché qu’une seule fois et vaut pour un seul appairage. Un nouveau code remplace le précédent ; si l’appareil est déjà appairé, le nouvel appairage remplace l’ancien.",
+    "pairingOnce": "Le code n'est affiché que maintenant et vaut pour un seul appairage. Un nouveau code remplace le précédent.",
     "pairingNew": "Générer un nouveau code",
     "pairingDone": "Terminé",
     "reactivateFirst": "Activez l’appareil avant de l’appairer.",
@@ -52,7 +52,11 @@
     "activate": "Activer l’appareil",
     "activateTitle": "Réactiver {name} ?",
     "activateText": "L’activation génère un nouveau code de couplage à saisir sur l’appareil.",
-    "activated": "Appareil activé."
+    "activated": "Appareil activé.",
+    "unpair": "Dissocier",
+    "unpairTitle": "Dissocier {name} ?",
+    "unpairText": "L'appareil sur lequel {name} fonctionne maintenant est déconnecté aussitôt. Vous pouvez ensuite créer un nouveau code et appairer {name} sur un autre appareil. Les commandes et les reçus sont conservés.",
+    "unpaired": "Appareil dissocié. Il peut être appairé de nouveau."
   },
   "stations": {
     "title": "Postes de cuisine",

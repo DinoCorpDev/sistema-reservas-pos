@@ -1,10 +1,11 @@
-import { isValidPin, type Permission } from '@pos/core';
+import { isValidPin, type Permission, signedInElsewhere } from '@pos/core';
 import { type DeviceApp, deviceApp, isPhone } from './app';
 import { getMeta, setMeta } from './db';
 import { dispatch } from './engine';
 import { preferredLanguage } from './language';
 import { makeOperation } from './operations';
 import { getPos, type PosUser, usePos } from './store';
+import { requestSync, syncNow } from './sync';
 
 /**
  * PIN on the device, with or without network (RF-A06, RNF-10, DEC-023): the PIN alone identifies
@@ -87,7 +88,9 @@ export type PinResult =
   /** The PIN is right, but this person may not work on this kind of device. */
   | { status: 'not_allowed'; displayName: string }
   /** The PIN is right, but this is another waiter's own phone (DEC-036). */
-  | { status: 'not_owner'; ownerName: string };
+  | { status: 'not_owner'; ownerName: string }
+  /** The PIN is right, but its person is signed in on another device (DEC-040). */
+  | { status: 'elsewhere'; displayName: string; terminalName: string };
 
 /**
  * What a person needs to unlock each app (RNF-10): the kitchen display is for the kitchen, so
@@ -163,6 +166,23 @@ export async function unlock(pin: string): Promise<PinResult> {
   if (isPhone(device) && owner && user.id !== owner) {
     return { status: 'not_owner', ownerName: device?.ownerName ?? device?.terminalName ?? '' };
   }
+  // One person, one device at a time (DEC-040): the freshest presence decides, if any arrives
+  // quickly; offline nothing is known and the PIN opens.
+  if (device && bootstrap?.location.settings.security.oneDevicePerPerson !== false) {
+    await Promise.race([syncNow().catch(() => undefined), wait(1_500)]);
+    const elsewhere = signedInElsewhere(getPos().presence, {
+      userId: user.id,
+      terminalId: device.terminalId,
+      now: Date.now(),
+    });
+    if (elsewhere) {
+      return {
+        status: 'elsewhere',
+        displayName: user.displayName,
+        terminalName: elsewhere.terminalName ?? '',
+      };
+    }
+  }
   // The language this person chose on this device (RF-A08).
   const opened = { ...user, uiLanguage: await preferredLanguage(user.id, user.uiLanguage) };
   usePos.setState({ user: opened });
@@ -170,7 +190,11 @@ export async function unlock(pin: string): Promise<PinResult> {
   return { status: 'ok', user: opened };
 }
 
+const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 /** Locks the terminal: the next person enters their own PIN. */
 export function lockTerminal(): void {
   usePos.setState({ user: null });
+  // Tell the hub and the cloud at once: the person may sign in on another device (DEC-040).
+  requestSync();
 }

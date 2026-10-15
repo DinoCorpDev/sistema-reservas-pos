@@ -8,7 +8,7 @@ import {
   startHub,
   terminalPairingCode,
 } from './hub-helpers';
-import { issuePairingCode, tapDigits, unlockPos } from './pos-helpers';
+import { closeSignInError, issuePairingCode, tapDigits, unlockPos } from './pos-helpers';
 
 /**
  * The kitchen with the LAN hub (Phase 3, RF-C20…RF-C28, RNF-06, RNF-07): a waiter sends from the
@@ -59,6 +59,7 @@ async function pairKds(page: Page, prefix: string, pin: string) {
   await tapDigits(page, '4001');
   await page.getByRole('button', { name: 'Entsperren' }).click();
   await expect(page.getByText('Anna Huber hat keine Küchenberechtigung')).toBeVisible();
+  await closeSignInError(page);
   await tapDigits(page, pin);
   await page.getByRole('button', { name: 'Entsperren' }).click();
 }

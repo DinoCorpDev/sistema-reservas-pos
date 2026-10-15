@@ -29,7 +29,12 @@
       "codeUsedUp": "Trop de PIN incorrects avec ce code. Demandez un nouveau code à la caisse.",
       "notWaiter": "Seul le personnel de service couple son propre téléphone.",
       "phoneDeactivated": "Votre téléphone a été désactivé dans le backoffice. Adressez-vous à la direction.",
-      "otherCode": "Utiliser un autre code"
+      "otherCode": "Utiliser un autre code",
+      "errorTitle": "Appairage impossible",
+      "ok": "OK",
+      "alreadyPairedTitle": "Plus de place libre",
+      "alreadyPaired": "« {name} » est déjà appairé sur un autre appareil et cette place est prise. Un poste ne fonctionne que sur un appareil à la fois. Dissociez-le d'abord (sur l'autre appareil ou dans le backoffice, sous Appareils) ou créez un nouveau poste dans le backoffice.",
+      "backToStart": "Retour à l'accueil"
     },
     "pin": {
       "title": "Saisir le PIN",
@@ -43,7 +48,10 @@
       "notAllowedKitchen": "{name} n’a pas l’autorisation cuisine. Déverrouillez l’écran de cuisine avec le PIN d’une personne de la cuisine.",
       "failed": "Cela n'a pas fonctionné. Saisissez à nouveau le PIN ou rechargez la page.",
       "notOwner": "Ce téléphone appartient à {name}. Il ne s’ouvre qu’avec son PIN.",
-      "phoneOf": "Téléphone de {name}"
+      "phoneOf": "Téléphone de {name}",
+      "errorTitle": "Connexion impossible",
+      "ok": "OK",
+      "elsewhere": "{name} est déjà connecté(e) sur « {terminal} ». Une personne travaille sur un seul appareil à la fois : verrouillez d'abord l'autre appareil. S'il a été éteint, la connexion se libère au plus tard après 90 secondes."
     },
     "approval": {
       "title": "Validation par une personne responsable",
@@ -80,8 +88,8 @@
     },
     "revoked": {
       "title": "Appareil découplé",
-      "description": "« {name} » a été désactivé ou découplé dans le backoffice. Pour l’utiliser de nouveau, saisissez un nouveau code de couplage (Backoffice → Appareils).",
-      "pending": "{count, plural, one {# opération n’est} other {# opérations ne sont}} pas encore dans le cloud. Elles seront envoyées dès que l’appareil sera de nouveau couplé."
+      "description": "Ce navigateur était « {name} ». Cet appareil a depuis été appairé sur un autre appareil, dissocié ou désactivé dans le backoffice. Saisissez le code d'appairage de l'appareil que ce navigateur doit devenir – cela peut être un autre, par exemple « Handheld 2 » (Backoffice → Appareils → afficher le code).",
+      "pending": "{count, plural, one {# opération n'est} other {# opérations ne sont}} pas encore dans le cloud. Elles partent dès que ce navigateur est de nouveau appairé, quel que soit l'appareil."
     },
     "update": {
       "available": "Une nouvelle version est prête.",

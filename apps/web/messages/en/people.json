@@ -41,7 +41,7 @@
     "pairingValidUntil": "Valid until {time} (15 minutes)",
     "pairingRemaining": "Valid for another {remaining}",
     "pairingExpired": "The code has expired.",
-    "pairingOnce": "The code is shown only now and works for a single pairing. A new code replaces the previous one; if the device is already paired, the new pairing replaces the old one.",
+    "pairingOnce": "The code is shown only now and is valid for one pairing. A new code replaces the previous one.",
     "pairingNew": "Generate new code",
     "pairingDone": "Done",
     "reactivateFirst": "Activate the device before pairing it.",
@@ -52,7 +52,11 @@
     "activate": "Activate device",
     "activateTitle": "Reactivate {name}?",
     "activateText": "Activating it creates a new pairing code to enter on the device.",
-    "activated": "Device activated."
+    "activated": "Device activated.",
+    "unpair": "Unpair",
+    "unpairTitle": "Unpair {name}?",
+    "unpairText": "The device {name} runs on now is signed out at once. Then you can issue a new pairing code and pair {name} on another device. Orders and receipts are kept.",
+    "unpaired": "Device unpaired. It can be paired again now."
   },
   "stations": {
     "title": "Kitchen stations",

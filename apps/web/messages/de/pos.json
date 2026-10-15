@@ -29,7 +29,12 @@
       "codeUsedUp": "Zu viele falsche PINs mit diesem Code. Holen Sie an der Kasse einen neuen Code.",
       "notWaiter": "Nur Servicemitarbeitende koppeln ihr eigenes Telefon.",
       "phoneDeactivated": "Ihr Telefon wurde im Backoffice deaktiviert. Wenden Sie sich an die Geschäftsführung.",
-      "otherCode": "Anderen Code verwenden"
+      "otherCode": "Anderen Code verwenden",
+      "errorTitle": "Kopplung nicht möglich",
+      "ok": "OK",
+      "alreadyPairedTitle": "Keine freien Plätze",
+      "alreadyPaired": "«{name}» ist bereits auf einem anderen Gerät gekoppelt, und dieser Platz ist belegt. Ein Gerät kann nur auf einem Gerät gleichzeitig laufen. Entkoppeln Sie es zuerst (auf dem anderen Gerät oder im Backoffice unter Geräte) oder legen Sie im Backoffice ein neues Gerät an.",
+      "backToStart": "Zur Startseite"
     },
     "pin": {
       "title": "PIN eingeben",
@@ -43,7 +48,10 @@
       "notAllowedKitchen": "{name} hat keine Küchenberechtigung. Entsperren Sie den Küchenbildschirm mit der PIN einer Person aus der Küche.",
       "failed": "Das hat nicht geklappt. Bitte PIN erneut eingeben oder die Seite neu laden.",
       "notOwner": "Dieses Telefon gehört {name}. Nur {name} öffnet es mit dem eigenen PIN.",
-      "phoneOf": "Telefon von {name}"
+      "phoneOf": "Telefon von {name}",
+      "errorTitle": "Anmeldung nicht möglich",
+      "ok": "OK",
+      "elsewhere": "{name} ist bereits auf «{terminal}» angemeldet. Eine Person arbeitet immer nur auf einem Gerät: sperren Sie zuerst das andere Gerät. Wurde es ausgeschaltet, ist die Anmeldung nach höchstens 90 Sekunden frei."
     },
     "approval": {
       "title": "Freigabe durch Führungsperson",
@@ -80,8 +88,8 @@
     },
     "revoked": {
       "title": "Gerät entkoppelt",
-      "description": "«{name}» wurde im Backoffice deaktiviert oder entkoppelt. Um es wieder zu benutzen, geben Sie einen neuen Kopplungscode ein (Backoffice → Geräte).",
-      "pending": "{count, plural, one {# Vorgang ist} other {# Vorgänge sind}} noch nicht in der Cloud. Sie werden gesendet, sobald das Gerät wieder gekoppelt ist."
+      "description": "Dieser Browser war «{name}». Dieses Gerät wurde inzwischen auf einem anderen Gerät gekoppelt, entkoppelt oder im Backoffice deaktiviert. Geben Sie den Kopplungscode des Geräts ein, das dieser Browser jetzt sein soll – das kann auch ein anderes sein, zum Beispiel «Handheld 2» (Backoffice → Geräte → Code anzeigen).",
+      "pending": "{count, plural, one {# Vorgang ist} other {# Vorgänge sind}} noch nicht in der Cloud. Sie werden gesendet, sobald dieser Browser wieder gekoppelt ist – mit welchem Gerät auch immer."
     },
     "update": {
       "available": "Eine neue Version ist bereit.",

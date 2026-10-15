@@ -52,7 +52,9 @@ export function terminalPairingCode(
   return withDb(async (db) => {
     const [location] = await db.select().from(s.locations).limit(1);
     const code = pairingCode();
+    // Unpaired first, as in the backoffice: a paired KDS refuses a new device (DEC-041).
     const pairing = {
+      deviceTokenHash: null,
       pairingCodeHash: sha256Hex(normalizePairingCode(code)),
       pairingExpiresAt: new Date(Date.now() + 15 * 60_000),
       isActive: true,

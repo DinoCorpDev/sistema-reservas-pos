@@ -41,7 +41,7 @@
     "pairingValidUntil": "Gültig bis {time} (15 Minuten)",
     "pairingRemaining": "Noch {remaining} gültig",
     "pairingExpired": "Der Code ist abgelaufen.",
-    "pairingOnce": "Der Code wird nur jetzt angezeigt und gilt für eine Kopplung. Ein neuer Code ersetzt den bisherigen; ist das Gerät schon gekoppelt, ersetzt die neue Kopplung die alte.",
+    "pairingOnce": "Der Code wird nur jetzt angezeigt und gilt für eine Kopplung. Ein neuer Code ersetzt den bisherigen.",
     "pairingNew": "Neuen Code erzeugen",
     "pairingDone": "Fertig",
     "reactivateFirst": "Aktivieren Sie das Gerät, bevor Sie es koppeln.",
@@ -52,7 +52,11 @@
     "activate": "Gerät aktivieren",
     "activateTitle": "{name} wieder aktivieren?",
     "activateText": "Beim Aktivieren wird ein neuer Kopplungscode erzeugt, den Sie auf dem Gerät eingeben.",
-    "activated": "Gerät aktiviert."
+    "activated": "Gerät aktiviert.",
+    "unpair": "Entkoppeln",
+    "unpairTitle": "{name} entkoppeln?",
+    "unpairText": "Das Gerät, auf dem {name} jetzt läuft, wird sofort abgemeldet. Danach können Sie einen neuen Kopplungscode erzeugen und {name} auf einem anderen Gerät koppeln. Bestellungen und Belege bleiben erhalten.",
+    "unpaired": "Gerät entkoppelt. Es kann jetzt neu gekoppelt werden."
   },
   "stations": {
     "title": "Küchenstationen",

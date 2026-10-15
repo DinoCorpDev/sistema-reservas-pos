@@ -194,7 +194,8 @@
     "pinLockMinutes": "Bloqueo de PIN (minutos)",
     "printMaxDelay": "Dejar de imprimir después de (minutos)",
     "hubUrls": "Direcciones de los hubs",
-    "hubUrlsHint": "Una dirección por línea, en orden. El primer hub numera los pedidos; vacío = sin hub."
+    "hubUrlsHint": "Una dirección por línea, en orden. El primer hub numera los pedidos; vacío = sin hub.",
+    "oneDevicePerPerson": "Una persona con sesión en un solo dispositivo a la vez"
   },
   "floor": {
     "title": "Áreas y mesas",

@@ -29,7 +29,12 @@
       "codeUsedUp": "Too many wrong PINs with this code. Get a new code at the cashier.",
       "notWaiter": "Only service staff pair their own phone.",
       "phoneDeactivated": "Your phone was deactivated in the backoffice. Please talk to the manager.",
-      "otherCode": "Use another code"
+      "otherCode": "Use another code",
+      "errorTitle": "Cannot pair",
+      "ok": "OK",
+      "alreadyPairedTitle": "No free places",
+      "alreadyPaired": "“{name}” is already paired on another device, and that place is taken. A device runs on one device at a time. Unpair it first (on the other device or in the backoffice under Devices) or create a new device in the backoffice.",
+      "backToStart": "Back to start"
     },
     "pin": {
       "title": "Enter PIN",
@@ -43,7 +48,10 @@
       "notAllowedKitchen": "{name} has no kitchen permission. Unlock the kitchen display with the PIN of someone from the kitchen.",
       "failed": "That did not work. Enter the PIN again or reload the page.",
       "notOwner": "This phone belongs to {name}. It opens only with their PIN.",
-      "phoneOf": "{name}’s phone"
+      "phoneOf": "{name}’s phone",
+      "errorTitle": "Cannot sign in",
+      "ok": "OK",
+      "elsewhere": "{name} is already signed in on “{terminal}”. A person works on one device at a time: lock the other device first. If it was switched off, the sign-in is free after 90 seconds at most."
     },
     "approval": {
       "title": "Manager approval",
@@ -80,8 +88,8 @@
     },
     "revoked": {
       "title": "Device unpaired",
-      "description": "“{name}” was deactivated or unpaired in the backoffice. To use it again, enter a new pairing code (Backoffice → Devices).",
-      "pending": "{count, plural, one {# operation is} other {# operations are}} not in the cloud yet. They are sent as soon as the device is paired again."
+      "description": "This browser was “{name}”. That device has since been paired on another device, unpaired or deactivated in the backoffice. Enter the pairing code of the device this browser should be now – it may be another one, for example “Handheld 2” (Backoffice → Devices → show code).",
+      "pending": "{count, plural, one {# operation is} other {# operations are}} not in the cloud yet. They are sent as soon as this browser is paired again, with whichever device."
     },
     "update": {
       "available": "A new version is ready.",

@@ -4,3 +4,4 @@
  */
 export * from './constants';
 export * from './commands';
+export * from './sessions';

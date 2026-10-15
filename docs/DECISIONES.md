@@ -347,6 +347,38 @@ Juan preguntó qué pasa si el mesero de una mesa no está y la mesa llama a otr
 - **Pasar una mesa a otro mesero**, por ejemplo en el cambio de turno: en los dos modos pide el permiso nuevo `order.reassign`, que por defecto solo tienen gerencia y admin. En la práctica pide el **PIN de un gerente o del administrador**. Queda en la auditoría (`order.waiter_changed`, con quién la autorizó), y desde ese momento la mesa y su propina son del nuevo mesero.
 - Los roles existentes reciben los permisos con la migración 0012. Se pueden ajustar por rol en el backoffice.
 
+### DEC-040 · Una persona, un dispositivo a la vez; los errores de acceso en un modal («Podría», amplía RF-A06 y RNF-10)
+
+Juan pidió que la misma persona no pueda tener sesión en dos dispositivos, y que los errores de PIN y de vinculación salgan en un modal.
+
+- **Presencia de todos los dispositivos.** En cada sincronización, cada dispositivo dice si hay alguien dentro y quién: cada 2 s en uso y cada 30 s en una pestaña oculta. Antes solo lo hacían las pantallas de cocina (DEC-033). El hub y la nube se lo pasan, y cada dispositivo recibe la lista con el nombre de cada uno.
+- **Al entrar con el PIN:**
+  - el dispositivo pide la presencia más fresca (hasta 1,5 s);
+  - si esa persona está dentro de **otro** dispositivo visto en los últimos 90 s, no la deja entrar y muestra en un modal dónde está: «Luca Rossi ya tiene la sesión abierta en “Handheld 1”»;
+  - al bloquear con el candado, el dispositivo lo informa enseguida, así la persona puede entrar en otro al instante;
+  - si el dispositivo se apagó sin bloquear, su sesión vence a los 90 s como máximo.
+- **Sin conexión no se sabe nada y el PIN abre.** El restaurante nunca se detiene por la red. Es una regla de uso, no de seguridad del dinero: cada operación sigue llevando su persona.
+- **Ajuste por sede**, «Eine Person nur auf einem Gerät gleichzeitig» (`security.oneDevicePerPerson`), activado por defecto. Las pruebas automáticas lo apagan, salvo la que lo verifica.
+- **Errores en un modal.** PIN incorrecto, bloqueo por intentos, teléfono de otro mesero, sin permiso de cocina, otro dispositivo y los errores de vinculación salen en un modal con «OK» que vuelve al teclado.
+
+## DEC-041 · Un dispositivo vinculado no se le quita a otro aparato
+
+Antes, un código nuevo vinculaba el dispositivo en el aparato nuevo y el anterior quedaba desvinculado sin aviso. Juan pidió que no se pueda vincular otro aparato mientras el dispositivo esté ocupado, que salga una alerta y que se vuelva al menú inicial.
+
+- **Kasse, Handheld y Küche** tienen un solo espacio cada una. Mientras están vinculadas:
+  - el backoffice no genera códigos para ellas (409 `already_paired`);
+  - un código que haya quedado de antes se rechaza igual.
+- **En el aparato nuevo** sale la alerta «Keine freien Plätze» con el nombre del dispositivo y qué hacer. El botón lleva al menú inicial (`/`), donde se elige Kasse, Küche o Backoffice.
+- **Para liberar el espacio** hay dos caminos:
+  - «Entkoppeln» en el backoffice (Geräte), nuevo para estos dispositivos;
+  - el botón de desvincular en la propia Kasse.
+
+  Después se genera el código y se vincula el aparato nuevo. Las órdenes y los recibos se conservan.
+- **Para más aparatos** se crea un dispositivo nuevo en el backoffice.
+- **El hub y los teléfonos de meseros siguen igual:**
+  - el hub lo instala un administrador, y reinstalarlo lo vuelve a vincular;
+  - el teléfono de un mesero lo reemplaza su nuevo teléfono (DEC-036).
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

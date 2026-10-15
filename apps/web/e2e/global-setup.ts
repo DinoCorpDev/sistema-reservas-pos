@@ -1,4 +1,5 @@
 import { setupHubTestDatabase, setupTestDatabase } from '@pos/db/testing';
+import { setOneDevicePerPerson } from './pos-helpers';
 
 /**
  * Fresh E2E databases: the cloud with the demo restaurant and the empty one of the LAN hub
@@ -7,4 +8,6 @@ import { setupHubTestDatabase, setupTestDatabase } from '@pos/db/testing';
 export default async function globalSetup() {
   await setupTestDatabase();
   await setupHubTestDatabase();
+  // The suites reuse people across devices; sessions.spec turns the rule on (DEC-040).
+  await setOneDevicePerPerson(false);
 }

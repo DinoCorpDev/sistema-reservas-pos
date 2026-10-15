@@ -29,7 +29,12 @@
       "codeUsedUp": "Demasiados PIN incorrectos con este código. Pide un código nuevo en la caja.",
       "notWaiter": "Solo los meseros pueden vincular su propio teléfono.",
       "phoneDeactivated": "Tu teléfono fue desactivado en el backoffice. Habla con el gerente.",
-      "otherCode": "Usar otro código"
+      "otherCode": "Usar otro código",
+      "errorTitle": "No se puede vincular",
+      "ok": "OK",
+      "alreadyPairedTitle": "No hay espacios libres",
+      "alreadyPaired": "«{name}» ya está vinculado en otro aparato y ese espacio está ocupado. Un dispositivo funciona en un solo aparato a la vez. Desvincúlelo primero (en el otro aparato o en el backoffice, en Dispositivos) o cree un dispositivo nuevo en el backoffice.",
+      "backToStart": "Volver al inicio"
     },
     "pin": {
       "title": "Ingrese su PIN",
@@ -43,7 +48,10 @@
       "notAllowedKitchen": "{name} no tiene permiso de cocina. Desbloquea la pantalla de cocina con el PIN de una persona de la cocina.",
       "failed": "No funcionó. Ingrese el PIN de nuevo o recargue la página.",
       "notOwner": "Este teléfono es de {name}. Solo se abre con su PIN.",
-      "phoneOf": "Teléfono de {name}"
+      "phoneOf": "Teléfono de {name}",
+      "errorTitle": "No se puede iniciar sesión",
+      "ok": "OK",
+      "elsewhere": "{name} ya tiene la sesión abierta en «{terminal}». Una persona trabaja en un solo dispositivo a la vez: primero bloquee el otro dispositivo. Si se apagó, la sesión se libera en 90 segundos como máximo."
     },
     "approval": {
       "title": "Autorización de un gerente",
@@ -80,8 +88,8 @@
     },
     "revoked": {
       "title": "Dispositivo desvinculado",
-      "description": "«{name}» fue desactivado o desvinculado en el backoffice. Para volver a usarlo, ingresa un código de vinculación nuevo (Backoffice → Dispositivos).",
-      "pending": "{count, plural, one {# operación todavía no llegó} other {# operaciones todavía no llegaron}} a la nube. Se enviarán en cuanto el dispositivo se vuelva a vincular."
+      "description": "Este navegador era «{name}». Ese dispositivo se vinculó después en otro aparato, se desvinculó o se desactivó en el backoffice. Ingrese el código de vinculación del dispositivo que este navegador debe ser ahora: puede ser otro, por ejemplo «Handheld 2» (Backoffice → Dispositivos → mostrar código).",
+      "pending": "{count, plural, one {# operación aún no está} other {# operaciones aún no están}} en la nube. Se envían apenas este navegador se vuelva a vincular, con el dispositivo que sea."
     },
     "update": {
       "available": "Hay una versión nueva lista.",

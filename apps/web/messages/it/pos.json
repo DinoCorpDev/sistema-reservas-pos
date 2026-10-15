@@ -29,7 +29,12 @@
       "codeUsedUp": "Troppi PIN errati con questo codice. Chieda un nuovo codice alla cassa.",
       "notWaiter": "Solo il personale di servizio abbina il proprio telefono.",
       "phoneDeactivated": "Il suo telefono è stato disattivato nel backoffice. Si rivolga alla direzione.",
-      "otherCode": "Usa un altro codice"
+      "otherCode": "Usa un altro codice",
+      "errorTitle": "Abbinamento non possibile",
+      "ok": "OK",
+      "alreadyPairedTitle": "Nessun posto libero",
+      "alreadyPaired": "«{name}» è già abbinato su un altro apparecchio e quel posto è occupato. Una postazione funziona su un solo apparecchio alla volta. Scollegatela prima (sull'altro apparecchio o nel backoffice, in Dispositivi) oppure create una nuova postazione nel backoffice.",
+      "backToStart": "Torna all'inizio"
     },
     "pin": {
       "title": "Inserisca il PIN",
@@ -43,7 +48,10 @@
       "notAllowedKitchen": "{name} non ha l’autorizzazione cucina. Sblocca lo schermo cucina con il PIN di una persona della cucina.",
       "failed": "Non ha funzionato. Inserisci di nuovo il PIN o ricarica la pagina.",
       "notOwner": "Questo telefono è di {name}. Si apre solo con il suo PIN.",
-      "phoneOf": "Telefono di {name}"
+      "phoneOf": "Telefono di {name}",
+      "errorTitle": "Accesso non possibile",
+      "ok": "OK",
+      "elsewhere": "{name} ha già effettuato l'accesso su «{terminal}». Una persona lavora su un solo dispositivo alla volta: bloccate prima l'altro dispositivo. Se è stato spento, l'accesso si libera al massimo dopo 90 secondi."
     },
     "approval": {
       "title": "Autorizzazione di una persona responsabile",
@@ -80,8 +88,8 @@
     },
     "revoked": {
       "title": "Dispositivo disaccoppiato",
-      "description": "«{name}» è stato disattivato o disaccoppiato nel backoffice. Per usarlo di nuovo, inserisci un nuovo codice di accoppiamento (Backoffice → Dispositivi).",
-      "pending": "{count, plural, one {# operazione non è} other {# operazioni non sono}} ancora nel cloud. Verranno inviate appena il dispositivo sarà di nuovo accoppiato."
+      "description": "Questo browser era «{name}». Quel dispositivo è stato poi abbinato su un altro apparecchio, scollegato o disattivato nel backoffice. Inserite il codice di abbinamento del dispositivo che questo browser deve diventare: può essere un altro, per esempio «Handheld 2» (Backoffice → Dispositivi → mostra codice).",
+      "pending": "{count, plural, one {# operazione non è} other {# operazioni non sono}} ancora nel cloud. Vengono inviate appena questo browser viene abbinato di nuovo, con qualsiasi dispositivo."
     },
     "update": {
       "available": "È pronta una nuova versione.",

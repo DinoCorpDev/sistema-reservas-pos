@@ -315,10 +315,21 @@ describe('stations nobody attends (DEC-033)', () => {
       expect.objectContaining({ terminalId: kds.terminal.id, unlocked: false, userId: null }),
     );
 
-    // Only kitchen displays report presence.
-    await pullAs({ ...pos.headers, 'x-presence': 'unlocked' });
+    // Every device reports who is signed in, so a person uses one device at a time (DEC-040).
+    await pullAs({
+      ...pos.headers,
+      'x-presence': 'unlocked',
+      'x-presence-user': demo.users.cashier.id,
+    });
     seen = await pullAs(pos.headers);
-    expect(seen.presence.map((p) => p.terminalId)).not.toContain(pos.terminal.id);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({
+        terminalId: pos.terminal.id,
+        unlocked: true,
+        userId: demo.users.cashier.id,
+        terminalName: expect.any(String),
+      }),
+    );
 
     // The bootstrap names the displays of each station and the replacements.
     const bootstrap = await json<{

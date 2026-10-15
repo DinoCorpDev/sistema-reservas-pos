@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { pairPos, tapDigits, unlockPos } from './pos-helpers';
+import { closeSignInError, pairPos, tapDigits, unlockPos } from './pos-helpers';
 
 /**
  * The POS boots, pairs with a code from the backoffice (RF-A06) and the PIN alone identifies
@@ -12,6 +12,7 @@ test('pairs, unlocks with a PIN and keeps working offline', async ({ page, conte
   await tapDigits(page, '9876');
   await page.getByRole('button', { name: 'Entsperren' }).click();
   await expect(page.getByText(/Falsche PIN\. Noch 4 Versuche/)).toBeVisible();
+  await closeSignInError(page);
 
   await unlockPos(page, '4001');
   await expect(page.getByTestId('pos-user')).toHaveText('Anna Huber');

@@ -1,7 +1,7 @@
 import { DEMO_BACKOFFICE_PASSWORD, DEMO_USERS } from '@pos/db/testing';
 import { expect, test } from '@playwright/test';
 import { terminalPairingCode } from './hub-helpers';
-import { tapDigits, unlockPos } from './pos-helpers';
+import { closeSignInError, tapDigits, unlockPos } from './pos-helpers';
 
 /**
  * A waiter's own phone (DEC-036): the cashier POS shows a QR, the phone opens it and takes the
@@ -52,9 +52,11 @@ test('a waiter pairs their own phone at the cashier POS and signs out at the end
     await tapDigits(phone, '4002');
     await phone.getByRole('button', { name: 'Entsperren' }).click();
     await expect(phone.getByText('Falsche PIN')).toBeVisible();
+    await closeSignInError(phone);
     await tapDigits(phone, '2000');
     await phone.getByRole('button', { name: 'Entsperren' }).click();
     await expect(phone.getByText('Dieses Telefon gehört Anna Huber')).toBeVisible();
+    await closeSignInError(phone);
     await unlockPos(phone, '4001');
 
     // Without network, signing out refuses: the new order has not reached the cloud.

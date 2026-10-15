@@ -106,7 +106,7 @@ export function registerSyncRoutes(app: ApiApp) {
         }),
         headers: z.object({
           'x-presence': z.enum(['unlocked', 'locked']).optional().openapi({
-            description: 'Kitchen displays: whether someone is logged in (DEC-033)',
+            description: 'Whether someone is signed in on the device (DEC-033, DEC-040)',
           }),
           'x-presence-user': z.uuid().optional(),
         }),
@@ -125,6 +125,7 @@ export function registerSyncRoutes(app: ApiApp) {
                 unlocked: z.boolean(),
                 userId: z.uuid().nullable(),
                 lastSeenAt: z.string(),
+                terminalName: z.string(),
               }),
             ),
           }),

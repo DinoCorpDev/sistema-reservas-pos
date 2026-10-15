@@ -7,9 +7,10 @@ import type { ServiceDeps } from '../shared';
 import type { SyncScope } from './store';
 
 /**
- * Who is at each kitchen display (DEC-033). A KDS says on every pull whether someone unlocked it;
- * every node keeps the latest per terminal, and the POS decides from it where to send. The hub and
- * the cloud exchange it, so a POS on one sees a display on the other.
+ * Who is signed in on each device. Every device says on each pull whether someone unlocked it;
+ * every node keeps the latest per terminal. The POS decides from it where to send (a kitchen
+ * display nobody attends, DEC-033) and whether a PIN may open (one device per person, DEC-040).
+ * The hub and the cloud exchange it, so a device on one sees a device on the other.
  */
 
 /** Presence older than this is not worth exchanging or showing. */
@@ -51,27 +52,24 @@ export async function recordPresence(
   }
 }
 
-/** The kitchen displays of the location seen recently, for the POS and the hub. */
+/** The devices of the location seen recently, with who is signed in, for the POS and the hub. */
 export async function listPresence(
   db: Database,
   scope: SyncScope,
   now = new Date(),
-): Promise<(PresenceEntry & { userId: string | null })[]> {
+): Promise<(PresenceEntry & { userId: string | null; terminalName: string })[]> {
   const rows = await db
     .select({
       terminalId: s.terminalPresence.id,
       unlocked: s.terminalPresence.unlocked,
       userId: s.terminalPresence.userId,
       lastSeenAt: s.terminalPresence.lastSeenAt,
+      terminalName: s.terminals.name,
     })
     .from(s.terminalPresence)
     .innerJoin(
       s.terminals,
-      and(
-        eq(s.terminals.id, s.terminalPresence.id),
-        eq(s.terminals.type, 'kds'),
-        isNull(s.terminals.deletedAt),
-      ),
+      and(eq(s.terminals.id, s.terminalPresence.id), isNull(s.terminals.deletedAt)),
     )
     .where(
       and(
