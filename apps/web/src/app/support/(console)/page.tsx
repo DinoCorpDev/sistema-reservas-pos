@@ -1,4 +1,4 @@
-import { admin, ApiError } from '@pos/api';
+import { admin, ApiError, platform } from '@pos/api';
 import { Alert } from '@pos/ui/alert';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -24,6 +24,9 @@ export default async function SupportConsolePage() {
       if (error instanceof ApiError && error.code === 'FORBIDDEN') return null;
       throw error;
     });
+  const catalog = organizations
+    ? await platform.getPlanCatalog(deps(), { staffId: session.user.id })
+    : { plans: [], addons: [], prices: [] };
   const currentId = session.user.organizationId;
   const current = currentId ? organizations?.find((org) => org.id === currentId) : undefined;
 
@@ -37,7 +40,14 @@ export default async function SupportConsolePage() {
       <div className="grid gap-6">
         {currentId ? <InsideOrganization name={current?.name ?? null} /> : null}
         {organizations ? (
-          <OrganizationList organizations={organizations} currentId={currentId} />
+          <OrganizationList
+            organizations={organizations}
+            currentId={currentId}
+            catalog={{
+              plans: catalog.plans.filter((plan) => plan.isActive),
+              addons: catalog.addons.filter((addon) => addon.isActive),
+            }}
+          />
         ) : (
           <Alert variant="destructive">{t('staffError')}</Alert>
         )}

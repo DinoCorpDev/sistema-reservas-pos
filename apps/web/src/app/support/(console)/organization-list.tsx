@@ -10,16 +10,20 @@ import { useTranslations } from 'next-intl';
 import { formatDate, formatDateTime } from '@/components/backoffice/admin/format';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import { openOrganization } from './actions';
+import { SubscriptionDialog } from './subscription-dialog';
 
 /** Organizations on the platform; one opens only with the owner's active grant (RF-A10). */
 export function OrganizationList({
   organizations,
   currentId,
+  catalog,
 }: {
   organizations: admin.PlatformOrganizationDto[];
   currentId: string | null;
+  catalog: { plans: { code: string; name: string }[]; addons: { code: string; name: string }[] };
 }) {
   const t = useTranslations('supportConsole');
+  const tp = useTranslations('supportConsole.plan');
   // On success the action redirects to the backoffice.
   const open = useServerAction(openOrganization, { successMessage: false });
 
@@ -37,6 +41,7 @@ export function OrganizationList({
               <TableHead>{t('name')}</TableHead>
               <TableHead>{t('createdAt')}</TableHead>
               <TableHead className="text-right">{t('locations')}</TableHead>
+              <TableHead>{tp('plan')}</TableHead>
               <TableHead>{t('access')}</TableHead>
               <TableHead className="text-right">
                 <span className="sr-only">{t('open')}</span>
@@ -65,6 +70,22 @@ export function OrganizationList({
                   </TableCell>
                   <TableCell className="tabular-nums">{formatDate(org.createdAt)}</TableCell>
                   <TableCell className="text-right tabular-nums">{org.locationsCount}</TableCell>
+                  <TableCell>
+                    <span className="flex items-center gap-1">
+                      <span data-testid="org-plan">{org.plan?.name ?? 'Pro'}</span>
+                      {org.plan && org.plan.status !== 'active' ? (
+                        <Badge
+                          variant={org.plan.status === 'suspended' ? 'destructive' : 'warning'}
+                        >
+                          {tp(`statuses.${org.plan.status as 'active'}`)}
+                        </Badge>
+                      ) : null}
+                      <SubscriptionDialog
+                        organization={{ id: org.id, name: org.name }}
+                        catalog={catalog}
+                      />
+                    </span>
+                  </TableCell>
                   <TableCell>
                     {org.supportGrantExpiresAt ? (
                       <Badge variant="success">{formatDateTime(org.supportGrantExpiresAt)}</Badge>

@@ -369,7 +369,8 @@
     "nav": {
       "label": "Console",
       "organizations": "Organizations",
-      "status": "Status"
+      "status": "Status",
+      "plans": "Plans"
     },
     "status": {
       "title": "Platform status",
@@ -407,6 +408,62 @@
         "backup_failed": "Backup failed",
         "restore_test_failed": "Restore test",
         "archive_failed": "Legal archive"
+      }
+    },
+    "plan": {
+      "plan": "Plan",
+      "edit": "Plan of {name}",
+      "title": "Plan · {name}",
+      "description": "Plan, add-ons and state (invoicing outside the POS). A smaller plan removes nothing; it only stops adding more.",
+      "status": "State",
+      "addons": "Add-ons",
+      "note": "Note",
+      "notePlaceholder": "e.g. invoice 2026-10 paid",
+      "cancel": "Cancel",
+      "save": "Save",
+      "limits": {
+        "devices": "Devices",
+        "users": "People",
+        "locations": "Locations"
+      },
+      "statuses": {
+        "active": "Active",
+        "past_due": "Payment due",
+        "suspended": "Suspended"
+      }
+    },
+    "catalog": {
+      "title": "Plans",
+      "description": "Plans and add-ons with limits, modules and monthly prices per country. A change applies at once to every organization on that plan.",
+      "plans": "Plans",
+      "addons": "Add-ons",
+      "newPlan": "New plan",
+      "newAddon": "New add-on",
+      "code": "Code",
+      "name": "Name",
+      "noLimit": "Empty = unlimited",
+      "adds": "+ {limit}",
+      "active": "Active",
+      "save": "Save",
+      "prices": "Monthly prices",
+      "item": "Plan or add-on",
+      "country": "Country",
+      "currency": "Currency",
+      "monthly": "Per month",
+      "setPrice": "Set price",
+      "remove": "Remove",
+      "limits": {
+        "devices": "Devices",
+        "users": "People",
+        "locations": "Locations"
+      },
+      "features": {
+        "kds": "Kitchen displays (KDS)",
+        "handhelds": "Handhelds for service",
+        "phones": "Waiter phones",
+        "table_ownership": "Tables per waiter",
+        "api": "API for your own integrations",
+        "multi_location": "Several locations"
       }
     }
   },
@@ -453,5 +510,40 @@
     "copyFailed": "Copying isn’t possible. Please select the password manually.",
     "nextSteps": "Before you can open the organisation, the owner must grant access under Support access.",
     "done": "Done"
+  },
+  "myPlan": {
+    "title": "My plan",
+    "description": "What your restaurant bought and uses. DINOLABS changes the plan or the add-ons.",
+    "noPermission": "“My plan” needs the permission to manage the location.",
+    "monthly": "{amount} per month",
+    "use": "{used} of {allowed}",
+    "unlimitedUse": "{used} · unlimited",
+    "addons": "Add-ons",
+    "modules": "Modules",
+    "modulesHint": "What your plan includes. Locked modules come with a bigger plan or an add-on.",
+    "inPlan": "In the {plan} plan",
+    "change": "More devices, people or modules? Write to DINOLABS: the change applies at once.",
+    "limits": {
+      "devices": "Devices",
+      "users": "People",
+      "locations": "Locations"
+    },
+    "features": {
+      "kds": "Kitchen displays (KDS)",
+      "handhelds": "Handhelds for service",
+      "phones": "Waiter phones",
+      "table_ownership": "Tables per waiter",
+      "api": "API for your own integrations",
+      "multi_location": "Several locations"
+    },
+    "statuses": {
+      "active": "Active",
+      "past_due": "Payment due",
+      "suspended": "Suspended"
+    },
+    "statusNotice": {
+      "past_due": "A payment for your subscription is due. Operation goes on; please settle it so nothing is suspended.",
+      "suspended": "Your subscription is suspended: you can keep selling and closing, but add nothing. Please contact DINOLABS."
+    }
   }
 }

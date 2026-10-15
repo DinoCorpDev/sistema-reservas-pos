@@ -1,4 +1,4 @@
-import { locations } from '@pos/api';
+import { locations, platform } from '@pos/api';
 import { Alert } from '@pos/ui/alert';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -17,6 +17,10 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
   const t = await getTranslations();
   const allLocations = await locations.listLocations(deps(), actor);
   const permissions = [...actor.permissions];
+  // A late payment or a suspended subscription, for whoever manages the location (DEC-045).
+  const subscription = actor.permissions.has('location.manage')
+    ? await platform.subscriptionStatusOf(deps().db, actor.organizationId)
+    : 'active';
 
   return (
     <div className="flex min-h-dvh">
@@ -40,6 +44,16 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
         {actor.kind === 'support' ? (
           <Alert variant="warning" className="rounded-none border-x-0 border-t-0">
             {t('nav.support_banner')}
+          </Alert>
+        ) : null}
+        {subscription !== 'active' ? (
+          <Alert
+            variant={subscription === 'suspended' ? 'destructive' : 'warning'}
+            className="rounded-none border-x-0 border-t-0 print:hidden"
+          >
+            <Link href="/backoffice/plan" className="underline-offset-4 hover:underline">
+              {t(`myPlan.statusNotice.${subscription}`)}
+            </Link>
           </Alert>
         ) : null}
         <main className="mx-auto w-full max-w-6xl flex-1 p-4 sm:p-6">{children}</main>

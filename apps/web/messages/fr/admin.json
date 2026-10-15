@@ -369,7 +369,8 @@
     "nav": {
       "label": "Console",
       "organizations": "Organisations",
-      "status": "État"
+      "status": "État",
+      "plans": "Formules"
     },
     "status": {
       "title": "État de la plateforme",
@@ -407,6 +408,62 @@
         "backup_failed": "Sauvegarde échouée",
         "restore_test_failed": "Test de restauration",
         "archive_failed": "Archive légale"
+      }
+    },
+    "plan": {
+      "plan": "Formule",
+      "edit": "Formule de {name}",
+      "title": "Formule · {name}",
+      "description": "Formule, options et état (facturation hors du POS). Une formule inférieure ne retire rien ; elle empêche seulement d’ajouter.",
+      "status": "État",
+      "addons": "Options",
+      "note": "Note",
+      "notePlaceholder": "p. ex. facture 2026-10 payée",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "limits": {
+        "devices": "Appareils",
+        "users": "Personnes",
+        "locations": "Sites"
+      },
+      "statuses": {
+        "active": "Actif",
+        "past_due": "Paiement en attente",
+        "suspended": "Suspendu"
+      }
+    },
+    "catalog": {
+      "title": "Formules",
+      "description": "Formules et options avec limites, modules et prix mensuels par pays. Un changement s’applique aussitôt à toutes les organisations de cette formule.",
+      "plans": "Formules",
+      "addons": "Options",
+      "newPlan": "Nouvelle formule",
+      "newAddon": "Nouvelle option",
+      "code": "Code",
+      "name": "Nom",
+      "noLimit": "Vide = illimité",
+      "adds": "+ {limit}",
+      "active": "Active",
+      "save": "Enregistrer",
+      "prices": "Prix mensuels",
+      "item": "Formule ou option",
+      "country": "Pays",
+      "currency": "Monnaie",
+      "monthly": "Par mois",
+      "setPrice": "Fixer le prix",
+      "remove": "Retirer",
+      "limits": {
+        "devices": "Appareils",
+        "users": "Personnes",
+        "locations": "Sites"
+      },
+      "features": {
+        "kds": "Écrans de cuisine (KDS)",
+        "handhelds": "Terminaux mobiles pour le service",
+        "phones": "Téléphones de service",
+        "table_ownership": "Tables par serveur",
+        "api": "API pour vos intégrations",
+        "multi_location": "Plusieurs sites"
       }
     }
   },
@@ -453,5 +510,40 @@
     "copyFailed": "Copie impossible. Veuillez sélectionner le mot de passe manuellement.",
     "nextSteps": "Pour que vous puissiez ouvrir l’organisation, le ou la propriétaire doit accorder un accès sous Accès support.",
     "done": "Terminé"
+  },
+  "myPlan": {
+    "title": "Ma formule",
+    "description": "Ce que votre restaurant a acheté et utilise. DINOLABS modifie la formule ou les options.",
+    "noPermission": "« Ma formule » demande l’autorisation de gérer le site.",
+    "monthly": "{amount} par mois",
+    "use": "{used} sur {allowed}",
+    "unlimitedUse": "{used} · illimité",
+    "addons": "Options",
+    "modules": "Modules",
+    "modulesHint": "Ce que votre formule comprend. Les modules verrouillés viennent avec une formule supérieure ou une option.",
+    "inPlan": "Dans la formule {plan}",
+    "change": "Plus d’appareils, de personnes ou de modules ? Écrivez à DINOLABS : le changement s’applique aussitôt.",
+    "limits": {
+      "devices": "Appareils",
+      "users": "Personnes",
+      "locations": "Sites"
+    },
+    "features": {
+      "kds": "Écrans de cuisine (KDS)",
+      "handhelds": "Terminaux mobiles pour le service",
+      "phones": "Téléphones de service",
+      "table_ownership": "Tables par serveur",
+      "api": "API pour vos intégrations",
+      "multi_location": "Plusieurs sites"
+    },
+    "statuses": {
+      "active": "Actif",
+      "past_due": "Paiement en attente",
+      "suspended": "Suspendu"
+    },
+    "statusNotice": {
+      "past_due": "Un paiement de votre abonnement est en attente. L’exploitation continue ; merci de le régler pour que rien ne soit suspendu.",
+      "suspended": "Votre abonnement est suspendu : vous pouvez continuer à vendre et à clôturer, mais rien ajouter. Contactez DINOLABS."
+    }
   }
 }

@@ -126,6 +126,10 @@
       "cancel": "Annuler",
       "pending": "{count, plural, one {# opération n'est} other {# opérations ne sont}} pas encore dans le cloud. Vérifiez la connexion et réessayez.",
       "offline": "Pas de connexion au cloud. La dissociation nécessite internet."
+    },
+    "subscription": {
+      "past_due": "Paiement de l’abonnement en attente – merci d’informer le propriétaire.",
+      "suspended": "Abonnement suspendu – la vente continue ; merci d’informer le propriétaire."
     }
   }
 }

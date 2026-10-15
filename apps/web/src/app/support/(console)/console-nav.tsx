@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 const LINKS = [
   { key: 'organizations', href: '/support' },
   { key: 'status', href: '/support/status' },
+  { key: 'plans', href: '/support/plans' },
 ] as const;
 
 /** The sections of the support console. */

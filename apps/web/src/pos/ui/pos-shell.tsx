@@ -87,6 +87,7 @@ export function PosShell() {
     view.name === 'counter' && view.channel === channel;
   return (
     <div className="flex min-h-dvh flex-col">
+      <SubscriptionNotice />
       <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 max-md:min-h-14 md:static md:flex-wrap">
         <span className="mr-2 hidden font-semibold md:inline">{location}</span>
         <nav
@@ -208,5 +209,24 @@ function ReadyBadge({ count, label, testId }: { count: number; label: string; te
       <span aria-hidden>{count}</span>
       <span className="sr-only">{label}</span>
     </span>
+  );
+}
+
+/**
+ * A late payment or a suspended subscription (DEC-045): one line above the POS, so staff tell the
+ * owner. Selling never stops because of it.
+ */
+function SubscriptionNotice() {
+  const status = usePos((state) => state.bootstrap?.subscriptionStatus ?? 'active');
+  const t = useTranslations('pos.subscription');
+  if (status === 'active') return null;
+  return (
+    <p
+      role="status"
+      data-testid="subscription-notice"
+      className={`px-3 py-1 text-center text-sm font-medium ${status === 'suspended' ? 'bg-destructive text-destructive-foreground' : 'bg-amber-100 text-amber-950'}`}
+    >
+      {t(status)}
+    </p>
   );
 }

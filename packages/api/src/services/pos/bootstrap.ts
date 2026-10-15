@@ -16,6 +16,7 @@ import { loadCatalogSnapshot } from '../catalog/snapshot';
 import { listAreas, listTables, toLocationDto } from '../locations';
 import type { ServiceDeps } from '../shared';
 import { configVersion } from '../sync/config-version';
+import { subscriptionStatusOf } from '../platform/plans';
 
 /**
  * `GET /pos/bootstrap` (docs/SYNC.md §6.4): everything a paired terminal needs to operate
@@ -176,6 +177,8 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
     configVersion: version,
     serverTime: new Date().toISOString(),
     organization: { id: actor.organizationId, name: organization?.name ?? '' },
+    /** A late payment shows a notice; suspended adds nothing new (DEC-045). */
+    subscriptionStatus: await subscriptionStatusOf(db, actor.organizationId),
     terminal: {
       id: terminal.id,
       name: terminal.name,

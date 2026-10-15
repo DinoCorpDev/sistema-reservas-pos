@@ -126,6 +126,10 @@
       "cancel": "Cancel",
       "pending": "{count, plural, one {# operation is} other {# operations are}} not in the cloud yet. Check the connection and try again.",
       "offline": "No connection to the cloud. Unpairing needs internet."
+    },
+    "subscription": {
+      "past_due": "Subscription payment due – please tell the owner.",
+      "suspended": "Subscription suspended – selling goes on; please tell the owner."
     }
   }
 }

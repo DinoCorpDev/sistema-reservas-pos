@@ -126,6 +126,10 @@
       "cancel": "Cancelar",
       "pending": "{count, plural, one {# operación aún no está} other {# operaciones aún no están}} en la nube. Revise la conexión e inténtelo de nuevo.",
       "offline": "Sin conexión con la nube. Para desvincular se necesita internet."
+    },
+    "subscription": {
+      "past_due": "Pago de la suscripción pendiente: avise al dueño.",
+      "suspended": "Suscripción suspendida: se puede seguir vendiendo; avise al dueño."
     }
   }
 }

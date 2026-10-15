@@ -5,6 +5,7 @@ import { cn } from '@pos/ui/utils';
 import {
   ChartColumnIcon,
   CloudAlertIcon,
+  CreditCardIcon,
   ContactIcon,
   FolderTreeIcon,
   KeyRoundIcon,
@@ -90,6 +91,7 @@ const SECTIONS: NavItem[][] = [
       icon: KeyRoundIcon,
       permission: 'user.manage',
     },
+    { href: '/backoffice/plan', key: 'plan', icon: CreditCardIcon, permission: 'location.manage' },
     { href: '/backoffice/account', key: 'account', icon: UserCogIcon },
   ],
 ];

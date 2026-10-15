@@ -126,6 +126,10 @@
       "cancel": "Annulla",
       "pending": "{count, plural, one {# operazione non è} other {# operazioni non sono}} ancora nel cloud. Controllate la connessione e riprovate.",
       "offline": "Nessuna connessione al cloud. Per scollegare serve internet."
+    },
+    "subscription": {
+      "past_due": "Pagamento dell’abbonamento in sospeso – avvisate il titolare.",
+      "suspended": "Abbonamento sospeso – la vendita continua; avvisate il titolare."
     }
   }
 }

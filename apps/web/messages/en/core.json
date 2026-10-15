@@ -85,7 +85,8 @@
     "language": "Language",
     "support_banner": "You are working in this organisation as DINOLABS support. Every action is logged.",
     "support_leave": "Leave organisation",
-    "reports": "Reports"
+    "reports": "Reports",
+    "plan": "My plan"
   },
   "auth": {
     "title": "Sign in",
@@ -246,6 +247,7 @@
     "supportAccess": "Grant or revoke DINOLABS support access to your organization for a limited time.",
     "apiKeys": "Keys to connect other systems (such as Zitas) to the POS API with limited permissions.",
     "account": "Your user: name, password and interface language.",
-    "reports": "Sales, VAT, tips, voids and times of a period, plus the exports for accounting, the fiduciary and the archive."
+    "reports": "Sales, VAT, tips, voids and times of a period, plus the exports for accounting, the fiduciary and the archive.",
+    "plan": "Your restaurant’s plan, add-ons, usage and monthly price."
   }
 }

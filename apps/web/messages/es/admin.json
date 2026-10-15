@@ -369,7 +369,8 @@
     "nav": {
       "label": "Consola",
       "organizations": "Organizaciones",
-      "status": "Estado"
+      "status": "Estado",
+      "plans": "Planes"
     },
     "status": {
       "title": "Estado de la plataforma",
@@ -407,6 +408,62 @@
         "backup_failed": "Respaldo fallido",
         "restore_test_failed": "Prueba de restauración",
         "archive_failed": "Archivo legal"
+      }
+    },
+    "plan": {
+      "plan": "Plan",
+      "edit": "Plan de {name}",
+      "title": "Plan · {name}",
+      "description": "Plan, add-ons y estado (la factura va por fuera del POS). Un plan menor no quita nada; solo impide agregar más.",
+      "status": "Estado",
+      "addons": "Add-ons",
+      "note": "Nota",
+      "notePlaceholder": "p. ej. factura 2026-10 pagada",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "limits": {
+        "devices": "Aparatos",
+        "users": "Personas",
+        "locations": "Sedes"
+      },
+      "statuses": {
+        "active": "Activa",
+        "past_due": "Pago pendiente",
+        "suspended": "Suspendida"
+      }
+    },
+    "catalog": {
+      "title": "Planes",
+      "description": "Planes y add-ons con límites, módulos y precios mensuales por país. Un cambio rige al instante para todas las organizaciones de ese plan.",
+      "plans": "Planes",
+      "addons": "Add-ons",
+      "newPlan": "Plan nuevo",
+      "newAddon": "Add-on nuevo",
+      "code": "Código",
+      "name": "Nombre",
+      "noLimit": "Vacío = sin límite",
+      "adds": "+ {limit}",
+      "active": "Activo",
+      "save": "Guardar",
+      "prices": "Precios mensuales",
+      "item": "Plan o add-on",
+      "country": "País",
+      "currency": "Moneda",
+      "monthly": "Al mes",
+      "setPrice": "Fijar precio",
+      "remove": "Quitar",
+      "limits": {
+        "devices": "Aparatos",
+        "users": "Personas",
+        "locations": "Sedes"
+      },
+      "features": {
+        "kds": "Pantallas de cocina (KDS)",
+        "handhelds": "Handhelds para meseros",
+        "phones": "Teléfonos de meseros",
+        "table_ownership": "Mesas por mesero",
+        "api": "API para integraciones propias",
+        "multi_location": "Varias sedes"
       }
     }
   },
@@ -453,5 +510,40 @@
     "copyFailed": "No se pudo copiar. Seleccione la contraseña manualmente.",
     "nextSteps": "Para que pueda abrir la organización, la persona propietaria debe otorgar un acceso en «Acceso de soporte».",
     "done": "Listo"
+  },
+  "myPlan": {
+    "title": "Mi plan",
+    "description": "Lo que su restaurante compró y usa. Los cambios de plan o de add-ons los hace DINOLABS.",
+    "noPermission": "Para «Mi plan» necesita el permiso de administrar la sede.",
+    "monthly": "{amount} al mes",
+    "use": "{used} de {allowed}",
+    "unlimitedUse": "{used} · sin límite",
+    "addons": "Add-ons",
+    "modules": "Módulos",
+    "modulesHint": "Lo que incluye su plan. Lo bloqueado viene con un plan mayor o un add-on.",
+    "inPlan": "En el plan {plan}",
+    "change": "¿Más aparatos, personas o módulos? Escriba a DINOLABS: el cambio rige al instante.",
+    "limits": {
+      "devices": "Aparatos",
+      "users": "Personas",
+      "locations": "Sedes"
+    },
+    "features": {
+      "kds": "Pantallas de cocina (KDS)",
+      "handhelds": "Handhelds para meseros",
+      "phones": "Teléfonos de meseros",
+      "table_ownership": "Mesas por mesero",
+      "api": "API para integraciones propias",
+      "multi_location": "Varias sedes"
+    },
+    "statuses": {
+      "active": "Activa",
+      "past_due": "Pago pendiente",
+      "suspended": "Suspendida"
+    },
+    "statusNotice": {
+      "past_due": "Hay un pago pendiente de su suscripción. La operación sigue; por favor páguelo para que nada se suspenda.",
+      "suspended": "Su suscripción está suspendida: puede seguir vendiendo y cerrando, pero no agregar nada. Contacte a DINOLABS."
+    }
   }
 }

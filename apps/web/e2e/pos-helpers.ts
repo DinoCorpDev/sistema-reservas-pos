@@ -155,3 +155,32 @@ export async function setOneDevicePerPerson(enabled: boolean): Promise<void> {
     await pool.end();
   }
 }
+
+/**
+ * Puts the demo organization on a plan and state (DEC-045), as DINOLABS would in /support. No
+ * plan code removes the subscription: the organization is back to Pro, from before plans.
+ */
+export async function setDemoSubscription(
+  planCode: string | null,
+  status: 'active' | 'past_due' | 'suspended' = 'active',
+): Promise<void> {
+  const { db, pool } = createDb(testDatabaseUrl(), { connectionLimit: 1 });
+  try {
+    const [organization] = await db
+      .select({ id: s.organizations.id })
+      .from(s.organizations)
+      .where(eq(s.organizations.slug, 'demo-gastro'));
+    if (!organization) throw new Error('No demo organization in the E2E database');
+    await db.delete(s.subscriptions).where(eq(s.subscriptions.organizationId, organization.id));
+    if (planCode) {
+      await db.insert(s.subscriptions).values({
+        organizationId: organization.id,
+        planCode,
+        status,
+        statusSince: new Date(),
+      });
+    }
+  } finally {
+    await pool.end();
+  }
+}

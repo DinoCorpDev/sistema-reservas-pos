@@ -369,7 +369,8 @@
     "nav": {
       "label": "Konsole",
       "organizations": "Organisationen",
-      "status": "Status"
+      "status": "Status",
+      "plans": "Pläne"
     },
     "status": {
       "title": "Plattformstatus",
@@ -407,6 +408,62 @@
         "backup_failed": "Backup fehlgeschlagen",
         "restore_test_failed": "Wiederherstellungstest",
         "archive_failed": "Rechtsarchiv"
+      }
+    },
+    "plan": {
+      "plan": "Plan",
+      "edit": "Plan von {name}",
+      "title": "Plan · {name}",
+      "description": "Plan, Add-ons und Zustand (Rechnung ausserhalb des POS). Ein kleinerer Plan entfernt nichts; er verhindert nur, mehr hinzuzufügen.",
+      "status": "Zustand",
+      "addons": "Add-ons",
+      "note": "Notiz",
+      "notePlaceholder": "z. B. Rechnung 2026-10 bezahlt",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "limits": {
+        "devices": "Geräte",
+        "users": "Personen",
+        "locations": "Standorte"
+      },
+      "statuses": {
+        "active": "Aktiv",
+        "past_due": "Zahlung ausstehend",
+        "suspended": "Pausiert"
+      }
+    },
+    "catalog": {
+      "title": "Pläne",
+      "description": "Pläne und Add-ons mit Grenzen, Modulen und Monatspreisen pro Land. Eine Änderung gilt sofort für alle Organisationen dieses Plans.",
+      "plans": "Pläne",
+      "addons": "Add-ons",
+      "newPlan": "Neuer Plan",
+      "newAddon": "Neues Add-on",
+      "code": "Code",
+      "name": "Name",
+      "noLimit": "Leer = unbegrenzt",
+      "adds": "+ {limit}",
+      "active": "Aktiv",
+      "save": "Speichern",
+      "prices": "Monatspreise",
+      "item": "Plan oder Add-on",
+      "country": "Land",
+      "currency": "Währung",
+      "monthly": "Pro Monat",
+      "setPrice": "Preis setzen",
+      "remove": "Entfernen",
+      "limits": {
+        "devices": "Geräte",
+        "users": "Personen",
+        "locations": "Standorte"
+      },
+      "features": {
+        "kds": "Küchenbildschirme (KDS)",
+        "handhelds": "Handgeräte für den Service",
+        "phones": "Service-Telefone",
+        "table_ownership": "Tische pro Service-Person",
+        "api": "API für eigene Anbindungen",
+        "multi_location": "Mehrere Standorte"
       }
     }
   },
@@ -453,5 +510,40 @@
     "copyFailed": "Kopieren nicht möglich. Bitte das Passwort manuell markieren.",
     "nextSteps": "Damit Sie die Organisation öffnen können, muss die Inhaberin oder der Inhaber unter Support-Zugang einen Zugang gewähren.",
     "done": "Fertig"
+  },
+  "myPlan": {
+    "title": "Mein Plan",
+    "description": "Was Ihr Restaurant gekauft hat und nutzt. Änderungen am Plan oder an Add-ons erledigt DINOLABS.",
+    "noPermission": "Für «Mein Plan» brauchen Sie die Berechtigung, den Standort zu verwalten.",
+    "monthly": "{amount} pro Monat",
+    "use": "{used} von {allowed}",
+    "unlimitedUse": "{used} · unbegrenzt",
+    "addons": "Add-ons",
+    "modules": "Module",
+    "modulesHint": "Was Ihr Plan enthält. Gesperrtes gibt es mit einem grösseren Plan oder einem Add-on.",
+    "inPlan": "Im Plan {plan}",
+    "change": "Mehr Geräte, Personen oder Module? Schreiben Sie DINOLABS: Die Änderung gilt sofort.",
+    "limits": {
+      "devices": "Geräte",
+      "users": "Personen",
+      "locations": "Standorte"
+    },
+    "features": {
+      "kds": "Küchenbildschirme (KDS)",
+      "handhelds": "Handgeräte für den Service",
+      "phones": "Service-Telefone",
+      "table_ownership": "Tische pro Service-Person",
+      "api": "API für eigene Anbindungen",
+      "multi_location": "Mehrere Standorte"
+    },
+    "statuses": {
+      "active": "Aktiv",
+      "past_due": "Zahlung ausstehend",
+      "suspended": "Pausiert"
+    },
+    "statusNotice": {
+      "past_due": "Eine Zahlung für Ihr Abo ist ausstehend. Der Betrieb läuft weiter; bitte begleichen Sie sie, damit nichts pausiert.",
+      "suspended": "Ihr Abo ist pausiert: Sie können weiter verkaufen und abschliessen, aber nichts hinzufügen. Bitte kontaktieren Sie DINOLABS."
+    }
   }
 }

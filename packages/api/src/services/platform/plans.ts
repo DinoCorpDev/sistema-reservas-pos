@@ -473,3 +473,17 @@ export async function updateSubscription(
   );
   return getOrganizationPlan(deps, staff, organizationId);
 }
+
+/** The subscription state alone (for the notices of the backoffice and the POS): none = active. */
+export async function subscriptionStatusOf(
+  db: Db,
+  organizationId: string,
+): Promise<SubscriptionStatus> {
+  const [row] = await db
+    .select({ status: s.subscriptions.status })
+    .from(s.subscriptions)
+    .where(
+      and(eq(s.subscriptions.organizationId, organizationId), isNull(s.subscriptions.deletedAt)),
+    );
+  return (row?.status as SubscriptionStatus | undefined) ?? 'active';
+}

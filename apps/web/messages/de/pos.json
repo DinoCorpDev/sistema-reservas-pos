@@ -126,6 +126,10 @@
       "cancel": "Abbrechen",
       "pending": "{count, plural, one {# Vorgang ist} other {# Vorgänge sind}} noch nicht in der Cloud. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
       "offline": "Keine Verbindung zur Cloud. Zum Entkoppeln braucht es Internet."
+    },
+    "subscription": {
+      "past_due": "Zahlung des Abos ausstehend – bitte die Inhaberin oder den Inhaber informieren.",
+      "suspended": "Abo pausiert – verkaufen geht weiter; bitte die Inhaberin oder den Inhaber informieren."
     }
   }
 }

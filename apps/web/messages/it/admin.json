@@ -369,7 +369,8 @@
     "nav": {
       "label": "Console",
       "organizations": "Organizzazioni",
-      "status": "Stato"
+      "status": "Stato",
+      "plans": "Piani"
     },
     "status": {
       "title": "Stato della piattaforma",
@@ -407,6 +408,62 @@
         "backup_failed": "Backup fallito",
         "restore_test_failed": "Test di ripristino",
         "archive_failed": "Archivio legale"
+      }
+    },
+    "plan": {
+      "plan": "Piano",
+      "edit": "Piano di {name}",
+      "title": "Piano · {name}",
+      "description": "Piano, add-on e stato (fatturazione fuori dal POS). Un piano inferiore non toglie nulla; impedisce solo di aggiungere.",
+      "status": "Stato",
+      "addons": "Add-on",
+      "note": "Nota",
+      "notePlaceholder": "p. es. fattura 2026-10 pagata",
+      "cancel": "Annulla",
+      "save": "Salva",
+      "limits": {
+        "devices": "Dispositivi",
+        "users": "Persone",
+        "locations": "Sedi"
+      },
+      "statuses": {
+        "active": "Attivo",
+        "past_due": "Pagamento in sospeso",
+        "suspended": "Sospeso"
+      }
+    },
+    "catalog": {
+      "title": "Piani",
+      "description": "Piani e add-on con limiti, moduli e prezzi mensili per paese. Una modifica vale subito per tutte le organizzazioni di quel piano.",
+      "plans": "Piani",
+      "addons": "Add-on",
+      "newPlan": "Nuovo piano",
+      "newAddon": "Nuovo add-on",
+      "code": "Codice",
+      "name": "Nome",
+      "noLimit": "Vuoto = illimitato",
+      "adds": "+ {limit}",
+      "active": "Attivo",
+      "save": "Salva",
+      "prices": "Prezzi mensili",
+      "item": "Piano o add-on",
+      "country": "Paese",
+      "currency": "Valuta",
+      "monthly": "Al mese",
+      "setPrice": "Imposta prezzo",
+      "remove": "Rimuovi",
+      "limits": {
+        "devices": "Dispositivi",
+        "users": "Persone",
+        "locations": "Sedi"
+      },
+      "features": {
+        "kds": "Schermi cucina (KDS)",
+        "handhelds": "Palmari per il servizio",
+        "phones": "Telefoni di servizio",
+        "table_ownership": "Tavoli per cameriere",
+        "api": "API per integrazioni proprie",
+        "multi_location": "Più sedi"
       }
     }
   },
@@ -453,5 +510,40 @@
     "copyFailed": "Impossibile copiare. Selezioni la password manualmente.",
     "nextSteps": "Per poter aprire l’organizzazione, il o la titolare deve concedere un accesso in Accesso supporto.",
     "done": "Fatto"
+  },
+  "myPlan": {
+    "title": "Il mio piano",
+    "description": "Ciò che il vostro ristorante ha acquistato e usa. Le modifiche al piano o agli add-on le fa DINOLABS.",
+    "noPermission": "«Il mio piano» richiede l’autorizzazione a gestire la sede.",
+    "monthly": "{amount} al mese",
+    "use": "{used} di {allowed}",
+    "unlimitedUse": "{used} · illimitato",
+    "addons": "Add-on",
+    "modules": "Moduli",
+    "modulesHint": "Cosa include il vostro piano. I moduli bloccati arrivano con un piano superiore o un add-on.",
+    "inPlan": "Nel piano {plan}",
+    "change": "Più dispositivi, persone o moduli? Scrivete a DINOLABS: la modifica vale subito.",
+    "limits": {
+      "devices": "Dispositivi",
+      "users": "Persone",
+      "locations": "Sedi"
+    },
+    "features": {
+      "kds": "Schermi cucina (KDS)",
+      "handhelds": "Palmari per il servizio",
+      "phones": "Telefoni di servizio",
+      "table_ownership": "Tavoli per cameriere",
+      "api": "API per integrazioni proprie",
+      "multi_location": "Più sedi"
+    },
+    "statuses": {
+      "active": "Attivo",
+      "past_due": "Pagamento in sospeso",
+      "suspended": "Sospeso"
+    },
+    "statusNotice": {
+      "past_due": "C’è un pagamento in sospeso per il vostro abbonamento. L’attività continua; saldatelo perché nulla venga sospeso.",
+      "suspended": "L’abbonamento è sospeso: potete continuare a vendere e chiudere, ma non aggiungere nulla. Contattate DINOLABS."
+    }
   }
 }
