@@ -84,9 +84,11 @@ test('a deactivated POS or KDS locks itself and comes back with a new code', asy
     });
     await expect(kds.getByRole('heading', { name: 'Welche Station?' })).toHaveCount(0);
 
-    // Reactivating it shows the new pairing code at once.
+    // Reactivating only activates it; the new pairing code comes from the link button.
     await row.getByRole('button', { name: 'Gerät aktivieren' }).click();
     await office.getByRole('button', { name: 'Aktivieren', exact: true }).click();
+    await expect(office.getByRole('dialog', { name: `Kopplungscode für ${NAME}` })).toHaveCount(0);
+    await row.getByRole('button', { name: 'Kopplungscode erzeugen' }).click();
     const pairing = office.getByRole('dialog', { name: `Kopplungscode für ${NAME}` });
     await expect(pairing).toBeVisible();
     const newCode = /[A-Z0-9]{4}-[A-Z0-9]{4}/.exec((await pairing.textContent()) ?? '')![0];

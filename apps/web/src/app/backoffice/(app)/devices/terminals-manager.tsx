@@ -77,20 +77,10 @@ export function TerminalsManager({
     (id: string) => actions.updateTerminal(id, { isActive: false }),
     { successMessage: t('deactivated') },
   );
-  // Deactivating unpaired the device, so it can only come back with a new code: show it at once.
-  const activate = useServerAction(
-    async (terminal: { id: string; name: string }): Promise<ActionResult<Pairing>> => {
-      const activated = await actions.updateTerminal(terminal.id, { isActive: true });
-      if (!activated.ok) return activated;
-      const result = await actions.issuePairingCode(terminal.id);
-      if (!result.ok) return result;
-      return {
-        ok: true,
-        data: { ...result.data, kind: 'device', terminalId: terminal.id, name: terminal.name },
-      };
-    },
-    { successMessage: t('activated'), onSuccess: setPairing },
-  );
+  // Activating only activates: the pairing code comes when the manager asks for it (link button).
+  const activate = useServerAction((id: string) => actions.updateTerminal(id, { isActive: true }), {
+    successMessage: t('activated'),
+  });
 
   const stationName = (id: string | null) => stations.find((s) => s.id === id)?.name ?? '—';
   const printerName = (id: string | null) => printers.find((p) => p.id === id)?.name ?? '—';
@@ -253,7 +243,7 @@ export function TerminalsManager({
                         description={t('activateText')}
                         confirmLabel={tc('activate')}
                         cancelLabel={tc('cancel')}
-                        onConfirm={() => activate.run(terminal)}
+                        onConfirm={() => activate.run(terminal.id)}
                       >
                         <PowerIcon />
                       </ConfirmButton>
