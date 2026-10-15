@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import * as sync from '../../services/sync';
+import { cleanVersion } from '../../version';
 import { actorOf, type ApiApp, type ApiContext } from '../env';
 import { ERROR_RESPONSES, jsonBody, jsonResponse } from '../schemas';
 
@@ -112,6 +113,9 @@ export function registerSyncRoutes(app: ApiApp) {
           'x-presence-station': z.uuid().optional().openapi({
             description: 'The station a kitchen display chose at sign-in (DEC-042)',
           }),
+          'x-app-version': z.string().max(64).optional().openapi({
+            description: 'The app version of the device or hub (RNF-17); refreshes its heartbeat',
+          }),
         }),
       },
       responses: {
@@ -151,6 +155,7 @@ export function registerSyncRoutes(app: ApiApp) {
                 stationId: headers['x-presence-station'] ?? null,
               }
             : null,
+          appVersion: cleanVersion(headers['x-app-version']),
         }),
         200,
       );

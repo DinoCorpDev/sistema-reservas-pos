@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { createApiApp, resolveTerminal } from '@pos/api';
-import { createDb } from '@pos/db';
+import { APP_VERSION, createApiApp, resolveTerminal } from '@pos/api';
+import { createDb, createLogger } from '@pos/db';
 import { cloudFetcher, cloudJson } from './cloud';
 import { syncConfig } from './config-sync';
 import { startCloudLink } from './node';
@@ -28,10 +28,11 @@ if (existsSync(rootEnv)) {
   process.loadEnvFile(rootEnv);
 }
 
+const logger = createLogger('hub');
 const port = Number(process.env.HUB_PORT ?? 4100);
 const databaseUrl = process.env.HUB_DATABASE_URL;
 if (!databaseUrl) {
-  console.error('HUB_DATABASE_URL is required');
+  logger.error('HUB_DATABASE_URL is required');
   process.exit(1);
 }
 const cloudUrl = process.env.HUB_CLOUD_URL ?? 'http://localhost:3000';
@@ -45,24 +46,24 @@ if (!state.value.deviceToken) {
   const code = process.env.HUB_PAIRING_CODE;
   if (!code) {
     // Not paired yet (e.g. `pnpm dev` on a laptop): only /health, so the rest keeps running.
-    console.warn(
+    logger.warn(
       'The hub is not paired: create a terminal of type "hub" in the backoffice and start the hub with HUB_PAIRING_CODE=<code>. Serving /health only.',
     );
     const idle = await startHub({ port, pingDatabase: null });
-    console.log(`Hub (unpaired) listening on http://0.0.0.0:${idle.port}`);
+    logger.info('hub unpaired, serving /health only', { port: idle.port });
     await new Promise(() => undefined);
   }
   const paired = await cloudJson<{
     deviceToken: string;
     organizationId: string;
     location: { id: string };
-  }>(cloud, '/terminals/pair', { method: 'POST', body: { code } });
+  }>(cloud, '/terminals/pair', { method: 'POST', body: { code, appVersion: APP_VERSION } });
   state.update({
     deviceToken: paired.deviceToken,
     organizationId: paired.organizationId,
     locationId: paired.location.id,
   });
-  console.log('Hub paired with the cloud.');
+  logger.info('hub paired with the cloud');
 }
 
 const { db, pool } = createDb(databaseUrl, { connectionLimit: 8 });
@@ -70,15 +71,19 @@ try {
   await syncConfig(db, cloud);
 } catch (error) {
   // Without internet the hub starts with the configuration it already has.
-  console.warn('Cloud not reachable at start; using the stored configuration.', String(error));
+  logger.warn('cloud not reachable at start; using the stored configuration', {
+    error: String(error),
+  });
 }
 if (!(await printConfig.refresh(cloud)) && !printConfig.value) {
-  console.warn('No printing configuration yet: the hub prints once it reaches the cloud.');
+  logger.warn('no printing configuration yet: the hub prints once it reaches the cloud');
 }
 
 const scope = { organizationId: state.value.organizationId!, locationId: state.value.locationId! };
+const located = logger.child(scope);
 const api = createApiApp({
   db,
+  logger: located,
   modules: 'sync',
   node: { kind: 'hub', authority, configVersion: () => state.value.cloudConfigVersion },
 });
@@ -139,7 +144,7 @@ link = startCloudLink({
  * not confirmed yet. Only /health stays, until it is restarted with a new pairing code.
  */
 async function revoke(): Promise<void> {
-  console.error(
+  located.error(
     'This hub was deactivated or unpaired in the backoffice: it stops serving the terminals. Create a new pairing code for its terminal and restart it with HUB_PAIRING_CODE=<code>.',
   );
   state.update({ deviceToken: null });
@@ -147,12 +152,15 @@ async function revoke(): Promise<void> {
   link?.stop();
   await hub.close();
   const idle = await startHub({ port, pingDatabase: null });
-  console.log(`Hub (unpaired) listening on http://0.0.0.0:${idle.port}`);
+  logger.info('hub unpaired, serving /health only', { port: idle.port });
 }
 
-console.log(
-  `Hub listening on http://0.0.0.0:${hub.port} (WebSocket /ws), cloud ${cloudUrl}, ${authority ? 'numbering authority' : 'standby'}, printing ${printConfig.value ? `on ${printConfig.value.printers.length} printer(s)` : 'pending configuration'}`,
-);
+located.info('hub listening', {
+  port: hub.port,
+  cloudUrl,
+  authority,
+  printers: printConfig.value ? printConfig.value.printers.length : null,
+});
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.on(signal, async () => {

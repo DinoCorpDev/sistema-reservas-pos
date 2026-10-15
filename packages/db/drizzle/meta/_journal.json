@@ -99,6 +99,13 @@
       "when": 1792081800310,
       "tag": "0013_kds_station_presence",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1792102701056,
+      "tag": "0014_presence_app_version",
+      "breakpoints": true
     }
   ]
 }

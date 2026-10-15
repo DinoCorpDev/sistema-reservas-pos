@@ -276,7 +276,9 @@ describe('terminals: pairing and PIN unlock (RF-A03, RF-A06, RN-16)', () => {
     const refused = await api.request('POST', '/terminals/pair', { body: { code: leftover } });
     expect(refused.status).toBe(409);
     expect(await json(refused)).toMatchObject({
-      error: { details: { reason: 'already_paired', name: expect.stringMatching(/^Test handheld/) } },
+      error: {
+        details: { reason: 'already_paired', name: expect.stringMatching(/^Test handheld/) },
+      },
     });
     expect((await unlock(terminal.deviceToken, PIN.waiter)).status).toBe(200);
 

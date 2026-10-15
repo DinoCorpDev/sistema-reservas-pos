@@ -43,6 +43,8 @@ export interface PresenceEntry {
   terminalName?: string | null;
   /** The station a display chose at sign-in (DEC-042); null when locked or fixed. */
   stationId?: string | null;
+  /** The app version the device runs (RNF-17). */
+  appVersion?: string | null;
 }
 
 /** What the last pull said about the displays, and when it arrived (device clock). */

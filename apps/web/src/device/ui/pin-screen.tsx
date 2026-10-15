@@ -6,6 +6,7 @@ import { type ReactNode, useState } from 'react';
 import { isPhone } from '../app';
 import { unlock } from '../pin';
 import { usePos } from '../store';
+import { APP_VERSION } from '../version';
 import { ErrorDialog } from './error-dialog';
 import { NumPad } from './num-pad';
 import { StatusIndicator } from './status-indicator';
@@ -79,6 +80,9 @@ export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
       <Button size="lg" onClick={() => void submit()} disabled={pin.length < 4 || busy}>
         {busy ? t('checking') : t('unlock')}
       </Button>
+      <p className="text-center text-xs text-muted-foreground" data-testid="app-version">
+        v{APP_VERSION}
+      </p>
       <ErrorDialog
         title={t('errorTitle')}
         message={message}

@@ -7,6 +7,7 @@ export { loadUserPermissions } from './auth/permissions';
 export * from './auth/tokens';
 export { API_KEY_SCOPE_NAMES, type ApiKeyScope } from './auth/api-keys';
 export type { ServiceDeps } from './services/shared';
+export { APP_VERSION, cleanVersion } from './version';
 export type { AreaDto, LocationDto, TableDto } from './services/locations';
 export type { BootstrapDto } from './services/pos/bootstrap';
 export type { OfflineCredentials } from './services/people/terminal-auth';

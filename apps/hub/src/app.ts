@@ -1,3 +1,4 @@
+import { APP_VERSION } from '@pos/api';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
@@ -41,6 +42,7 @@ export function createApp(deps: HubDependencies) {
         status: healthy ? 'ok' : 'degraded',
         service: 'hub',
         level: 'hub',
+        version: APP_VERSION,
         checks: { database },
         connectedClients: deps.connectedClients(),
         printers: deps.printers?.() ?? {},
@@ -69,6 +71,7 @@ export function createApp(deps: HubDependencies) {
           'x-presence',
           'x-presence-user',
           'x-presence-station',
+          'x-app-version',
         ],
         allowMethods: ['GET', 'POST', 'OPTIONS'],
         maxAge: 600,

@@ -1,6 +1,6 @@
 import type { Operation } from '@pos/core';
 import { schema as s } from '@pos/db';
-import { and, asc, eq, gt } from 'drizzle-orm';
+import { and, asc, eq, gt, isNull, lt, ne, or } from 'drizzle-orm';
 import { type Actor, requireTerminal } from '../../actor';
 import { configVersion } from './config-version';
 import { listPresence, recordPresence } from './presence';
@@ -31,6 +31,8 @@ export async function pullOperations(
     limit?: number;
     /** Whether someone is signed in on the device: kitchen routing (DEC-033), one session per person (DEC-040). */
     presence?: { unlocked: boolean; userId: string | null; stationId?: string | null } | null;
+    /** The app version of the device or hub (RNF-17). */
+    appVersion?: string | null;
   },
 ): Promise<{
   operations: PulledOperation[];
@@ -51,9 +53,14 @@ export async function pullOperations(
         unlocked: query.presence.unlocked,
         userId: query.presence.unlocked ? query.presence.userId : null,
         stationId: query.presence.stationId ?? null,
+        appVersion: query.appVersion ?? null,
         lastSeenAt: now,
       },
     ]);
+  }
+  // The cloud's heartbeat of the terminal or hub that pulls, at most once a minute (RNF-16).
+  if ((deps.node?.kind ?? 'cloud') === 'cloud') {
+    await touchTerminal(deps.db, actor, terminalId, query.appVersion ?? null, now);
   }
   const limit = Math.min(Math.max(query.limit ?? MAX_PULL_OPERATIONS, 1), MAX_PULL_OPERATIONS);
   const rows = await deps.db
@@ -94,4 +101,35 @@ export async function pullOperations(
     // Who is at the kitchen displays, so the POS can send around an unattended station.
     presence: await listPresence(deps.db, scope, now),
   };
+}
+
+/** How often a pull refreshes `terminals.last_seen_at` (the heartbeat support watches). */
+export const HEARTBEAT_INTERVAL_MS = 60_000;
+
+/** Marks the terminal as seen now (and its version), unless it was seen less than a minute ago. */
+async function touchTerminal(
+  db: SyncDeps['db'],
+  actor: Actor,
+  terminalId: string,
+  appVersion: string | null,
+  now: Date,
+) {
+  const stale = new Date(now.getTime() - HEARTBEAT_INTERVAL_MS);
+  await db
+    .update(s.terminals)
+    .set({
+      lastSeenAt: now,
+      ...(appVersion ? { appVersion } : {}),
+    })
+    .where(
+      and(
+        eq(s.terminals.organizationId, actor.organizationId),
+        eq(s.terminals.id, terminalId),
+        or(
+          isNull(s.terminals.lastSeenAt),
+          lt(s.terminals.lastSeenAt, stale),
+          appVersion ? ne(s.terminals.appVersion, appVersion) : undefined,
+        ),
+      ),
+    );
 }

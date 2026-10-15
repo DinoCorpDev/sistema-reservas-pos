@@ -52,6 +52,8 @@ export const terminalPresence = mysqlTable(
     userId: uuid('user_id'),
     /** The station a kitchen display chose at sign-in (DEC-042); null when locked or fixed. */
     stationId: uuid('station_id'),
+    /** The app version the device runs (RNF-17): who has not updated yet. */
+    appVersion: varchar('app_version', { length: 64 }),
     /** Server time of the terminal's last pull. */
     lastSeenAt: utcDatetime('last_seen_at').notNull(),
   },

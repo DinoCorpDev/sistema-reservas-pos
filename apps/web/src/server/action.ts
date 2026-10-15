@@ -1,5 +1,6 @@
 import 'server-only';
 import { toApiError } from '@pos/api';
+import { createLogger, loggableError } from '@pos/db';
 import { unstable_rethrow } from 'next/navigation';
 
 /**
@@ -9,6 +10,8 @@ import { unstable_rethrow } from 'next/navigation';
 export type ActionResult<T = null> =
   | { ok: true; data: T }
   | { ok: false; error: { code: string; message: string; fieldErrors: Record<string, string> } };
+
+const logger = createLogger('web');
 
 function fieldErrorsOf(details: unknown): Record<string, string> {
   const errors: Record<string, string> = {};
@@ -32,7 +35,8 @@ export async function runAction<T>(work: () => Promise<T>): Promise<ActionResult
   } catch (error) {
     unstable_rethrow(error);
     const apiError = toApiError(error);
-    if (apiError.code === 'INTERNAL') console.error('[action]', error);
+    if (apiError.code === 'INTERNAL')
+      logger.error('action failed', { error: loggableError(error) });
     return {
       ok: false,
       error: {

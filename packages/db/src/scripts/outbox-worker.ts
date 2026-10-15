@@ -1,5 +1,6 @@
 import { createDb } from '../client';
 import { loadRootEnv, requireEnv } from '../env';
+import { createLogger, loggableError } from '../logging';
 import { publishPending } from '../outbox';
 
 /**
@@ -9,6 +10,7 @@ import { publishPending } from '../outbox';
 loadRootEnv();
 const intervalMs = Number(process.env.OUTBOX_INTERVAL_MS ?? 2000);
 const { db, pool } = createDb(requireEnv('DATABASE_URL'), { connectionLimit: 2 });
+const logger = createLogger('worker', { task: 'outbox' });
 
 let running = true;
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
@@ -17,10 +19,18 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   });
 }
 
-console.log(`Outbox worker started (every ${intervalMs} ms)`);
+logger.info('outbox worker started', { intervalMs });
 while (running) {
   const result = await publishPending(db, async (event) => {
-    console.log(`→ ${event.type} ${event.aggregateType}/${event.aggregateId}`);
+    logger.debug('event published', {
+      type: event.type,
+      aggregateType: event.aggregateType,
+      aggregateId: event.aggregateId,
+      organizationId: event.organizationId,
+    });
+  }).catch((error: unknown) => {
+    logger.error('outbox round failed', { error: loggableError(error) });
+    return { published: 0, failed: 0 };
   });
   if (result.published + result.failed === 0) {
     await new Promise((resolve) => setTimeout(resolve, intervalMs));

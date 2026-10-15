@@ -1,3 +1,5 @@
+import { APP_VERSION } from '@pos/api';
+
 /**
  * Calls from the hub to the cloud API (docs/SYNC.md §11). Injectable, so tests run the cloud
  * in-process; in production it is `fetch` with a timeout and the hub's device token.
@@ -32,6 +34,8 @@ export function cloudFetcher(
         method: init.method ?? 'GET',
         headers: {
           'content-type': 'application/json',
+          // The cloud keeps the hub's heartbeat and version (RNF-16, RNF-17).
+          'x-app-version': APP_VERSION,
           ...(deviceToken ? { 'x-terminal-token': deviceToken } : {}),
         },
         body: init.body === undefined ? undefined : JSON.stringify(init.body),

@@ -1,4 +1,5 @@
 import type { BootstrapDto, OfflineCredentials, PulledOperation, PushResult } from '@pos/api';
+import { APP_VERSION } from './version';
 import type { PresenceEntry } from '@pos/core';
 import { deviceApp, isPhone } from './app';
 import { observeHlc, recordServerTime } from './clock';
@@ -170,7 +171,8 @@ async function pull(target: string, deviceToken: string): Promise<string | null>
     }>(target, `/sync/pull?after=${after}&limit=500`, {
       deviceToken,
       timeoutMs: 15_000,
-      headers: page === 0 ? presenceHeaders() : undefined,
+      // Every pull tells the node which version runs here (RNF-17); the first also who is in.
+      headers: { 'x-app-version': APP_VERSION, ...(page === 0 ? presenceHeaders() : {}) },
     });
     configVersion = response.configVersion;
     if (page === 0 && response.presence) {

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { OpenAPIHono } from '@hono/zod-openapi';
-import type { Database } from '@pos/db';
+import { createLogger, type Database, type Logger, loggableError } from '@pos/db';
 import { Scalar } from '@scalar/hono-api-reference';
 import { resolveActor, type SessionResolver } from '../auth/resolve-actor';
 import { ApiError, toApiError } from '../errors';
@@ -11,18 +11,6 @@ import { registerSyncRoutes } from './routes/sync';
 
 export const API_BASE_PATH = '/api/v1';
 
-/**
- * Error for the server log without bound query parameters: a failed Drizzle query carries its
- * params, which may hold password/PIN hashes, PIN lookups or personal data (RNF-10, revDSG).
- */
-function loggable(error: unknown) {
-  if (error && typeof error === 'object' && 'query' in error && 'params' in error) {
-    const cause = (error as { cause?: { code?: string; message?: string } }).cause;
-    return { query: (error as { query: string }).query, code: cause?.code, cause: cause?.message };
-  }
-  return error;
-}
-
 export interface ApiDependencies {
   db: Database;
   /** Backoffice session from the web app (Auth.js); absent in tests and on the hub. */
@@ -30,7 +18,12 @@ export interface ApiDependencies {
   /** Where the API runs (default: cloud). The hub mounts only the sync routes. */
   node?: SyncNode;
   modules?: 'all' | 'sync';
+  /** Structured log of every request (RNF-18); by default `api` or `hub` on stdout. */
+  logger?: Logger;
 }
+
+/** Routes polled every few seconds by every device: logged at debug level only. */
+const CHATTY_ROUTES = new Set(['/api/v1/health', '/api/v1/sync/pull', '/api/v1/sync/ping']);
 
 /**
  * Public REST API v1 (RF-F14, PA-01): one Hono app mounted by Next.js under /api/v1 and by the
@@ -39,6 +32,7 @@ export interface ApiDependencies {
  */
 export function createApiApp(deps: ApiDependencies) {
   const node: SyncNode = deps.node ?? { kind: 'cloud' };
+  const logger = deps.logger ?? createLogger(node.kind === 'hub' ? 'hub' : 'api');
   const app = new OpenAPIHono<ApiEnv>({
     defaultHook: (result) => {
       if (!result.success) {
@@ -50,13 +44,19 @@ export function createApiApp(deps: ApiDependencies) {
   app.onError((error, c) => {
     const apiError = toApiError(error);
     if (apiError.code === 'INTERNAL') {
-      console.error(`[api] ${c.req.method} ${c.req.path} (${c.get('requestId')})`, loggable(error));
+      logger.error('request failed', {
+        requestId: c.get('requestId'),
+        method: c.req.method,
+        route: c.req.path,
+        error: loggableError(error),
+      });
     }
     return c.json(apiError.toJSON(), apiError.status as 500);
   });
   app.notFound((c) => c.json(new ApiError('NOT_FOUND', 'Route not found').toJSON(), 404));
 
   app.use('*', async (c, next) => {
+    const startedAt = Date.now();
     const requestId = c.req.header('x-request-id') ?? randomUUID();
     c.set('requestId', requestId);
     c.set('db', deps.db);
@@ -78,6 +78,20 @@ export function createApiApp(deps: ApiDependencies) {
       }),
     );
     await next();
+    // One line per request with who and where (RNF-18); the polling of devices only at debug.
+    const actor = c.get('actor');
+    logger[CHATTY_ROUTES.has(c.req.path) ? 'debug' : 'info']('request', {
+      requestId,
+      method: c.req.method,
+      route: c.req.routePath,
+      status: c.res.status,
+      durationMs: Date.now() - startedAt,
+      organizationId: actor?.organizationId ?? null,
+      locationId: actor?.locationId ?? null,
+      terminalId: actor?.terminalId ?? null,
+      userId: actor?.userId ?? null,
+      supportStaffId: actor?.supportStaffId ?? null,
+    });
   });
 
   if (deps.modules === 'sync') registerSyncRoutes(app);

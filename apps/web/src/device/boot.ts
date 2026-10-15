@@ -1,4 +1,5 @@
 import type { Permission } from '@pos/core';
+import { APP_VERSION } from './version';
 import { deviceApp, isPhone, TERMINAL_TYPES_OF } from './app';
 import { loadClock } from './clock';
 import {
@@ -101,13 +102,14 @@ export async function pairDevice(code: string, pin?: string): Promise<void> {
     location: { id: string };
     organizationId: string;
     user?: { id: string; displayName: string; uiLanguage: string; permissions: Permission[] };
-  }>(CLOUD, '/terminals/pair', { method: 'POST', body: pin ? { code, pin } : { code } }).catch(
-    (cause: unknown) => {
-      throw phonePairingRefusal(cause) === 'pin_required'
-        ? new PinRequiredError('This code pairs a waiter phone')
-        : cause;
-    },
-  );
+  }>(CLOUD, '/terminals/pair', {
+    method: 'POST',
+    body: { code, ...(pin ? { pin } : {}), appVersion: APP_VERSION },
+  }).catch((cause: unknown) => {
+    throw phonePairingRefusal(cause) === 'pin_required'
+      ? new PinRequiredError('This code pairs a waiter phone')
+      : cause;
+  });
   const device: PairedDevice = {
     terminalId: paired.terminal.id,
     terminalName: paired.terminal.name,

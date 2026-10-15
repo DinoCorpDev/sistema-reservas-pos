@@ -25,6 +25,9 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
           {t('app.name')}
         </Link>
         <BackofficeNav permissions={permissions} />
+        <p className="mt-auto px-3 text-xs text-muted-foreground">
+          v{process.env.NEXT_PUBLIC_APP_VERSION ?? 'dev'}
+        </p>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar

@@ -6,4 +6,5 @@ export * from './tenant';
 export * from './unit-of-work';
 export * from './outbox';
 export * from './security';
+export * from './logging';
 export * from './templates/organization';

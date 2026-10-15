@@ -393,6 +393,42 @@ describe('stations nobody attends (DEC-033)', () => {
     );
   });
 
+  it('a pull is the heartbeat: last seen and version, at most once a minute (RNF-16, RNF-17)', async () => {
+    const device = await pairTerminal(api, admin, { prefix: 'HB', type: 'kds' });
+    const headers = { 'x-terminal-token': device.deviceToken };
+    const row = async () => {
+      const [terminal] = await api.db
+        .select({ lastSeenAt: s.terminals.lastSeenAt, appVersion: s.terminals.appVersion })
+        .from(s.terminals)
+        .where(eq(s.terminals.id, device.id));
+      return terminal!;
+    };
+    // Paired a minute ago: the next pull refreshes the heartbeat and records the version.
+    await api.db
+      .update(s.terminals)
+      .set({ lastSeenAt: new Date(Date.now() - 120_000) })
+      .where(eq(s.terminals.id, device.id));
+    await pullAs({ ...headers, 'x-app-version': '1.4.0+abc123', 'x-presence': 'locked' });
+    const first = await row();
+    expect(first.appVersion).toBe('1.4.0+abc123');
+    expect(Date.now() - first.lastSeenAt!.getTime()).toBeLessThan(10_000);
+    const seen = await pullAs(pos.headers);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({ terminalId: device.id, appVersion: '1.4.0+abc123' }),
+    );
+
+    // Within the minute nothing is written; a new version is, at once. A bad one is ignored.
+    await pullAs({ ...headers, 'x-app-version': '1.4.0+abc123' });
+    expect((await row()).lastSeenAt).toEqual(first.lastSeenAt);
+    await pullAs({ ...headers, 'x-app-version': '1.5.0' });
+    expect((await row()).appVersion).toBe('1.5.0');
+    await pullAs({ ...headers, 'x-app-version': 'bad version <script>' });
+    expect((await row()).appVersion).toBe('1.5.0');
+
+    const health = await api.request('GET', '/health');
+    expect(await json(health)).toMatchObject({ version: expect.any(String) });
+  });
+
   it('the hub hands over its displays only; a late report never wins; others never see it', async () => {
     const barDisplay = await pairTerminal(api, admin, {
       prefix: 'KD3',

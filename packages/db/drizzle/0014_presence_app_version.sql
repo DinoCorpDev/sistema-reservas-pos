@@ -1,0 +1,1 @@
+ALTER TABLE `terminal_presence` ADD `app_version` varchar(64);

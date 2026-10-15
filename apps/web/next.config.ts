@@ -19,6 +19,8 @@ const intlRequestConfig = './src/i18n/request.ts';
 // One id per build: Next's build id and the precache revision of /pos and /kds, so a new build
 // always replaces the cached shells together with the chunks they reference (docs/SYNC.md §13).
 const buildId = process.env.POS_BUILD_ID ?? Date.now().toString(36);
+// The version devices report and support sees (RNF-17): set at deploy, else this build's id.
+const appVersion = process.env.APP_VERSION?.trim() || buildId;
 
 const withSerwist = withSerwistInit({
   swSrc: 'src/sw/sw.ts',
@@ -37,6 +39,7 @@ const withSerwist = withSerwistInit({
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   generateBuildId: () => buildId,
+  env: { NEXT_PUBLIC_APP_VERSION: appVersion },
   // Monorepo packages published as TypeScript source.
   transpilePackages: ['@pos/core', '@pos/db', '@pos/ui', '@pos/api'],
   serverExternalPackages: ['mysql2', '@node-rs/argon2'],

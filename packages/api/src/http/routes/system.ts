@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import { sql } from 'drizzle-orm';
+import { APP_VERSION } from '../../version';
 import type { ApiApp } from '../env';
 import { jsonResponse } from '../schemas';
 
@@ -7,6 +8,7 @@ const HealthSchema = z
   .object({
     status: z.enum(['ok', 'degraded']),
     service: z.literal('web'),
+    version: z.string().openapi({ description: 'The deployed build (RNF-17)' }),
     checks: z.object({ database: z.enum(['ok', 'down']) }),
     latencyMs: z.number().int(),
     time: z.string(),
@@ -37,6 +39,7 @@ export function registerSystemRoutes(app: ApiApp) {
       const body = {
         status: database === 'ok' ? ('ok' as const) : ('degraded' as const),
         service: 'web' as const,
+        version: APP_VERSION,
         checks: { database },
         latencyMs: Date.now() - startedAt,
         time: new Date().toISOString(),
