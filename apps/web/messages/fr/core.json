@@ -47,7 +47,12 @@
     "VALIDATION_FAILED": "Veuillez vérifier les champs signalés.",
     "RULE_VIOLATION": "Cette action n’est pas permise par les règles métier.",
     "BAD_REQUEST": "La requête n’est pas valide.",
-    "INTERNAL": "Erreur inattendue. Veuillez réessayer."
+    "INTERNAL": "Erreur inattendue. Veuillez réessayer.",
+    "reasons": {
+      "plan_limit": "Votre formule permet au plus {allowed} {limit, select, devices {appareils} users {personnes} locations {sites} other {}}. Pour plus, il faut une option ou une formule supérieure – voir « Ma formule ».",
+      "plan_feature": "Votre formule n’inclut pas : {feature, select, kds {écrans de cuisine} handhelds {terminaux mobiles} phones {téléphones de service} table_ownership {tables par serveur} api {API} multi_location {plusieurs sites} other {}}. Voir « Ma formule ».",
+      "subscription_suspended": "Votre abonnement est suspendu : rien ne peut être ajouté. L’exploitation continue."
+    }
   },
   "languages": {
     "de": "Allemand",

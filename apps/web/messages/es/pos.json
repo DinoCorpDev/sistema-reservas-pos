@@ -34,7 +34,8 @@
       "ok": "OK",
       "alreadyPairedTitle": "No hay espacios libres",
       "alreadyPaired": "«{name}» ya está vinculado en otro aparato y ese espacio está ocupado. Un dispositivo funciona en un solo aparato a la vez. Desvincúlelo primero (en el otro aparato o en el backoffice, en Dispositivos) o cree un dispositivo nuevo en el backoffice.",
-      "backToStart": "Volver al inicio"
+      "backToStart": "Volver al inicio",
+      "planLimit": "El plan de este restaurante no permite este dispositivo. El dueño puede ampliarlo en el backoffice, en «Mi plan»."
     },
     "pin": {
       "title": "Ingrese su PIN",

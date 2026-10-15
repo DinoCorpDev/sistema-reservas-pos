@@ -47,7 +47,12 @@
     "VALIDATION_FAILED": "Bitte prüfen Sie die markierten Felder.",
     "RULE_VIOLATION": "Diese Aktion ist nach den Geschäftsregeln nicht erlaubt.",
     "BAD_REQUEST": "Die Anfrage ist ungültig.",
-    "INTERNAL": "Unerwarteter Fehler. Bitte erneut versuchen."
+    "INTERNAL": "Unerwarteter Fehler. Bitte erneut versuchen.",
+    "reasons": {
+      "plan_limit": "Ihr Plan erlaubt höchstens {allowed} {limit, select, devices {Geräte} users {Personen} locations {Standorte} other {}}. Für mehr braucht es ein Add-on oder einen grösseren Plan – siehe «Mein Plan».",
+      "plan_feature": "Ihr Plan enthält nicht: {feature, select, kds {Küchenbildschirme} handhelds {Handgeräte} phones {Service-Telefone} table_ownership {Tische pro Service} api {API} multi_location {mehrere Standorte} other {}}. Siehe «Mein Plan».",
+      "subscription_suspended": "Ihr Abo ist pausiert: Es kann nichts hinzugefügt werden. Der Betrieb läuft weiter."
+    }
   },
   "languages": {
     "de": "Deutsch",

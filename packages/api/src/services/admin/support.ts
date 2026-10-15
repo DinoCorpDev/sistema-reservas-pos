@@ -44,6 +44,8 @@ export interface PlatformOrganizationDto {
   primaryLocationId: string | null;
   /** Latest expiry of the grants that let this staff member in; null = no access now. */
   supportGrantExpiresAt: string | null;
+  /** Its subscription (DEC-045); null = none, i.e. Pro from before plans. */
+  plan: { code: string; name: string; status: string } | null;
 }
 
 export interface OnboardingResultDto {
@@ -89,7 +91,7 @@ export async function listPlatformOrganizations(
   staff: { staffId: string },
 ): Promise<PlatformOrganizationDto[]> {
   await assertActiveStaff(deps.db, staff.staffId);
-  const [organizations, locations, grants] = await Promise.all([
+  const [organizations, locations, grants, plans] = await Promise.all([
     deps.db
       .select()
       .from(s.organizations)
@@ -118,7 +120,19 @@ export async function listPlatformOrganizations(
         ),
       )
       .groupBy(s.supportAccessGrants.organizationId),
+    // What each one bought (DEC-045); none = Pro, from before plans.
+    deps.db
+      .select({
+        organizationId: s.subscriptions.organizationId,
+        planCode: s.subscriptions.planCode,
+        planName: s.plans.name,
+        status: s.subscriptions.status,
+      })
+      .from(s.subscriptions)
+      .leftJoin(s.plans, eq(s.plans.code, s.subscriptions.planCode))
+      .where(isNull(s.subscriptions.deletedAt)),
   ]);
+  const planOf = new Map(plans.map((row) => [row.organizationId, row]));
   const locationsOf = new Map<string, string[]>();
   for (const location of locations) {
     locationsOf.set(location.organizationId, [
@@ -139,6 +153,13 @@ export async function listPlatformOrganizations(
     locationsCount: locationsOf.get(org.id)?.length ?? 0,
     primaryLocationId: locationsOf.get(org.id)?.[0] ?? null,
     supportGrantExpiresAt: iso(grantOf.get(org.id)),
+    plan: planOf.has(org.id)
+      ? {
+          code: planOf.get(org.id)!.planCode,
+          name: planOf.get(org.id)!.planName ?? planOf.get(org.id)!.planCode,
+          status: planOf.get(org.id)!.status,
+        }
+      : null,
   }));
 }
 

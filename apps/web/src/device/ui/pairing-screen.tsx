@@ -104,9 +104,13 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
                 ? t('notWaiter')
                 : reason === 'phone_deactivated'
                   ? t('phoneDeactivated')
-                  : status === 401
-                    ? t('invalidCode')
-                    : t('failed'),
+                  : reason === 'plan_limit' ||
+                      reason === 'plan_feature' ||
+                      reason === 'subscription_suspended'
+                    ? t('planLimit')
+                    : status === 401
+                      ? t('invalidCode')
+                      : t('failed'),
       );
     } finally {
       setBusy(false);

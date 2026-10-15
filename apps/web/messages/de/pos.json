@@ -34,7 +34,8 @@
       "ok": "OK",
       "alreadyPairedTitle": "Keine freien Plätze",
       "alreadyPaired": "«{name}» ist bereits auf einem anderen Gerät gekoppelt, und dieser Platz ist belegt. Ein Gerät kann nur auf einem Gerät gleichzeitig laufen. Entkoppeln Sie es zuerst (auf dem anderen Gerät oder im Backoffice unter Geräte) oder legen Sie im Backoffice ein neues Gerät an.",
-      "backToStart": "Zur Startseite"
+      "backToStart": "Zur Startseite",
+      "planLimit": "Der Plan dieses Restaurants erlaubt dieses Gerät nicht. Die Inhaberin oder der Inhaber kann ihn im Backoffice unter «Mein Plan» erweitern."
     },
     "pin": {
       "title": "PIN eingeben",

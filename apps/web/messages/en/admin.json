@@ -306,6 +306,9 @@
     },
     "sync": {
       "conflict_resolved": "Sync conflict resolved"
+    },
+    "subscription": {
+      "changed": "Subscription changed"
     }
   },
   "supportAccess": {

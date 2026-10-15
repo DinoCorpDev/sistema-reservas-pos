@@ -34,7 +34,8 @@
       "ok": "OK",
       "alreadyPairedTitle": "Plus de place libre",
       "alreadyPaired": "« {name} » est déjà appairé sur un autre appareil et cette place est prise. Un poste ne fonctionne que sur un appareil à la fois. Dissociez-le d'abord (sur l'autre appareil ou dans le backoffice, sous Appareils) ou créez un nouveau poste dans le backoffice.",
-      "backToStart": "Retour à l'accueil"
+      "backToStart": "Retour à l'accueil",
+      "planLimit": "La formule de ce restaurant n’autorise pas cet appareil. Le propriétaire peut l’étendre dans le backoffice, sous « Ma formule »."
     },
     "pin": {
       "title": "Saisir le PIN",

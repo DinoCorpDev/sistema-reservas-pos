@@ -24,6 +24,7 @@ import type { z } from 'zod';
 import { type Actor, assertPermission, requireLocationId } from '../../actor';
 import { ApiError, isDuplicateKey, notFound } from '../../errors';
 import { changedFields, iso, type ServiceDeps } from '../shared';
+import { assertGrowth } from '../platform/plans';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -350,6 +351,7 @@ export async function createUser(
   input: z.output<typeof createUserSchema>,
 ): Promise<UserDto> {
   assertPermission(actor, 'user.manage');
+  await assertGrowth(deps.db, actor.organizationId, { limit: 'users' });
   const locationIds = await assertLocations(deps, actor, input.locationIds);
   const roleIds = await roleIdsByKey(deps, actor, input.roles);
   const pinKey = input.pin ? await ensurePinKey(deps, actor) : null;
@@ -424,6 +426,8 @@ export async function updateUser(
   if (input.email !== undefined) patch.email = input.email?.toLowerCase() ?? null;
   if (input.uiLanguage !== undefined) patch.uiLanguage = input.uiLanguage;
   if (input.isActive !== undefined && input.isActive !== current.isActive) {
+    // Back in use: one more person of the plan (DEC-045).
+    if (input.isActive) await assertGrowth(deps.db, actor.organizationId, { limit: 'users' });
     patch.isActive = input.isActive;
     patch.deactivatedAt = input.isActive ? null : new Date();
   }

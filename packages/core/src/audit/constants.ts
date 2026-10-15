@@ -31,6 +31,7 @@ export const AUDIT_ACTIONS = [
   'tax.category_renamed',
   // organization, people and devices
   'organization.created',
+  'subscription.changed',
   'location.updated',
   'location.settings_changed',
   'operation.activated',

@@ -5,6 +5,7 @@ export * from './kitchen';
 export * from './orders';
 export * from './organization';
 export * from './payments';
+export * from './plans';
 export * from './platform';
 export * from './platform-access';
 export * from './printing';

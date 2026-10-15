@@ -9,7 +9,31 @@ import { unstable_rethrow } from 'next/navigation';
  */
 export type ActionResult<T = null> =
   | { ok: true; data: T }
-  | { ok: false; error: { code: string; message: string; fieldErrors: Record<string, string> } };
+  | {
+      ok: false;
+      error: {
+        code: string;
+        message: string;
+        fieldErrors: Record<string, string>;
+        /** A known reason the client translates, with its values (e.g. a plan limit, DEC-045). */
+        reason?: { key: string; values: Record<string, string | number> };
+      };
+    };
+
+/** Reasons with their own message (`errors.reasons.<key>`), and the values they may show. */
+const REASONS = new Set(['plan_limit', 'plan_feature', 'subscription_suspended']);
+
+function reasonOf(details: unknown) {
+  const record = details && typeof details === 'object' ? (details as Record<string, unknown>) : {};
+  if (typeof record.reason !== 'string' || !REASONS.has(record.reason)) return undefined;
+  const values: Record<string, string | number> = {};
+  for (const [key, value] of Object.entries(record)) {
+    if (key !== 'reason' && (typeof value === 'string' || typeof value === 'number')) {
+      values[key] = value;
+    }
+  }
+  return { key: record.reason, values };
+}
 
 const logger = createLogger('web');
 
@@ -43,6 +67,7 @@ export async function runAction<T>(work: () => Promise<T>): Promise<ActionResult
         code: apiError.code,
         message: apiError.message,
         fieldErrors: fieldErrorsOf(apiError.details),
+        reason: reasonOf(apiError.details),
       },
     };
   }

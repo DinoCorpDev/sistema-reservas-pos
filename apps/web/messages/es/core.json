@@ -47,7 +47,12 @@
     "VALIDATION_FAILED": "Revise los campos marcados.",
     "RULE_VIOLATION": "Esta acción no está permitida según las reglas del negocio.",
     "BAD_REQUEST": "La solicitud no es válida.",
-    "INTERNAL": "Error inesperado. Inténtelo de nuevo."
+    "INTERNAL": "Error inesperado. Inténtelo de nuevo.",
+    "reasons": {
+      "plan_limit": "Su plan permite como máximo {allowed} {limit, select, devices {aparatos} users {personas} locations {sedes} other {}}. Para más necesita un add-on o un plan mayor: vea «Mi plan».",
+      "plan_feature": "Su plan no incluye {feature, select, kds {pantallas de cocina} handhelds {handhelds} phones {teléfonos de meseros} table_ownership {mesas por mesero} api {API} multi_location {varias sedes} other {}}. Vea «Mi plan».",
+      "subscription_suspended": "Su suscripción está suspendida: no se puede agregar nada. La operación sigue."
+    }
   },
   "languages": {
     "de": "Alemán",

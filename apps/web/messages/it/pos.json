@@ -34,7 +34,8 @@
       "ok": "OK",
       "alreadyPairedTitle": "Nessun posto libero",
       "alreadyPaired": "«{name}» è già abbinato su un altro apparecchio e quel posto è occupato. Una postazione funziona su un solo apparecchio alla volta. Scollegatela prima (sull'altro apparecchio o nel backoffice, in Dispositivi) oppure create una nuova postazione nel backoffice.",
-      "backToStart": "Torna all'inizio"
+      "backToStart": "Torna all'inizio",
+      "planLimit": "Il piano di questo ristorante non consente questo dispositivo. Il titolare può ampliarlo nel backoffice, in «Il mio piano»."
     },
     "pin": {
       "title": "Inserisca il PIN",

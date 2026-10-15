@@ -6,6 +6,7 @@ import { type Actor, assertPermission } from '../../actor';
 import { API_KEY_SCOPE_NAMES, generateApiKey } from '../../auth/api-keys';
 import { ApiError, notFound } from '../../errors';
 import { iso, type ServiceDeps } from '../shared';
+import { assertGrowth } from '../platform/plans';
 
 // ── API keys (RF-F14) ───────────────────────────────────────────────────────
 
@@ -51,6 +52,8 @@ export async function createApiKey(
   input: z.output<typeof createApiKeySchema>,
 ): Promise<ApiKeyDto & { key: string }> {
   assertPermission(actor, 'user.manage');
+  // The API is a module of the plan (DEC-045).
+  await assertGrowth(deps.db, actor.organizationId, { feature: 'api' });
   const known = new Set<string>(API_KEY_SCOPE_NAMES);
   const unknown = input.scopes.filter((scope) => !known.has(scope));
   if (unknown.length > 0) {

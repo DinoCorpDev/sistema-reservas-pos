@@ -8,7 +8,14 @@ export const TABLE_GROUPS = {
   /** Multi-tenant root. */
   root: [s.organizations],
   /** DINOLABS platform level, outside every organization (support staff). */
-  platform: [s.platformStaff, s.platformJobRuns, s.platformAlerts],
+  platform: [
+    s.platformStaff,
+    s.platformJobRuns,
+    s.platformAlerts,
+    s.plans,
+    s.planAddons,
+    s.planPrices,
+  ],
   /** Location configuration: FK, soft delete, required `location_id` (except `locations`). */
   config: [
     s.locations,
@@ -47,6 +54,8 @@ export const TABLE_GROUPS = {
     s.consents,
     s.apiKeys,
     s.supportAccessGrants,
+    s.subscriptions,
+    s.subscriptionAddons,
   ],
   /** Syncable daily operations: required org + location, no hard FKs, soft delete, version. */
   operational: [

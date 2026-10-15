@@ -47,7 +47,12 @@
     "VALIDATION_FAILED": "Verifichi i campi evidenziati.",
     "RULE_VIOLATION": "Questa azione non è consentita dalle regole aziendali.",
     "BAD_REQUEST": "La richiesta non è valida.",
-    "INTERNAL": "Errore imprevisto. Riprovi."
+    "INTERNAL": "Errore imprevisto. Riprovi.",
+    "reasons": {
+      "plan_limit": "Il vostro piano consente al massimo {allowed} {limit, select, devices {dispositivi} users {persone} locations {sedi} other {}}. Per averne di più serve un add-on o un piano superiore – vedi «Il mio piano».",
+      "plan_feature": "Il vostro piano non include: {feature, select, kds {schermi cucina} handhelds {palmari} phones {telefoni di servizio} table_ownership {tavoli per cameriere} api {API} multi_location {più sedi} other {}}. Vedi «Il mio piano».",
+      "subscription_suspended": "L’abbonamento è sospeso: non si può aggiungere nulla. L’attività continua."
+    }
   },
   "languages": {
     "de": "Tedesco",

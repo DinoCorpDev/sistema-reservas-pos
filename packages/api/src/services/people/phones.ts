@@ -21,6 +21,7 @@ import { loadUserPermissions } from '../../auth/permissions';
 import { ApiError, isDuplicateKey } from '../../errors';
 import type { ServiceDeps } from '../shared';
 import { toPairedDto, unknownCode } from './devices';
+import { assertGrowth } from '../platform/plans';
 
 /**
  * Waiters' own phones (DEC-036). The cashier POS or the backoffice shows a short-lived code (as a
@@ -55,6 +56,8 @@ export async function issuePhonePairingCode(
     assertPermission(actor, 'location.manage');
   }
   requireLocationId(actor);
+  // Waiter phones are a module of the plan (DEC-045); the count is checked when one pairs.
+  await assertGrowth(deps.db, actor.organizationId, { feature: 'phones' });
   const code = pairingCode();
   const expiresAt = new Date(Date.now() + PHONE_CODE_TTL_MINUTES * 60_000);
   await runCommand(deps.db, actor, async (tx, recorder) => {
@@ -244,6 +247,8 @@ export async function pairPhone(
               .set({ ...fields, appVersion: input.appVersion ?? current.appVersion })
               .where(inLocation(s.terminals, tenant, eq(s.terminals.id, id)));
           } else {
+            // A new phone is one more device of the plan (DEC-045).
+            await assertGrowth(tx, tenant.organizationId, { device: 'phone' });
             const orderNumberPrefix = await nextPhonePrefix(tx, tenant);
             const [row] = await tx
               .insert(s.terminals)

@@ -29,6 +29,12 @@ export function useServerAction<A extends unknown[], T>(
           options.onSuccess?.(result.data);
         } else {
           setFieldErrors(result.error.fieldErrors);
+          const reason = result.error.reason;
+          if (reason && tErrors.has(`reasons.${reason.key}` as 'INTERNAL')) {
+            toast.error(tErrors(`reasons.${reason.key}` as 'INTERNAL', reason.values));
+            resolve(result);
+            return;
+          }
           const known = tErrors.has(result.error.code as 'INTERNAL');
           toast.error(known ? tErrors(result.error.code as 'INTERNAL') : result.error.message, {
             description: known ? result.error.message : undefined,

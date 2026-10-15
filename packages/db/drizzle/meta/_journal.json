@@ -127,6 +127,20 @@
       "when": 1792104365214,
       "tag": "0017_platform_alerts",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1792105583424,
+      "tag": "0018_plans",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1792105592570,
+      "tag": "0019_plan_catalog",
+      "breakpoints": true
     }
   ]
 }

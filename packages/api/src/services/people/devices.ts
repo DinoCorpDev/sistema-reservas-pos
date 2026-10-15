@@ -7,6 +7,7 @@ import type {
   updatePrinterSchema,
   updateTerminalSchema,
 } from '@pos/core';
+import { featureForDevice } from '@pos/core';
 import {
   inLocation,
   inOrg,
@@ -25,6 +26,7 @@ import { type Actor, assertPermission, requireLocationId } from '../../actor';
 import { ApiError, isDuplicateKey, notFound } from '../../errors';
 import { changedFields, definedOnly, iso, type ServiceDeps } from '../shared';
 import { findPhoneCode, pairPhone } from './phones';
+import { assertGrowth } from '../platform/plans';
 
 // ── Printers (RF-F17) ───────────────────────────────────────────────────────
 
@@ -387,6 +389,8 @@ export async function createTerminal(
   assertPermission(actor, 'location.manage');
   requireLocationId(actor);
   await assertTerminalRefs(deps, actor, input);
+  // One more device of the plan, and its module: KDS, handheld (DEC-045).
+  await assertGrowth(deps.db, actor.organizationId, { device: input.type });
   const id = await runCommand(deps.db, actor, async (tx, recorder) => {
     const [row] = await tx.insert(s.terminals).values(ownedByLocation(actor, input)).$returningId();
     recorder.audit({
@@ -413,6 +417,13 @@ export async function updateTerminal(
     throw new ApiError('CONFLICT', 'A waiter phone stays a phone (DEC-036)', { field: 'type' });
   }
   await assertTerminalRefs(deps, actor, input);
+  const nextType = input.type ?? current.type;
+  if (input.isActive === true && !current.isActive) {
+    // Back in use: it counts again (DEC-045).
+    await assertGrowth(deps.db, actor.organizationId, { device: nextType });
+  } else if (input.type !== undefined && input.type !== current.type && current.isActive) {
+    await assertGrowth(deps.db, actor.organizationId, { feature: featureForDevice(nextType) });
+  }
   const patch: Partial<TerminalRow> = definedOnly(input);
   if (input.isActive === false && current.isActive) {
     Object.assign(patch, {

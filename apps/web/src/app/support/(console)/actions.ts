@@ -1,7 +1,13 @@
 'use server';
 
-import { admin, ApiError } from '@pos/api';
-import { onboardOrganizationSchema } from '@pos/core';
+import { admin, ApiError, platform } from '@pos/api';
+import {
+  addonInputSchema,
+  onboardOrganizationSchema,
+  planInputSchema,
+  planPriceInputSchema,
+  subscriptionInputSchema,
+} from '@pos/core';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { auth, signOut, updateSession } from '@/auth';
@@ -61,4 +67,55 @@ export async function openOrganization(organizationId: string) {
 
 export async function logoutStaff() {
   await signOut({ redirectTo: '/support/login' });
+}
+
+// ── Plans and subscriptions (DEC-045) ───────────────────────────────────────────
+
+export async function savePlan(input: unknown) {
+  return runAction(async () => {
+    await platform.savePlan(deps(), await currentStaff(), planInputSchema.parse(input));
+    revalidatePath('/support/plans');
+    return null;
+  });
+}
+
+export async function saveAddon(input: unknown) {
+  return runAction(async () => {
+    await platform.saveAddon(deps(), await currentStaff(), addonInputSchema.parse(input));
+    revalidatePath('/support/plans');
+    return null;
+  });
+}
+
+/** Sets a monthly price; `amountMinor: null` removes it. */
+export async function savePlanPrice(input: unknown) {
+  return runAction(async () => {
+    const raw = (input ?? {}) as { amountMinor?: unknown };
+    const parsed =
+      raw.amountMinor === null
+        ? { ...planPriceInputSchema.omit({ amountMinor: true }).parse(input), amountMinor: null }
+        : planPriceInputSchema.parse(input);
+    await platform.savePlanPrice(deps(), await currentStaff(), parsed);
+    revalidatePath('/support/plans');
+    return null;
+  });
+}
+
+export async function loadOrganizationPlan(organizationId: string) {
+  return runAction(async () =>
+    platform.getOrganizationPlan(deps(), await currentStaff(), organizationId),
+  );
+}
+
+export async function updateSubscription(organizationId: string, input: unknown) {
+  return runAction(async () => {
+    const result = await platform.updateSubscription(
+      deps(),
+      await currentStaff(),
+      organizationId,
+      subscriptionInputSchema.parse(input),
+    );
+    revalidatePath('/support');
+    return result;
+  });
 }

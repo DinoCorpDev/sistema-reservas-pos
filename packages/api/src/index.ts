@@ -31,3 +31,4 @@ export * as orders from './services/orders';
 export * as sync from './services/sync';
 export * as cash from './services/cash';
 export * as reports from './services/reports';
+export * as platform from './services/platform';

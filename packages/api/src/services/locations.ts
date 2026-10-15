@@ -15,6 +15,7 @@ import type { z } from 'zod';
 import { type Actor, assertPermission, requireLocationId } from '../actor';
 import { ApiError, notFound } from '../errors';
 import { changedFields, definedOnly, iso, type ServiceDeps } from './shared';
+import { assertGrowth } from './platform/plans';
 
 // ── Locations (RF-A02) ──────────────────────────────────────────────────────
 
@@ -124,6 +125,13 @@ export async function updateLocationSettings(
   assertPermission(actor, 'location.manage');
   const current = await loadLocation(deps, actor, id);
   const settings = parseLocationSettings(input);
+  if (
+    settings.tableOwnership === 'restricted' &&
+    parseLocationSettings(current.settings).tableOwnership !== 'restricted'
+  ) {
+    // Tables of their own per waiter is a module of the plan (DEC-039, DEC-045).
+    await assertGrowth(deps.db, actor.organizationId, { feature: 'table_ownership' });
+  }
   await runCommand(deps.db, { ...actor, locationId: id }, async (tx, recorder) => {
     await tx
       .update(s.locations)

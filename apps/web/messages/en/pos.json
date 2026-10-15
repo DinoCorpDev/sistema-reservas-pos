@@ -34,7 +34,8 @@
       "ok": "OK",
       "alreadyPairedTitle": "No free places",
       "alreadyPaired": "“{name}” is already paired on another device, and that place is taken. A device runs on one device at a time. Unpair it first (on the other device or in the backoffice under Devices) or create a new device in the backoffice.",
-      "backToStart": "Back to start"
+      "backToStart": "Back to start",
+      "planLimit": "This restaurant’s plan does not allow this device. The owner can extend it in the backoffice under “My plan”."
     },
     "pin": {
       "title": "Enter PIN",

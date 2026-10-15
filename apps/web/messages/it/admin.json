@@ -306,6 +306,9 @@
     },
     "sync": {
       "conflict_resolved": "Conflitto di sincronizzazione risolto"
+    },
+    "subscription": {
+      "changed": "Abbonamento modificato"
     }
   },
   "supportAccess": {
