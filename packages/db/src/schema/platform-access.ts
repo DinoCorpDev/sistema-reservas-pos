@@ -108,3 +108,30 @@ export const platformJobRuns = mysqlTable(
   },
   (t) => [index('idx_platform_job_runs_job').on(t.job, t.finishedAt)],
 );
+
+/**
+ * Alerts of the monitor (RNF-16): one row per problem while it lasts, so support gets one e-mail
+ * when it starts and one when it is solved, never one per minute. `key` names the problem
+ * (`hub_offline:<terminal>`); the open one has no `resolvedAt`.
+ */
+export const platformAlerts = mysqlTable(
+  'platform_alerts',
+  {
+    id: primaryId(),
+    key: varchar('key', { length: 120 }).notNull(),
+    kind: varchar('kind', { length: 32 }).notNull(),
+    severity: varchar('severity', { length: 16 }).notNull(),
+    organizationId: uuid('organization_id'),
+    locationId: uuid('location_id'),
+    subject: varchar('subject', { length: 255 }).notNull(),
+    detail: text('detail'),
+    /** When the problem started, as far as the data says. */
+    since: utcDatetime('since').notNull(),
+    openedAt: utcDatetime('opened_at').notNull(),
+    notifiedAt: utcDatetime('notified_at'),
+    resolvedAt: utcDatetime('resolved_at'),
+    resolvedNotifiedAt: utcDatetime('resolved_notified_at'),
+    ...timestamps(),
+  },
+  (t) => [index('idx_platform_alerts_open').on(t.resolvedAt, t.key)],
+);

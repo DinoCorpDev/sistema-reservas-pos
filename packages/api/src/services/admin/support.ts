@@ -78,7 +78,7 @@ async function isActiveStaff(db: Database, staffId: string): Promise<boolean> {
 }
 
 /** The session's support staff member must exist and be active. */
-async function assertActiveStaff(db: Database, staffId: string) {
+export async function assertActiveStaff(db: Database, staffId: string) {
   if (!(await isActiveStaff(db, staffId))) {
     throw new ApiError('FORBIDDEN', 'Unknown or inactive support staff member');
   }

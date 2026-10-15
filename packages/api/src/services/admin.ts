@@ -8,3 +8,4 @@ export * from './admin/customers';
 export * from './admin/audit';
 export * from './admin/setup';
 export * from './admin/support';
+export * from './admin/platform-health';

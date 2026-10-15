@@ -14,7 +14,8 @@
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "menu:import": "tsx src/scripts/import-menu.ts",
     "archive:loop": "tsx src/scripts/archive.ts loop",
-    "archive:month": "tsx src/scripts/archive.ts month"
+    "archive:month": "tsx src/scripts/archive.ts month",
+    "monitor": "tsx src/scripts/monitor.ts"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.6.3",
@@ -24,12 +25,14 @@
     "drizzle-orm": "catalog:",
     "hono": "^4.13.13",
     "jose": "^6.2.12",
+    "nodemailer": "^7.0.13",
     "otplib": "^13.5.0",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@pos/config": "workspace:*",
     "@types/node": "catalog:",
+    "@types/nodemailer": "^8.0.2",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

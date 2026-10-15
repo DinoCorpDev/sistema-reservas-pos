@@ -28,5 +28,6 @@ export * from './printing';
 export * from './customers';
 export * from './reservations';
 export * from './reports';
+export * from './platform';
 export * from './audit';
 export * from './sync';

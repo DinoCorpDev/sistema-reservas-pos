@@ -64,6 +64,7 @@ services:
       - -c
       - >-
         pnpm --filter @pos/db outbox:work &
+        pnpm --filter @pos/api monitor &
         pnpm --filter @pos/api archive:loop &
         wait -n; exit 1
     volumes:

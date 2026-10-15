@@ -158,11 +158,7 @@ async function consumeApproval(
   }
 }
 
-async function attachApproval(
-  db: Database,
-  actor: Actor,
-  token: string | null,
-): Promise<Actor> {
+async function attachApproval(db: Database, actor: Actor, token: string | null): Promise<Actor> {
   if (!token) return actor;
   const claims = await verifyApproval(token);
   if (claims.organizationId !== actor.organizationId || claims.locationId !== actor.locationId) {
