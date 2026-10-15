@@ -1,13 +1,14 @@
 import {
   boolean,
   char,
+  index,
   json,
   mysqlTable,
   text,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
-import { organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
+import { locationId, organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
 import { organizations } from './organization';
 import { users } from './users';
 
@@ -71,3 +72,19 @@ export const supportAccessGrants = mysqlTable('support_access_grants', {
   revokedAt: utcDatetime('revoked_at'),
   ...timestamps(),
 });
+
+/**
+ * Manager approvals already used (RN-15, DEC-015): an approval token works once. Kept in the
+ * database so every instance of the API sees it (two web containers, DEC-045). `id` is the
+ * token's id (`jti`); rows past `expires_at` are cleaned up as new ones arrive.
+ */
+export const approvalUses = mysqlTable(
+  'approval_uses',
+  {
+    id: uuid('id').primaryKey(),
+    organizationId: organizationId(),
+    locationId: locationId(),
+    expiresAt: utcDatetime('expires_at').notNull(),
+  },
+  (t) => [index('idx_approval_uses_expires').on(t.expiresAt)],
+);

@@ -1,8 +1,8 @@
 import type { Permission } from '@pos/core';
 import { type Database, schema as s, sha256Hex } from '@pos/db';
-import { and, eq, gt, isNull, or } from 'drizzle-orm';
+import { and, eq, gt, isNull, lt, or } from 'drizzle-orm';
 import type { Actor, Approval } from '../actor';
-import { ApiError } from '../errors';
+import { ApiError, isDuplicateKey } from '../errors';
 import { looksLikeApiKey, resolveApiKeyActor } from './api-keys';
 import { ALL_PERMISSIONS, loadUserPermissions } from './permissions';
 import { verifyApproval, verifyPosSession } from './tokens';
@@ -132,22 +132,37 @@ export async function resolveTerminal(db: Database, deviceToken: string) {
   return terminal;
 }
 
-const usedApprovals = new Map<string, number>();
-
 /**
- * One-time use of approval tokens. Kept in memory: tokens live 60 s and are bound to one action,
- * so a replay window would also need the same action. Multi-instance deployments move this to
- * a shared store (Phase 6).
+ * One-time use of approval tokens (RN-15). Tokens live 60 s and are bound to one action; the
+ * used ids are kept in the database, so two instances of the API never accept the same one
+ * (DEC-015, DEC-045). The first insert wins; a duplicate key means it was already used.
  */
-function consumeApproval(jti: string, ttlMs = 120_000): boolean {
-  const now = Date.now();
-  for (const [key, expires] of usedApprovals) if (expires < now) usedApprovals.delete(key);
-  if (usedApprovals.has(jti)) return false;
-  usedApprovals.set(jti, now + ttlMs);
-  return true;
+async function consumeApproval(
+  db: Database,
+  claims: { jti: string; organizationId: string; locationId: string },
+  ttlMs = 120_000,
+): Promise<boolean> {
+  const now = new Date();
+  await db.delete(s.approvalUses).where(lt(s.approvalUses.expiresAt, now));
+  try {
+    await db.insert(s.approvalUses).values({
+      id: claims.jti,
+      organizationId: claims.organizationId,
+      locationId: claims.locationId,
+      expiresAt: new Date(now.getTime() + ttlMs),
+    });
+    return true;
+  } catch (error) {
+    if (isDuplicateKey(error)) return false;
+    throw error;
+  }
 }
 
-async function attachApproval(actor: Actor, token: string | null): Promise<Actor> {
+async function attachApproval(
+  db: Database,
+  actor: Actor,
+  token: string | null,
+): Promise<Actor> {
   if (!token) return actor;
   const claims = await verifyApproval(token);
   if (claims.organizationId !== actor.organizationId || claims.locationId !== actor.locationId) {
@@ -156,7 +171,7 @@ async function attachApproval(actor: Actor, token: string | null): Promise<Actor
   if (actor.terminalId && claims.terminalId !== actor.terminalId) {
     throw new ApiError('FORBIDDEN', 'The approval was given on another terminal');
   }
-  if (!consumeApproval(claims.jti)) {
+  if (!(await consumeApproval(db, claims))) {
     throw new ApiError('FORBIDDEN', 'This approval was already used');
   }
   const approval: Approval = {
@@ -215,5 +230,5 @@ export async function resolveActor(db: Database, input: ResolveInput): Promise<A
     actor = await sessionActor(db, input.session, input);
   }
 
-  return actor ? attachApproval(actor, input.approvalToken) : null;
+  return actor ? attachApproval(db, actor, input.approvalToken) : null;
 }

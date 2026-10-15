@@ -425,6 +425,28 @@ describe('manager approval with PIN on the same device (RF-A05, RN-15)', () => {
     });
   });
 
+  it('an approval works once, even across two instances of the API (DEC-015, DEC-045)', async () => {
+    const terminal = await pairedTerminal();
+    const pos = await posSession(terminal.deviceToken, PIN.waiter);
+    const issued = await api.request('POST', '/terminals/approve', {
+      headers: pos,
+      body: { pin: PIN.manager, action: 'void_item:43', permissions: ['approval.grant'] },
+    });
+    const { approvalToken } = await json<{ approvalToken: string }>(issued);
+    const withApproval = { ...pos, 'x-approval': approvalToken };
+
+    // The other web container behind the load balancer sees the same database.
+    const other = createTestApi();
+    try {
+      expect((await api.request('GET', '/areas', { headers: withApproval })).status).toBe(200);
+      const replay = await other.request('GET', '/areas', { headers: withApproval });
+      expect(replay.status).toBe(403);
+      expect(JSON.stringify(await json(replay))).toContain('already used');
+    } finally {
+      await other.close();
+    }
+  });
+
   it('refuses approvers without the requested permissions and callers without a POS session', async () => {
     const terminal = await pairedTerminal();
     const pos = await posSession(terminal.deviceToken, PIN.waiter);
