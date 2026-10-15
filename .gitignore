@@ -16,6 +16,9 @@ apps/web/public/sw.js
 apps/web/public/sw.js.map
 apps/web/public/swe-worker-*.js
 
+# monthly legal archive written locally by `archive:month` (deploy: the archive volume)
+.archive/
+
 # turbo / caches
 .turbo/
 .eslintcache

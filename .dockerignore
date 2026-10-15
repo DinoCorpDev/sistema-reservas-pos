@@ -1,0 +1,17 @@
+# Docker build context (deploy/Dockerfile): sources only, never local data or secrets.
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/test-results
+**/playwright-report
+.git
+.cache
+.data
+.claude
+.env
+deploy/.env
+apps/web/public/sw.js
+apps/web/public/swe-worker-*.js
+**/.hub-state.json
+**/.hub-config.json

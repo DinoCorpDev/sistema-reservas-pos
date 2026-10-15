@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests --exclude \"**/*.int.test.ts\"",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "menu:import": "tsx src/scripts/import-menu.ts"
+    "menu:import": "tsx src/scripts/import-menu.ts",
+    "archive:loop": "tsx src/scripts/archive.ts loop",
+    "archive:month": "tsx src/scripts/archive.ts month"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.6.3",

@@ -88,3 +88,23 @@ export const approvalUses = mysqlTable(
   },
   (t) => [index('idx_approval_uses_expires').on(t.expiresAt)],
 );
+
+/**
+ * Runs of the platform's own jobs (RNF-14, RNF-16): every hourly backup, the monthly restore
+ * test and the monthly legal archive leave one row; the monitor alerts when the last good one is
+ * too old or a run failed. Written by the backup container (SQL) and the worker.
+ */
+export const platformJobRuns = mysqlTable(
+  'platform_job_runs',
+  {
+    id: primaryId(),
+    /** `backup`, `restore_test` or `archive`. */
+    job: varchar('job', { length: 32 }).notNull(),
+    ok: boolean('ok').notNull(),
+    detail: text('detail'),
+    startedAt: utcDatetime('started_at').notNull(),
+    finishedAt: utcDatetime('finished_at').notNull(),
+    ...timestamps(),
+  },
+  (t) => [index('idx_platform_job_runs_job').on(t.job, t.finishedAt)],
+);

@@ -1,0 +1,22 @@
+# HTTPS everywhere (RNF-10): Caddy gets and renews the certificate of the domain by itself.
+# Two web containers: while one restarts during a deployment, the other answers (RNF-17).
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web-1:3000 web-2:3000 {
+		lb_policy round_robin
+		lb_try_duration 10s
+		health_uri /api/v1/health
+		health_interval 5s
+		health_timeout 3s
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+}

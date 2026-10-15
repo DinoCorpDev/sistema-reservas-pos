@@ -1,0 +1,119 @@
+# The cloud in production (DEC-045, RNF-10, RNF-14, RNF-17): any Linux server with Docker.
+# Two web containers behind Caddy (automatic HTTPS), so a deployment restarts one at a time;
+# MySQL with binary logs; the worker (outbox, monitor, archive) and hourly encrypted backups.
+#
+#   cp deploy/.env.example deploy/.env   # fill it in
+#   deploy/deploy.sh                      # build, migrate, roll out without downtime
+#
+# The data lives in Switzerland (RNF-13): the server and the S3 bucket of the backups are
+# chosen in a Swiss region.
+
+name: pos
+
+x-web: &web
+  image: pos-web:${APP_VERSION:-dev}
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+    target: web
+    args: { APP_VERSION: '${APP_VERSION:-dev}' }
+  restart: unless-stopped
+  env_file: .env
+  environment:
+    DATABASE_URL: mysql://pos:${MYSQL_PASSWORD}@mysql:3306/pos_cloud
+    LOG_DIR: /logs
+  volumes:
+    - logs:/logs
+  depends_on:
+    mysql: { condition: service_healthy }
+
+services:
+  caddy:
+    image: caddy:2.8
+    restart: unless-stopped
+    ports: ['80:80', '443:443']
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [web-1, web-2]
+
+  web-1: *web
+  web-2: *web
+
+  worker:
+    image: pos-worker:${APP_VERSION:-dev}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: worker
+      args: { APP_VERSION: '${APP_VERSION:-dev}' }
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: mysql://pos:${MYSQL_PASSWORD}@mysql:3306/pos_cloud
+      LOG_DIR: /logs
+      ARCHIVE_DIR: /archive
+      HEALTH_URL: http://web-1:3000/api/v1/health
+    # One container, one loop each; if one stops, the container restarts as a whole.
+    command:
+      - bash
+      - -c
+      - >-
+        pnpm --filter @pos/db outbox:work &
+        pnpm --filter @pos/api archive:loop &
+        wait -n; exit 1
+    volumes:
+      - logs:/logs
+      - archive:/archive
+    depends_on:
+      mysql: { condition: service_healthy }
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: pos_cloud
+      MYSQL_USER: pos
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+      # Binary logs, two days: point-in-time recovery between the hourly backups.
+      - --log-bin=binlog
+      - --binlog-expire-logs-seconds=172800
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '-p${MYSQL_ROOT_PASSWORD}']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backup:
+    build:
+      context: ./backup
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: pos_cloud
+      MYSQL_USER: root
+      MYSQL_PWD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - archive:/archive:ro
+    depends_on:
+      mysql: { condition: service_healthy }
+
+volumes:
+  mysql-data:
+  caddy-data:
+  caddy-config:
+  logs:
+  archive:

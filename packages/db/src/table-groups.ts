@@ -8,7 +8,7 @@ export const TABLE_GROUPS = {
   /** Multi-tenant root. */
   root: [s.organizations],
   /** DINOLABS platform level, outside every organization (support staff). */
-  platform: [s.platformStaff],
+  platform: [s.platformStaff, s.platformJobRuns],
   /** Location configuration: FK, soft delete, required `location_id` (except `locations`). */
   config: [
     s.locations,

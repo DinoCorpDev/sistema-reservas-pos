@@ -38,6 +38,8 @@ const withSerwist = withSerwistInit({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // The Docker image runs the standalone server (deploy/Dockerfile); `next start` locally.
+  ...(process.env.NEXT_OUTPUT === 'standalone' ? { output: 'standalone' as const } : {}),
   generateBuildId: () => buildId,
   env: { NEXT_PUBLIC_APP_VERSION: appVersion },
   // Monorepo packages published as TypeScript source.
