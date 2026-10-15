@@ -14,6 +14,7 @@ export interface AuditFilters {
   action: string;
   entityType: string;
   userId: string;
+  terminalId: string;
 }
 
 export const AUDIT_PAGE_SIZE = 50;
@@ -51,16 +52,18 @@ export function parseAuditFilters(raw: Record<string, unknown>): AuditFilters {
   const action = text(raw.action);
   const entityType = text(raw.entityType);
   const userId = text(raw.userId).toLowerCase();
+  const terminalId = text(raw.terminalId).toLowerCase();
   return {
     from: isIsoDate(from) ? from : '',
     to: isIsoDate(to) ? to : '',
     action: (AUDIT_ACTIONS as readonly string[]).includes(action) ? action : '',
     entityType: /^[a-z_]{1,48}$/.test(entityType) ? entityType : '',
     userId: UUID_PATTERN.test(userId) ? userId : '',
+    terminalId: UUID_PATTERN.test(terminalId) ? terminalId : '',
   };
 }
 
-/** URL parameters → filters (`entity` and `user` are the short URL names). */
+/** URL parameters → filters (`entity`, `user` and `terminal` are the short URL names). */
 export const auditFiltersFromSearch = (params: Record<string, string | string[] | undefined>) =>
   parseAuditFilters({
     from: params.from,
@@ -68,6 +71,7 @@ export const auditFiltersFromSearch = (params: Record<string, string | string[] 
     action: params.action,
     entityType: params.entity,
     userId: params.user,
+    terminalId: params.terminal,
   });
 
 /**
@@ -81,6 +85,7 @@ export function auditQueryOf(filters: AuditFilters): admin.AuditQuery {
     action: filters.action || undefined,
     entityType: filters.entityType || undefined,
     userId: filters.userId || undefined,
+    terminalId: filters.terminalId || undefined,
     limit: AUDIT_PAGE_SIZE,
   };
 }

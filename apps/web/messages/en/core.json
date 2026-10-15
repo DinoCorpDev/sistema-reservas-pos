@@ -79,7 +79,8 @@
     "location_switch": "Switch location",
     "language": "Language",
     "support_banner": "You are working in this organisation as DINOLABS support. Every action is logged.",
-    "support_leave": "Leave organisation"
+    "support_leave": "Leave organisation",
+    "reports": "Reports"
   },
   "auth": {
     "title": "Sign in",
@@ -239,6 +240,7 @@
     "syncConflicts": "Operations made offline that clashed when syncing (e.g. two people changed the same thing). The manager reviews and resolves them.",
     "supportAccess": "Grant or revoke DINOLABS support access to your organization for a limited time.",
     "apiKeys": "Keys to connect other systems (such as Zitas) to the POS API with limited permissions.",
-    "account": "Your user: name, password and interface language."
+    "account": "Your user: name, password and interface language.",
+    "reports": "Sales, VAT, tips, voids and times of a period, plus the exports for accounting, the fiduciary and the archive."
   }
 }

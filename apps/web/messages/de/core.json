@@ -79,7 +79,8 @@
     "location_switch": "Standort wechseln",
     "language": "Sprache",
     "support_banner": "Sie arbeiten als DINOLABS-Support in dieser Organisation. Jede Aktion wird protokolliert.",
-    "support_leave": "Organisation verlassen"
+    "support_leave": "Organisation verlassen",
+    "reports": "Berichte"
   },
   "auth": {
     "title": "Anmelden",
@@ -239,6 +240,7 @@
     "syncConflicts": "Offline gemachte Vorgänge, die beim Synchronisieren kollidierten (z. B. zwei Personen änderten dasselbe). Die Leitung prüft sie und markiert sie als gelöst.",
     "supportAccess": "Dem DINOLABS-Support Zugang zu Ihrer Organisation für eine begrenzte Zeit geben oder entziehen.",
     "apiKeys": "Schlüssel, um andere Systeme (wie Zitas) mit begrenzten Rechten an die API der Kasse anzubinden.",
-    "account": "Ihr Benutzer: Name, Passwort und Sprache der Oberfläche."
+    "account": "Ihr Benutzer: Name, Passwort und Sprache der Oberfläche.",
+    "reports": "Umsatz, MWST, Trinkgeld, Stornos und Zeiten eines Zeitraums, dazu die Exporte für Buchhaltung, Treuhand und Archiv."
   }
 }

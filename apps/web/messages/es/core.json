@@ -79,7 +79,8 @@
     "location_switch": "Cambiar de sede",
     "language": "Idioma",
     "support_banner": "Está trabajando en esta organización como soporte de DINOLABS. Cada acción queda registrada.",
-    "support_leave": "Salir de la organización"
+    "support_leave": "Salir de la organización",
+    "reports": "Reportes"
   },
   "auth": {
     "title": "Iniciar sesión",
@@ -239,6 +240,7 @@
     "syncConflicts": "Operaciones hechas sin conexión que chocaron al sincronizar (por ejemplo, dos personas cambiaron lo mismo). El gerente las revisa y las marca como resueltas.",
     "supportAccess": "Dar o quitar permiso al soporte de DINOLABS para entrar a tu organización por un tiempo limitado.",
     "apiKeys": "Claves para conectar otros sistemas (como Zitas) a la API del POS, con permisos limitados.",
-    "account": "Tu usuario: nombre, contraseña e idioma de la interfaz."
+    "account": "Tu usuario: nombre, contraseña e idioma de la interfaz.",
+    "reports": "Ventas, MWST, propinas, anulaciones y tiempos de un período, más las exportaciones para la contabilidad, la fiduciaria y el archivo."
   }
 }

@@ -20,7 +20,7 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
 
   return (
     <div className="flex min-h-dvh">
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto border-r bg-card p-4 lg:flex">
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto border-r bg-card p-4 lg:flex print:hidden">
         <Link href="/backoffice" className="px-3 text-lg font-semibold">
           {t('app.name')}
         </Link>

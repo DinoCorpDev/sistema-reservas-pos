@@ -5,10 +5,14 @@ import { getTranslations } from 'next-intl/server';
 import { SetupChecklist } from '@/components/backoffice/admin/overview/setup-checklist';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
+import { OwnerDashboard } from './reports/_components/dashboard';
 
 export const metadata: Metadata = { title: 'Übersicht' };
 
-/** Overview of the location: what is still missing before it can operate (RF-A11). */
+/**
+ * Overview of the location: today's figures for whoever may see reports (RF-F10), then what is
+ * still missing before it can operate (RF-A11).
+ */
 export default async function OverviewPage() {
   const actor = await currentActor();
   const t = await getTranslations('overview');
@@ -24,6 +28,7 @@ export default async function OverviewPage() {
   return (
     <>
       <PageHeader title={t('title')} />
+      {actor.permissions.has('report.view') && <OwnerDashboard />}
       <SetupChecklist
         checklist={checklist}
         canActivate={actor.permissions.has('location.manage')}

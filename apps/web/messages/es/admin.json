@@ -212,7 +212,10 @@
       "terminal": "Dispositivo",
       "user": "Persona",
       "phone_pairing_code": "Código para teléfonos de meseros"
-    }
+    },
+    "allTerminals": "Todos los dispositivos",
+    "exportCsv": "Exportar CSV",
+    "exportJson": "Exportar JSON"
   },
   "auditActions": {
     "order": {

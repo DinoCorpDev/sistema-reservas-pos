@@ -79,7 +79,8 @@
     "location_switch": "Cambia sede",
     "language": "Lingua",
     "support_banner": "Sta lavorando in questa organizzazione come supporto DINOLABS. Ogni azione viene registrata.",
-    "support_leave": "Lascia l’organizzazione"
+    "support_leave": "Lascia l’organizzazione",
+    "reports": "Rapporti"
   },
   "auth": {
     "title": "Accesso",
@@ -239,6 +240,7 @@
     "syncConflicts": "Operazioni fatte offline che si sono scontrate nella sincronizzazione (es. due persone hanno cambiato la stessa cosa). Il gerente le controlla e le risolve.",
     "supportAccess": "Dare o togliere al supporto DINOLABS l’accesso alla tua organizzazione per un tempo limitato.",
     "apiKeys": "Chiavi per collegare altri sistemi (come Zitas) all’API della cassa, con permessi limitati.",
-    "account": "Il tuo utente: nome, password e lingua dell’interfaccia."
+    "account": "Il tuo utente: nome, password e lingua dell’interfaccia.",
+    "reports": "Fatturato, IVA, mance, storni e tempi di un periodo, più le esportazioni per la contabilità, la fiduciaria e l’archivio."
   }
 }

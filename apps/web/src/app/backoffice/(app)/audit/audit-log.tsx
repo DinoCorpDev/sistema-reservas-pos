@@ -8,7 +8,13 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { ChevronDownIcon, ChevronUpIcon, FilterIcon, RotateCcwIcon } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DownloadIcon,
+  FilterIcon,
+  RotateCcwIcon,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Fragment, useState, useTransition } from 'react';
@@ -76,15 +82,25 @@ export function AuditLog({
     t.has(`entityTypes.${type}`) ? t(`entityTypes.${type}`) : type;
   const person = (id: string | null) => (id ? (userName.get(id) ?? shortId(id)) : null);
 
-  const apply = (next: AuditFilters) => {
+  const queryOf = (next: AuditFilters) => {
     const params = new URLSearchParams();
     if (next.from) params.set('from', next.from);
     if (next.to) params.set('to', next.to);
     if (next.action) params.set('action', next.action);
     if (next.entityType) params.set('entity', next.entityType);
     if (next.userId.trim()) params.set('user', next.userId.trim());
-    const query = params.toString();
+    if (next.terminalId) params.set('terminal', next.terminalId);
+    return params;
+  };
+  const apply = (next: AuditFilters) => {
+    const query = queryOf(next).toString();
     startNavigation(() => router.push(query ? `/backoffice/audit?${query}` : '/backoffice/audit'));
+  };
+  /** The applied filters as a file (RF-F12): the same events, all pages. */
+  const exportHref = (format: 'csv' | 'json') => {
+    const params = queryOf(filters);
+    params.set('format', format);
+    return `/backoffice/audit/export?${params.toString()}`;
   };
 
   const toggle = (id: string) =>
@@ -110,7 +126,7 @@ export function AuditLog({
             apply(draft);
           }}
         >
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field label={t('from')} htmlFor="audit-from">
               <Input
                 id="audit-from"
@@ -203,6 +219,28 @@ export function AuditLog({
                 />
               </Field>
             )}
+            {terminals.length > 0 ? (
+              <Field label={t('terminal')}>
+                <Select
+                  value={draft.terminalId || ALL}
+                  onValueChange={(value) =>
+                    setDraft({ ...draft, terminalId: value === ALL ? '' : value })
+                  }
+                >
+                  <SelectTrigger aria-label={t('terminal')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL}>{t('allTerminals')}</SelectItem>
+                    {terminals.map((terminal) => (
+                      <SelectItem key={terminal.id} value={terminal.id}>
+                        {terminal.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={navigating}>
@@ -218,6 +256,16 @@ export function AuditLog({
                 <RotateCcwIcon /> {t('reset')}
               </Button>
             ) : null}
+            <Button asChild variant="outline" className="ml-auto">
+              <a href={exportHref('csv')} download data-testid="audit-export-csv">
+                <DownloadIcon /> {t('exportCsv')}
+              </a>
+            </Button>
+            <Button asChild variant="outline">
+              <a href={exportHref('json')} download>
+                <DownloadIcon /> {t('exportJson')}
+              </a>
+            </Button>
           </div>
         </form>
       </Card>

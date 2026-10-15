@@ -212,7 +212,10 @@
       "terminal": "Device",
       "user": "Person",
       "phone_pairing_code": "Code for service phones"
-    }
+    },
+    "allTerminals": "All devices",
+    "exportCsv": "Export CSV",
+    "exportJson": "Export JSON"
   },
   "auditActions": {
     "order": {

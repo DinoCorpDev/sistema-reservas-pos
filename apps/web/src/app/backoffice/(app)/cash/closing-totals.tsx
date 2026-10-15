@@ -15,7 +15,12 @@ export async function ClosingTotals({ totals }: { totals: DailyClosingTotals }) 
   const t = await getTranslations('cash.totals');
   const tm = await getTranslations('posPayment.methods');
   return (
-    <div className="grid gap-4 lg:grid-cols-2 print:grid-cols-1">
+    <div
+      className="grid gap-4 lg:grid-cols-2 print:grid-cols-1"
+      data-testid="closing-totals"
+      data-sales-rappen={totals.grossSalesRappen}
+      data-tax-rappen={totals.byTaxRate.reduce((sum, rate) => sum + rate.taxRappen, 0)}
+    >
       <Card>
         <CardHeader>
           <CardTitle>{t('turnover', { amount: chf(totals.grossSalesRappen) })}</CardTitle>

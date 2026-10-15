@@ -39,8 +39,9 @@ export function TopBar({
   const [menuOpen, setMenuOpen] = useState(false);
   const current = locations.find((l) => l.id === locationId);
 
+  // A printed report (or one saved as PDF) carries the page only (RF-F03).
   return (
-    <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
+    <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 border-b bg-background/95 px-4 backdrop-blur print:hidden">
       <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
         <DialogTrigger asChild>
           <Button variant="ghost" size="icon" className="lg:hidden" aria-label={t('overview')}>

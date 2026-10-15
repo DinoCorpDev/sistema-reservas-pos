@@ -3,6 +3,7 @@
 import { Tooltip } from '@pos/ui/tooltip';
 import { cn } from '@pos/ui/utils';
 import {
+  ChartColumnIcon,
   CloudAlertIcon,
   ContactIcon,
   FolderTreeIcon,
@@ -37,6 +38,12 @@ const SECTIONS: NavItem[][] = [
   [
     { href: '/backoffice', key: 'overview', icon: LayoutDashboardIcon },
     { href: '/backoffice/cash', key: 'cash', icon: WalletIcon, permission: 'report.view' },
+    {
+      href: '/backoffice/reports',
+      key: 'reports',
+      icon: ChartColumnIcon,
+      permission: 'report.view',
+    },
   ],
   [
     { href: '/backoffice/location', key: 'location', icon: StoreIcon },
