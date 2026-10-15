@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { auth } from '@/auth';
 import { logoutStaff } from './actions';
+import { ConsoleNav } from './console-nav';
 
 /** Support console guard and shell: DINOLABS staff only (RF-A10, DEC-017). */
 export default async function SupportConsoleLayout({ children }: { children: ReactNode }) {
@@ -17,6 +18,7 @@ export default async function SupportConsoleLayout({ children }: { children: Rea
       <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
         <LifeBuoyIcon className="size-6 text-primary" aria-hidden />
         <span className="font-semibold">{t('title')}</span>
+        <ConsoleNav />
         <div className="ml-auto flex items-center gap-3">
           <span className="hidden text-sm text-muted-foreground sm:inline">
             {t('signedInAs', { name: session.user.name ?? '' })}

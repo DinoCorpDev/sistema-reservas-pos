@@ -362,7 +362,50 @@
     "backToBackoffice": "Zum Backoffice",
     "leave": "Verlassen",
     "left": "Organisation verlassen.",
-    "staffError": "Ihr Support-Konto ist unbekannt oder deaktiviert."
+    "staffError": "Ihr Support-Konto ist unbekannt oder deaktiviert.",
+    "nav": {
+      "label": "Konsole",
+      "organizations": "Organisationen",
+      "status": "Status"
+    },
+    "status": {
+      "title": "Plattformstatus",
+      "refreshed": "Geprüft {time} · alle 30 s aktualisiert",
+      "alerts": "Offene Alarme",
+      "noAlerts": "Alles in Ordnung: keine offenen Alarme.",
+      "since": "seit {time}",
+      "never": "nie",
+      "failed": "fehlgeschlagen",
+      "jobs": {
+        "backup": "Letztes Backup",
+        "restoreTest": "Letzter Wiederherstellungstest",
+        "archive": "Letztes Rechtsarchiv"
+      },
+      "outbox": "Outbox",
+      "pending": "{count, plural, =0 {Aktuell} other {# ausstehend}}",
+      "training": "Übung",
+      "conflicts": "{count, plural, one {# Konflikt} other {# Konflikte}}",
+      "devices": "Geräte",
+      "version": "Version",
+      "lastSeen": "Letztes Signal",
+      "hub": "Hub",
+      "printers": "Drucker",
+      "state": "Status",
+      "noPrinters": "Keine Drucker.",
+      "error": "Fehler",
+      "printed": "gedruckt {time}",
+      "kinds": {
+        "cloud_down": "Cloud ausgefallen",
+        "hub_offline": "Hub ohne Signal",
+        "printer_error": "Drucker",
+        "sync_conflicts": "Sync-Konflikte",
+        "outbox_lagging": "Outbox im Rückstand",
+        "backup_stale": "Backup veraltet",
+        "backup_failed": "Backup fehlgeschlagen",
+        "restore_test_failed": "Wiederherstellungstest",
+        "archive_failed": "Rechtsarchiv"
+      }
+    }
   },
   "onboarding": {
     "start": "Neues Restaurant",

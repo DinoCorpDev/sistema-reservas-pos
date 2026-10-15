@@ -1,4 +1,4 @@
-import type { HealthIssue, HealthSnapshot, JobRunSummary } from '@pos/core';
+import { type HealthIssue, healthIssues, type HealthSnapshot, type JobRunSummary } from '@pos/core';
 import { schema as s } from '@pos/db';
 import { and, asc, count, desc, eq, inArray, isNull, max, min, sql } from 'drizzle-orm';
 import type { ServiceDeps } from '../shared';
@@ -221,16 +221,8 @@ export async function markNotified(
 
 export interface PlatformStatusDto {
   checkedAt: string;
-  alerts: {
-    id: string;
-    kind: string;
-    severity: string;
-    subject: string;
-    detail: string | null;
-    since: string;
-    openedAt: string;
-    organizationId: string | null;
-  }[];
+  /** The problems right now, computed on every load (the monitor e-mails the same ones). */
+  alerts: (HealthIssue & { notifiedAt: string | null })[];
   locations: (HealthSnapshot['locations'][number] & {
     devices: {
       terminalId: string;
@@ -243,7 +235,10 @@ export interface PlatformStatusDto {
   jobs: HealthSnapshot['jobs'];
 }
 
-/** `/support` › Status: open alerts and, per location, hubs, devices with versions, printers. */
+/**
+ * `/support` › Status: the problems right now (live, the same rule as the monitor's e-mails, with
+ * when support was told) and, per location, hubs, devices with versions and printers.
+ */
 export async function platformStatus(
   deps: ServiceDeps,
   staff: { staffId: string },
@@ -253,7 +248,7 @@ export async function platformStatus(
     cloud: { healthy: true, detail: null },
     expectBackups: process.env.MONITOR_EXPECT_BACKUPS !== 'false',
   });
-  const [alerts, devices] = await Promise.all([
+  const [notified, devices] = await Promise.all([
     deps.db
       .select()
       .from(s.platformAlerts)
@@ -283,15 +278,9 @@ export async function platformStatus(
   const newest = (a: Date | null, b: Date | null) => (a && b ? (a > b ? a : b) : (a ?? b));
   return {
     checkedAt: snapshot.now,
-    alerts: alerts.map((alert) => ({
-      id: alert.id,
-      kind: alert.kind,
-      severity: alert.severity,
-      subject: alert.subject,
-      detail: alert.detail,
-      since: alert.since.toISOString(),
-      openedAt: alert.openedAt.toISOString(),
-      organizationId: alert.organizationId,
+    alerts: healthIssues(snapshot).map((issue) => ({
+      ...issue,
+      notifiedAt: iso(notified.find((alert) => alert.key === issue.key)?.notifiedAt),
     })),
     locations: snapshot.locations.map((location) => ({
       ...location,

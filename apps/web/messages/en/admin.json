@@ -362,7 +362,50 @@
     "backToBackoffice": "Go to backoffice",
     "leave": "Leave",
     "left": "Left the organisation.",
-    "staffError": "Your support account is unknown or deactivated."
+    "staffError": "Your support account is unknown or deactivated.",
+    "nav": {
+      "label": "Console",
+      "organizations": "Organizations",
+      "status": "Status"
+    },
+    "status": {
+      "title": "Platform status",
+      "refreshed": "Checked {time} · refreshes every 30 s",
+      "alerts": "Open alerts",
+      "noAlerts": "All good: no open alerts.",
+      "since": "since {time}",
+      "never": "never",
+      "failed": "failed",
+      "jobs": {
+        "backup": "Last backup",
+        "restoreTest": "Last restore test",
+        "archive": "Last legal archive"
+      },
+      "outbox": "Outbox",
+      "pending": "{count, plural, =0 {Up to date} other {# pending}}",
+      "training": "Practice",
+      "conflicts": "{count, plural, one {# conflict} other {# conflicts}}",
+      "devices": "Devices",
+      "version": "Version",
+      "lastSeen": "Last signal",
+      "hub": "hub",
+      "printers": "Printers",
+      "state": "State",
+      "noPrinters": "No printers.",
+      "error": "error",
+      "printed": "printed {time}",
+      "kinds": {
+        "cloud_down": "Cloud down",
+        "hub_offline": "Hub offline",
+        "printer_error": "Printer",
+        "sync_conflicts": "Sync conflicts",
+        "outbox_lagging": "Outbox lagging",
+        "backup_stale": "Backup late",
+        "backup_failed": "Backup failed",
+        "restore_test_failed": "Restore test",
+        "archive_failed": "Legal archive"
+      }
+    }
   },
   "onboarding": {
     "start": "New restaurant",

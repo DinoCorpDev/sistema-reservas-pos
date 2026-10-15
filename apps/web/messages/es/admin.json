@@ -362,7 +362,50 @@
     "backToBackoffice": "Ir al backoffice",
     "leave": "Salir",
     "left": "Salió de la organización.",
-    "staffError": "Su cuenta de soporte no existe o está desactivada."
+    "staffError": "Su cuenta de soporte no existe o está desactivada.",
+    "nav": {
+      "label": "Consola",
+      "organizations": "Organizaciones",
+      "status": "Estado"
+    },
+    "status": {
+      "title": "Estado de la plataforma",
+      "refreshed": "Revisado {time} · se actualiza cada 30 s",
+      "alerts": "Alertas abiertas",
+      "noAlerts": "Todo en orden: no hay alertas abiertas.",
+      "since": "desde {time}",
+      "never": "nunca",
+      "failed": "falló",
+      "jobs": {
+        "backup": "Último respaldo",
+        "restoreTest": "Última prueba de restauración",
+        "archive": "Último archivo legal"
+      },
+      "outbox": "Outbox",
+      "pending": "{count, plural, =0 {Al día} one {# pendiente} other {# pendientes}}",
+      "training": "Práctica",
+      "conflicts": "{count, plural, one {# conflicto} other {# conflictos}}",
+      "devices": "Aparatos",
+      "version": "Versión",
+      "lastSeen": "Última señal",
+      "hub": "hub",
+      "printers": "Impresoras",
+      "state": "Estado",
+      "noPrinters": "Sin impresoras.",
+      "error": "error",
+      "printed": "imprimió {time}",
+      "kinds": {
+        "cloud_down": "Nube caída",
+        "hub_offline": "Hub sin señal",
+        "printer_error": "Impresora",
+        "sync_conflicts": "Conflictos de sync",
+        "outbox_lagging": "Outbox atrasado",
+        "backup_stale": "Respaldo atrasado",
+        "backup_failed": "Respaldo fallido",
+        "restore_test_failed": "Prueba de restauración",
+        "archive_failed": "Archivo legal"
+      }
+    }
   },
   "onboarding": {
     "start": "Nuevo restaurante",

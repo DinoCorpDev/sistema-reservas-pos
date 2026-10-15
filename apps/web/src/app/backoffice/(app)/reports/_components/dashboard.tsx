@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@pos/ui/card';
 import Link from 'next/link';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { currentActor, deps } from '@/server/actor';
-import { AutoRefresh } from './auto-refresh';
+import { AutoRefresh } from '@/components/auto-refresh';
 import { Stat } from './stat';
 
 const chf = (value: number) => formatChf(rappen(value));

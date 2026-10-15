@@ -362,7 +362,50 @@
     "backToBackoffice": "Torna al backoffice",
     "leave": "Lascia",
     "left": "Organizzazione lasciata.",
-    "staffError": "Il suo account di supporto è sconosciuto o disattivato."
+    "staffError": "Il suo account di supporto è sconosciuto o disattivato.",
+    "nav": {
+      "label": "Console",
+      "organizations": "Organizzazioni",
+      "status": "Stato"
+    },
+    "status": {
+      "title": "Stato della piattaforma",
+      "refreshed": "Verificato {time} · aggiornato ogni 30 s",
+      "alerts": "Allarmi aperti",
+      "noAlerts": "Tutto a posto: nessun allarme aperto.",
+      "since": "da {time}",
+      "never": "mai",
+      "failed": "fallito",
+      "jobs": {
+        "backup": "Ultimo backup",
+        "restoreTest": "Ultimo test di ripristino",
+        "archive": "Ultimo archivio legale"
+      },
+      "outbox": "Outbox",
+      "pending": "{count, plural, =0 {Aggiornato} other {# in attesa}}",
+      "training": "Esercizio",
+      "conflicts": "{count, plural, one {# conflitto} other {# conflitti}}",
+      "devices": "Dispositivi",
+      "version": "Versione",
+      "lastSeen": "Ultimo segnale",
+      "hub": "hub",
+      "printers": "Stampanti",
+      "state": "Stato",
+      "noPrinters": "Nessuna stampante.",
+      "error": "errore",
+      "printed": "stampato {time}",
+      "kinds": {
+        "cloud_down": "Cloud non disponibile",
+        "hub_offline": "Hub senza segnale",
+        "printer_error": "Stampante",
+        "sync_conflicts": "Conflitti di sync",
+        "outbox_lagging": "Outbox in ritardo",
+        "backup_stale": "Backup in ritardo",
+        "backup_failed": "Backup fallito",
+        "restore_test_failed": "Test di ripristino",
+        "archive_failed": "Archivio legale"
+      }
+    }
   },
   "onboarding": {
     "start": "Nuovo ristorante",
