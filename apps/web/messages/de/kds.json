@@ -28,6 +28,13 @@
         "served": "Serviert",
         "voided": "Storniert"
       }
+    },
+    "chooseStation": {
+      "title": "Welche Station?",
+      "hint": "Wählen Sie, wo Sie arbeiten. Danach geben Sie Ihren PIN ein.",
+      "none": "Es ist keine aktive Station eingerichtet. Legen Sie sie im Backoffice unter Geräte & Stationen an.",
+      "station": "Station",
+      "other": "Andere Station wählen"
     }
   }
 }

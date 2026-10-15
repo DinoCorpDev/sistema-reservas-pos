@@ -138,13 +138,17 @@ async function push(target: string, deviceToken: string): Promise<void> {
 
 /**
  * Every device tells whether someone unlocked it with their PIN: kitchen displays for the routing
- * (DEC-033), every device so a person is signed in on one device at a time (DEC-040).
+ * (DEC-033), every device so a person is signed in on one device at a time (DEC-040). A kitchen
+ * display that chose its station at sign-in says which one (DEC-042).
  */
 function presenceHeaders(): Record<string, string> {
-  const user = getPos().user;
-  return user
-    ? { 'x-presence': 'unlocked', 'x-presence-user': user.id }
-    : { 'x-presence': 'locked' };
+  const { user, kitchenStationId } = getPos();
+  if (!user) return { 'x-presence': 'locked' };
+  return {
+    'x-presence': 'unlocked',
+    'x-presence-user': user.id,
+    ...(kitchenStationId ? { 'x-presence-station': kitchenStationId } : {}),
+  };
 }
 
 /** Pulls the location's operations after this node's cursor; returns its config version. */

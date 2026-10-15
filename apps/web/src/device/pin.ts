@@ -194,7 +194,8 @@ const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, 
 
 /** Locks the terminal: the next person enters their own PIN. */
 export function lockTerminal(): void {
-  usePos.setState({ user: null });
+  // A kitchen display that chose its station asks again for the next person (DEC-042).
+  usePos.setState({ user: null, kitchenStationId: null });
   // Tell the hub and the cloud at once: the person may sign in on another device (DEC-040).
   requestSync();
 }

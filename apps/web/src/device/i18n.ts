@@ -16,6 +16,16 @@ export type DeviceLanguage = (typeof DEVICE_LANGUAGES)[number];
 export const asDeviceLanguage = (value: string | null | undefined): DeviceLanguage =>
   (DEVICE_LANGUAGES as readonly string[]).includes(value ?? '') ? (value as DeviceLanguage) : 'de';
 
+/**
+ * Before the device knows its location: the language chosen on the start menu (`NEXT_LOCALE`
+ * cookie), else the browser's.
+ */
+export function chosenLanguage(): string {
+  if (typeof document === 'undefined') return 'de';
+  const cookie = /(?:^|;\s*)NEXT_LOCALE=([a-z]{2})/.exec(document.cookie)?.[1];
+  return cookie ?? navigator.language.slice(0, 2);
+}
+
 function merge(base: Messages, override: Messages): Messages {
   const result: Messages = { ...base };
   for (const [key, value] of Object.entries(override)) {

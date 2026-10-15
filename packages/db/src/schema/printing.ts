@@ -50,6 +50,8 @@ export const terminalPresence = mysqlTable(
     locationId: locationId(),
     unlocked: boolean('unlocked').notNull(),
     userId: uuid('user_id'),
+    /** The station a kitchen display chose at sign-in (DEC-042); null when locked or fixed. */
+    stationId: uuid('station_id'),
     /** Server time of the terminal's last pull. */
     lastSeenAt: utcDatetime('last_seen_at').notNull(),
   },

@@ -1,0 +1,16 @@
+{
+  "home": {
+    "pos": {
+      "title": "Caja y servicio",
+      "description": "Plano de mesas, pedidos, cobro (tablet y handheld)"
+    },
+    "kds": {
+      "title": "Cocina (KDS)",
+      "description": "Comandas por estación: cocina, bar, pastelería…"
+    },
+    "backoffice": {
+      "title": "Backoffice",
+      "description": "Configuración, catálogo, MWST, caja, reportes"
+    }
+  }
+}

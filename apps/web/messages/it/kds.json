@@ -28,6 +28,13 @@
         "served": "Servito",
         "voided": "Stornato"
       }
+    },
+    "chooseStation": {
+      "title": "Quale postazione?",
+      "hint": "Scegliete dove lavorate, poi inserite il vostro PIN.",
+      "none": "Non è configurata nessuna postazione attiva. Createla nel backoffice in Dispositivi & postazioni.",
+      "station": "Postazione",
+      "other": "Scegli un'altra postazione"
     }
   }
 }

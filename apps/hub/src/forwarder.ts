@@ -83,6 +83,7 @@ export async function pullFromCloud(
         terminalId: string;
         unlocked: boolean;
         userId: string | null;
+        stationId?: string | null;
         lastSeenAt: string;
       }[];
     }>(cloud, `/sync/pull?after=${cursor}&limit=500`);

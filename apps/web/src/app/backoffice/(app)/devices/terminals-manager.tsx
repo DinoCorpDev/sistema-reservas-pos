@@ -168,7 +168,11 @@ export function TerminalsManager({
                 </TableCell>
                 <TableCell>{t(`types.${terminal.type}`)}</TableCell>
                 <TableCell className="font-mono">{terminal.orderNumberPrefix}</TableCell>
-                <TableCell>{stationName(terminal.kitchenStationId)}</TableCell>
+                <TableCell>
+                  {terminal.type === 'kds' && !terminal.kitchenStationId
+                    ? t('stationAtSignIn')
+                    : stationName(terminal.kitchenStationId)}
+                </TableCell>
                 <TableCell>{printerName(terminal.receiptPrinterId)}</TableCell>
                 <TableCell>{pairingState(terminal)}</TableCell>
                 <TableCell className="whitespace-nowrap">
@@ -403,7 +407,10 @@ function TerminalForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NONE}>{tc('none')}</SelectItem>
+            {/* A kitchen display without a fixed station asks for one at sign-in (DEC-042). */}
+            <SelectItem value={NONE}>
+              {form.type === 'kds' ? t('stationAtSignIn') : tc('none')}
+            </SelectItem>
             {selectable(stations, fromOption(initial.kitchenStationId)).map((station) => (
               <SelectItem key={station.id} value={station.id}>
                 {station.name}

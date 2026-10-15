@@ -24,6 +24,7 @@ export async function recordPresence(
     terminalId: string;
     unlocked: boolean;
     userId: string | null;
+    stationId?: string | null;
     lastSeenAt: Date;
   }[],
 ): Promise<void> {
@@ -31,6 +32,7 @@ export async function recordPresence(
     const values = {
       unlocked: entry.unlocked,
       userId: entry.userId,
+      stationId: entry.unlocked ? (entry.stationId ?? null) : null,
       lastSeenAt: entry.lastSeenAt,
     };
     await db
@@ -46,6 +48,7 @@ export async function recordPresence(
         set: {
           unlocked: sql`if(values(last_seen_at) >= last_seen_at, values(unlocked), unlocked)`,
           userId: sql`if(values(last_seen_at) >= last_seen_at, values(user_id), user_id)`,
+          stationId: sql`if(values(last_seen_at) >= last_seen_at, values(station_id), station_id)`,
           lastSeenAt: sql`greatest(last_seen_at, values(last_seen_at))`,
         },
       });
@@ -57,12 +60,15 @@ export async function listPresence(
   db: Database,
   scope: SyncScope,
   now = new Date(),
-): Promise<(PresenceEntry & { userId: string | null; terminalName: string })[]> {
+): Promise<
+  (PresenceEntry & { userId: string | null; stationId: string | null; terminalName: string })[]
+> {
   const rows = await db
     .select({
       terminalId: s.terminalPresence.id,
       unlocked: s.terminalPresence.unlocked,
       userId: s.terminalPresence.userId,
+      stationId: s.terminalPresence.stationId,
       lastSeenAt: s.terminalPresence.lastSeenAt,
       terminalName: s.terminals.name,
     })

@@ -23,12 +23,13 @@ test('a deactivated POS or KDS locks itself and comes back with a new code', asy
   const kds = await kdsContext.newPage();
   const office = await officeContext.newPage();
   try {
-    // A kitchen display of its own ("DR"), paired and waiting for a PIN.
+    // A kitchen display of its own ("DR"), paired; without a fixed station it asks for one
+    // before the PIN (DEC-042).
     const kdsCode = await terminalPairingCode('DR', { name: KDS_NAME, type: 'kds' });
     await kds.goto('/kds');
     await kds.getByLabel('Kopplungscode').fill(kdsCode);
     await kds.getByRole('button', { name: 'Koppeln' }).click();
-    await expect(kds.getByRole('heading', { name: 'PIN eingeben' })).toBeVisible({
+    await expect(kds.getByRole('heading', { name: 'Welche Station?' })).toBeVisible({
       timeout: 30_000,
     });
 
@@ -81,7 +82,7 @@ test('a deactivated POS or KDS locks itself and comes back with a new code', asy
     await expect(kds.getByTestId('device-revoked')).toContainText('Gerät entkoppelt', {
       timeout: 15_000,
     });
-    await expect(kds.getByRole('heading', { name: 'PIN eingeben' })).toHaveCount(0);
+    await expect(kds.getByRole('heading', { name: 'Welche Station?' })).toHaveCount(0);
 
     // Reactivating it shows the new pairing code at once.
     await row.getByRole('button', { name: 'Gerät aktivieren' }).click();

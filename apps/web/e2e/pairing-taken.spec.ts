@@ -23,7 +23,7 @@ test('a second browser is refused a paired device and goes back to the start men
 
     await alert.getByRole('button', { name: 'Zur Startseite' }).last().click();
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByRole('link', { name: /Küche/ })).toBeVisible();
+    await expect(page.getByTestId('start-kds')).toBeVisible();
   } finally {
     await first.close();
     await second.close();

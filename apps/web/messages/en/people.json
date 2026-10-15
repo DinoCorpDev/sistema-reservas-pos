@@ -19,14 +19,15 @@
       "pos": "POS register",
       "handheld": "Handheld",
       "kds": "Kitchen display (KDS)",
-      "phone": "Service phone"
+      "phone": "Service phone",
+      "hub": "Hub (on-site server)"
     },
     "prefix": "Prefix",
     "prefixLabel": "Prefix for order numbers when offline",
     "prefixHint": "1–4 capital letters or digits, e.g. K1. Unique per location, so order numbers assigned offline are never duplicated.",
     "prefixTaken": "Another device at this location already uses this prefix.",
     "station": "Kitchen station",
-    "stationHint": "For kitchen displays: which station the device shows.",
+    "stationHint": "For kitchen displays: which station the device shows. “Choose at sign-in” asks for the station before the PIN.",
     "receiptPrinter": "Receipt printer",
     "receiptPrinterHint": "Prints this device’s receipts.",
     "pairing": "Pairing",
@@ -56,7 +57,8 @@
     "unpair": "Unpair",
     "unpairTitle": "Unpair {name}?",
     "unpairText": "The device {name} runs on now is signed out at once. Then you can issue a new pairing code and pair {name} on another device. Orders and receipts are kept.",
-    "unpaired": "Device unpaired. It can be paired again now."
+    "unpaired": "Device unpaired. It can be paired again now.",
+    "stationAtSignIn": "Choose at sign-in"
   },
   "stations": {
     "title": "Kitchen stations",

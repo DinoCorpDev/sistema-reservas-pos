@@ -109,6 +109,9 @@ export function registerSyncRoutes(app: ApiApp) {
             description: 'Whether someone is signed in on the device (DEC-033, DEC-040)',
           }),
           'x-presence-user': z.uuid().optional(),
+          'x-presence-station': z.uuid().optional().openapi({
+            description: 'The station a kitchen display chose at sign-in (DEC-042)',
+          }),
         }),
       },
       responses: {
@@ -124,6 +127,7 @@ export function registerSyncRoutes(app: ApiApp) {
                 terminalId: z.uuid(),
                 unlocked: z.boolean(),
                 userId: z.uuid().nullable(),
+                stationId: z.uuid().nullable(),
                 lastSeenAt: z.string(),
                 terminalName: z.string(),
               }),
@@ -144,6 +148,7 @@ export function registerSyncRoutes(app: ApiApp) {
             ? {
                 unlocked: headers['x-presence'] === 'unlocked',
                 userId: headers['x-presence-user'] ?? null,
+                stationId: headers['x-presence-station'] ?? null,
               }
             : null,
         }),

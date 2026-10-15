@@ -1,0 +1,16 @@
+{
+  "home": {
+    "pos": {
+      "title": "Kasse & Service",
+      "description": "Tischplan, Bestellungen, Zahlung (Tablet & Handheld)"
+    },
+    "kds": {
+      "title": "Küche (KDS)",
+      "description": "Bons pro Station: Küche, Bar, Patisserie…"
+    },
+    "backoffice": {
+      "title": "Backoffice",
+      "description": "Einrichtung, Katalog, MWST, Kasse, Berichte"
+    }
+  }
+}

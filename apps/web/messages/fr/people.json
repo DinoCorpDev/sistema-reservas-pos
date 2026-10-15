@@ -19,14 +19,15 @@
       "pos": "Caisse",
       "handheld": "Terminal mobile",
       "kds": "Écran de cuisine (KDS)",
-      "phone": "Téléphone de service"
+      "phone": "Téléphone de service",
+      "hub": "Hub (serveur sur place)"
     },
     "prefix": "Préfixe",
     "prefixLabel": "Préfixe des numéros de commande hors ligne",
     "prefixHint": "1–4 majuscules ou chiffres, p. ex. K1. Unique par établissement, pour que les numéros de commande attribués hors ligne ne soient jamais en double.",
     "prefixTaken": "Ce préfixe est déjà utilisé par un autre appareil de cet établissement.",
     "station": "Poste de cuisine",
-    "stationHint": "Pour les écrans de cuisine : le poste affiché par l’appareil.",
+    "stationHint": "Pour les écrans de cuisine : le poste affiché par l’appareil. « Choisir à la connexion » demande le poste avant le PIN.",
     "receiptPrinter": "Imprimante à tickets",
     "receiptPrinterHint": "Imprime les tickets de cet appareil.",
     "pairing": "Appairage",
@@ -56,7 +57,8 @@
     "unpair": "Dissocier",
     "unpairTitle": "Dissocier {name} ?",
     "unpairText": "L'appareil sur lequel {name} fonctionne maintenant est déconnecté aussitôt. Vous pouvez ensuite créer un nouveau code et appairer {name} sur un autre appareil. Les commandes et les reçus sont conservés.",
-    "unpaired": "Appareil dissocié. Il peut être appairé de nouveau."
+    "unpaired": "Appareil dissocié. Il peut être appairé de nouveau.",
+    "stationAtSignIn": "Choisir à la connexion"
   },
   "stations": {
     "title": "Postes de cuisine",

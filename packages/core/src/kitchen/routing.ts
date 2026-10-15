@@ -9,6 +9,9 @@ import type { ContentLanguage } from '../shared/languages';
  *
  * Without fresh presence data (the POS is offline) nothing is guessed: the items go to their own
  * stations, as the KDS would show them once everyone syncs.
+ *
+ * A display without a fixed station asks for one at sign-in (DEC-042): it attends the station it
+ * reports in its presence, and only while someone is signed in there.
  */
 
 /** A kitchen display not seen for this long is not there (it pulls every 2 s). */
@@ -26,7 +29,8 @@ export interface RoutingStation {
 
 export interface RoutingDisplay {
   terminalId: string;
-  kitchenStationId: string;
+  /** null: the station is chosen at sign-in and reported with the presence (DEC-042). */
+  kitchenStationId: string | null;
 }
 
 export interface PresenceEntry {
@@ -37,6 +41,8 @@ export interface PresenceEntry {
   /** Who is signed in there (DEC-040); null when locked. */
   userId?: string | null;
   terminalName?: string | null;
+  /** The station a display chose at sign-in (DEC-042); null when locked or fixed. */
+  stationId?: string | null;
 }
 
 /** What the last pull said about the displays, and when it arrived (device clock). */
@@ -81,20 +87,21 @@ export function stationAttendance(
   input: Pick<RouteSendInput, 'displays' | 'activePrinterIds' | 'presence' | 'now'>,
 ): StationAttendance {
   if (!station.isActive) return 'inactive';
-  const displays = input.displays.filter((d) => d.kitchenStationId === station.id);
-  if (displays.length === 0) {
-    return station.printerId && input.activePrinterIds.has(station.printerId)
-      ? 'attended'
-      : 'no_output';
+  const fixed = input.displays.filter((d) => d.kitchenStationId === station.id);
+  const choosing = input.displays.filter((d) => d.kitchenStationId === null);
+  if (fixed.length === 0) {
+    if (station.printerId && input.activePrinterIds.has(station.printerId)) return 'attended';
+    if (choosing.length === 0) return 'no_output';
   }
   const presence = input.presence;
   if (!presence || input.now - presence.receivedAt >= PRESENCE_WINDOW_MS) return 'unknown';
   // Ages on the server's clock, plus the time since this device got the answer.
   const sinceReceived = Math.max(0, input.now - presence.receivedAt);
   const serverNow = Date.parse(presence.serverTime);
-  const someone = displays.some((display) => {
+  const someone = [...fixed, ...choosing].some((display) => {
     const entry = presence.entries.find((e) => e.terminalId === display.terminalId);
     if (!entry?.unlocked) return false;
+    if (display.kitchenStationId === null && entry.stationId !== station.id) return false;
     return serverNow - Date.parse(entry.lastSeenAt) + sinceReceived < PRESENCE_WINDOW_MS;
   });
   return someone ? 'attended' : 'nobody_there';

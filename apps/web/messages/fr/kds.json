@@ -28,6 +28,13 @@
         "served": "Servi",
         "voided": "Annulé"
       }
+    },
+    "chooseStation": {
+      "title": "Quel poste ?",
+      "hint": "Choisissez où vous travaillez, puis saisissez votre PIN.",
+      "none": "Aucun poste actif n'est configuré. Créez-le dans le backoffice sous Appareils & postes.",
+      "station": "Poste",
+      "other": "Choisir un autre poste"
     }
   }
 }

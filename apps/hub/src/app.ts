@@ -63,7 +63,13 @@ export function createApp(deps: HubDependencies) {
       '/api/v1/*',
       cors({
         origin: deps.allowedOrigins && deps.allowedOrigins.length > 0 ? deps.allowedOrigins : '*',
-        allowHeaders: ['content-type', 'x-terminal-token', 'x-presence', 'x-presence-user'],
+        allowHeaders: [
+          'content-type',
+          'x-terminal-token',
+          'x-presence',
+          'x-presence-user',
+          'x-presence-station',
+        ],
         allowMethods: ['GET', 'POST', 'OPTIONS'],
         maxAge: 600,
       }),

@@ -29,6 +29,8 @@ export const presenceReportSchema = z.object({
         terminalId: z.uuid(),
         unlocked: z.boolean(),
         userId: z.uuid().nullable(),
+        /** The station a display chose at sign-in (DEC-042). Absent from an older hub. */
+        stationId: z.uuid().nullable().default(null),
         lastSeenAt: z.iso.datetime({ offset: true }),
       }),
     )

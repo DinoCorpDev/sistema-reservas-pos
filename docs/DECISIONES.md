@@ -374,10 +374,31 @@ Antes, un código nuevo vinculaba el dispositivo en el aparato nuevo y el anteri
   - el botón de desvincular en la propia Kasse.
 
   Después se genera el código y se vincula el aparato nuevo. Las órdenes y los recibos se conservan.
+
 - **Para más aparatos** se crea un dispositivo nuevo en el backoffice.
 - **El hub y los teléfonos de meseros siguen igual:**
   - el hub lo instala un administrador, y reinstalarlo lo vuelve a vincular;
   - el teléfono de un mesero lo reemplaza su nuevo teléfono (DEC-036).
+
+## DEC-042 · La pantalla de cocina pregunta la estación antes del PIN; el menú inicial en varios idiomas
+
+Juan pidió que sea a prueba de errores: al tocar «Küche» el sistema pregunta qué estación (Küche, Bar, Patisserie…), y el PIN se ingresa ya sabiendo dónde se trabaja. También pidió el menú inicial en varios idiomas, porque el producto va para cualquier país.
+
+- **Los dos modos.** En el backoffice (Geräte), cada pantalla de cocina:
+  - se fija a una estación: va directo al PIN, con el nombre de la estación en grande;
+  - o queda en «Beim Anmelden wählen»: antes del PIN muestra las estaciones activas con botones grandes, y el PIN muestra en grande la estación elegida, con la opción de cambiarla.
+- **Al bloquear,** la pantalla vuelve a preguntar la estación para la persona siguiente.
+- **Quién entra:** cualquiera con el permiso de cocina (`kitchen.operate`) entra a cualquier estación. Por defecto lo tienen el rol de cocina, el gerente y el admin. Un mesero sigue rechazado. Juan prefirió no atar personas a estaciones.
+- **El ruteo sigue a la pantalla.**
+  - Cada sincronización informa la estación elegida (`x-presence-station`, columna `terminal_presence.station_id`), y el hub la pasa a la nube.
+  - La caja manda cada categoría a la estación que alguien eligió: bebidas al Bar, postres a Patisserie, comidas a Küche.
+  - Una estación que nadie eligió va a su reemplazo, como en DEC-033.
+- **La lista de verificación (RF-A11):** una pantalla que elige al entrar cuenta como salida para todas las estaciones.
+- **Menú inicial en 5 idiomas** (DE, FR, IT, EN, ES), con selector:
+  - arranca en el idioma del navegador;
+  - la elección queda en la cookie `NEXT_LOCALE`, que también usan el login del backoffice y las pantallas de vinculación de la caja y la cocina.
+  - Sumar otro idioma es agregar su carpeta en `apps/web/messages` y su código en `UI_LOCALES`.
+- **Demo:** se agrega «KDS Allgemein» (D4), que pregunta la estación. Las tres pantallas fijas siguen igual.
 
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 

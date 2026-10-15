@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { configureDevice } from '@/device/app';
 import { bootDevice } from '@/device/boot';
-import { asDeviceLanguage, deviceMessages, type Messages } from '@/device/i18n';
+import { asDeviceLanguage, chosenLanguage, deviceMessages, type Messages } from '@/device/i18n';
 import { usePos } from '@/device/store';
 import { PairingScreen } from '@/device/ui/pairing-screen';
 import { RevokedScreen } from '@/device/ui/revoked-screen';
@@ -26,9 +26,7 @@ export function PosApp() {
   const user = usePos((state) => state.user);
   const revoked = usePos((state) => state.revoked);
   const language = asDeviceLanguage(
-    user?.uiLanguage ??
-      bootstrap?.location.defaultLanguage ??
-      (typeof navigator === 'undefined' ? 'de' : navigator.language.slice(0, 2)),
+    user?.uiLanguage ?? bootstrap?.location.defaultLanguage ?? chosenLanguage(),
   );
   const [messages, setMessages] = useState<{ language: string; messages: Messages } | null>(null);
 

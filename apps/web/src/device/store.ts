@@ -52,6 +52,11 @@ export interface PosState {
   presence: PresenceSnapshot | null;
   /** Deactivated or unpaired in the backoffice: nothing works until a new code (DEC-035). */
   revoked: boolean;
+  /**
+   * The station chosen before the PIN on a kitchen display without a fixed one (DEC-042); it goes
+   * with the presence and is cleared when the display locks.
+   */
+  kitchenStationId: string | null;
 }
 
 /**
@@ -70,6 +75,7 @@ export const usePos = create<PosState>(() => ({
   printers: {},
   presence: null,
   revoked: false,
+  kitchenStationId: null,
 }));
 
 export const getPos = () => usePos.getState();

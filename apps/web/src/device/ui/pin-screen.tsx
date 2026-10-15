@@ -2,7 +2,7 @@
 
 import { Button } from '@pos/ui/button';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isPhone } from '../app';
 import { unlock } from '../pin';
 import { usePos } from '../store';
@@ -12,8 +12,11 @@ import { StatusIndicator } from './status-indicator';
 
 const MAX_PIN = 6;
 
-/** The PIN alone identifies the person, with or without network (RF-A06, DEC-023). */
-export function PinScreen() {
+/**
+ * The PIN alone identifies the person, with or without network (RF-A06, DEC-023). `heading` goes
+ * above the pad: the kitchen display shows its station there (DEC-042).
+ */
+export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
   const t = useTranslations('pos.pin');
   const location = usePos((state) => state.bootstrap?.location.name);
   const device = usePos((state) => state.device);
@@ -54,6 +57,7 @@ export function PinScreen() {
         <p className="text-sm text-muted-foreground">{terminal}</p>
         <StatusIndicator className="mt-2" />
       </div>
+      {heading}
       <h1 className="text-center text-2xl font-semibold">{t('title')}</h1>
       <div
         className="flex justify-center gap-3"

@@ -1,0 +1,16 @@
+{
+  "home": {
+    "pos": {
+      "title": "Caisse & service",
+      "description": "Plan de salle, commandes, paiement (tablette et terminal mobile)"
+    },
+    "kds": {
+      "title": "Cuisine (KDS)",
+      "description": "Bons par poste : cuisine, bar, pâtisserie…"
+    },
+    "backoffice": {
+      "title": "Backoffice",
+      "description": "Configuration, catalogue, TVA, caisse, rapports"
+    }
+  }
+}

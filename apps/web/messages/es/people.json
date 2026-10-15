@@ -19,14 +19,15 @@
       "pos": "Caja",
       "handheld": "Dispositivo móvil",
       "kds": "Pantalla de cocina (KDS)",
-      "phone": "Teléfono de mesero"
+      "phone": "Teléfono de mesero",
+      "hub": "Hub (servidor del local)"
     },
     "prefix": "Prefijo",
     "prefixLabel": "Prefijo para números de pedido sin internet",
     "prefixHint": "De 1 a 4 letras mayúsculas o dígitos, p. ej. K1. Único por sede, para que los números de pedido asignados sin conexión nunca se repitan.",
     "prefixTaken": "Otro dispositivo de esta sede ya usa este prefijo.",
     "station": "Estación de cocina",
-    "stationHint": "Para pantallas de cocina: qué estación muestra el dispositivo.",
+    "stationHint": "Para pantallas de cocina: qué estación muestra el dispositivo. «Elegir al iniciar sesión» pregunta la estación antes del PIN.",
     "receiptPrinter": "Impresora de recibos",
     "receiptPrinterHint": "Imprime los recibos de este dispositivo.",
     "pairing": "Vinculación",
@@ -56,7 +57,8 @@
     "unpair": "Desvincular",
     "unpairTitle": "¿Desvincular {name}?",
     "unpairText": "El aparato donde funciona {name} ahora se cierra de inmediato. Después puede generar un código nuevo y vincular {name} en otro aparato. Las órdenes y los recibos se conservan.",
-    "unpaired": "Dispositivo desvinculado. Ya se puede volver a vincular."
+    "unpaired": "Dispositivo desvinculado. Ya se puede volver a vincular.",
+    "stationAtSignIn": "Elegir al iniciar sesión"
   },
   "stations": {
     "title": "Estaciones de cocina",

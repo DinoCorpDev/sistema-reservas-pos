@@ -344,6 +344,55 @@ describe('stations nobody attends (DEC-033)', () => {
     );
   });
 
+  it('a display without a fixed station says which one it chose; locked, none (DEC-042)', async () => {
+    const shared = await pairTerminal(api, admin, { prefix: 'KD5', type: 'kds' });
+    const headers = { 'x-terminal-token': shared.deviceToken };
+    await pullAs({
+      ...headers,
+      'x-presence': 'unlocked',
+      'x-presence-user': demo.users.kitchen.id,
+      'x-presence-station': station.bar,
+    });
+    let seen = await pullAs(pos.headers);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({ terminalId: shared.id, unlocked: true, stationId: station.bar }),
+    );
+    const bootstrap = await json<{
+      kitchenDisplays: { terminalId: string; kitchenStationId: string | null }[];
+    }>(await api.request('GET', '/pos/bootstrap', { headers: pos.headers }));
+    expect(bootstrap.kitchenDisplays).toContainEqual(
+      expect.objectContaining({ terminalId: shared.id, kitchenStationId: null }),
+    );
+
+    await pullAs({ ...headers, 'x-presence': 'locked', 'x-presence-station': station.bar });
+    seen = await pullAs(pos.headers);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({ terminalId: shared.id, unlocked: false, stationId: null }),
+    );
+
+    // Through the hub as well; an older hub that does not send it means no station.
+    const now = new Date();
+    const reported = await api.request('POST', '/sync/presence', {
+      headers: hubToken,
+      body: {
+        entries: [
+          {
+            terminalId: shared.id,
+            unlocked: true,
+            userId: demo.users.kitchen.id,
+            stationId: station.kitchen,
+            lastSeenAt: now.toISOString(),
+          },
+        ],
+      },
+    });
+    expect(await json(reported)).toEqual({ stored: 1 });
+    seen = await pullAs(pos.headers);
+    expect(seen.presence).toContainEqual(
+      expect.objectContaining({ terminalId: shared.id, stationId: station.kitchen }),
+    );
+  });
+
   it('the hub hands over its displays only; a late report never wins; others never see it', async () => {
     const barDisplay = await pairTerminal(api, admin, {
       prefix: 'KD3',

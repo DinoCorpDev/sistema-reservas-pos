@@ -30,7 +30,7 @@ export async function pullOperations(
     after: number;
     limit?: number;
     /** Whether someone is signed in on the device: kitchen routing (DEC-033), one session per person (DEC-040). */
-    presence?: { unlocked: boolean; userId: string | null } | null;
+    presence?: { unlocked: boolean; userId: string | null; stationId?: string | null } | null;
   },
 ): Promise<{
   operations: PulledOperation[];
@@ -50,6 +50,7 @@ export async function pullOperations(
         terminalId,
         unlocked: query.presence.unlocked,
         userId: query.presence.unlocked ? query.presence.userId : null,
+        stationId: query.presence.stationId ?? null,
         lastSeenAt: now,
       },
     ]);

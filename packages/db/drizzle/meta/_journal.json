@@ -92,6 +92,13 @@
       "when": 1792014800620,
       "tag": "0012_table_ownership_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1792081800310,
+      "tag": "0013_kds_station_presence",
+      "breakpoints": true
     }
   ]
 }

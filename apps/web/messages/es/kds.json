@@ -28,6 +28,13 @@
         "served": "Servido",
         "voided": "Anulado"
       }
+    },
+    "chooseStation": {
+      "title": "¿Qué estación?",
+      "hint": "Elija dónde trabaja y después ingrese su PIN.",
+      "none": "No hay ninguna estación activa. Créela en el backoffice, en Dispositivos y estaciones.",
+      "station": "Estación",
+      "other": "Elegir otra estación"
     }
   }
 }

@@ -28,6 +28,13 @@
         "served": "Served",
         "voided": "Voided"
       }
+    },
+    "chooseStation": {
+      "title": "Which station?",
+      "hint": "Choose where you work, then enter your PIN.",
+      "none": "No active station is set up. Create one in the backoffice under Devices & stations.",
+      "station": "Station",
+      "other": "Choose another station"
     }
   }
 }

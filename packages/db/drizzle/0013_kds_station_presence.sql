@@ -1,0 +1,1 @@
+ALTER TABLE `terminal_presence` ADD `station_id` binary(16);

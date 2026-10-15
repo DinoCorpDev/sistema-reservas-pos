@@ -132,6 +132,70 @@ describe('who is at a station (DEC-033)', () => {
   });
 });
 
+describe('a display that chooses its station at sign-in (DEC-042)', () => {
+  const SHARED_TABLET = uid(902);
+  const at = (stationId: string | null, agoMs = 1_000, unlocked = true) => ({
+    ...seen(SHARED_TABLET, agoMs, unlocked),
+    stationId,
+  });
+  // Only the shared display: the bar and the pastry have no display of their own.
+  const shared = (entries: PresenceSnapshot['entries']) =>
+    input({
+      displays: [{ terminalId: SHARED_TABLET, kitchenStationId: null }],
+      presence: presence(entries),
+    });
+
+  it('attends the station it chose, and only that one', () => {
+    const atBar = shared([at(STATION.bar)]);
+    expect(stationAttendance(stations[1]!, atBar)).toBe('attended');
+    expect(stationAttendance(stations[2]!, atBar)).toBe('nobody_there');
+  });
+
+  it('locked, or seen too long ago, it attends nothing', () => {
+    expect(stationAttendance(stations[1]!, shared([at(null, 1_000, false)]))).toBe('nobody_there');
+    expect(stationAttendance(stations[1]!, shared([at(STATION.bar, PRESENCE_WINDOW_MS)]))).toBe(
+      'nobody_there',
+    );
+  });
+
+  it('a printer still attends its station; offline nothing is guessed', () => {
+    expect(stationAttendance(stations[0]!, shared([at(STATION.bar)]))).toBe('attended');
+    expect(stationAttendance(stations[1]!, { ...shared([]), presence: null })).toBe('unknown');
+  });
+
+  it('adds to the fixed displays of a station: either one attends it', () => {
+    const both = input({
+      displays: [
+        { terminalId: BAR_TABLET, kitchenStationId: STATION.bar },
+        { terminalId: SHARED_TABLET, kitchenStationId: null },
+      ],
+      presence: presence([seen(BAR_TABLET, 1_000, false), at(STATION.bar)]),
+    });
+    expect(stationAttendance(stations[1]!, both)).toBe('attended');
+  });
+
+  it('a send by category: the drink to the bar it chose, the dessert to its stand-in', () => {
+    const result = routeSend(shared([at(STATION.bar)]));
+    expect(byStation(result)).toEqual({
+      [STATION.bar]: [],
+      [STATION.kitchen]: [STATION.dessert],
+    });
+    expect(result.redirected).toEqual([
+      {
+        fromStationId: STATION.dessert,
+        toStationId: STATION.kitchen,
+        itemIds: ['cake'],
+        reason: 'nobody_there',
+      },
+    ]);
+    // Moved to the pastry: now the cake stays there and the beer goes to the kitchen.
+    expect(byStation(routeSend(shared([at(STATION.dessert)])))).toEqual({
+      [STATION.dessert]: [],
+      [STATION.kitchen]: [STATION.bar],
+    });
+  });
+});
+
 describe('routing a send (RF-C21, DEC-033)', () => {
   it('everyone there: each item to its own station', () => {
     const result = routeSend(input());

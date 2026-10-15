@@ -1,0 +1,16 @@
+{
+  "home": {
+    "pos": {
+      "title": "Cassa & servizio",
+      "description": "Piantina dei tavoli, ordini, pagamento (tablet e palmare)"
+    },
+    "kds": {
+      "title": "Cucina (KDS)",
+      "description": "Comande per postazione: cucina, bar, pasticceria…"
+    },
+    "backoffice": {
+      "title": "Backoffice",
+      "description": "Configurazione, catalogo, IVA, cassa, rapporti"
+    }
+  }
+}

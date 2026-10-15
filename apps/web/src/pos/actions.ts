@@ -260,11 +260,11 @@ export function planSend(
       ...station,
       fallbackStationId: station.fallbackStationId ?? null,
     })),
-    displays: displays.flatMap((display) =>
-      display.kitchenStationId
-        ? [{ terminalId: display.terminalId, kitchenStationId: display.kitchenStationId }]
-        : [],
-    ),
+    // A display without a fixed station attends the one it chose at sign-in (DEC-042).
+    displays: displays.map((display) => ({
+      terminalId: display.terminalId,
+      kitchenStationId: display.kitchenStationId ?? null,
+    })),
     activePrinterIds: new Set(
       bootstrap.printers.filter((printer) => printer.isActive).map((printer) => printer.id),
     ),

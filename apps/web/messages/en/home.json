@@ -1,0 +1,16 @@
+{
+  "home": {
+    "pos": {
+      "title": "Till & service",
+      "description": "Floor plan, orders, payment (tablet and handheld)"
+    },
+    "kds": {
+      "title": "Kitchen (KDS)",
+      "description": "Tickets per station: kitchen, bar, pastry…"
+    },
+    "backoffice": {
+      "title": "Backoffice",
+      "description": "Setup, catalog, VAT, cash, reports"
+    }
+  }
+}

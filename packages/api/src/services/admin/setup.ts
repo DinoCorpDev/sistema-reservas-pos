@@ -131,6 +131,8 @@ export async function buildSetupSnapshot(
               ),
             );
           const withDisplay = new Set(displays.map((d) => d.stationId));
+          // A display that chooses its station at sign-in can show any of them (DEC-042).
+          if (withDisplay.has(null)) return 0;
           const active = new Set(rows.map((row) => row.id));
           return rows.filter(
             (row) =>

@@ -21,12 +21,32 @@ export function useNow(intervalMs = 10_000): string {
   return now;
 }
 
-/** The station of this kitchen display and how it works (RF-C20, RF-C24, RF-C25, RF-C26). */
+/**
+ * The stations a display without a fixed one offers before the PIN (DEC-042): the active ones, in
+ * the backoffice order. Empty for a display fixed to its station.
+ */
+export function useChoosableStations() {
+  const bootstrap = usePos((state) => state.bootstrap);
+  return useMemo(
+    () =>
+      !bootstrap || bootstrap.terminal.kitchenStationId
+        ? []
+        : bootstrap.stations.filter((station) => station.isActive),
+    [bootstrap],
+  );
+}
+
+/**
+ * The station of this kitchen display and how it works (RF-C20, RF-C24, RF-C25, RF-C26): the one
+ * fixed in the backoffice, or the one chosen before the PIN (DEC-042).
+ */
 export function useStation() {
   const bootstrap = usePos((state) => state.bootstrap);
+  const chosen = usePos((state) => state.kitchenStationId);
   return useMemo(() => {
     if (!bootstrap) return null;
-    const station = bootstrap.stations.find((s) => s.id === bootstrap.terminal.kitchenStationId);
+    const stationId = bootstrap.terminal.kitchenStationId ?? chosen;
+    const station = bootstrap.stations.find((s) => s.id === stationId);
     if (!station) return null;
     const language: ContentLanguage = isContentLanguage(station.language)
       ? station.language
@@ -42,7 +62,7 @@ export function useStation() {
         station.alertAfterMinutes ?? bootstrap.location.settings.kitchen.alertAfterMinutes,
       printer,
     };
-  }, [bootstrap]);
+  }, [bootstrap, chosen]);
 }
 
 /**
