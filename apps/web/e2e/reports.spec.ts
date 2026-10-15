@@ -12,7 +12,6 @@ import { unlockPos } from './pos-helpers';
 /** Σ of a CSV column in CHF, as rappen ("12.50" → 1250). */
 function sumColumn(csv: string, column: number, rowFilter: (cells: string[]) => boolean) {
   return csv
-    .replace(/^﻿/, '')
     .split('\r\n')
     .slice(1)
     .filter((line) => line.length > 0)
