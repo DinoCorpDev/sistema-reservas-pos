@@ -80,6 +80,11 @@ export const locationSettingsSchema = z.object({
     .prefault({}),
   pos: z
     .object({
+      /**
+       * `tables`: a floor plan with tables. `counter`: a café or a bar that sells at the counter;
+       * the setup checklist does not ask for areas and tables (DEC-045).
+       */
+      serviceStyle: z.enum(['tables', 'counter']).default('tables'),
       /** Frequent discounts as buttons (RF-C11); above the threshold they still need a manager. */
       discountPresets: z
         .array(discountPresetSchema)

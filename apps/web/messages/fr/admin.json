@@ -509,7 +509,16 @@
     "copyPassword": "Copier le mot de passe",
     "copyFailed": "Copie impossible. Veuillez sélectionner le mot de passe manuellement.",
     "nextSteps": "Pour que vous puissiez ouvrir l’organisation, le ou la propriétaire doit accorder un accès sous Accès support.",
-    "done": "Terminé"
+    "done": "Terminé",
+    "profile": "Type d’établissement",
+    "profiles": {
+      "restaurant": "Restaurant",
+      "cafe": "Café"
+    },
+    "profileHint": {
+      "restaurant": "Plan «Restaurant», service à table avec plan de salle.",
+      "cafe": "Plan «Café», vente au comptoir sans plan de salle et un rôle «Équipe» qui vend et encaisse, sans rapports, clôtures Z ni validations."
+    }
   },
   "myPlan": {
     "title": "Ma formule",

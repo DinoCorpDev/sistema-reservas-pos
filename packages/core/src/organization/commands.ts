@@ -3,6 +3,7 @@ import { CONTENT_LANGUAGES, UI_LANGUAGES } from '../shared/languages';
 import { QR_MODES } from '../tables/constants';
 import { CREATABLE_TERMINAL_TYPES, PRINTER_KINDS, PRINTER_PROTOCOLS } from './constants';
 import { PERMISSIONS, ROLE_KEYS } from './permissions';
+import { BUSINESS_PROFILES } from '../platform/profiles';
 import { isValidSwissUid } from './uid';
 
 /**
@@ -221,6 +222,8 @@ export const onboardOrganizationSchema = z
       email: z.email().max(254),
       uiLanguage: z.enum(UI_LANGUAGES).default('de'),
     }),
+    /** Café or restaurant: proposes the plan, the roles and the service style (DEC-045). */
+    profile: z.enum(BUSINESS_PROFILES).default('restaurant'),
   })
   .refine((value) => value.location.languages.includes(value.organization.defaultLanguage), {
     path: ['location', 'languages'],

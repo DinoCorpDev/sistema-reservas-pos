@@ -509,7 +509,16 @@
     "copyPassword": "Passwort kopieren",
     "copyFailed": "Kopieren nicht möglich. Bitte das Passwort manuell markieren.",
     "nextSteps": "Damit Sie die Organisation öffnen können, muss die Inhaberin oder der Inhaber unter Support-Zugang einen Zugang gewähren.",
-    "done": "Fertig"
+    "done": "Fertig",
+    "profile": "Art des Betriebs",
+    "profiles": {
+      "restaurant": "Restaurant",
+      "cafe": "Café"
+    },
+    "profileHint": {
+      "restaurant": "Plan «Restaurant», Service am Tisch mit Saalplan.",
+      "cafe": "Plan «Café», Verkauf an der Theke ohne Saalplan und eine Rolle «Team», die verkauft und kassiert, aber keine Berichte, Z-Abschlüsse oder Freigaben sieht."
+    }
   },
   "myPlan": {
     "title": "Mein Plan",

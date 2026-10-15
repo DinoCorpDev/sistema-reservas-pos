@@ -509,7 +509,16 @@
     "copyPassword": "Copia password",
     "copyFailed": "Impossibile copiare. Selezioni la password manualmente.",
     "nextSteps": "Per poter aprire l’organizzazione, il o la titolare deve concedere un accesso in Accesso supporto.",
-    "done": "Fatto"
+    "done": "Fatto",
+    "profile": "Tipo di locale",
+    "profiles": {
+      "restaurant": "Ristorante",
+      "cafe": "Caffè"
+    },
+    "profileHint": {
+      "restaurant": "Piano «Ristorante», servizio al tavolo con piantina della sala.",
+      "cafe": "Piano «Caffè», vendita al banco senza piantina e un ruolo «Squadra» che vende e incassa, senza report, chiusure Z né approvazioni."
+    }
   },
   "myPlan": {
     "title": "Il mio piano",

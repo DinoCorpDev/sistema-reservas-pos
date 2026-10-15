@@ -1,7 +1,12 @@
 'use client';
 
 import type { admin } from '@pos/api';
-import { CONTENT_LANGUAGES, UI_LANGUAGES } from '@pos/core';
+import {
+  BUSINESS_PROFILES,
+  type BusinessProfile,
+  CONTENT_LANGUAGES,
+  UI_LANGUAGES,
+} from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Button } from '@pos/ui/button';
 import {
@@ -27,6 +32,7 @@ import * as actions from './actions';
 const STEPS = ['organization', 'location', 'owner', 'review'] as const;
 
 interface Draft {
+  profile: BusinessProfile;
   organization: { name: string; legalName: string; defaultLanguage: string };
   location: {
     name: string;
@@ -43,6 +49,7 @@ interface Draft {
 }
 
 const initialDraft = (): Draft => ({
+  profile: 'restaurant',
   organization: { name: '', legalName: '', defaultLanguage: 'de' },
   location: {
     name: '',
@@ -59,6 +66,7 @@ const initialDraft = (): Draft => ({
 });
 
 const payloadOf = (draft: Draft) => ({
+  profile: draft.profile,
   organization: {
     name: draft.organization.name.trim(),
     legalName: draft.organization.legalName.trim(),
@@ -138,6 +146,7 @@ export function OnboardingWizard() {
       const previous = d.organization.defaultLanguage;
       const languages = new Set([...d.location.languages, language]);
       return {
+        ...d,
         organization: { ...d.organization, defaultLanguage: language },
         location: {
           ...d.location,
@@ -346,6 +355,29 @@ export function OnboardingWizard() {
 
               {step === 0 ? (
                 <form className="grid gap-4" onSubmit={next}>
+                  <Field
+                    label={t('profile')}
+                    htmlFor="ob-profile"
+                    hint={t(`profileHint.${draft.profile}`)}
+                  >
+                    <Select
+                      value={draft.profile}
+                      onValueChange={(profile) =>
+                        setDraft((d) => ({ ...d, profile: profile as BusinessProfile }))
+                      }
+                    >
+                      <SelectTrigger id="ob-profile">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BUSINESS_PROFILES.map((profile) => (
+                          <SelectItem key={profile} value={profile}>
+                            {t(`profiles.${profile}`)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
                   {text(
                     'ob-org-name',
                     t('orgName'),
@@ -538,6 +570,7 @@ export function OnboardingWizard() {
               {step === 3 ? (
                 <form className="grid gap-4" onSubmit={submit}>
                   <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
+                    <Summary label={t('profile')}>{t(`profiles.${draft.profile}`)}</Summary>
                     <Summary label={t('orgName')}>{org.name}</Summary>
                     <Summary label={t('orgLegalName')}>{org.legalName}</Summary>
                     <Summary label={t('defaultLanguage')}>{tl(org.defaultLanguage)}</Summary>

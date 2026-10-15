@@ -4,6 +4,7 @@ import {
   type SetupCheck,
   type SetupSnapshot,
 } from '@pos/core';
+import { parseLocationSettings } from '@pos/core';
 import { type Database, inLocation, inOrg, notDeleted, runCommand, schema as s } from '@pos/db';
 import { and, count, countDistinct, eq, inArray, isNotNull, isNull, or, sql } from 'drizzle-orm';
 import { type Actor, assertPermission, requireLocationId } from '../../actor';
@@ -301,6 +302,7 @@ export async function buildSetupSnapshot(
       vatUid: location.vatUid,
       defaultLanguage: location.defaultLanguage,
       languages: location.languages,
+      serviceStyle: parseLocationSettings(location.settings).pos.serviceStyle,
     },
     activeAreas: value(areas),
     activeTables: value(tables),

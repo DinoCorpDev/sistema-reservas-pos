@@ -14,6 +14,7 @@ describe('location settings', () => {
       receipts: { customerNameFromRappen: 40000 },
       security: { maxPinAttempts: 5, pinLockMinutes: 5, oneDevicePerPerson: true },
       pos: {
+        serviceStyle: 'tables',
         discountPresets: [
           { code: 'staff', label: null, kind: 'percent', value: 5000 },
           { code: 'courtesy', label: null, kind: 'percent', value: 10000 },

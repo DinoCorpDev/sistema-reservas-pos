@@ -1,12 +1,14 @@
 import { healthIssues, PERMISSIONS } from '@pos/core';
 import { schema as s } from '@pos/db';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   loadHealthSnapshot,
   platformStatus,
   reconcileAlerts,
 } from '../services/admin/platform-health';
+import { getSetupChecklist } from '../services/admin/setup';
+import { onboardOrganization } from '../services/admin/support';
 import { getMyPlan, updateSubscription } from '../services/platform/plans';
 import {
   createOtherOrganization,
@@ -172,6 +174,67 @@ describe('plans and add-ons (DEC-045)', () => {
       .from(s.auditEvents)
       .where(eq(s.auditEvents.organizationId, cafe.organizationId));
     expect(audit).toMatchObject({ action: 'subscription.changed', supportStaffId: staff!.id });
+  });
+
+  it('onboarding a café: café plan, a «Team» role without money powers and counter service', async () => {
+    const [staff] = await api.db.select({ id: s.platformStaff.id }).from(s.platformStaff).limit(1);
+    const created = await onboardOrganization(
+      { db: api.db },
+      { staffId: staff!.id },
+      {
+        profile: 'cafe',
+        organization: {
+          name: 'Café Lausanne',
+          legalName: 'Café Lausanne Sàrl',
+          defaultLanguage: 'fr',
+        },
+        location: {
+          name: 'Café Lausanne',
+          legalName: 'Café Lausanne Sàrl',
+          street: 'Bahnhofstrasse 1',
+          postalCode: '8001',
+          city: 'Zürich',
+          canton: 'ZH',
+          vatUid: null,
+          languages: ['fr'],
+          kitchenLanguage: 'fr',
+        },
+        owner: { displayName: 'Dueña', email: 'cafe-profile@example.test', uiLanguage: 'es' },
+      },
+    );
+    const actor = {
+      kind: 'user',
+      organizationId: created.organizationId,
+      locationId: created.locationId,
+      userId: created.ownerUserId,
+      permissions: ALL,
+    } as const;
+
+    const mine = await getMyPlan({ db: api.db }, actor);
+    expect(mine.subscription).toMatchObject({ planCode: 'cafe', status: 'active' });
+
+    const [team] = await api.db
+      .select({ id: s.roles.id, name: s.roles.name })
+      .from(s.roles)
+      .where(and(eq(s.roles.organizationId, created.organizationId), eq(s.roles.key, 'team')));
+    expect(team?.name).toBe('Équipe');
+    const granted = (
+      await api.db
+        .select({ permission: s.rolePermissions.permission })
+        .from(s.rolePermissions)
+        .where(eq(s.rolePermissions.roleId, team!.id))
+    ).map((row) => row.permission);
+    expect(granted).toEqual(expect.arrayContaining(['order.create', 'payment.take', 'shift.open']));
+    for (const forbidden of ['report.view', 'day.close', 'approval.grant', 'location.manage']) {
+      expect(granted).not.toContain(forbidden);
+    }
+
+    // At the counter the checklist does not ask for a floor plan.
+    const checklist = await getSetupChecklist({ db: api.db }, actor);
+    expect(checklist.checks.filter((c) => c.key === 'areas' || c.key === 'tables')).toEqual([
+      { key: 'areas', done: true },
+      { key: 'tables', done: true },
+    ]);
   });
 
   it('an organization from before plans has no limits', async () => {

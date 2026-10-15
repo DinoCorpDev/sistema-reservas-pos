@@ -36,6 +36,22 @@ describe('RF-A11 · setup checklist', () => {
     expect(checklist.checks.map((c) => c.key)).toEqual([...SETUP_CHECKS]);
   });
 
+  it('a café at the counter needs no areas nor tables (DEC-045)', () => {
+    const cafe = computeSetupChecklist({
+      ...ready,
+      location: { ...ready.location, serviceStyle: 'counter' },
+      activeAreas: 0,
+      activeTables: 0,
+    });
+    expect(cafe.complete).toBe(true);
+    expect(cafe.checks.filter((c) => c.key === 'areas' || c.key === 'tables')).toEqual([
+      { key: 'areas', done: true },
+      { key: 'tables', done: true },
+    ]);
+    const withTables = computeSetupChecklist({ ...ready, activeAreas: 0, activeTables: 0 });
+    expect(withTables.complete).toBe(false);
+  });
+
   it('lists everything a brand-new restaurant still needs', () => {
     const empty: SetupSnapshot = {
       ...ready,

@@ -509,7 +509,16 @@
     "copyPassword": "Copiar contraseña",
     "copyFailed": "No se pudo copiar. Seleccione la contraseña manualmente.",
     "nextSteps": "Para que pueda abrir la organización, la persona propietaria debe otorgar un acceso en «Acceso de soporte».",
-    "done": "Listo"
+    "done": "Listo",
+    "profile": "Tipo de negocio",
+    "profiles": {
+      "restaurant": "Restaurante",
+      "cafe": "Café"
+    },
+    "profileHint": {
+      "restaurant": "Plan «Restaurante», servicio a la mesa con plano de salón.",
+      "cafe": "Plan «Café», venta en mostrador sin plano de mesas y un rol «Equipo» que vende y cobra, sin reportes, cierres Z ni aprobaciones."
+    }
   },
   "myPlan": {
     "title": "Mi plan",

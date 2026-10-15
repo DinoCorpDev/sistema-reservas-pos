@@ -509,7 +509,16 @@
     "copyPassword": "Copy password",
     "copyFailed": "Copying isn’t possible. Please select the password manually.",
     "nextSteps": "Before you can open the organisation, the owner must grant access under Support access.",
-    "done": "Done"
+    "done": "Done",
+    "profile": "Type of business",
+    "profiles": {
+      "restaurant": "Restaurant",
+      "cafe": "Café"
+    },
+    "profileHint": {
+      "restaurant": "«Restaurant» plan, table service with a floor plan.",
+      "cafe": "«Café» plan, counter sales without a floor plan and a «Team» role that sells and takes payments, without reports, Z closings or approvals."
+    }
   },
   "myPlan": {
     "title": "My plan",

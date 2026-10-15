@@ -4,6 +4,8 @@ import {
   formatSwissVatUid,
   newId,
   type OnboardOrganizationInput,
+  PROFILE_DEFAULTS,
+  TEAM_ROLE_PERMISSIONS,
 } from '@pos/core';
 import {
   applyOrganizationTemplate,
@@ -163,6 +165,15 @@ export async function listPlatformOrganizations(
   }));
 }
 
+/** The «Team» role of a café in the organization's language. */
+const TEAM_ROLE_NAMES: Record<string, string> = {
+  de: 'Team',
+  fr: 'Équipe',
+  it: 'Squadra',
+  en: 'Team',
+  es: 'Equipo',
+};
+
 /** URL-friendly organization slug: `Café Zürich AG` → `cafe-zurich-ag`. */
 export function slugify(name: string): string {
   const slug = name
@@ -216,6 +227,7 @@ export async function onboardOrganization(
   const slug = await uniqueSlug(deps.db, input.organization.name);
   const temporaryPassword = randomToken(12);
   const passwordHash = await hashPassword(temporaryPassword);
+  const profile = PROFILE_DEFAULTS[input.profile];
   const ctx = {
     organizationId,
     locationId: null,
@@ -246,7 +258,10 @@ export async function onboardOrganization(
       defaultLanguage: input.organization.defaultLanguage,
       kitchenLanguage: input.location.kitchenLanguage,
       languages: [...input.location.languages],
-      settings: DEFAULT_LOCATION_SETTINGS,
+      settings: {
+        ...DEFAULT_LOCATION_SETTINGS,
+        pos: { ...DEFAULT_LOCATION_SETTINGS.pos, serviceStyle: profile.serviceStyle },
+      },
     });
     const { roleIds } = await applyOrganizationTemplate(
       tx,
@@ -267,11 +282,42 @@ export async function onboardOrganization(
     await tx
       .insert(s.userRoles)
       .values({ organizationId, userId: ownerUserId, roleId: roleIds.admin });
+    // The profile proposes the plan and, for a café, one «Team» role for the whole service.
+    await tx.insert(s.subscriptions).values({
+      organizationId,
+      planCode: profile.planCode,
+      status: 'active',
+      statusSince: new Date(),
+    });
+    if (profile.teamRole) {
+      const teamRoleId = newId();
+      await tx.insert(s.roles).values({
+        id: teamRoleId,
+        organizationId,
+        key: 'team',
+        name: TEAM_ROLE_NAMES[input.organization.defaultLanguage] ?? 'Team',
+        isSystem: false,
+      });
+      await tx.insert(s.rolePermissions).values(
+        TEAM_ROLE_PERMISSIONS.map((permission) => ({
+          organizationId,
+          roleId: teamRoleId,
+          permission,
+        })),
+      );
+    }
     recorder.audit({
       action: 'organization.created',
       entityType: 'organization',
       entityId: organizationId,
-      after: { name: input.organization.name, slug, locationId, ownerUserId },
+      after: {
+        name: input.organization.name,
+        slug,
+        locationId,
+        ownerUserId,
+        profile: input.profile,
+        planCode: profile.planCode,
+      },
     });
   });
 

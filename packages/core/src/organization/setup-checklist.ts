@@ -15,6 +15,8 @@ export interface SetupSnapshot {
     vatUid: string | null;
     defaultLanguage: string;
     languages: readonly string[];
+    /** A counter service (café, bar) needs no floor plan (DEC-045). */
+    serviceStyle?: 'tables' | 'counter';
   };
   activeAreas: number;
   activeTables: number;
@@ -111,8 +113,12 @@ export function computeSetupChecklist(snapshot: SetupSnapshot): SetupChecklist {
       key: 'languages',
       done: location.languages.includes(location.defaultLanguage) && otherLanguages.length >= 1,
     },
-    atLeast(snapshot.activeAreas, 'areas'),
-    atLeast(snapshot.activeTables, 'tables'),
+    ...(location.serviceStyle === 'counter'
+      ? [
+          { key: 'areas' as const, done: true },
+          { key: 'tables' as const, done: true },
+        ]
+      : [atLeast(snapshot.activeAreas, 'areas'), atLeast(snapshot.activeTables, 'tables')]),
     atLeast(snapshot.activePosTerminals, 'pos_terminal'),
     atLeast(snapshot.activeKitchenStations, 'kitchen_station'),
     none(snapshot.stationsWithoutOutput, 'station_output'),
