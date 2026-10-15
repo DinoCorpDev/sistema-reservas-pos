@@ -74,6 +74,7 @@ test('today’s reports and the accounting file add up to the Z', async ({ brows
     // Today's sales report and its MWST: the Z to the rappen.
     await office.goto('/backoffice/reports');
     await office.getByRole('link', { name: 'Heute' }).click();
+    await expect(office).toHaveURL(/from=\d{4}-\d{2}-\d{2}&to=/);
     await expect(office.getByTestId('report-sales-total')).toHaveAttribute(
       'data-rappen',
       String(zSales),

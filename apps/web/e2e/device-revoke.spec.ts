@@ -33,7 +33,7 @@ test('a deactivated POS or KDS locks itself and comes back with a new code', asy
       timeout: 30_000,
     });
 
-    // A POS of its own ("KR"), with an order at table 8 that reached the cloud.
+    // A POS of its own ("KR"), with an order at table T2 that reached the cloud.
     const code = await terminalPairingCode('KR', { name: NAME, type: 'pos' });
     await pos.goto('/pos');
     await pos.getByLabel('Kopplungscode').fill(code);
@@ -42,7 +42,9 @@ test('a deactivated POS or KDS locks itself and comes back with a new code', asy
       timeout: 30_000,
     });
     await unlockPos(pos, '4001');
-    await pos.getByTestId('table-8').click();
+    // A terrace table: the tables of the hall are used by the other specs of the suite.
+    await pos.getByRole('tab', { name: 'Terrasse' }).click();
+    await pos.getByTestId('table-T2').click();
     await pos.getByRole('button', { name: 'Öffnen' }).click();
     await pos.getByRole('button', { name: 'Vorspeisen', exact: true }).click();
     await pos.getByTestId('product').filter({ hasText: 'Tomatensuppe' }).first().click();
@@ -70,7 +72,7 @@ test('a deactivated POS or KDS locks itself and comes back with a new code', asy
     await expect(pos.getByRole('navigation', { name: 'Kasse' })).toHaveCount(0);
     await pos.reload();
     await expect(pos.getByTestId('device-revoked')).toBeVisible();
-    await expect(pos.getByTestId('table-8')).toHaveCount(0);
+    await expect(pos.getByTestId('table-T2')).toHaveCount(0);
 
     // The same for the kitchen display.
     await office
@@ -100,7 +102,8 @@ test('a deactivated POS or KDS locks itself and comes back with a new code', asy
       timeout: 30_000,
     });
     await unlockPos(pos, '4001');
-    await expect(pos.getByTestId('table-8')).toHaveAttribute('data-state', 'awaiting_order');
+    await pos.getByRole('tab', { name: 'Terrasse' }).click();
+    await expect(pos.getByTestId('table-T2')).toHaveAttribute('data-state', 'awaiting_order');
   } finally {
     await posContext.close();
     await kdsContext.close();

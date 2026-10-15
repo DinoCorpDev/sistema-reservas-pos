@@ -6,7 +6,9 @@ test('a waiter hands a table to a colleague with the manager PIN', async ({ page
   test.setTimeout(180_000);
   await pairPos(page, 'H2');
   await unlockPos(page, '4001');
-  await page.getByTestId('table-7').click();
+  // A terrace table: the tables of the hall are used by the other specs of the suite.
+  await page.getByRole('tab', { name: 'Terrasse' }).click();
+  await page.getByTestId('table-T1').click();
   await page.getByRole('button', { name: 'Öffnen' }).click();
   await expect(page.getByTestId('order-number')).toBeVisible();
 

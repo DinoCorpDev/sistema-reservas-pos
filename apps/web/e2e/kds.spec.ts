@@ -111,9 +111,10 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
     await expect(ticket.getByTestId('kds-allergens').first()).toBeVisible();
 
     // The station printer got the ticket, in German, with the allergens (RF-C26, RF-C25).
-    await expect.poll(() => printedText().join('\n---\n'), { timeout: 15_000 }).toContain('KÜCHE');
-    const [printed] = printedText();
-    expect(printed).toContain('Tisch 7');
+    // Tickets of other specs may print first when the hub catches up: take table 7's.
+    const tableSeven = () => printedText().find((text) => text.includes('Tisch 7')) ?? '';
+    await expect.poll(tableSeven, { timeout: 15_000 }).toContain('KÜCHE');
+    const printed = tableSeven();
     expect(printed).toContain('Wiener Schnitzel mit Pommes frites');
     expect(printed).toContain('Allergene:');
 
@@ -191,9 +192,13 @@ test('POS → hub → KDS in under 2 s, printed, struck, ready and recalled', as
       pastry.getByTestId('kds-ticket').filter({ hasText: 'Zuger Kirschtorte' }),
     ).toBeVisible({ timeout: 5_000 });
     // The kitchen station does not get it.
-    await expect(kds.getByTestId('kds-item').filter({ hasText: 'Zuger Kirschtorte' })).toHaveCount(
-      0,
-    );
+    await expect(
+      kds
+        .getByTestId('kds-ticket')
+        .filter({ hasText: 'Tisch 7' })
+        .getByTestId('kds-item')
+        .filter({ hasText: 'Zuger Kirschtorte' }),
+    ).toHaveCount(0);
 
     // Nobody is logged in at the bar display: the POS warns before the beer goes to the kitchen
     // instead, and the kitchen sees whose it is (DEC-033).
