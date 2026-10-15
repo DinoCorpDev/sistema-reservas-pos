@@ -424,6 +424,28 @@ Esta decisión reemplaza el comentario del módulo `reports` («alimentado por e
   - la exportación de auditoría trae como máximo 20 000 eventos por archivo.
 - **Permisos:** se usan los que ya existían, `report.view` y `audit.view`; no se agregó ninguno.
 
+## DEC-044 · Sin Zitas: el POS no se integra con Zitas
+
+Juan lo decidió con su jefe (15 oct 2026): el producto no incluye nada de Zitas.
+
+- **Qué queda diferido** (⏸ en TRAZABILIDAD), con su motivo:
+  - las reservas vinculadas a mesas, el check-in y los walk-ins (RF-E01…E03), y su reporte (RF-F09);
+  - las confirmaciones y los avisos por WhatsApp (RF-E04, E13, E19);
+  - Zita IA (RF-E20).
+
+  Las tablas y los estados de reservas que ya existen en el Core se quedan, pero no se usan. Nada se borra.
+
+- **Qué sigue igual:**
+  - la API v1 documentada (RF-F14): cualquier sistema externo se puede conectar por ella;
+  - los clientes, su consentimiento y su historial dentro del Core (RF-E14…E17).
+- **La Fase 5 queda sin Zitas:**
+  - menú QR por mesa (RF-E06…E08, E10);
+  - takeaway en mostrador con número (RF-E12) y por web (RF-E11).
+
+  El pago online del QR sigue diferido (DEC-003).
+
+- **Si un cliente quiere reservas más adelante,** se decide de nuevo: reservas propias del POS, o una integración por la API.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |
