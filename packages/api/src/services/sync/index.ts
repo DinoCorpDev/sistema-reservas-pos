@@ -2,6 +2,13 @@ export { configVersion, forgetConfigVersion } from './config-version';
 export { listConflicts, resolveConflict, type SyncConflictDto } from './conflicts';
 export { getHubConfig, type HubConfigDto } from './hub';
 export {
+  getHubCertificate,
+  type HubCertificateDto,
+  hubDnsZone,
+  processHubCertificates,
+  requestHubCertificate,
+} from './hub-certificate';
+export {
   existingOperations,
   insertOperations,
   lastSeq,

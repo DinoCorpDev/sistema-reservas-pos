@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { APP_VERSION, createApiApp, resolveTerminal } from '@pos/api';
+import { HUB_TLS_PORT } from '@pos/core';
 import { createDb, createLogger } from '@pos/db';
 import { cloudFetcher, cloudJson } from './cloud';
 import { syncConfig } from './config-sync';
@@ -10,6 +11,7 @@ import { tcpTransport } from './printing/transport';
 import { PrintWorker } from './printing/worker';
 import { startHub } from './server';
 import { StateFile } from './state';
+import { HubTls, lanAddress } from './tls';
 
 /**
  * The LAN hub of a location (docs/SYNC.md §11, DEC-028). Configuration by environment:
@@ -20,6 +22,9 @@ import { StateFile } from './state';
  *   printing configuration is kept next to it (`.hub-config.json`).
  * - HUB_AUTHORITY=false for a standby hub that must not number orders (§11.4).
  * - HUB_ALLOWED_ORIGINS: comma-separated origins of the POS (default any).
+ * - HUB_LAN_IP: the LAN address published for HTTPS (default: the PC's first private IPv4; in
+ *   Docker it must be set, the container only sees its own network).
+ * - HUB_TLS_PORT: the HTTPS port once the cloud issued the certificate (default 4443, DEC-028).
  */
 
 // In development the monorepo root .env is used; at the location, the service's variables.
@@ -138,6 +143,21 @@ link = startCloudLink({
   onRevoked: () => void revoke(),
 });
 
+// HTTPS on the LAN (DEC-028): the cloud issues the certificate; until then, and without a DNS
+// zone in the cloud, only HTTP.
+const tlsPort = Number(process.env.HUB_TLS_PORT ?? HUB_TLS_PORT);
+const tls = new HubTls({
+  dir: join(dirname(stateFile), 'tls'),
+  cloud,
+  lanIp: () => lanAddress(),
+  install: async ({ key, cert }) => {
+    const listening = await hub.serveTls({ port: tlsPort, key, cert });
+    located.info('hub HTTPS listening', { port: listening });
+  },
+  logger: located,
+});
+void tls.start();
+
 /**
  * Deactivated or unpaired in the backoffice (DEC-035): the hub forgets its token and stops
  * serving the terminals and printing; they go to the cloud by themselves and keep everything
@@ -150,6 +170,7 @@ async function revoke(): Promise<void> {
   state.update({ deviceToken: null });
   printer?.stop();
   link?.stop();
+  tls.stop();
   await hub.close();
   const idle = await startHub({ port, pingDatabase: null });
   logger.info('hub unpaired, serving /health only', { port: idle.port });
@@ -166,6 +187,7 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.on(signal, async () => {
     printer?.stop();
     link?.stop();
+    tls.stop();
     await hub.close();
     await pool.end();
     process.exit(0);

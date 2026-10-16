@@ -1,4 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
+import { HUB_CERTIFICATE_STATUSES, hubCertificateRequestSchema } from '@pos/core';
 import * as sync from '../../services/sync';
 import { cleanVersion } from '../../version';
 import { actorOf, type ApiApp, type ApiContext } from '../env';
@@ -44,6 +45,19 @@ const OrderNumberSchema = z
     display: z.string().openapi({ example: '0042' }),
   })
   .openapi('OrderNumber');
+
+const HubCertificateSchema = z
+  .object({
+    enabled: z.boolean(),
+    hostname: z.string().nullable(),
+    url: z.string().nullable(),
+    status: z.enum(HUB_CERTIFICATE_STATUSES),
+    lanIp: z.string().nullable(),
+    certificatePem: z.string().nullable(),
+    notAfter: z.string().nullable(),
+    lastError: z.string().nullable(),
+  })
+  .openapi('HubCertificate');
 
 export function registerSyncRoutes(app: ApiApp) {
   app.openapi(
@@ -194,6 +208,46 @@ export function registerSyncRoutes(app: ApiApp) {
     async (c) => {
       c.header('Cache-Control', 'no-store');
       return c.json(await sync.getHubConfig({ db: c.get('db') }, actorOf(c)), 200);
+    },
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/sync/hub-certificate',
+      tags,
+      security: DEVICE,
+      summary: 'Name and HTTPS certificate of the LAN hub (DEC-028)',
+      responses: {
+        200: jsonResponse(HubCertificateSchema, 'The state of the certificate'),
+        ...ERROR_RESPONSES,
+      },
+    }),
+    async (c) => {
+      c.header('Cache-Control', 'no-store');
+      return c.json(await sync.getHubCertificate(depsOf(c), actorOf(c)), 200);
+    },
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/sync/hub-certificate',
+      tags,
+      security: DEVICE,
+      summary: 'The hub asks for its certificate with its LAN address and a CSR (DEC-028)',
+      request: { body: jsonBody(hubCertificateRequestSchema) },
+      responses: {
+        200: jsonResponse(HubCertificateSchema, 'The state of the certificate'),
+        ...ERROR_RESPONSES,
+      },
+    }),
+    async (c) => {
+      c.header('Cache-Control', 'no-store');
+      return c.json(
+        await sync.requestHubCertificate(depsOf(c), actorOf(c), c.req.valid('json')),
+        200,
+      );
     },
   );
 }

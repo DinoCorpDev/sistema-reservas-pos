@@ -32,6 +32,8 @@ COPY --from=build /repo/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build /repo/apps/web/public ./apps/web/public
 # Texts are read at request time from apps/web/messages (src/i18n/request.ts).
 COPY --from=build /repo/apps/web/messages ./apps/web/messages
+# Volumes mounted here start with this owner: the app runs as `node` and writes its logs.
+RUN mkdir -p /logs && chown node:node /logs
 WORKDIR /app/apps/web
 USER node
 EXPOSE 3000
@@ -42,6 +44,8 @@ CMD ["node", "server.js"]
 # ── Worker (outbox, monitor, migrations, archive) ──────────────────────────────
 FROM build AS worker
 ENV NODE_ENV=production
+# Logs, the legal archive and the ACME account key: volumes owned by `node`.
+RUN mkdir -p /logs /archive /acme && chown node:node /logs /archive /acme
 USER node
 CMD ["pnpm", "--filter", "@pos/db", "outbox:work"]
 

@@ -21,6 +21,7 @@
     "@pos/core": "workspace:*",
     "@scalar/hono-api-reference": "^0.12.10",
     "@pos/db": "workspace:*",
+    "acme-client": "catalog:",
     "drizzle-orm": "catalog:",
     "hono": "^4.13.13",
     "jose": "^6.2.12",

@@ -87,6 +87,7 @@ export const TABLE_GROUPS = {
     s.printJobs,
     s.terminalPresence,
     s.approvalUses,
+    s.hubCertificates,
   ],
 } as const;
 

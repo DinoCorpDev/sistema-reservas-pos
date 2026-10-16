@@ -233,6 +233,18 @@ logs web | jq -r 'select(.status >= 500) | .route' | sort | uniq -c | sort -rn
   4. **Actualizar:** `git pull && sudo deploy/hub/install-hub.sh`.
   5. **Reinstalar o cambiar de equipo:** desvincular el hub en el backoffice, generar un código nuevo, borrar `deploy/hub/.env` y correr el script otra vez.
   - Mientras no haya hub, las tablets sincronizan directo con la nube. Para imprimir y para trabajar sin internet hace falta el hub.
+- **HTTPS del hub (DEC-028):** la caja vive en HTTPS y el navegador no deja llamar por HTTP a la LAN, así que cada hub recibe un nombre y un certificado.
+  - **Una vez, en la nube** (`deploy/.env`):
+    - `HUB_DNS_ZONE`: una zona solo para los hubs, por ejemplo `hub.pos.example.ch`, administrada en Cloudflare (gratis). Si el dominio está en otro proveedor, se delega ese subdominio a Cloudflare con registros `NS`.
+    - `CLOUDFLARE_ZONE_ID` y `CLOUDFLARE_API_TOKEN`: un token con permiso «DNS edit» solo sobre esa zona.
+    - `ACME_DIRECTORY=staging` para la primera prueba (certificados no confiables, sin límites estrictos); luego `production`.
+  - **Qué pasa solo:**
+    1. el hub informa su IP de la LAN y un CSR (su clave privada nunca sale del equipo);
+    2. el worker publica `h-<id>.<zona>` → IP de la LAN, obtiene el certificado de Let's Encrypt (DNS-01) y lo renueva 30 días antes de vencer;
+    3. el hub sirve HTTPS en el puerto 4443;
+    4. la sede recibe `https://h-<id>.<zona>:4443` como primer hub en sus ajustes, y las tablets lo usan desde su próxima configuración.
+  - **Si falla:** los logs del worker (`hub certificate failed`) dicen el motivo; se reintenta solo, cada vez con más espera (máximo 6 h).
+  - **Routers con protección contra DNS rebinding** (FRITZ!Box y otros) bloquean un nombre público que apunta a una IP privada. Se agrega la zona de los hubs a las excepciones del router (en FRITZ!Box: «DNS-Rebind-Schutz»). Se prueba desde una tablet abriendo `https://h-<id>.<zona>:4443/health`.
   - El instalador de Windows para un equipo «todo en uno» queda para cuando se elija ese hardware.
 
 ---
@@ -267,3 +279,4 @@ logs web | jq -r 'select(.status >= 500) | .route' | sort | uniq -c | sort -rn
 - [ ] El chequeo externo de `/api/v1/health` está configurado y avisa.
 - [ ] HTTPS válido en `DOMAIN` (Caddy).
 - [ ] `install-hub.sh` en un mini PC: se vincula, sobrevive a un reinicio y aparece con señal en `/support/status`.
+- [ ] HTTPS del hub con `ACME_DIRECTORY=staging` y después `production`: la tablet abre `https://h-<id>.<zona>:4443/health` en la red del local (también con el router del piloto).

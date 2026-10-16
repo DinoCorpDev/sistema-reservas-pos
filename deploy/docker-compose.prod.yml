@@ -58,6 +58,7 @@ services:
       LOG_DIR: /logs
       ARCHIVE_DIR: /archive
       HEALTH_URL: http://web-1:3000/api/v1/health
+      ACME_ACCOUNT_KEY_PATH: /acme/account.pem
     # One container, one loop each; if one stops, the container restarts as a whole.
     command:
       - bash
@@ -66,10 +67,12 @@ services:
         pnpm --filter @pos/db outbox:work &
         pnpm --filter @pos/api monitor &
         pnpm --filter @pos/api archive:loop &
+        pnpm --filter @pos/api hub-certs:loop &
         wait -n; exit 1
     volumes:
       - logs:/logs
       - archive:/archive
+      - acme:/acme
     depends_on:
       mysql: { condition: service_healthy }
 
@@ -118,3 +121,4 @@ volumes:
   caddy-config:
   logs:
   archive:
+  acme:

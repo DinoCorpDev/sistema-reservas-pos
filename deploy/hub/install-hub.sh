@@ -28,11 +28,15 @@ if [[ ! -f .env ]]; then
   read -rp "Pairing code of the «Hub» terminal: " pairing_code
   [[ -n "$pairing_code" ]] || fail "The pairing code is required"
   random() { head -c 24 /dev/urandom | base64 | tr -d '/+='; }
+  detected="$(hostname -I 2>/dev/null | awk '{print $1}')"
+  read -rp "LAN address of this PC [${detected}]: " lan_ip
+  lan_ip="${lan_ip:-$detected}"
+  [[ -n "$lan_ip" ]] || fail "The LAN address is required (give this PC a fixed IP in the router)"
   sed \
     -e "s|^HUB_CLOUD_URL=.*|HUB_CLOUD_URL=${cloud_url%/}|" \
     -e "s|^HUB_PAIRING_CODE=.*|HUB_PAIRING_CODE=${pairing_code}|" \
     -e "s|^MYSQL_ROOT_PASSWORD=.*|MYSQL_ROOT_PASSWORD=$(random)|" \
-    -e "s|^MYSQL_PASSWORD=.*|MYSQL_PASSWORD=$(random)|" \
+    -e "s|^MYSQL_PASSWORD=.*|MYSQL_PASSWORD=$(random)|"     -e "s|^HUB_LAN_IP=.*|HUB_LAN_IP=${lan_ip}|" \
     .env.example >.env
   chmod 600 .env
 fi
@@ -65,11 +69,11 @@ fi
 # The code was single-use: it does not stay in the file.
 sed -i "s|^HUB_PAIRING_CODE=.*|HUB_PAIRING_CODE=|" .env
 
-ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+ip="$(grep -E '^HUB_LAN_IP=' .env | cut -d= -f2)"
 say "The hub ${version} is running and paired"
 cat <<INFO
 
-  LAN address:  http://${ip:-<this PC>}:${port}
+  LAN address:  ${ip} (HTTP ${port}; HTTPS 4443 once the cloud issued its certificate)
   Health:       curl http://127.0.0.1:${port}/health
   Logs:         docker compose -f $(pwd)/docker-compose.yml logs -f hub
   Update:       git pull && sudo deploy/hub/install-hub.sh

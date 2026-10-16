@@ -1,3 +1,4 @@
+import type { EventEmitter } from 'node:events';
 import type { IncomingMessage, Server } from 'node:http';
 import type { Duplex } from 'node:stream';
 import { WebSocket, WebSocketServer } from 'ws';
@@ -31,14 +32,17 @@ export function attachRealtime(server: Server, options: RealtimeOptions = { auth
   const wss = new WebSocketServer({ noServer: true });
   const authenticated = new Set<WebSocket>();
 
-  server.on('upgrade', (request: IncomingMessage, socket: Duplex, head: Buffer) => {
-    const { pathname } = new URL(request.url ?? '/', 'http://hub.local');
-    if (pathname !== WS_PATH) {
-      socket.destroy();
-      return;
-    }
-    wss.handleUpgrade(request, socket, head, (ws) => wss.emit('connection', ws, request));
-  });
+  // One channel for every listener: plain HTTP on the PC itself and HTTPS on the LAN (DEC-028).
+  const attach = (target: EventEmitter) =>
+    target.on('upgrade', (request: IncomingMessage, socket: Duplex, head: Buffer) => {
+      const { pathname } = new URL(request.url ?? '/', 'http://hub.local');
+      if (pathname !== WS_PATH) {
+        socket.destroy();
+        return;
+      }
+      wss.handleUpgrade(request, socket, head, (ws) => wss.emit('connection', ws, request));
+    });
+  attach(server);
 
   wss.on('connection', (ws) => {
     send(ws, {
@@ -71,6 +75,8 @@ export function attachRealtime(server: Server, options: RealtimeOptions = { auth
   });
 
   return {
+    /** Serves the same channel on another listener (the HTTPS one). */
+    attach: (target: EventEmitter) => void attach(target),
     connectedClients: () => wss.clients.size,
     /** Sends a hint to every authenticated terminal. */
     broadcast: (message: HubMessage) => {

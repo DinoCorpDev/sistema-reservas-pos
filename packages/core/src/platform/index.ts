@@ -1,4 +1,5 @@
-/** The platform itself (Phase 6): health of the locations and the jobs, plans and limits. */
+/** The platform itself (Phase 6): health, plans and limits, business profiles and hub HTTPS. */
 export * from './health';
+export * from './hub-tls';
 export * from './plans';
 export * from './profiles';

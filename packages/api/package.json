@@ -15,13 +15,15 @@
     "menu:import": "tsx src/scripts/import-menu.ts",
     "archive:loop": "tsx src/scripts/archive.ts loop",
     "archive:month": "tsx src/scripts/archive.ts month",
-    "monitor": "tsx src/scripts/monitor.ts"
+    "monitor": "tsx src/scripts/monitor.ts",
+    "hub-certs:loop": "tsx src/scripts/hub-certificates.ts"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.6.3",
     "@pos/core": "workspace:*",
     "@pos/db": "workspace:*",
     "@scalar/hono-api-reference": "^0.12.10",
+    "acme-client": "catalog:",
     "drizzle-orm": "catalog:",
     "hono": "^4.13.13",
     "jose": "^6.2.12",
