@@ -1,3 +1,5 @@
+import type { Currency } from '../shared/money';
+
 /**
  * Who collects cash, as configured by the location (RF-D12, RN-19, DEC-038):
  * - `terminal`: only at the till; the shift belongs to the POS or handheld, phones take no cash;
@@ -23,3 +25,20 @@ export const CHF_DENOMINATIONS = [
   5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 100000,
 ] as const;
 export type ChfDenomination = (typeof CHF_DENOMINATIONS)[number];
+
+/**
+ * COP denominations in circulation, in centavos (DEC-047): coins of $50 to $1.000, notes of
+ * $2.000 to $100.000.
+ */
+export const COP_DENOMINATIONS = [
+  5_000, 10_000, 20_000, 50_000, 100_000, 200_000, 500_000, 1_000_000, 2_000_000, 5_000_000,
+  10_000_000,
+] as const;
+export type CopDenomination = (typeof COP_DENOMINATIONS)[number];
+
+/** The smallest banknote of each currency: below it, coins (for the count screen). */
+export const FIRST_BANKNOTE: Readonly<Record<Currency, number>> = { CHF: 1_000, COP: 200_000 };
+
+export function denominationsOf(currency: Currency): readonly number[] {
+  return currency === 'COP' ? COP_DENOMINATIONS : CHF_DENOMINATIONS;
+}

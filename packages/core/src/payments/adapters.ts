@@ -18,6 +18,8 @@ export interface PaymentRequest {
   tenderedRappen?: Rappen;
   /** External terminal: the amount approved on the terminal (sale + tip). */
   approvedRappen?: Rappen;
+  /** Cash: the currency's rounding step in minor units (`cashRoundingStep`); default 5. */
+  roundingStep?: number;
 }
 
 export interface PaymentAdapter {
@@ -40,7 +42,7 @@ function assertWithinBalance(request: PaymentRequest): void {
   }
 }
 
-/** Cash in CHF with the 0.05 rounding of what is handed over (RF-D03, RN-06). */
+/** Cash with the currency's rounding of what is handed over (RF-D03, RN-06, DEC-047). */
 export const cashAdapter: PaymentAdapter = {
   key: 'cash',
   methods: ['cash'],
@@ -51,6 +53,7 @@ export const cashAdapter: PaymentAdapter = {
       amountRappen: request.amountRappen,
       tipRappen: request.tipRappen,
       tenderedRappen: request.tenderedRappen,
+      roundingStep: request.roundingStep,
     });
   },
 };

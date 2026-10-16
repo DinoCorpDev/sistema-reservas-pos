@@ -109,3 +109,32 @@ describe('RN-07 · the tip is outside the sale and carries no MWST', () => {
     expect(payment.collectedRappen).toBe(4000);
   });
 });
+
+describe('RN-06 in pesos · cash is rounded to $50 (DEC-047)', () => {
+  it('rounds sale + tip to the step and keeps sale and tip untouched', () => {
+    // $15.020 + $1.000 tip in cash → $16.000 to collect, rounding −$20.
+    const paid = settleCash({
+      amountRappen: rappen(1_502_000),
+      tipRappen: rappen(100_000),
+      tenderedRappen: rappen(2_000_000),
+      roundingStep: 5_000,
+    });
+    expect(paid).toEqual({
+      amountRappen: 1_502_000,
+      tipRappen: 100_000,
+      roundingRappen: -2_000,
+      collectedRappen: 1_600_000,
+      tenderedRappen: 2_000_000,
+      changeRappen: 400_000,
+    });
+  });
+
+  it('rounds a cash refund to the same step; a card refund is exact', () => {
+    expect(
+      settleRefund('cash', { amountRappen: rappen(1_503_000), roundingStep: 5_000 }),
+    ).toMatchObject({ paidOutRappen: 1_505_000, roundingRappen: 2_000 });
+    expect(
+      settleRefund('other', { amountRappen: rappen(1_503_000), roundingStep: 5_000 }),
+    ).toMatchObject({ paidOutRappen: 1_503_000, roundingRappen: 0 });
+  });
+});

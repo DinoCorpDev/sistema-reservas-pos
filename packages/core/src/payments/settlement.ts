@@ -1,4 +1,4 @@
-import { addRappen, type Rappen, roundCashTo5, subtractRappen } from '../shared/money';
+import { addRappen, type Rappen, roundCash, subtractRappen } from '../shared/money';
 
 export class PaymentRuleError extends Error {
   override readonly name = 'PaymentRuleError';
@@ -15,7 +15,7 @@ export class PaymentRuleError extends Error {
  * collected = sale amount + tip + rounding.
  * - `amountRappen` settles the order balance and is the only part that belongs to the sale.
  * - `tipRappen` is outside the sale and carries no MWST (RN-07).
- * - `roundingRappen` is the CHF 0.05 cash rounding, never a discount (RN-06).
+ * - `roundingRappen` is the cash rounding (CHF 0.05, $50), never a discount (RN-06, DEC-047).
  */
 export interface PaymentBreakdown {
   amountRappen: Rappen;
@@ -33,18 +33,24 @@ function assertNonNegative(value: Rappen, label: string): void {
 }
 
 /**
- * Cash payment (RF-D03): the total handed over in cash (sale + tip) is rounded to CHF 0.05 and the
- * difference is recorded as rounding. The sale amount and the tip are never touched by rounding.
+ * Cash payment (RF-D03): the total handed over in cash (sale + tip) is rounded to the currency's
+ * step (CHF 0.05 by default, $50 in pesos: `cashRoundingStep`) and the difference is recorded as
+ * rounding. The sale amount and the tip are never touched by rounding.
  */
 export function settleCash(input: {
   amountRappen: Rappen;
   tipRappen?: Rappen;
   tenderedRappen?: Rappen;
+  /** Minor units of the cash rounding; 5 (CHF 0.05) when missing. */
+  roundingStep?: number;
 }): PaymentBreakdown {
   const tip = input.tipRappen ?? (0 as Rappen);
   assertNonNegative(input.amountRappen, 'amount');
   assertNonNegative(tip, 'tip');
-  const { payable, rounding } = roundCashTo5(addRappen(input.amountRappen, tip));
+  const { payable, rounding } = roundCash(
+    addRappen(input.amountRappen, tip),
+    input.roundingStep ?? 5,
+  );
   const tendered = input.tenderedRappen ?? null;
   if (tendered !== null && tendered < payable) {
     throw new PaymentRuleError(
@@ -77,14 +83,16 @@ export interface RefundBreakdown {
  */
 export function settleRefund(
   method: 'cash' | 'other',
-  input: { amountRappen: Rappen; tipRappen?: Rappen },
+  input: { amountRappen: Rappen; tipRappen?: Rappen; roundingStep?: number },
 ): RefundBreakdown {
   const tip = input.tipRappen ?? (0 as Rappen);
   assertNonNegative(input.amountRappen, 'amount');
   assertNonNegative(tip, 'tip');
   const total = addRappen(input.amountRappen, tip);
   const { payable, rounding } =
-    method === 'cash' ? roundCashTo5(total) : { payable: total, rounding: 0 as Rappen };
+    method === 'cash'
+      ? roundCash(total, input.roundingStep ?? 5)
+      : { payable: total, rounding: 0 as Rappen };
   return {
     amountRappen: input.amountRappen,
     tipRappen: tip,

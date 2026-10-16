@@ -7,6 +7,7 @@
  * - Every business rule and every money calculation has a unit test.
  */
 export * from './shared/money';
+export * from './shared/countries';
 export * from './shared/ids';
 export * from './shared/languages';
 export * from './shared/channels';
