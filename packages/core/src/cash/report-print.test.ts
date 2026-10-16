@@ -62,7 +62,7 @@ describe('shiftReportDocument (RF-D15)', () => {
     },
   );
 
-  it('has its labels in the four printing languages', () => {
-    expect(Object.keys(SHIFT_REPORT_LABELS).sort()).toEqual(['de', 'en', 'fr', 'it']);
+  it('has its labels in the five printing languages (DEC-046)', () => {
+    expect(Object.keys(SHIFT_REPORT_LABELS).sort()).toEqual(['de', 'en', 'es', 'fr', 'it']);
   });
 });

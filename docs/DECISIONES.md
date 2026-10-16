@@ -488,6 +488,14 @@ Juan lo decidió el 15 oct 2026 al aprobar el plan de la Fase 6. La Fase 5 (QR y
   - Se valida con el router y las tablets reales (protección contra DNS rebinding).
 - **Lo que queda pendiente de Juan y su socio:** el hosting y el almacenamiento en Suiza, el dominio y la zona DNS de los hubs, la lista de hardware, el modelo de soporte, los precios reales de los planes y la validación de la fiduciaria.
 
+## DEC-046 · El español es idioma de contenido, no solo de soporte
+
+Juan lo pidió (15 oct 2026): el sistema debe servir fuera de Suiza. El documento solo traía DE, FR, IT y EN para la carta, los recibos y la cocina, y ES únicamente en la interfaz.
+
+- `CONTENT_LANGUAGES` pasa a ser DE, FR, IT, EN y **ES**: idioma principal de la organización, de la sede y de la cocina, traducciones de la carta, recibos, comandas e informe de turno.
+- La interfaz usa los mismos cinco idiomas.
+- **Sigue siendo suizo** (pendiente, se decide con el primer cliente fuera de Suiza): el código postal de 4 dígitos, el cantón, la UID CHE, el CHF, la zona horaria y las tasas MWST de la plantilla.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

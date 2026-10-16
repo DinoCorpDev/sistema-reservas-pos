@@ -154,9 +154,42 @@ export const RECEIPT_LABELS: Readonly<Record<ContentLanguage, ReceiptLabels>> = 
     vatSuffix: 'MWST',
     methods: { cash: 'Cash', card: 'Card', twint: 'TWINT', online: 'Online', voucher: 'Voucher' },
   },
+  es: {
+    receipt: 'Recibo',
+    receiptNumber: 'Recibo n.º',
+    order: 'Pedido',
+    table: 'Mesa',
+    date: 'Fecha',
+    servedBy: 'Le atendió',
+    subtotal: 'Subtotal',
+    discount: 'Descuento',
+    total: 'Total',
+    vat: 'IVA',
+    vatRate: 'Tasa',
+    net: 'Neto',
+    gross: 'Bruto',
+    paidWith: 'Pagado con',
+    tip: 'Propina',
+    rounding: 'Redondeo',
+    tendered: 'Recibido',
+    change: 'Cambio',
+    paidBefore: 'Ya pagado',
+    balance: 'Saldo pendiente',
+    partialPayment: 'Pago parcial',
+    customer: 'Cliente',
+    copy: 'COPIA',
+    thankYou: 'Gracias por su visita',
+    vatSuffix: 'IVA',
+    methods: {
+      cash: 'Efectivo',
+      card: 'Tarjeta',
+      twint: 'TWINT',
+      online: 'En línea',
+      voucher: 'Vale',
+    },
+  },
 };
 
-/** Labels as stored in the frozen content: a flat map (`methods.cash`, `total`…). */
 /**
  * Mark of a receipt printed in a training organization (RF-F22): stored with the receipt only
  * when it is one, so real receipts keep their labels.
@@ -166,8 +199,10 @@ export const TRAINING_RECEIPT_LABELS: Readonly<Record<ContentLanguage, string>> 
   fr: 'EXERCICE — PAS UN JUSTIFICATIF VALABLE',
   it: 'ESERCITAZIONE — RICEVUTA NON VALIDA',
   en: 'TRAINING — NOT A VALID RECEIPT',
+  es: 'PRÁCTICA — NO ES UN RECIBO VÁLIDO',
 };
 
+/** Labels as stored in the frozen content: a flat map (`methods.cash`, `total`…). */
 export function flattenLabels(labels: ReceiptLabels): Record<string, string> {
   const flat: Record<string, string> = {};
   for (const [key, value] of Object.entries(labels)) {

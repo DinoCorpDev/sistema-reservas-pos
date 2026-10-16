@@ -63,7 +63,7 @@ export const updateLocationSchema = z
     timezone: text(64),
     defaultLanguage: z.enum(CONTENT_LANGUAGES),
     kitchenLanguage: z.enum(CONTENT_LANGUAGES),
-    languages: z.array(z.enum(CONTENT_LANGUAGES)).min(1).max(4),
+    languages: z.array(z.enum(CONTENT_LANGUAGES)).min(1).max(CONTENT_LANGUAGES.length),
     receiptHeader: optionalText(500),
     receiptFooter: optionalText(500),
     openingHours: openingHoursSchema.nullable(),
@@ -214,7 +214,7 @@ export const onboardOrganizationSchema = z
         .refine(isValidSwissUid, 'Invalid Swiss UID (CHE-123.456.789)')
         .nullable()
         .default(null),
-      languages: z.array(z.enum(CONTENT_LANGUAGES)).min(1).max(4),
+      languages: z.array(z.enum(CONTENT_LANGUAGES)).min(1).max(CONTENT_LANGUAGES.length),
       kitchenLanguage: z.enum(CONTENT_LANGUAGES),
     }),
     owner: z.object({

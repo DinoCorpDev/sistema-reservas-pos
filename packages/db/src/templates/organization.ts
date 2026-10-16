@@ -47,6 +47,13 @@ export const ROLE_NAMES: Record<ContentLanguage, Record<RoleKey, string>> = {
     waiter: 'Service',
     kitchen: 'Kitchen',
   },
+  es: {
+    admin: 'Administrador',
+    manager: 'Gerencia',
+    cashier: 'Caja',
+    waiter: 'Mesero',
+    kitchen: 'Cocina',
+  },
 };
 
 export const SWISS_TAX_CATEGORY_NAMES: Record<ContentLanguage, Record<TaxCategoryKey, string>> = {
@@ -77,6 +84,13 @@ export const SWISS_TAX_CATEGORY_NAMES: Record<ContentLanguage, Record<TaxCategor
     alcoholic_beverage: 'Alcoholic drinks',
     accommodation: 'Accommodation',
     other: 'Other',
+  },
+  es: {
+    food: 'Comida',
+    non_alcoholic_beverage: 'Bebidas sin alcohol',
+    alcoholic_beverage: 'Bebidas alcohólicas',
+    accommodation: 'Alojamiento',
+    other: 'Otros',
   },
 };
 

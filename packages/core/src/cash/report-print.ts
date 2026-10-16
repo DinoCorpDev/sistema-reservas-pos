@@ -139,6 +139,38 @@ export const SHIFT_REPORT_LABELS: Readonly<Record<ContentLanguage, ShiftReportLa
       correction: 'Correction',
     },
   },
+  es: {
+    title: 'CIERRE DE TURNO',
+    period: 'Periodo',
+    payments: 'Pagos',
+    refunds: 'Reembolsos',
+    taxes: 'IVA',
+    tips: 'Propinas',
+    rounding: 'Redondeo',
+    discounts: 'Descuentos',
+    voids: 'Anulaciones',
+    cash: 'EFECTIVO',
+    float: 'Fondo de cambio',
+    collected: 'Efectivo recibido',
+    paidOut: 'Efectivo devuelto',
+    expected: 'Efectivo esperado',
+    counted: 'Contado',
+    difference: 'Diferencia',
+    comment: 'Motivo',
+    methods: {
+      cash: 'Efectivo',
+      card: 'Tarjeta',
+      twint: 'TWINT',
+      online: 'En línea',
+      voucher: 'Vale',
+    },
+    movements: {
+      cash_in: 'Entrada',
+      cash_out: 'Retiro',
+      expense: 'Gasto',
+      correction: 'Corrección',
+    },
+  },
 };
 
 /** "label ........ value" on one line of `width` columns. */
