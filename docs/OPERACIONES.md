@@ -10,14 +10,14 @@ Para cada tarea se indica qué hacer, con qué comando y cómo verificar que sal
 
 ## 1. Qué corre en producción
 
-| Pieza | Dónde | Qué hace |
-|---|---|---|
-| `caddy` | nube | HTTPS automático (Let's Encrypt) para `DOMAIN`; reparte el tráfico entre `web-1` y `web-2` |
-| `web-1`, `web-2` | nube | Next.js: backoffice, `/pos`, `/kds`, `/support`, `/help` y la API `/api/v1` |
-| `worker` | nube | outbox, monitor (alertas por correo) y archivo legal mensual |
-| `mysql` | nube | MySQL 8.4 con binlog; base `pos_cloud` |
-| `backup` | nube | restic cada hora hacia S3 en Suiza; test de restauración mensual |
-| hub | local del restaurante | sincroniza la sede en la LAN, imprime y sigue sin internet (`apps/hub`) |
+| Pieza            | Dónde                 | Qué hace                                                                                   |
+| ---------------- | --------------------- | ------------------------------------------------------------------------------------------ |
+| `caddy`          | nube                  | HTTPS automático (Let's Encrypt) para `DOMAIN`; reparte el tráfico entre `web-1` y `web-2` |
+| `web-1`, `web-2` | nube                  | Next.js: backoffice, `/pos`, `/kds`, `/support`, `/help` y la API `/api/v1`                |
+| `worker`         | nube                  | outbox, monitor (alertas por correo), archivo legal mensual y certificados de los hubs     |
+| `mysql`          | nube                  | MySQL 8.4 con binlog; base `pos_cloud`                                                     |
+| `backup`         | nube                  | restic cada hora hacia S3 en Suiza; test de restauración mensual                           |
+| hub              | local del restaurante | sincroniza la sede en la LAN, imprime y sigue sin internet (`apps/hub`)                    |
 
 - Todo está en `deploy/`: `docker-compose.prod.yml`, `Dockerfile`, `Caddyfile`, `deploy.sh`, `backup/` y `.env.example`.
 - Los secretos van en `deploy/.env`, que nunca se sube al repositorio.
@@ -27,6 +27,7 @@ Para cada tarea se indica qué hacer, con qué comando y cómo verificar que sal
 ## 2. Primer servidor
 
 **Requisitos:**
+
 - Linux con Docker Engine y el plugin `docker compose`, con 2 vCPU y 4 GB de RAM como mínimo.
 - Puertos 80 y 443 abiertos.
 - Un registro DNS `A` de `DOMAIN` que apunte al servidor.
@@ -65,6 +66,7 @@ deploy/deploy.sh
 ```
 
 **Qué hace `deploy.sh`:**
+
 1. Compila las imágenes con la versión `AAAA.MM.DD+commit`.
 2. Aplica las migraciones.
 3. Reinicia `web-1`, espera a que esté sano y luego reinicia `web-2`. Mientras uno se reinicia, Caddy atiende con el otro.
@@ -73,6 +75,7 @@ deploy/deploy.sh
 Si un contenedor no queda sano, el despliegue se detiene y el otro sigue atendiendo.
 
 **Reglas que mantienen el despliegue sin corte:**
+
 - **Las migraciones solo agregan** (tablas, columnas con valor por defecto, índices). Nunca se borra ni se renombra una columna en uso en el mismo despliegue: primero se deja de usar y se quita en una versión posterior. Nunca se edita una migración ya aplicada.
 - **La API solo agrega** campos y rutas. Las terminales con una versión anterior siguen funcionando: sus operaciones van versionadas.
 - **Las tablets no se actualizan solas.** Muestran «Jetzt aktualisieren» y el personal actualiza cuando nadie está cobrando. En `/support/status` se ve la versión de cada aparato.
@@ -91,11 +94,11 @@ No debe aparecer ningún código distinto de `200`.
 
 ## 4. Respaldos y restauración (RNF-13, RNF-14, RNF-15)
 
-| Qué | Cuándo | Retención |
-|---|---|---|
-| `mysqldump` de `pos_cloud` (restic, cifrado) | cada hora, en el minuto `BACKUP_MINUTE` | 48 horarios, 30 diarios, 12 mensuales |
-| Archivo legal por sede (recibos, cierres Z, libro de caja, auditoría en JSON) | mensual | **10 años**, etiqueta `legal` |
-| Test de restauración | día `RESTORE_TEST_DAY` de cada mes | resultado en `platform_job_runs` |
+| Qué                                                                           | Cuándo                                  | Retención                             |
+| ----------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------- |
+| `mysqldump` de `pos_cloud` (restic, cifrado)                                  | cada hora, en el minuto `BACKUP_MINUTE` | 48 horarios, 30 diarios, 12 mensuales |
+| Archivo legal por sede (recibos, cierres Z, libro de caja, auditoría en JSON) | mensual                                 | **10 años**, etiqueta `legal`         |
+| Test de restauración                                                          | día `RESTORE_TEST_DAY` de cada mes      | resultado en `platform_job_runs`      |
 
 - **RPO 1 h:** se pierde como máximo la última hora de la nube. Los datos del día también están en el hub y en las tablets, que los vuelven a enviar.
 - **RTO 4 h.**
@@ -134,20 +137,21 @@ docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env run --rm
 
 El `monitor` (dentro de `worker`) revisa cada 60 s. Cuando un problema dura más que su umbral, envía **un** correo a `SUPPORT_ALERT_EMAIL`, y otro cuando se resuelve.
 
-| Problema | Umbral |
-|---|---|
-| Hub de una sede sin señal | 5 min |
-| Impresora con error | según su último informe |
-| Conflictos de sincronización sin resolver | al aparecer |
-| Outbox atrasado | evento más viejo > 5 min |
-| Último respaldo | > 2 h (si `MONITOR_EXPECT_BACKUPS=true`) |
-| Test de restauración | falló, o tiene más de 35 días |
+| Problema                                  | Umbral                                   |
+| ----------------------------------------- | ---------------------------------------- |
+| Hub de una sede sin señal                 | 5 min                                    |
+| Impresora con error                       | según su último informe                  |
+| Conflictos de sincronización sin resolver | al aparecer                              |
+| Outbox atrasado                           | evento más viejo > 5 min                 |
+| Último respaldo                           | > 2 h (si `MONITOR_EXPECT_BACKUPS=true`) |
+| Test de restauración                      | falló, o tiene más de 35 días            |
 
 - Las organizaciones de práctica nunca alertan.
 - Las tablets apagadas de noche tampoco; solo el hub, que debe estar siempre encendido.
 - **`/support/status`** muestra en vivo los problemas abiertos de todas las organizaciones y, por organización: la última señal del hub, los aparatos con su versión, las impresoras, los conflictos y el outbox.
 
 **Cuando cae el servidor completo**, el monitor no puede avisar. Por eso hay que configurar un **chequeo externo**:
+
 - Usar un servicio gratuito de uptime (UptimeRobot, Better Stack o similar).
 - Hacer un `GET https://DOMAIN/api/v1/health` cada minuto y avisar por correo a soporte si falla dos veces seguidas.
 - Ese servicio mide también la disponibilidad. La meta es 99,9 %, unos 43 minutos de caída al mes como máximo (RNF-01).
@@ -198,6 +202,7 @@ logs web | jq -r 'select(.status >= 500) | .route' | sort | uniq -c | sort -rn
    Según el tipo, el asistente deja:
    - **Café:** plan Café, venta en mostrador (no exige plano de mesas) y un rol «Team» que vende y cobra sin reportes, sin cierre Z ni autorizaciones.
    - **Restaurante:** plan Restaurante y servicio a la mesa.
+
 2. **Contraseña temporal del dueño.** Se muestra una vez y se entrega por un canal seguro (en persona o por teléfono). Al primer ingreso el dueño la cambia.
 3. **Plan y add-ons.** En la lista de `/support`, el ícono de tarjeta abre el plan, los add-ons y el estado de pago. El cobro es manual: se marca `past_due` si no paga y `suspended` si hay que frenar el crecimiento. Vender, cobrar y cerrar el Z nunca se bloquean.
 4. **Configuración.** El dueño (o soporte, con su acceso) completa la lista de verificación del «Resumen» del backoffice: sede y UID, carta, MWST, mesas, personal con PIN, aparatos y estaciones. La carta se puede cargar en lote con `pnpm --filter @pos/api menu:import <archivo.json>`.
@@ -253,15 +258,16 @@ logs web | jq -r 'select(.status >= 500) | .route' | sort | uniq -c | sort -rn
 
 > **Pendiente de definir por Juan y su socio.** Se completa antes del primer piloto.
 
-| Tema | Decisión |
-|---|---|
-| Quién atiende | _pendiente_ |
-| Horario (servicio de noche y fines de semana) | _pendiente_ |
-| Canal (teléfono, WhatsApp, correo) | _pendiente_ |
+| Tema                                                                            | Decisión    |
+| ------------------------------------------------------------------------------- | ----------- |
+| Quién atiende                                                                   | _pendiente_ |
+| Horario (servicio de noche y fines de semana)                                   | _pendiente_ |
+| Canal (teléfono, WhatsApp, correo)                                              | _pendiente_ |
 | Tiempo de respuesta según gravedad (no se puede cobrar / un aparato / consulta) | _pendiente_ |
-| Quién recibe las alertas por correo (`SUPPORT_ALERT_EMAIL`) | _pendiente_ |
+| Quién recibe las alertas por correo (`SUPPORT_ALERT_EMAIL`)                     | _pendiente_ |
 
 **Primer diagnóstico cuando llama un restaurante:**
+
 1. Revisar `/support/status`: ¿la nube está sana? ¿el hub tiene señal? ¿hay impresoras con error?
 2. Si se necesita entrar a la organización, pedir al dueño el **acceso de soporte** (backoffice → «Acceso de soporte»). Todo lo que hace soporte queda registrado con su nombre.
 3. Para un error de la API, buscar en los logs por `requestId` u `organizationId` (§6).

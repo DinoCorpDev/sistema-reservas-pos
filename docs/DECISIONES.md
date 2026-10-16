@@ -445,12 +445,56 @@ Juan lo decidió con su jefe (15 oct 2026): el producto no incluye nada de Zitas
   El pago online del QR sigue diferido (DEC-003).
 
 - **Si un cliente quiere reservas más adelante,** se decide de nuevo: reservas propias del POS, o una integración por la API.
+- **Adenda (Fase 6):** también quedan ⏸ los dos requisitos de la Fase 5 que dependían de las reservas: vincular la mesa con la reserva (RF-C04) y el bloqueo de mesa antes de la reserva con no-show (RN-22). Los ajustes de RN-22 siguen en `settings` (DEC-004), sin uso.
+
+## DEC-045 · Fase 6: piloto con hosting neutral, alertas por correo, planes con cobro manual y modo práctica
+
+Juan lo decidió el 15 oct 2026 al aprobar el plan de la Fase 6. La Fase 5 (QR y takeaway) va después del piloto.
+
+- **Hosting neutral (RNF-10, RNF-13, RNF-17).**
+  - La nube corre con Docker Compose en cualquier Linux (`deploy/`): Caddy con HTTPS automático, dos contenedores web, `worker` (outbox, monitor, archivo legal y certificados de los hubs), MySQL 8.4 con binlog y `backup`.
+  - `deploy.sh` reinicia `web-1` y `web-2` de a uno. Las migraciones y la API solo agregan, así que las terminales viejas siguen funcionando.
+  - Lo que vivía en memoria y rompería con dos instancias (las aprobaciones de un solo uso, DEC-015) pasó a la base (`approval_uses`).
+  - El proveedor suizo, el bucket S3 y el dominio se eligen después. Nada depende de ellos.
+- **Respaldos (RNF-14, RNF-15, RF-F13).** restic cifrado cada hora hacia S3 en Suiza (48 horarios, 30 diarios, 12 mensuales). El archivo legal mensual por sede va con la etiqueta `legal`, sin vencimiento. Un test de restauración mensual compara los recibos y los Z con producción.
+- **Alertas a soporte por correo (RNF-16, RNF-01).**
+  - La función pura `healthIssues()` decide los problemas: hub sin señal 5 min, impresora con error, conflictos, outbox atrasado, respaldos y test de restauración.
+  - El `monitor` manda un correo al abrirse cada problema y otro al resolverse.
+  - `/support/status` muestra el estado en vivo.
+  - La caída del servidor completo la detecta un chequeo externo de uptime (`docs/OPERACIONES.md`).
+- **Logs JSON (RNF-18):** con organización, sede, terminal, usuario y `requestId`, sin secretos, en archivos diarios que se borran a los 90 días.
+- **Versión y latido (RNF-17):** cada aparato informa su versión (`x-app-version`). La nube guarda `lastSeenAt` como máximo una vez por minuto, también para el hub.
+- **Planes y add-ons con cobro manual.**
+  - `plans`, `plan_addons` y `plan_prices` (por país y moneda) son datos; `subscriptions` y `subscription_addons` van por organización.
+  - **Los límites se aplican en los casos de uso** y responden 409 con su motivo (`plan_limit`, `plan_feature`, `subscription_suspended`): crear o activar aparatos según su tipo y los módulos del plan, códigos de teléfono, usuarios, claves de API, y la propiedad de mesas restringida.
+  - **Lo legal nunca se bloquea:** vender, cobrar, imprimir recibos, cerrar el Z y exportar.
+  - `past_due` muestra un aviso en el backoffice y en la caja; `suspended` además frena el crecimiento.
+  - Las organizaciones anteriores quedaron en Pro (migración 0019).
+  - DINOLABS edita el catálogo y las suscripciones en `/support`; el dueño ve «Mi plan».
+- **Perfil del negocio en el alta.**
+  - **Café:** plan Café, venta en mostrador (`pos.serviceStyle = counter`, sin plano de mesas en la lista de verificación) y un rol «Team» que vende, cobra, abre turnos y opera cocina, sin reportes, cierre Z ni autorizaciones.
+  - **Restaurante:** plan Restaurante y servicio a la mesa.
+- **Modo práctica (RF-F22).**
+  - Es otra organización (`is_training`, `training_of_id`) copiada de la real: sedes, plano, estaciones, carta, MWST, roles y personal con los mismos PIN (misma `pin_key`).
+  - Los ID se remapean, también dentro de JSON. Sin correo ni contraseña, sin vinculaciones, con QR nuevos y con las impresoras apagadas.
+  - Sus aparatos se vinculan desde el backoffice real, muestran la franja naranja y sus recibos dicen «ÜBUNG — KEIN GÜLTIGER BELEG». No alerta ni cuenta en los planes.
+  - Una copia nueva retira la anterior (soft delete) y desvincula sus aparatos.
+- **PWA:** `/pos` y `/kds` se instalan cada una con su manifiesto e íconos («Kasse», «Küche»). Una app nativa no hace falta para el piloto.
+- **Manuales y runbook (RNF-21, RNF-20).** `/help/{de,es}/{rol}` tiene los manuales cortos, imprimibles y disponibles sin conexión. `docs/OPERACIONES.md` es el runbook de soporte. El modelo de soporte del piloto queda por definir con Juan.
+- **Hub en el local.**
+  - Docker Compose con su MySQL e `install-hub.sh` para un mini PC Linux.
+  - **HTTPS del hub (DEC-028):** la nube publica `h-<id>.<zona>` → IP de la LAN y emite el certificado por ACME DNS-01 (Let's Encrypt). El hub manda solo un CSR, porque su clave privada nunca sale del equipo. El hub sirve HTTPS en 4443 y la sede recibe esa dirección como primer hub.
+  - El DNS va detrás de un adaptador; el primero es Cloudflare. Sin `HUB_DNS_ZONE`, el hub sigue en HTTP.
+  - Se valida con el router y las tablets reales (protección contra DNS rebinding).
+- **Lo que queda pendiente de Juan y su socio:** el hosting y el almacenamiento en Suiza, el dominio y la zona DNS de los hubs, la lista de hardware, el modelo de soporte, los precios reales de los planes y la validación de la fiduciaria.
 
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |
 | -------------------------------------------------------------------------------------- | -------- | ------------ |
-| Proveedor de hosting en Suiza                                                          | Fase 6   | Juan y socio |
+| Proveedor de hosting y de almacenamiento S3 en Suiza (el software es neutral, DEC-045) | Piloto   | Juan y socio |
+| Dominio y zona DNS de los hubs (HTTPS en la LAN, DEC-045)                              | Piloto   | Juan y socio |
+| Precios reales de los planes y add-ons (el catálogo es un ejemplo, DEC-045)            | Piloto   | Juan y socio |
 | Proveedor de pago online (TWINT y tarjeta en QR/web)                                   | Fase 5   | Juan y socio |
 | Validar el redondeo de las devoluciones en efectivo (DEC-038) y el Z basado en recibos | Piloto   | Fiduciaria   |
 | Precio por sede en CHF y qué incluye                                                   | Piloto   | Juan y socio |

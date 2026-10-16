@@ -115,7 +115,7 @@ export async function startHub(): Promise<RunningHub> {
     if (child.exitCode !== null) throw new Error(`The hub exited:\n${output.join('')}`);
     try {
       const health = await fetch(`${HUB_URL}/health`);
-      if (health.ok && output.join('').includes('Hub listening')) break;
+      if (health.ok && /hub listening/i.test(output.join(''))) break;
     } catch {
       // Not listening yet.
     }

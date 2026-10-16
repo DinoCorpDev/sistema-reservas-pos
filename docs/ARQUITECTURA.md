@@ -131,21 +131,41 @@ Cada cambio importante escribe una fila en `outbox_events` **dentro de la misma 
 | Desarrollo local (Windows) | MySQL 8 con binarios de Laragon y datos en `.data/mysql` (D:), puerto 3310: `pos_cloud` y `pos_hub` (DEC-013) | `pnpm mysql:start`, `pnpm db:setup`, `pnpm dev` |
 | Desarrollo con Docker      | `docker compose up -d`: `mysql-cloud` (3306) y `mysql-hub` (3307)                                             | Igual, ajustando `.env`                         |
 | CI (GitHub Actions)        | Servicio MySQL 8                                                                                              | `.github/workflows/ci.yml`                      |
-| Piloto                     | Docker Compose en un proveedor con región suiza (decisión abierta) y un hub por sede                          | Fase 6                                          |
+| Producción (piloto)        | `deploy/docker-compose.prod.yml` en cualquier Linux con región suiza; un hub por sede (`deploy/hub`)          | `deploy/deploy.sh`, `deploy/hub/install-hub.sh` |
+
+### 9.1 Producción (Fase 6, DEC-045)
+
+```
+Internet ── Caddy (HTTPS, Let's Encrypt) ──┬── web-1 ─┐
+                                           └── web-2 ─┴── MySQL 8.4 (binlog) ── backup (restic → S3 en Suiza)
+                                                worker: outbox · monitor (correo) · archivo legal · certificados de hubs
+
+Local del restaurante (LAN): tablets (PWA /pos, /kds) ── https://h-<id>.<zona>:4443 ── hub + MySQL ── impresoras ESC/POS
+```
+
+- **Despliegue sin corte:** `deploy.sh` compila, migra (las migraciones solo agregan) y reinicia `web-1` y luego `web-2`. Las tablets se actualizan cuando el personal toca el aviso.
+- **Estado compartido entre instancias:** todo lo que debe sobrevivir a dos contenedores vive en MySQL (sesiones firmadas, aprobaciones de un solo uso en `approval_uses`). Ningún contenedor web guarda estado propio.
+- **Observabilidad:** logs JSON en el volumen `logs` (90 días); `monitor` con `healthIssues()` y correo a soporte; `/support/status`; versión y latido de cada aparato; chequeo externo de `/api/v1/health`.
+- **Respaldos:** `mysqldump` cada hora con restic (RPO 1 h), archivo legal mensual con etiqueta `legal` y test de restauración mensual que compara los hash de recibos y Z.
+- **HTTPS del hub:** el hub manda su IP de la LAN y un CSR (`POST /sync/hub-certificate`); el worker publica el nombre en la zona DNS (adaptador, primero Cloudflare), obtiene el certificado por ACME DNS-01 y agrega `https://h-<id>.<zona>:4443` a `settings.sync.hubUrls` de la sede. Sin `HUB_DNS_ZONE` el hub queda en HTTP (desarrollo).
+- **Planes:** el catálogo (`plans`, `plan_addons`, `plan_prices`) y las suscripciones son datos. `assertGrowth()` se consulta en cada caso de uso que agrega aparatos, usuarios, claves o módulos; lo legal nunca la consulta.
+- **Práctica:** una organización aparte (`is_training`, `training_of_id`) copiada de la real. El aislamiento es el mismo multi-tenant de siempre (PA-09).
+
+El runbook de operación está en [`OPERACIONES.md`](OPERACIONES.md).
 
 ## 10. Cómo se cumple cada principio
 
-| PA                                 | Cómo se cumple hoy                                                                                                                                           | Qué falta                                                                |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| PA-01 Monolito modular + API-first | Módulos en `@pos/core`; casos de uso en `packages/api`, usados igual por la API REST v1 y el backoffice; ESLint impide que el dominio dependa de frameworks. | Módulos de caja, reservas y reportes (Fases 4-5).                        |
-| PA-02 Una sola fuente de verdad    | Un único esquema y un único reductor de órdenes, compartidos por la nube, el hub y las terminales; Zitas solo por API (DEC-001).                             | —                                                                        |
-| PA-03 Offline-first                | PWA con service worker, Dexie y registro de operaciones; hub en la LAN; E2E con la red cortada (DEC-021, SYNC.md).                                           | Turnos sin conexión (Fase 4); HTTPS hacia el hub en producción (Fase 6). |
-| PA-04 Pagos desacoplados           | Interfaz `PaymentAdapter` con `cash`, `external-terminal` y `online` (stub); el motor de órdenes solo recibe pagos resueltos.                                | Proveedor online (Fase 5, DEC-003).                                      |
-| PA-05 Cocina ≠ pago                | Estado por ítem (y por estación en cocina, DEC-029) y por orden independientes; cierre automático (RN-12) en el reductor; KDS por estación.                  | —                                                                        |
-| PA-06 Nada se borra                | Soft delete obligatorio; triggers append-only; anulaciones y devoluciones son operaciones nuevas.                                                            | —                                                                        |
-| PA-07 La IA interpreta             | Sin acceso de escritura previsto.                                                                                                                            | Credenciales de solo lectura cuando exista IA.                           |
-| PA-08 Dinero en enteros            | Tipo `Rappen`, columnas `int`; MWST, descuentos, divisiones y redondeo con tests exhaustivos.                                                                | Validación de la fiduciaria (DEC-016, DEC-024).                          |
-| PA-09 Multi-tenant                 | `organization_id` en toda tabla; `inOrg`/`inLocation` en toda consulta; tests de cruce entre organizaciones.                                                 | —                                                                        |
-| PA-10 Eventos e idempotencia       | Outbox en la misma transacción; operaciones idempotentes por ID; propiedad: cualquier orden de llegada da el mismo estado.                                   | Consumidores (webhooks, Fase 5).                                         |
-| PA-11 Configurable sin código      | Montaje completo desde el backoffice con lista de verificación (puerta de la Fase 1).                                                                        | —                                                                        |
-| PA-12 Datos en Suiza               | Nada acoplado a un proveedor; todo corre con Docker Compose.                                                                                                 | Elegir hosting con región suiza (Fase 6).                                |
+| PA                                 | Cómo se cumple hoy                                                                                                                                           | Qué falta                                                        |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| PA-01 Monolito modular + API-first | Módulos en `@pos/core`; casos de uso en `packages/api`, usados igual por la API REST v1 y el backoffice; ESLint impide que el dominio dependa de frameworks. | Módulos de caja, reservas y reportes (Fases 4-5).                |
+| PA-02 Una sola fuente de verdad    | Un único esquema y un único reductor de órdenes, compartidos por la nube, el hub y las terminales; Zitas solo por API (DEC-001).                             | —                                                                |
+| PA-03 Offline-first                | PWA con service worker, Dexie y registro de operaciones; hub en la LAN; E2E con la red cortada (DEC-021, SYNC.md).                                           | Validar el HTTPS del hub con el router y las tablets del piloto. |
+| PA-04 Pagos desacoplados           | Interfaz `PaymentAdapter` con `cash`, `external-terminal` y `online` (stub); el motor de órdenes solo recibe pagos resueltos.                                | Proveedor online (Fase 5, DEC-003).                              |
+| PA-05 Cocina ≠ pago                | Estado por ítem (y por estación en cocina, DEC-029) y por orden independientes; cierre automático (RN-12) en el reductor; KDS por estación.                  | —                                                                |
+| PA-06 Nada se borra                | Soft delete obligatorio; triggers append-only; anulaciones y devoluciones son operaciones nuevas.                                                            | —                                                                |
+| PA-07 La IA interpreta             | Sin acceso de escritura previsto.                                                                                                                            | Credenciales de solo lectura cuando exista IA.                   |
+| PA-08 Dinero en enteros            | Tipo `Rappen`, columnas `int`; MWST, descuentos, divisiones y redondeo con tests exhaustivos.                                                                | Validación de la fiduciaria (DEC-016, DEC-024).                  |
+| PA-09 Multi-tenant                 | `organization_id` en toda tabla; `inOrg`/`inLocation` en toda consulta; tests de cruce entre organizaciones.                                                 | —                                                                |
+| PA-10 Eventos e idempotencia       | Outbox en la misma transacción; operaciones idempotentes por ID; propiedad: cualquier orden de llegada da el mismo estado.                                   | Consumidores (webhooks, Fase 5).                                 |
+| PA-11 Configurable sin código      | Montaje completo desde el backoffice con lista de verificación (puerta de la Fase 1).                                                                        | —                                                                |
+| PA-12 Datos en Suiza               | Nada acoplado a un proveedor; todo corre con Docker Compose.                                                                                                 | Elegir el hosting y el S3 con región suiza (DEC-045).            |
