@@ -303,6 +303,7 @@ export async function buildSetupSnapshot(
       defaultLanguage: location.defaultLanguage,
       languages: location.languages,
       serviceStyle: parseLocationSettings(location.settings).pos.serviceStyle,
+      country: location.country,
     },
     activeAreas: value(areas),
     activeTables: value(tables),

@@ -2,6 +2,8 @@ import { randomBytes } from 'node:crypto';
 import {
   type ConsumptionType,
   type ContentLanguage,
+  type Country,
+  type CoTaxRegime,
   DEFAULT_ROLE_PERMISSIONS,
   newId,
   ROLE_KEYS,
@@ -124,6 +126,18 @@ export const SWISS_TAX_RULES: Record<TaxCategoryKey, Record<ConsumptionType, Tax
 
 const SWISS_RULES_VALID_FROM = '2018-01-01';
 
+/**
+ * Colombia (DEC-047): a restaurant charges one tax on everything it sells, on premise, takeaway
+ * or delivery — the national consumption tax (INC 8 %, most restaurants, cafés and bars), VAT
+ * (IVA 19 %, franchises) or none (not responsible). The owner edits it from the backoffice.
+ */
+export const COLOMBIAN_TAX_RATE_BP: Readonly<Record<CoTaxRegime, number>> = {
+  inc: 800,
+  iva: 1900,
+  none: 0,
+};
+const COLOMBIAN_TAX_VALID_FROM = '2017-01-01';
+
 /** Fresh secret for `organizations.pin_key` (DEC-015). */
 export function newPinKey(): string {
   return randomBytes(32).toString('hex');
@@ -134,11 +148,15 @@ export interface AppliedTemplate {
   taxCategoryIds: Record<TaxCategoryKey, string>;
 }
 
-/** Copies roles, permissions and the Swiss MWST setup into a new organization. */
+/**
+ * Copies roles, permissions and the tax setup of the country into a new organization: the Swiss
+ * MWST, or the Colombian regime's single rate (DEC-047).
+ */
 export async function applyOrganizationTemplate(
   tx: Transaction,
   organizationId: string,
   language: ContentLanguage,
+  tax: { country: Country; regime?: CoTaxRegime } = { country: 'CH' },
 ): Promise<AppliedTemplate> {
   const org = { organizationId };
   const roleIds = {} as Record<RoleKey, string>;
@@ -162,20 +180,39 @@ export async function applyOrganizationTemplate(
     taxCategoryIds[key] = id;
     await tx.insert(s.taxCategories).values({ id, ...org, key, name });
   }
-  await tx.insert(s.taxRates).values(SWISS_TAX_RATES.map((rate) => ({ ...org, ...rate })));
+  const colombia = tax.country === 'CO';
+  const rates = colombia
+    ? [
+        {
+          code: 'normal' as const,
+          rateBp: COLOMBIAN_TAX_RATE_BP[tax.regime ?? 'inc'],
+          validFrom: COLOMBIAN_TAX_VALID_FROM,
+          validTo: null,
+        },
+      ]
+    : SWISS_TAX_RATES;
+  const rules: Record<TaxCategoryKey, Record<ConsumptionType, TaxRateCode>> = colombia
+    ? (Object.fromEntries(
+        Object.keys(SWISS_TAX_RULES).map((key) => [
+          key,
+          { on_premise: 'normal', takeaway: 'normal', delivery: 'normal' },
+        ]),
+      ) as Record<TaxCategoryKey, Record<ConsumptionType, TaxRateCode>>)
+    : SWISS_TAX_RULES;
+  const rulesFrom = colombia ? COLOMBIAN_TAX_VALID_FROM : SWISS_RULES_VALID_FROM;
+  await tx.insert(s.taxRates).values(rates.map((rate) => ({ ...org, ...rate })));
   await tx.insert(s.taxRules).values(
-    (
-      Object.entries(SWISS_TAX_RULES) as [TaxCategoryKey, Record<ConsumptionType, TaxRateCode>][]
-    ).flatMap(([categoryKey, byConsumption]) =>
-      (Object.entries(byConsumption) as [ConsumptionType, TaxRateCode][]).map(
-        ([consumptionType, rateCode]) => ({
-          ...org,
-          taxCategoryId: taxCategoryIds[categoryKey],
-          consumptionType,
-          rateCode,
-          validFrom: SWISS_RULES_VALID_FROM,
-        }),
-      ),
+    (Object.entries(rules) as [TaxCategoryKey, Record<ConsumptionType, TaxRateCode>][]).flatMap(
+      ([categoryKey, byConsumption]) =>
+        (Object.entries(byConsumption) as [ConsumptionType, TaxRateCode][]).map(
+          ([consumptionType, rateCode]) => ({
+            ...org,
+            taxCategoryId: taxCategoryIds[categoryKey],
+            consumptionType,
+            rateCode,
+            validFrom: rulesFrom,
+          }),
+        ),
     ),
   );
   return { roleIds, taxCategoryIds };

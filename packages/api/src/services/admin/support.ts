@@ -1,7 +1,10 @@
 import {
   type CreateSupportGrantInput,
   DEFAULT_LOCATION_SETTINGS,
-  formatSwissVatUid,
+  coTaxLabel,
+  COUNTRY_PROFILES,
+  CUSTOMER_NAME_FROM,
+  formatTaxId,
   newId,
   type OnboardOrganizationInput,
   PROFILE_DEFAULTS,
@@ -228,6 +231,7 @@ export async function onboardOrganization(
   const temporaryPassword = randomToken(12);
   const passwordHash = await hashPassword(temporaryPassword);
   const profile = PROFILE_DEFAULTS[input.profile];
+  const country = COUNTRY_PROFILES[input.country];
   const ctx = {
     organizationId,
     locationId: null,
@@ -253,20 +257,27 @@ export async function onboardOrganization(
       street: input.location.street,
       postalCode: input.location.postalCode,
       city: input.location.city,
-      canton: input.location.canton?.toUpperCase() ?? null,
-      vatUid: input.location.vatUid ? formatSwissVatUid(input.location.vatUid) : null,
+      canton: country.hasCanton ? (input.location.canton?.toUpperCase() ?? null) : null,
+      vatUid: input.location.vatUid ? formatTaxId(input.country, input.location.vatUid) : null,
+      // Money, time and tax follow the country (DEC-047).
+      country: input.country,
+      currency: country.currency,
+      timezone: country.timezone,
       defaultLanguage: input.organization.defaultLanguage,
       kitchenLanguage: input.location.kitchenLanguage,
       languages: [...input.location.languages],
       settings: {
         ...DEFAULT_LOCATION_SETTINGS,
         pos: { ...DEFAULT_LOCATION_SETTINGS.pos, serviceStyle: profile.serviceStyle },
+        tax: { label: input.country === 'CO' ? coTaxLabel(input.taxRegime) : null },
+        receipts: { customerNameFromRappen: CUSTOMER_NAME_FROM[input.country] },
       },
     });
     const { roleIds } = await applyOrganizationTemplate(
       tx,
       organizationId,
       input.organization.defaultLanguage,
+      { country: input.country, regime: input.taxRegime },
     );
     await tx.insert(s.users).values({
       id: ownerUserId,
@@ -317,6 +328,8 @@ export async function onboardOrganization(
         ownerUserId,
         profile: input.profile,
         planCode: profile.planCode,
+        country: input.country,
+        ...(input.country === 'CO' ? { taxRegime: input.taxRegime } : {}),
       },
     });
   });

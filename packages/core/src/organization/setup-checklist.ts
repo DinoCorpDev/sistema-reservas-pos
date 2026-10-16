@@ -1,4 +1,4 @@
-import { isValidSwissUid } from './uid';
+import { asCountry, isValidTaxId } from '../shared/countries';
 
 /**
  * Setup checklist of a location (RF-A11): what is still missing before the restaurant can operate.
@@ -17,6 +17,8 @@ export interface SetupSnapshot {
     languages: readonly string[];
     /** A counter service (café, bar) needs no floor plan (DEC-045). */
     serviceStyle?: 'tables' | 'counter';
+    /** CH or CO: the tax id is a UID or a NIT (DEC-047). */
+    country?: string;
   };
   activeAreas: number;
   activeTables: number;
@@ -107,7 +109,10 @@ export function computeSetupChecklist(snapshot: SetupSnapshot): SetupChecklist {
         location.city,
       ].every(filled),
     },
-    { key: 'vat_uid', done: !!location.vatUid && isValidSwissUid(location.vatUid) },
+    {
+      key: 'vat_uid',
+      done: !!location.vatUid && isValidTaxId(asCountry(location.country), location.vatUid),
+    },
     // RF-B07: at least the location language plus one more.
     {
       key: 'languages',

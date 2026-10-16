@@ -1,4 +1,11 @@
-import { healthIssues, PERMISSIONS } from '@pos/core';
+import {
+  extractTax,
+  healthIssues,
+  onboardOrganizationSchema,
+  parseLocationSettings,
+  PERMISSIONS,
+  rappen,
+} from '@pos/core';
 import { schema as s } from '@pos/db';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -9,6 +16,7 @@ import {
 } from '../services/admin/platform-health';
 import { getSetupChecklist } from '../services/admin/setup';
 import { onboardOrganization } from '../services/admin/support';
+import { updateLocation } from '../services/locations';
 import { getMyPlan, updateSubscription } from '../services/platform/plans';
 import {
   createTraining,
@@ -188,6 +196,8 @@ describe('plans and add-ons (DEC-045)', () => {
       { staffId: staff!.id },
       {
         profile: 'cafe',
+        country: 'CH',
+        taxRegime: 'inc',
         organization: {
           name: 'Café Lausanne',
           legalName: 'Café Lausanne Sàrl',
@@ -400,3 +410,98 @@ const demoActor = () =>
     userId: demo.users.admin.id,
     requestId: null,
   }) as const;
+
+describe('a restaurant in Colombia (DEC-047)', () => {
+  const colombian = {
+    profile: 'restaurant',
+    country: 'CO',
+    taxRegime: 'inc',
+    organization: {
+      name: 'Tienda de Café',
+      legalName: 'Tienda de Café SAS',
+      defaultLanguage: 'es',
+    },
+    location: {
+      name: 'Tienda de Café Chapinero',
+      legalName: 'Tienda de Café SAS',
+      street: 'Calle 63 # 9-42',
+      postalCode: '110231',
+      city: 'Bogotá',
+      canton: null,
+      vatUid: '8001972684',
+      languages: ['es'],
+      kitchenLanguage: 'es',
+    },
+    owner: { displayName: 'Dueña', email: 'tienda-cafe@example.test', uiLanguage: 'es' },
+  };
+
+  it('validates the NIT check digit and the 6-digit postal code; no canton', () => {
+    expect(onboardOrganizationSchema.safeParse(colombian).success).toBe(true);
+    const badNit = onboardOrganizationSchema.safeParse({
+      ...colombian,
+      location: { ...colombian.location, vatUid: '800197268-5' },
+    });
+    expect(badNit.error?.issues.map((issue) => issue.path.join('.'))).toEqual(['location.vatUid']);
+    const swissPostal = onboardOrganizationSchema.safeParse({
+      ...colombian,
+      location: { ...colombian.location, postalCode: '8001', canton: 'ZH' },
+    });
+    expect(swissPostal.error?.issues.map((issue) => issue.path.join('.')).sort()).toEqual([
+      'location.canton',
+      'location.postalCode',
+    ]);
+  });
+
+  it('pesos, Bogotá time, the NIT and one INC rate of 8 % for everything', async () => {
+    const [staff] = await api.db.select({ id: s.platformStaff.id }).from(s.platformStaff).limit(1);
+    const created = await onboardOrganization(
+      { db: api.db },
+      { staffId: staff!.id },
+      onboardOrganizationSchema.parse(colombian),
+    );
+    const [location] = await api.db
+      .select()
+      .from(s.locations)
+      .where(eq(s.locations.id, created.locationId));
+    expect(location).toMatchObject({
+      country: 'CO',
+      currency: 'COP',
+      timezone: 'America/Bogota',
+      vatUid: '800.197.268-4',
+      canton: null,
+    });
+    const settings = parseLocationSettings(location!.settings);
+    expect(settings.tax.label).toBe('INC');
+    expect(settings.receipts.customerNameFromRappen).toBe(100_000_000);
+
+    const rates = await api.db
+      .select({ code: s.taxRates.code, rateBp: s.taxRates.rateBp })
+      .from(s.taxRates)
+      .where(eq(s.taxRates.organizationId, created.organizationId));
+    expect(rates).toEqual([{ code: 'normal', rateBp: 800 }]);
+    const rules = await api.db
+      .select({ rateCode: s.taxRules.rateCode })
+      .from(s.taxRules)
+      .where(eq(s.taxRules.organizationId, created.organizationId));
+    expect(rules.length).toBe(15);
+    expect(new Set(rules.map((rule) => rule.rateCode))).toEqual(new Set(['normal']));
+    // $10.000 with INC included: $740,74 of tax.
+    expect(extractTax(rappen(1_000_000), 800)).toBe(74_074);
+
+    // Later edits keep Colombian rules: a Swiss UID is refused, a NIT is formatted.
+    const owner = {
+      kind: 'user',
+      organizationId: created.organizationId,
+      locationId: created.locationId,
+      userId: created.ownerUserId,
+      permissions: ALL,
+    } as const;
+    await expect(
+      updateLocation({ db: api.db }, owner, created.locationId, { vatUid: 'CHE-123.456.788' }),
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+    const updated = await updateLocation({ db: api.db }, owner, created.locationId, {
+      vatUid: '900123456-8',
+    });
+    expect(updated.vatUid).toBe('900.123.456-8');
+  });
+});

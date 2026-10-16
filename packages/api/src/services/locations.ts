@@ -2,7 +2,9 @@ import { randomBytes } from 'node:crypto';
 import {
   type createAreaSchema,
   type createTableSchema,
-  formatSwissVatUid,
+  asCountry,
+  formatTaxId,
+  locationFieldProblems,
   type LocationSettings,
   parseLocationSettings,
   type UpdateLocationInput,
@@ -82,10 +84,16 @@ export async function updateLocation(
 ): Promise<LocationDto> {
   assertPermission(actor, 'location.manage');
   const current = await loadLocation(deps, actor, id);
+  // The country stays; its address and tax id rules apply (DEC-047).
+  const country = asCountry(current.country);
+  const [problem] = locationFieldProblems(country, input);
+  if (problem) {
+    throw new ApiError('VALIDATION_FAILED', problem.message, { path: [problem.path] });
+  }
   const patch = definedOnly({
     ...input,
     vatUid:
-      input.vatUid === undefined ? undefined : input.vatUid && formatSwissVatUid(input.vatUid),
+      input.vatUid === undefined ? undefined : input.vatUid && formatTaxId(country, input.vatUid),
     canton: input.canton === undefined ? undefined : (input.canton?.toUpperCase() ?? null),
   });
 

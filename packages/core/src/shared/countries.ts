@@ -1,4 +1,4 @@
-import { isValidSwissUid } from '../organization/uid';
+import { formatSwissVatUid, isValidSwissUid } from '../organization/uid';
 import type { Currency } from './money';
 
 /**
@@ -87,6 +87,25 @@ export function formatNit(value: string): string {
 export function isValidTaxId(country: Country, value: string): boolean {
   return country === 'CO' ? isValidNit(value) : isValidSwissUid(value);
 }
+
+/** How the tax id is stored: `CHE-123.456.789 MWST` or `900.123.456-7`. */
+export function formatTaxId(country: Country, value: string): string {
+  return country === 'CO' ? formatNit(value) : formatSwissVatUid(value);
+}
+
+/** The tax's name on receipts in Colombia (DEC-047); null keeps the language's label. */
+export function coTaxLabel(regime: CoTaxRegime): string | null {
+  return regime === 'inc' ? 'INC' : regime === 'iva' ? 'IVA' : null;
+}
+
+/**
+ * From this amount the receipt asks for the customer's name (RN-08). In Switzerland CHF 400;
+ * in Colombia $1.000.000 by default (DEC-047), editable per location.
+ */
+export const CUSTOMER_NAME_FROM: Readonly<Record<Country, number>> = {
+  CH: 40_000,
+  CO: 100_000_000,
+};
 
 export function isValidPostalCode(country: Country, value: string): boolean {
   return COUNTRY_PROFILES[country].postalCode.test(value.trim());

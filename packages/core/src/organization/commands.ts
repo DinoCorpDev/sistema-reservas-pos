@@ -4,12 +4,54 @@ import { QR_MODES } from '../tables/constants';
 import { CREATABLE_TERMINAL_TYPES, PRINTER_KINDS, PRINTER_PROTOCOLS } from './constants';
 import { PERMISSIONS, ROLE_KEYS } from './permissions';
 import { BUSINESS_PROFILES } from '../platform/profiles';
-import { isValidSwissUid } from './uid';
+import {
+  COUNTRY_PROFILES,
+  CO_TAX_REGIMES,
+  COUNTRIES,
+  type Country,
+  isValidTaxId,
+} from '../shared/countries';
 
 /**
  * Input schemas of the organization commands, shared by the REST API and the backoffice forms.
  * They only validate; normalization (e.g. the canonical UID format) happens in the use case.
  */
+
+/**
+ * What the country asks of a location's address and tax id (DEC-047): the postal code format
+ * (optional in Colombia), a canton only in Switzerland, the UID or the NIT with its check digit.
+ */
+export function locationFieldProblems(
+  country: Country,
+  fields: { postalCode?: string; canton?: string | null; vatUid?: string | null },
+): { path: 'postalCode' | 'canton' | 'vatUid'; message: string }[] {
+  const profile = COUNTRY_PROFILES[country];
+  const problems: { path: 'postalCode' | 'canton' | 'vatUid'; message: string }[] = [];
+  const postalCode = fields.postalCode?.trim();
+  if (postalCode !== undefined) {
+    if (postalCode === '' ? profile.postalCodeRequired : !profile.postalCode.test(postalCode)) {
+      problems.push({
+        path: 'postalCode',
+        message:
+          country === 'CO' ? 'Colombian postal code: 6 digits' : 'Swiss postal code: 4 digits',
+      });
+    }
+  }
+  if (fields.canton && !profile.hasCanton) {
+    problems.push({ path: 'canton', message: 'No canton outside Switzerland' });
+  }
+  const vatUid = fields.vatUid?.trim();
+  if (vatUid && !isValidTaxId(country, vatUid)) {
+    problems.push({
+      path: 'vatUid',
+      message:
+        country === 'CO'
+          ? 'Invalid NIT: check digit (900.123.456-7)'
+          : 'Invalid Swiss UID (CHE-123.456.789)',
+    });
+  }
+  return problems;
+}
 
 const text = (max: number) => z.string().trim().min(1).max(max);
 const optionalText = (max: number) => z.string().trim().max(max).nullable().optional();
@@ -43,21 +85,15 @@ export const updateLocationSchema = z
     name: text(200),
     legalName: text(200),
     street: text(200),
-    postalCode: z
-      .string()
-      .trim()
-      .regex(/^\d{4}$/, 'Swiss postal code: 4 digits'),
+    // Checked against the location's country in the use case (`locationFieldProblems`).
+    postalCode: z.string().trim().max(10),
     city: text(100),
     canton: z
       .string()
       .trim()
       .regex(/^[A-Za-z]{2}$/)
       .nullable(),
-    vatUid: z
-      .string()
-      .trim()
-      .refine(isValidSwissUid, 'Invalid Swiss UID (CHE-123.456.789)')
-      .nullable(),
+    vatUid: z.string().trim().max(32).nullable(),
     phone: optionalText(32),
     email: z.email().max(254).nullable(),
     timezone: text(64),
@@ -197,10 +233,7 @@ export const onboardOrganizationSchema = z
       name: text(200),
       legalName: text(200),
       street: text(200),
-      postalCode: z
-        .string()
-        .trim()
-        .regex(/^\d{4}$/, 'Swiss postal code: 4 digits'),
+      postalCode: z.string().trim().max(10).default(''),
       city: text(100),
       canton: z
         .string()
@@ -208,12 +241,7 @@ export const onboardOrganizationSchema = z
         .regex(/^[A-Za-z]{2}$/)
         .nullable()
         .default(null),
-      vatUid: z
-        .string()
-        .trim()
-        .refine(isValidSwissUid, 'Invalid Swiss UID (CHE-123.456.789)')
-        .nullable()
-        .default(null),
+      vatUid: z.string().trim().max(32).nullable().default(null),
       languages: z.array(z.enum(CONTENT_LANGUAGES)).min(1).max(CONTENT_LANGUAGES.length),
       kitchenLanguage: z.enum(CONTENT_LANGUAGES),
     }),
@@ -224,10 +252,19 @@ export const onboardOrganizationSchema = z
     }),
     /** Café or restaurant: proposes the plan, the roles and the service style (DEC-045). */
     profile: z.enum(BUSINESS_PROFILES).default('restaurant'),
+    /** Currency, time zone, address, tax id and tax setup follow the country (DEC-047). */
+    country: z.enum(COUNTRIES).default('CH'),
+    /** Colombia only: which tax the restaurant charges. */
+    taxRegime: z.enum(CO_TAX_REGIMES).default('inc'),
   })
   .refine((value) => value.location.languages.includes(value.organization.defaultLanguage), {
     path: ['location', 'languages'],
     message: 'The location languages must include the organization default language',
+  })
+  .superRefine((value, ctx) => {
+    for (const problem of locationFieldProblems(value.country, value.location)) {
+      ctx.addIssue({ code: 'custom', path: ['location', problem.path], message: problem.message });
+    }
   });
 export type OnboardOrganizationInput = z.output<typeof onboardOrganizationSchema>;
 
