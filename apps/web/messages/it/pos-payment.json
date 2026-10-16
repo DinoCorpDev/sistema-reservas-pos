@@ -90,7 +90,7 @@
       "method": "Metodo di pagamento",
       "tendered": "Ricevuto",
       "exact": "Esatto",
-      "collect": "Da incassare (arrotondato a 5 centesimi)",
+      "collect": "Da incassare (arrotondato a {step})",
       "rounding": "Arrotondamento",
       "change": "Resto",
       "missing": "Mancano {amount}.",

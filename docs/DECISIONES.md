@@ -496,6 +496,34 @@ Juan lo pidió (15 oct 2026): el sistema debe servir fuera de Suiza. El document
 - La interfaz usa los mismos cinco idiomas.
 - **Sigue siendo suizo** (pendiente, se decide con el primer cliente fuera de Suiza): el código postal de 4 dígitos, el cantón, la UID CHE, el CHF, la zona horaria y las tasas MWST de la plantilla.
 
+## DEC-047 · Suiza y Colombia: el país de la sede decide moneda, impuesto y documento fiscal
+
+Juan lo pidió para mostrar el sistema a clientes en Colombia (15 oct 2026).
+
+- **Al crear un restaurante se elige el país.** El país fija para la sede la moneda (CHF o COP), la zona horaria, el formato del código postal (4 dígitos en Suiza; 6 en Colombia, opcional), el cantón (solo en Suiza) y el documento fiscal: UID con su dígito de control, o **NIT con el dígito de verificación de la DIAN**. Las mismas reglas se aplican al editar la sede.
+- **Impuesto en Colombia:** al crear el restaurante se elige el régimen.
+  - Impuesto al consumo (INC) 8 %, para la mayoría de restaurantes, cafés y bares.
+  - IVA 19 %, para franquicias.
+  - No responsable, 0 %.
+
+  Es una sola tasa para todo lo que se vende (en el local, para llevar y a domicilio). Como siempre, es un dato con vigencia en `tax_rates`. Los precios incluyen el impuesto y el sistema lo extrae. El nombre del impuesto que sale en el recibo («INC», «IVA») está en `settings.tax.label`.
+
+- **Dinero:**
+  - Se guarda en enteros en la unidad menor (centavos para COP), así la aritmética no cambia.
+  - En pesos se muestra `$ 15.000`; los centavos solo aparecen si los hay.
+  - El efectivo se redondea a **$50**, la moneda más pequeña. La diferencia se registra como redondeo, igual que en RN-06.
+  - El conteo de caja y los billetes rápidos usan las denominaciones colombianas.
+- **Umbral del nombre del cliente en el recibo:** $1.000.000 por defecto en Colombia, editable por sede. En Suiza sigue en CHF 400 (RN-08).
+- **Recibos:**
+  - Llevan su moneda; un recibo sin moneda es CHF, así los recibos suizos conservan su contenido y su hash.
+  - Se corrigió de paso que la UID suiza salía con el sufijo dos veces («MWST MWST»).
+- **Demo:** «Café Demo Bogotá» (`pnpm --filter @pos/api demo:colombia`), con carta en español y precios en pesos.
+- **Pendiente:**
+  - facturación electrónica DIAN;
+  - medios de pago locales (Nequi, Daviplata);
+  - los periodos de declaración de Colombia en los reportes;
+  - las sedes en dos países dentro de una misma organización.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

@@ -168,9 +168,10 @@
       "orderDiscount": "Descuento en el pedido: {label}",
       "removeDiscount": "Quitar descuento",
       "total": "Total",
-      "tax": "IVA incluido",
+      "tax": "{tax} incluido",
       "paid": "Pagado",
-      "balance": "Por pagar"
+      "balance": "Por pagar",
+      "taxName": "IVA"
     },
     "line": {
       "discount": "Descuento",

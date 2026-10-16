@@ -10,7 +10,7 @@ import {
   rappen,
   ReceiptError,
 } from '@pos/core';
-import { formatPosMoney, roundPosCash } from '@/pos/money';
+import { formatPosMoney, posRoundingStep, roundPosCash } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Input, Textarea } from '@pos/ui/input';
@@ -521,7 +521,9 @@ function PaymentForm({ order }: { order: OrderState }) {
               </div>
             )}
             <dl className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 rounded-lg bg-muted px-3 py-2">
-              <dt className="text-sm">{t('collect')}</dt>
+              <dt className="text-sm">
+                {t('collect', { step: formatPosMoney(rappen(posRoundingStep())) })}
+              </dt>
               <dd className="text-right font-semibold tabular-nums" data-testid="payment-collect">
                 {cash ? formatPosMoney(cash.payable) : '–'}
               </dd>

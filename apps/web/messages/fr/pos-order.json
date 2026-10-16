@@ -168,9 +168,10 @@
       "orderDiscount": "Rabais sur la commande : {label}",
       "removeDiscount": "Retirer le rabais",
       "total": "Total",
-      "tax": "TVA incl.",
+      "tax": "{tax} incl.",
       "paid": "Payé",
-      "balance": "À payer"
+      "balance": "À payer",
+      "taxName": "TVA"
     },
     "line": {
       "discount": "Rabais",

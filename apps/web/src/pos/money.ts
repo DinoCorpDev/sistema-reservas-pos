@@ -27,3 +27,7 @@ export const roundPosCash = (amount: Rappen): CashRounding =>
   roundCash(amount, cashRoundingStep(posCurrency()));
 
 export const posRoundingStep = (): number => cashRoundingStep(posCurrency());
+
+/** The location's tax name (`INC`, `IVA`) when it has one; null keeps the language's (DEC-047). */
+export const posTaxName = (): string | null =>
+  getPos().bootstrap?.location.settings.tax?.label ?? null;

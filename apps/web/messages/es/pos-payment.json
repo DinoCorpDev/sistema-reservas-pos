@@ -90,7 +90,7 @@
       "method": "Forma de pago",
       "tendered": "Recibido",
       "exact": "Exacto",
-      "collect": "A cobrar (redondeado a 5 centavos)",
+      "collect": "A cobrar (redondeado a {step})",
       "rounding": "Redondeo",
       "change": "Cambio",
       "missing": "Faltan {amount}.",

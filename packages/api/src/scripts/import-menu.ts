@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { parseChf, type TaxCategoryKey } from '@pos/core';
+import { asCurrency, parseMoney, type TaxCategoryKey } from '@pos/core';
 import { createDb, inOrg, notDeleted, schema as s } from '@pos/db';
 import { eq } from 'drizzle-orm';
 import type { Actor } from '../actor';
@@ -33,9 +33,11 @@ interface MenuFile {
       name: string;
       description: string | null;
       en: { name: string; description: string | null };
-      priceChf: string;
+      /** In the location's currency (`price`), or CHF for the older files (`priceChf`). */
+      price?: string;
+      priceChf?: string;
       taxCategory: TaxCategoryKey;
-      variants?: { name: string; en: string; priceChf: string }[];
+      variants?: { name: string; en: string; price?: string; priceChf?: string }[];
     }[];
   }[];
 }
@@ -74,6 +76,9 @@ try {
     .where(inOrg(s.users, tenant, eq(s.roles.key, 'admin'), eq(s.users.isActive, true)))
     .limit(1);
   if (!location || !admin) throw new Error('The organization needs a location and an admin');
+  // Prices are read in the location's currency: CHF or pesos (DEC-047).
+  const priceOf = (entry: { price?: string; priceChf?: string }) =>
+    parseMoney(entry.price ?? entry.priceChf ?? '', asCurrency(location.currency));
   const actor: Actor = {
     kind: 'user',
     organizationId: org.id,
@@ -141,7 +146,7 @@ try {
         sku: item.sku,
         name: item.name,
         description: item.description,
-        basePriceRappen: parseChf(item.priceChf),
+        basePriceRappen: priceOf(item),
         defaultCourse: entry.course,
         sortOrder: productIndex,
         isActive: true,
@@ -165,7 +170,7 @@ try {
       await catalog.replaceVariants(deps, actor, product.id, {
         variants: (item.variants ?? []).map((variant, index) => ({
           name: variant.name,
-          priceRappen: parseChf(variant.priceChf),
+          priceRappen: priceOf(variant),
           isDefault: index === 0,
           sortOrder: index,
           isActive: true,

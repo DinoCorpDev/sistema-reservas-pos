@@ -90,7 +90,7 @@
       "method": "Payment method",
       "tendered": "Tendered",
       "exact": "Exact",
-      "collect": "To collect (rounded to 5 centimes)",
+      "collect": "To collect (rounded to {step})",
       "rounding": "Rounding",
       "change": "Change",
       "missing": "{amount} short.",

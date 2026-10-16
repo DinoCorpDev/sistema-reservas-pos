@@ -168,9 +168,10 @@
       "orderDiscount": "Rabatt auf Bestellung: {label}",
       "removeDiscount": "Rabatt entfernen",
       "total": "Total",
-      "tax": "inkl. MWST",
+      "tax": "inkl. {tax}",
       "paid": "Bezahlt",
-      "balance": "Offen"
+      "balance": "Offen",
+      "taxName": "MWST"
     },
     "line": {
       "discount": "Rabatt",

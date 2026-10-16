@@ -168,9 +168,10 @@
       "orderDiscount": "Order discount: {label}",
       "removeDiscount": "Remove discount",
       "total": "Total",
-      "tax": "incl. VAT",
+      "tax": "incl. {tax}",
       "paid": "Paid",
-      "balance": "Balance due"
+      "balance": "Balance due",
+      "taxName": "VAT"
     },
     "line": {
       "discount": "Discount",

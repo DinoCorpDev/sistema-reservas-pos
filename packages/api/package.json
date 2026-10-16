@@ -16,7 +16,8 @@
     "archive:loop": "tsx src/scripts/archive.ts loop",
     "archive:month": "tsx src/scripts/archive.ts month",
     "monitor": "tsx src/scripts/monitor.ts",
-    "hub-certs:loop": "tsx src/scripts/hub-certificates.ts"
+    "hub-certs:loop": "tsx src/scripts/hub-certificates.ts",
+    "demo:colombia": "tsx src/scripts/demo-colombia.ts && tsx src/scripts/import-menu.ts ../../scripts/menus/cafe-bogota.json --org=cafe-demo-bogota && tsx src/scripts/demo-colombia.ts --activate"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.6.3",

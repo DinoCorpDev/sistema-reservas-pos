@@ -90,7 +90,7 @@
       "method": "Zahlungsart",
       "tendered": "Gegeben",
       "exact": "Passend",
-      "collect": "Zu kassieren (auf 5 Rappen gerundet)",
+      "collect": "Zu kassieren (auf {step} gerundet)",
       "rounding": "Rundung",
       "change": "Rückgeld",
       "missing": "Es fehlen {amount}.",

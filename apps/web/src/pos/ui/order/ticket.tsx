@@ -9,7 +9,7 @@ import {
   STANDARD_DISCOUNT_REASONS,
   VOID_REASONS,
 } from '@pos/core';
-import { formatPosMoney } from '@/pos/money';
+import { formatPosMoney, posTaxName } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
 import { Minus, Plus, X } from 'lucide-react';
@@ -318,7 +318,7 @@ function Totals({
         </span>
       </div>
       <div className={cn(row, 'text-xs text-muted-foreground')}>
-        <span>{t('tax')}</span>
+        <span>{t('tax', { tax: posTaxName() ?? t('taxName') })}</span>
         <span className="tabular-nums">{formatPosMoney(order.taxTotalRappen)}</span>
       </div>
       {order.paidRappen !== 0 && (

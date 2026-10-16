@@ -1,0 +1,249 @@
+{
+  "source": "Carta de demostración (DEC-047): café en Bogotá, precios en pesos con INC incluido",
+  "retrievedAt": "2026-10-15",
+  "stations": {
+    "kitchen": "Cocina",
+    "bar": "Barra"
+  },
+  "categories": [
+    {
+      "name": "Cafés",
+      "en": "Coffee",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "CAFE-TINTO",
+          "name": "Tinto",
+          "description": "Café negro colombiano, servido en pocillo.",
+          "en": { "name": "Tinto", "description": "Colombian black coffee in a small cup." },
+          "price": "3000",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "CAFE-AMERICANO",
+          "name": "Americano",
+          "description": "Espresso alargado con agua caliente.",
+          "en": { "name": "Americano", "description": "Espresso topped up with hot water." },
+          "price": "5000",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "CAFE-CAPUCHINO",
+          "name": "Capuchino",
+          "description": "Espresso con leche vaporizada y espuma.",
+          "en": { "name": "Cappuccino", "description": "Espresso with steamed milk and foam." },
+          "price": "7500",
+          "taxCategory": "non_alcoholic_beverage",
+          "variants": [
+            { "name": "Mediano", "en": "Medium", "price": "7500" },
+            { "name": "Grande", "en": "Large", "price": "9000" }
+          ]
+        },
+        {
+          "sku": "CAFE-LATTE",
+          "name": "Latte",
+          "description": "Espresso con bastante leche vaporizada.",
+          "en": { "name": "Latte", "description": "Espresso with plenty of steamed milk." },
+          "price": "8000",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "CAFE-PERICO",
+          "name": "Perico",
+          "description": "Café con un toque de leche.",
+          "en": { "name": "Perico", "description": "Coffee with a dash of milk." },
+          "price": "4000",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "CAFE-CHOCOLATE",
+          "name": "Chocolate santafereño",
+          "description": "Chocolate caliente con queso y almojábana.",
+          "en": {
+            "name": "Hot chocolate Santa Fe style",
+            "description": "Hot chocolate served with cheese and almojábana."
+          },
+          "price": "14000",
+          "taxCategory": "non_alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Bebidas frías",
+      "en": "Cold drinks",
+      "station": "bar",
+      "course": 0,
+      "products": [
+        {
+          "sku": "FRIA-JUGO-NATURAL",
+          "name": "Jugo natural",
+          "description": "En agua o en leche: mora, lulo, mango o maracuyá.",
+          "en": {
+            "name": "Fresh juice",
+            "description": "With water or milk: blackberry, lulo, mango or passion fruit."
+          },
+          "price": "8000",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "FRIA-LIMONADA-COCO",
+          "name": "Limonada de coco",
+          "description": "Limonada frapé con crema de coco.",
+          "en": {
+            "name": "Coconut lemonade",
+            "description": "Frozen lemonade with coconut cream."
+          },
+          "price": "11000",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "FRIA-AGUA",
+          "name": "Agua",
+          "description": "Con o sin gas, 600 ml.",
+          "en": { "name": "Water", "description": "Still or sparkling, 600 ml." },
+          "price": "4500",
+          "taxCategory": "non_alcoholic_beverage"
+        },
+        {
+          "sku": "FRIA-CERVEZA",
+          "name": "Cerveza nacional",
+          "description": "Club Colombia o Águila, botella.",
+          "en": { "name": "Local beer", "description": "Club Colombia or Águila, bottle." },
+          "price": "7000",
+          "taxCategory": "alcoholic_beverage"
+        }
+      ]
+    },
+    {
+      "name": "Desayunos",
+      "en": "Breakfast",
+      "station": "kitchen",
+      "course": 1,
+      "products": [
+        {
+          "sku": "DESAYUNO-CALENTADO",
+          "name": "Calentado",
+          "description": "Arroz con fríjoles, huevo, arepa y chorizo.",
+          "en": {
+            "name": "Calentado",
+            "description": "Rice and beans with egg, arepa and chorizo."
+          },
+          "price": "22000",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "DESAYUNO-HUEVOS-PERICOS",
+          "name": "Huevos pericos",
+          "description": "Huevos revueltos con tomate y cebolla, con arepa.",
+          "en": {
+            "name": "Huevos pericos",
+            "description": "Scrambled eggs with tomato and onion, with arepa."
+          },
+          "price": "15000",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "DESAYUNO-CHANGUA",
+          "name": "Changua",
+          "description": "Caldo de leche con huevo, cilantro y calado.",
+          "en": { "name": "Changua", "description": "Milk broth with egg, coriander and bread." },
+          "price": "14000",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Para comer",
+      "en": "To eat",
+      "station": "kitchen",
+      "course": 2,
+      "products": [
+        {
+          "sku": "COMER-AREPA-QUESO",
+          "name": "Arepa con queso",
+          "description": "Arepa de maíz asada con queso campesino.",
+          "en": {
+            "name": "Arepa with cheese",
+            "description": "Grilled corn arepa with farm cheese."
+          },
+          "price": "9000",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "COMER-EMPANADAS",
+          "name": "Empanadas",
+          "description": "Tres empanadas de carne con ají.",
+          "en": { "name": "Empanadas", "description": "Three beef empanadas with ají sauce." },
+          "price": "10500",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "COMER-SANDUCHE",
+          "name": "Sánduche de pollo",
+          "description": "Pan artesanal, pollo desmechado, queso y vegetales.",
+          "en": {
+            "name": "Chicken sandwich",
+            "description": "Artisan bread, pulled chicken, cheese and vegetables."
+          },
+          "price": "21000",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "COMER-AJIACO",
+          "name": "Ajiaco santafereño",
+          "description": "Sopa de papas con pollo, mazorca, alcaparras, crema y aguacate.",
+          "en": {
+            "name": "Ajiaco",
+            "description": "Potato soup with chicken, corn, capers, cream and avocado."
+          },
+          "price": "32000",
+          "taxCategory": "food"
+        }
+      ]
+    },
+    {
+      "name": "Postres y panadería",
+      "en": "Desserts and bakery",
+      "station": "kitchen",
+      "course": 3,
+      "products": [
+        {
+          "sku": "POSTRE-ALMOJABANA",
+          "name": "Almojábana",
+          "description": "Pan de queso recién horneado.",
+          "en": { "name": "Almojábana", "description": "Freshly baked cheese bread." },
+          "price": "4500",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "POSTRE-PANDEBONO",
+          "name": "Pandebono",
+          "description": "Pan de yuca y queso.",
+          "en": { "name": "Pandebono", "description": "Cassava and cheese bread." },
+          "price": "4000",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "POSTRE-TRES-LECHES",
+          "name": "Torta tres leches",
+          "description": "Bizcocho húmedo de tres leches.",
+          "en": { "name": "Tres leches cake", "description": "Sponge cake soaked in three milks." },
+          "price": "12000",
+          "taxCategory": "food"
+        },
+        {
+          "sku": "POSTRE-OBLEA",
+          "name": "Oblea con arequipe",
+          "description": "Obleas con arequipe y queso.",
+          "en": {
+            "name": "Wafer with dulce de leche",
+            "description": "Wafers with arequipe and cheese."
+          },
+          "price": "7000",
+          "taxCategory": "food"
+        }
+      ]
+    }
+  ]
+}

@@ -90,7 +90,7 @@
       "method": "Mode de paiement",
       "tendered": "Reçu",
       "exact": "Exact",
-      "collect": "À encaisser (arrondi à 5 centimes)",
+      "collect": "À encaisser (arrondi à {step})",
       "rounding": "Arrondi",
       "change": "Monnaie rendue",
       "missing": "Il manque {amount}.",
