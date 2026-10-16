@@ -445,6 +445,7 @@ export async function pay(orderId: string, input: PaymentInput): Promise<IssuedR
   const receiptNumber = await nextReceiptNumber();
   const content = buildReceipt({
     language,
+    training: bootstrap.organization.isTraining,
     location: {
       name: location.name,
       legalName: location.legalName,

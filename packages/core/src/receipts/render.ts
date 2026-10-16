@@ -72,6 +72,12 @@ export function renderReceiptText(
     return `${day}.${month}.${year} ${moment.time.slice(0, 5)}`;
   };
 
+  // A training receipt says so first and last, where nobody can miss it (RF-F22).
+  const trainingMark =
+    content.training && l.training
+      ? wrap(`*** ${l.training} ***`, width).map((line) => center(line, width))
+      : [];
+  out.push(...trainingMark);
   const loc = content.location;
   for (const text of [
     loc.name,
@@ -166,5 +172,6 @@ export function renderReceiptText(
   if (loc.footer) out.push(...wrap(loc.footer, width).map((line) => center(line, width)));
   out.push(center(l.thankYou ?? '', width));
   if (options.copyAt) out.push('', center(`*** ${l.copy} ${when(options.copyAt)} ***`, width));
+  if (trainingMark.length > 0) out.push('', ...trainingMark);
   return out;
 }

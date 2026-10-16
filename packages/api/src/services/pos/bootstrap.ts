@@ -40,7 +40,11 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
   if (!locationRow) throw notFound('Location');
   const location = toLocationDto(locationRow);
   const [organization] = await db
-    .select({ id: s.organizations.id, name: s.organizations.name })
+    .select({
+      id: s.organizations.id,
+      name: s.organizations.name,
+      isTraining: s.organizations.isTraining,
+    })
     .from(s.organizations)
     .where(eq(s.organizations.id, actor.organizationId));
 
@@ -176,7 +180,12 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
   return {
     configVersion: version,
     serverTime: new Date().toISOString(),
-    organization: { id: actor.organizationId, name: organization?.name ?? '' },
+    organization: {
+      id: actor.organizationId,
+      name: organization?.name ?? '',
+      /** Practice copy (RF-F22): an orange band on every screen and receipts marked not valid. */
+      isTraining: organization?.isTraining ?? false,
+    },
     /** A late payment shows a notice; suspended adds nothing new (DEC-045). */
     subscriptionStatus: await subscriptionStatusOf(db, actor.organizationId),
     terminal: {

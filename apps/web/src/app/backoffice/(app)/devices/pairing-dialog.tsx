@@ -91,6 +91,7 @@ function PairingCode({
           />
         ) : null}
         <p
+          data-testid="pairing-code"
           className={cn(
             'font-mono text-4xl font-semibold tracking-[0.15em] break-all select-all sm:text-5xl',
             expired && 'text-muted-foreground line-through',

@@ -207,6 +207,18 @@ describe('renderReceiptText (80 mm, 42 columns)', () => {
     expect(lines.some((l) => l.includes('KOPIE'))).toBe(false);
   });
 
+  it('a training receipt says it is not valid, first and last (RF-F22)', () => {
+    const training = renderReceiptText(content({ training: true }));
+    expect(training[0]!.trim()).toBe('*** ÜBUNG — KEIN GÜLTIGER BELEG ***');
+    expect(training.at(-1)!.trim()).toBe('*** ÜBUNG — KEIN GÜLTIGER BELEG ***');
+    expect(training.slice(1, -2)).toEqual(lines);
+    expectWithinWidth(training);
+    expect(lines.some((l) => l.includes('ÜBUNG'))).toBe(false);
+    const italian = renderReceiptText(content({ training: true, language: 'it' }), { width: 32 });
+    expectWithinWidth(italian, 32);
+    expect(italian.join(' ')).toContain('ESERCITAZIONE');
+  });
+
   it('marks a reprint as a copy with its local time (RF-D24)', () => {
     const copy = renderReceiptText(content(), { copyAt: '2026-10-07T07:05:00.000Z' });
     expect(copy.slice(0, -2)).toEqual(lines);

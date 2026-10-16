@@ -31,6 +31,11 @@ export const organizations = mysqlTable(
     /** Training organization with fictitious data (RF-F22); never mixed with the real one. */
     isTraining: boolean('is_training').notNull().default(false),
     /**
+     * The real organization a training one was copied from (RF-F22). Its owner manages the
+     * training devices from the real backoffice; a new copy replaces the previous one.
+     */
+    trainingOfId: uuid('training_of_id').references((): AnyMySqlColumn => organizations.id),
+    /**
      * Secret HMAC key that turns a PIN into `users.pin_lookup` (DEC-015). Paired terminals receive
      * it to unlock offline (RF-A06). Hex, 32 bytes.
      */

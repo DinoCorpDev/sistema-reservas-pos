@@ -1,0 +1,2 @@
+ALTER TABLE `organizations` ADD `training_of_id` binary(16);--> statement-breakpoint
+ALTER TABLE `organizations` ADD CONSTRAINT `organizations_training_of_id_organizations_id_fk` FOREIGN KEY (`training_of_id`) REFERENCES `organizations`(`id`) ON DELETE no action ON UPDATE no action;

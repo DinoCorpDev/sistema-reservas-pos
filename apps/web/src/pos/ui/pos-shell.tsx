@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
 import { LanguageMenu } from '@/device/ui/language-menu';
+import { TrainingBand } from '@/device/ui/training-band';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import { hasCashDrawer, hubReceiptPrinter, openDrawer } from '../actions';
 import { requestApproval, usePosUi } from '../ui-store';
@@ -87,6 +88,7 @@ export function PosShell() {
     view.name === 'counter' && view.channel === channel;
   return (
     <div className="flex min-h-dvh flex-col">
+      <TrainingBand />
       <SubscriptionNotice />
       <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 max-md:min-h-14 md:static md:flex-wrap">
         <span className="mr-2 hidden font-semibold md:inline">{location}</span>

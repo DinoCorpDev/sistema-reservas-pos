@@ -141,6 +141,13 @@
       "when": 1792105592570,
       "tag": "0019_plan_catalog",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1792108257135,
+      "tag": "0020_training_of",
+      "breakpoints": true
     }
   ]
 }

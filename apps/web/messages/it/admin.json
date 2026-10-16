@@ -465,7 +465,11 @@
         "api": "API per integrazioni proprie",
         "multi_location": "Più sedi"
       }
-    }
+    },
+    "createTraining": "Crea esercitazione per {name}",
+    "createTrainingConfirm": "Crea",
+    "createTrainingText": "Copia menu, piantina, postazioni, personale (stesso PIN) e dispositivi in un’organizzazione di esercitazione separata. Una copia precedente viene sostituita e i suoi dispositivi scollegati.",
+    "trainingCreated": "Esercitazione creata"
   },
   "onboarding": {
     "start": "Nuovo ristorante",
@@ -553,6 +557,19 @@
     "statusNotice": {
       "past_due": "C’è un pagamento in sospeso per il vostro abbonamento. L’attività continua; saldatelo perché nulla venga sospeso.",
       "suspended": "L’abbonamento è sospeso: potete continuare a vendere e chiudere, ma non aggiungere nulla. Contattate DINOLABS."
+    },
+    "training": {
+      "title": "Esercitazione",
+      "description": "Una copia del suo ristorante per esercitarsi: stesso menu, stessa piantina, stesso PIN. Ordini, pagamenti e ricevute non sono mai reali e non compaiono in nessun report.",
+      "create": "Crea esercitazione",
+      "creating": "Creazione …",
+      "created": "Esercitazione creata",
+      "since": "Copia del {date}",
+      "pair": "Collega",
+      "paired": "Collegato",
+      "renew": "Copia di nuovo",
+      "renewTitle": "Copiare di nuovo l’esercitazione?",
+      "renewText": "L’esercitazione riparte con il menu e il personale attuali. I dispositivi di esercitazione attuali vengono scollegati e vanno ricollegati."
     }
   }
 }

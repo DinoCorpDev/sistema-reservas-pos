@@ -224,6 +224,13 @@ describe('refundTaxes (DEC-038)', () => {
 describe('buildReceipt (RF-D20, RN-08, RN-09, DEC-024)', () => {
   it('builds valid frozen content for a single full payment', () => {
     const content = buildReceipt(input());
+    // A real receipt carries no training mark, so its content and hash stay as before (RF-F22).
+    expect(content).not.toHaveProperty('training');
+    expect(content.labels).not.toHaveProperty('training');
+    expect(buildReceipt({ ...input(), training: true })).toMatchObject({
+      training: true,
+      labels: { training: 'ÜBUNG — KEIN GÜLTIGER BELEG' },
+    });
     expect(receiptContentSchema.parse(content)).toEqual(content);
     expect(content).toMatchObject({
       version: 1,

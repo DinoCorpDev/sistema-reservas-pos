@@ -4,7 +4,7 @@ import type { ContentLanguage } from '../shared/languages';
 import { type Rappen, rappen } from '../shared/money';
 import { allocate, extractTax, summarizeByRate, type TaxSummaryLine } from '../tax/calculation';
 import type { ReceiptContent } from './content';
-import { flattenLabels, RECEIPT_LABELS } from './labels';
+import { flattenLabels, RECEIPT_LABELS, TRAINING_RECEIPT_LABELS } from './labels';
 
 export type ReceiptErrorCode = 'CUSTOMER_NAME_REQUIRED' | 'VAT_UID_MISSING' | 'NOTHING_TO_RECEIPT';
 
@@ -136,6 +136,8 @@ export function buildReceipt(input: {
   customer: { name: string; address: string | null } | null;
   /** RN-08 threshold from the location settings (DEC-009). */
   customerNameFromRappen: number;
+  /** A training organization (RF-F22): the receipt says it is not valid. */
+  training?: boolean;
 }): ReceiptContent {
   const { language, location, payment, order } = input;
   if (!location.vatUid) {
@@ -158,7 +160,10 @@ export function buildReceipt(input: {
   return {
     version: 1,
     language,
-    labels: flattenLabels(RECEIPT_LABELS[language]),
+    labels: {
+      ...flattenLabels(RECEIPT_LABELS[language]),
+      ...(input.training ? { training: TRAINING_RECEIPT_LABELS[language] } : {}),
+    },
     location: {
       name: location.name,
       legalName: location.legalName,
@@ -209,5 +214,6 @@ export function buildReceipt(input: {
       customerName === ''
         ? null
         : { name: customerName, address: input.customer?.address?.trim() || null },
+    ...(input.training ? { training: true as const } : {}),
   };
 }

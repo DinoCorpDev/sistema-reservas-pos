@@ -465,7 +465,11 @@
         "api": "API für eigene Anbindungen",
         "multi_location": "Mehrere Standorte"
       }
-    }
+    },
+    "createTraining": "Übungsbetrieb für {name} erstellen",
+    "createTrainingConfirm": "Erstellen",
+    "createTrainingText": "Kopiert Karte, Saalplan, Stationen, Personal (gleiche PIN) und Geräte in eine eigene Übungsorganisation. Eine frühere Kopie wird ersetzt und ihre Geräte entkoppelt.",
+    "trainingCreated": "Übungsbetrieb erstellt"
   },
   "onboarding": {
     "start": "Neues Restaurant",
@@ -553,6 +557,19 @@
     "statusNotice": {
       "past_due": "Eine Zahlung für Ihr Abo ist ausstehend. Der Betrieb läuft weiter; bitte begleichen Sie sie, damit nichts pausiert.",
       "suspended": "Ihr Abo ist pausiert: Sie können weiter verkaufen und abschliessen, aber nichts hinzufügen. Bitte kontaktieren Sie DINOLABS."
+    },
+    "training": {
+      "title": "Übungsbetrieb",
+      "description": "Eine Kopie Ihres Restaurants zum Üben: gleiche Karte, gleicher Saalplan, gleiche PIN. Bestellungen, Zahlungen und Belege dort sind nie echt und erscheinen in keinem Bericht.",
+      "create": "Übungsbetrieb erstellen",
+      "creating": "Wird erstellt …",
+      "created": "Übungsbetrieb erstellt",
+      "since": "Kopie vom {date}",
+      "pair": "Koppeln",
+      "paired": "Gekoppelt",
+      "renew": "Neu kopieren",
+      "renewTitle": "Übungsbetrieb neu kopieren?",
+      "renewText": "Die Übung startet mit Ihrer aktuellen Karte und Ihrem Personal neu. Die bisherigen Übungsgeräte werden entkoppelt und müssen neu gekoppelt werden."
     }
   }
 }

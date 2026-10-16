@@ -130,6 +130,9 @@
     "subscription": {
       "past_due": "Zahlung des Abos ausstehend – bitte die Inhaberin oder den Inhaber informieren.",
       "suspended": "Abo pausiert – verkaufen geht weiter; bitte die Inhaberin oder den Inhaber informieren."
+    },
+    "training": {
+      "band": "Übungsmodus – keine echten Bestellungen"
     }
   }
 }

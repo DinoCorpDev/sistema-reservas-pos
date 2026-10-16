@@ -130,6 +130,9 @@
     "subscription": {
       "past_due": "Pagamento dell’abbonamento in sospeso – avvisate il titolare.",
       "suspended": "Abbonamento sospeso – la vendita continua; avvisate il titolare."
+    },
+    "training": {
+      "band": "Modalità esercitazione – nessun ordine reale"
     }
   }
 }

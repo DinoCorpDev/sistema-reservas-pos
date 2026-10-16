@@ -8,6 +8,7 @@ import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
+import { TrainingCard } from './training-card';
 
 export const metadata: Metadata = { title: 'Plan' };
 
@@ -27,7 +28,10 @@ export default async function MyPlanPage() {
       </>
     );
   }
-  const plan = await platform.getMyPlan(deps(), actor);
+  const [plan, training] = await Promise.all([
+    platform.getMyPlan(deps(), actor),
+    platform.getTraining(deps(), actor),
+  ]);
   const status = plan.subscription?.status ?? 'active';
   const money = (amountMinor: number, currency: string) =>
     format.number(amountMinor / 100, { style: 'currency', currency });
@@ -156,6 +160,7 @@ export default async function MyPlanPage() {
           </CardContent>
         </Card>
       </div>
+      <TrainingCard training={training} />
       <p className="mt-6 text-sm text-muted-foreground">{t('change')}</p>
     </>
   );

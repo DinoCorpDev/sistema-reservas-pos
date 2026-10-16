@@ -130,6 +130,9 @@
     "subscription": {
       "past_due": "Paiement de l’abonnement en attente – merci d’informer le propriétaire.",
       "suspended": "Abonnement suspendu – la vente continue ; merci d’informer le propriétaire."
+    },
+    "training": {
+      "band": "Mode exercice – aucune vraie commande"
     }
   }
 }

@@ -6,6 +6,7 @@ import { type ReactNode, useState } from 'react';
 import { isPhone } from '../app';
 import { unlock } from '../pin';
 import { usePos } from '../store';
+import { TrainingBand } from './training-band';
 import { APP_VERSION } from '../version';
 import { ErrorDialog } from './error-dialog';
 import { NumPad } from './num-pad';
@@ -53,6 +54,7 @@ export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 p-6">
+      <TrainingBand />
       <div className="flex flex-col items-center gap-1 text-center">
         <p className="text-lg font-semibold">{location}</p>
         <p className="text-sm text-muted-foreground">{terminal}</p>

@@ -4,12 +4,13 @@ import type { admin } from '@pos/api';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Card, CardHeader, CardTitle } from '@pos/ui/card';
+import { ConfirmButton } from '@pos/ui/confirm';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { LogInIcon } from 'lucide-react';
+import { GraduationCapIcon, LogInIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { formatDate, formatDateTime } from '@/components/backoffice/admin/format';
 import { useServerAction } from '@/components/backoffice/use-server-action';
-import { openOrganization } from './actions';
+import { createTraining, openOrganization } from './actions';
 import { SubscriptionDialog } from './subscription-dialog';
 
 /** Organizations on the platform; one opens only with the owner's active grant (RF-A10). */
@@ -24,8 +25,10 @@ export function OrganizationList({
 }) {
   const t = useTranslations('supportConsole');
   const tp = useTranslations('supportConsole.plan');
+  const tc = useTranslations('common');
   // On success the action redirects to the backoffice.
   const open = useServerAction(openOrganization, { successMessage: false });
+  const training = useServerAction(createTraining, { successMessage: t('trainingCreated') });
 
   return (
     <Card>
@@ -84,6 +87,21 @@ export function OrganizationList({
                         organization={{ id: org.id, name: org.name }}
                         catalog={catalog}
                       />
+                      {org.isTraining ? null : (
+                        <ConfirmButton
+                          variant="ghost"
+                          size="icon"
+                          aria-label={t('createTraining', { name: org.name })}
+                          title={t('createTraining', { name: org.name })}
+                          disabled={training.pending}
+                          confirmLabel={t('createTrainingConfirm')}
+                          cancelLabel={tc('cancel')}
+                          description={t('createTrainingText')}
+                          onConfirm={() => training.run(org.id)}
+                        >
+                          <GraduationCapIcon />
+                        </ConfirmButton>
+                      )}
                     </span>
                   </TableCell>
                   <TableCell>

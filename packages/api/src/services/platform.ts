@@ -3,3 +3,4 @@
  * organization may add.
  */
 export * from './platform/plans';
+export * from './platform/training';

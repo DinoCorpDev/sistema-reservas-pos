@@ -188,7 +188,7 @@ export function slugify(name: string): string {
   return slug || 'organization';
 }
 
-async function uniqueSlug(db: Database, name: string): Promise<string> {
+export async function uniqueSlug(db: Database, name: string): Promise<string> {
   const base = slugify(name);
   // The unique index covers soft-deleted organizations too, so they are not filtered out.
   const rows = await db

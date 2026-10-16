@@ -74,6 +74,8 @@ export const receiptContentSchema = z.object({
   partial: z.object({ paidBeforeRappen: amount, balanceAfterRappen: amount }).nullable(),
   /** Mandatory from CHF 400 (RN-08, DEC-009); the address is optional (RF-D22). */
   customer: z.object({ name: text(200), address: text(500).nullable() }).nullable(),
+  /** Issued in a training organization (RF-F22): printed as not valid. Absent on real receipts. */
+  training: z.literal(true).optional(),
 });
 
 export type ReceiptContent = z.infer<typeof receiptContentSchema>;

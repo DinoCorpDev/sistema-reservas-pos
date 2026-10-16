@@ -130,6 +130,9 @@
     "subscription": {
       "past_due": "Subscription payment due – please tell the owner.",
       "suspended": "Subscription suspended – selling goes on; please tell the owner."
+    },
+    "training": {
+      "band": "Training mode – no real orders"
     }
   }
 }

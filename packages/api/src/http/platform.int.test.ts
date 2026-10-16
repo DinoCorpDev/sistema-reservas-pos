@@ -1,6 +1,6 @@
 import { healthIssues, PERMISSIONS } from '@pos/core';
 import { schema as s } from '@pos/db';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   loadHealthSnapshot,
@@ -10,6 +10,11 @@ import {
 import { getSetupChecklist } from '../services/admin/setup';
 import { onboardOrganization } from '../services/admin/support';
 import { getMyPlan, updateSubscription } from '../services/platform/plans';
+import {
+  createTraining,
+  getTraining,
+  issueTrainingPairingCode,
+} from '../services/platform/training';
 import {
   createOtherOrganization,
   createTestApi,
@@ -256,4 +261,142 @@ const cafeActor = (cafe: { organizationId: string; locationId: string; adminId: 
     organizationId: cafe.organizationId,
     locationId: cafe.locationId,
     userId: cafe.adminId,
+  }) as const;
+
+describe('training mode (RF-F22)', () => {
+  it('a copy of its own: same menu, floor and PINs; its devices pair from the real backoffice', async () => {
+    const [source] = await api.db
+      .select()
+      .from(s.organizations)
+      .where(eq(s.organizations.id, demo.organizationId));
+    const owner = { ...demoActor(), permissions: ALL };
+    const training = await createTraining({ db: api.db }, owner);
+
+    const [copy] = await api.db
+      .select()
+      .from(s.organizations)
+      .where(eq(s.organizations.id, training.organizationId));
+    expect(copy).toMatchObject({
+      isTraining: true,
+      trainingOfId: demo.organizationId,
+      pinKey: source!.pinKey,
+    });
+
+    // The same menu, floor and staff, every reference inside the copy.
+    const countIn = async (
+      table: typeof s.products | typeof s.diningTables | typeof s.users,
+      org: string,
+    ) =>
+      (await api.db.select({ id: table.id }).from(table).where(eq(table.organizationId, org)))
+        .length;
+    for (const table of [s.products, s.diningTables, s.users]) {
+      expect(await countIn(table, training.organizationId)).toBe(
+        await countIn(table, demo.organizationId),
+      );
+    }
+    const products = await api.db
+      .select({ categoryId: s.products.categoryId, taxCategoryId: s.products.taxCategoryId })
+      .from(s.products)
+      .where(eq(s.products.organizationId, training.organizationId));
+    const categories = await api.db
+      .select({ id: s.categories.id })
+      .from(s.categories)
+      .where(
+        inArray(
+          s.categories.id,
+          products.map((p) => p.categoryId),
+        ),
+      );
+    expect(new Set(categories.map((c) => c.id)).size).toBeGreaterThan(0);
+    const foreign = await api.db
+      .select({ id: s.categories.id })
+      .from(s.categories)
+      .where(
+        and(
+          inArray(
+            s.categories.id,
+            products.map((p) => p.categoryId),
+          ),
+          eq(s.categories.organizationId, demo.organizationId),
+        ),
+      );
+    expect(foreign).toEqual([]);
+
+    // Staff practise with their PIN, never with the real sign-in.
+    const staff = await api.db
+      .select()
+      .from(s.users)
+      .where(eq(s.users.organizationId, training.organizationId));
+    expect(staff.every((user) => user.email === null && user.passwordHash === null)).toBe(true);
+    const realLookups = (
+      await api.db
+        .select({ pinLookup: s.users.pinLookup })
+        .from(s.users)
+        .where(eq(s.users.organizationId, demo.organizationId))
+    ).map((user) => user.pinLookup);
+    expect(staff.map((user) => user.pinLookup).sort()).toEqual(realLookups.sort());
+    const printers = await api.db
+      .select({ isActive: s.printers.isActive })
+      .from(s.printers)
+      .where(eq(s.printers.organizationId, training.organizationId));
+    expect(printers.every((printer) => !printer.isActive)).toBe(true);
+
+    // A practice POS pairs with a code from the real backoffice and knows it is practice.
+    const device = training.terminals.find((terminal) => terminal.type === 'pos')!;
+    expect(device.isPaired).toBe(false);
+    const { code } = await issueTrainingPairingCode({ db: api.db }, owner, device.id);
+    const paired = await api.request('POST', '/terminals/pair', { body: { code } });
+    expect(paired.status).toBe(200);
+    const { deviceToken } = (await paired.json()) as { deviceToken: string };
+    const bootstrap = (await (
+      await api.request('GET', '/pos/bootstrap', { headers: { 'x-terminal-token': deviceToken } })
+    ).json()) as { organization: { id: string; isTraining: boolean } };
+    expect(bootstrap.organization).toEqual(
+      expect.objectContaining({ id: training.organizationId, isTraining: true }),
+    );
+
+    // The real backoffice never lists practice devices; a code for a real one is refused.
+    const real = await api.request('GET', '/terminals', {
+      headers: api.as(demoSession(demo, 'admin')),
+    });
+    const realIds = ((await real.json()) as { id: string }[]).map((terminal) => terminal.id);
+    expect(realIds).not.toContain(device.id);
+    await expect(
+      issueTrainingPairingCode({ db: api.db }, owner, realIds[0]!),
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+
+    // A new copy replaces the old one: retired, its devices unpaired, nothing deleted.
+    const renewed = await createTraining({ db: api.db }, owner);
+    expect(renewed.organizationId).not.toBe(training.organizationId);
+    const [retired] = await api.db
+      .select()
+      .from(s.organizations)
+      .where(eq(s.organizations.id, training.organizationId));
+    expect(retired?.deletedAt).not.toBeNull();
+    const [unpaired] = await api.db
+      .select({ token: s.terminals.deviceTokenHash })
+      .from(s.terminals)
+      .where(eq(s.terminals.id, device.id));
+    expect(unpaired?.token).toBeNull();
+    expect((await getTraining({ db: api.db }, owner))?.organizationId).toBe(renewed.organizationId);
+    const live = await api.db
+      .select({ id: s.organizations.id })
+      .from(s.organizations)
+      .where(
+        and(
+          eq(s.organizations.trainingOfId, demo.organizationId),
+          isNull(s.organizations.deletedAt),
+        ),
+      );
+    expect(live).toEqual([{ id: renewed.organizationId }]);
+  });
+});
+
+const demoActor = () =>
+  ({
+    kind: 'user',
+    organizationId: demo.organizationId,
+    locationId: demo.locationId,
+    userId: demo.users.admin.id,
+    requestId: null,
   }) as const;

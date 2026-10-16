@@ -107,6 +107,19 @@ export async function loadOrganizationPlan(organizationId: string) {
   );
 }
 
+/** A practice copy of the organization (RF-F22), e.g. before training its staff. */
+export async function createTraining(organizationId: string) {
+  return runAction(async () => {
+    const result = await platform.createTrainingAsSupport(
+      deps(),
+      await currentStaff(),
+      organizationId,
+    );
+    revalidatePath('/support');
+    return result;
+  });
+}
+
 export async function updateSubscription(organizationId: string, input: unknown) {
   return runAction(async () => {
     const result = await platform.updateSubscription(

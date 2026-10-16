@@ -465,7 +465,11 @@
         "api": "API para integraciones propias",
         "multi_location": "Varias sedes"
       }
-    }
+    },
+    "createTraining": "Crear práctica para {name}",
+    "createTrainingConfirm": "Crear",
+    "createTrainingText": "Copia la carta, el plano, las estaciones, el personal (mismo PIN) y los aparatos en una organización de práctica aparte. Una copia anterior se reemplaza y sus aparatos se desvinculan.",
+    "trainingCreated": "Práctica creada"
   },
   "onboarding": {
     "start": "Nuevo restaurante",
@@ -553,6 +557,19 @@
     "statusNotice": {
       "past_due": "Hay un pago pendiente de su suscripción. La operación sigue; por favor páguelo para que nada se suspenda.",
       "suspended": "Su suscripción está suspendida: puede seguir vendiendo y cerrando, pero no agregar nada. Contacte a DINOLABS."
+    },
+    "training": {
+      "title": "Modo práctica",
+      "description": "Una copia de tu restaurante para practicar: la misma carta, el mismo plano y los mismos PIN. Los pedidos, pagos y recibos ahí nunca son reales y no aparecen en ningún reporte.",
+      "create": "Crear práctica",
+      "creating": "Creando …",
+      "created": "Práctica creada",
+      "since": "Copia del {date}",
+      "pair": "Vincular",
+      "paired": "Vinculado",
+      "renew": "Copiar de nuevo",
+      "renewTitle": "¿Copiar de nuevo la práctica?",
+      "renewText": "La práctica vuelve a empezar con tu carta y tu personal actuales. Los aparatos de práctica actuales se desvinculan y hay que vincularlos otra vez."
     }
   }
 }

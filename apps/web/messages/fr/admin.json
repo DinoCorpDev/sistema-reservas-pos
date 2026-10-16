@@ -465,7 +465,11 @@
         "api": "API pour vos intégrations",
         "multi_location": "Plusieurs sites"
       }
-    }
+    },
+    "createTraining": "Créer un mode exercice pour {name}",
+    "createTrainingConfirm": "Créer",
+    "createTrainingText": "Copie la carte, le plan de salle, les postes, le personnel (même PIN) et les appareils dans une organisation d’exercice à part. Une copie précédente est remplacée et ses appareils dissociés.",
+    "trainingCreated": "Mode exercice créé"
   },
   "onboarding": {
     "start": "Nouveau restaurant",
@@ -553,6 +557,19 @@
     "statusNotice": {
       "past_due": "Un paiement de votre abonnement est en attente. L’exploitation continue ; merci de le régler pour que rien ne soit suspendu.",
       "suspended": "Votre abonnement est suspendu : vous pouvez continuer à vendre et à clôturer, mais rien ajouter. Contactez DINOLABS."
+    },
+    "training": {
+      "title": "Mode exercice",
+      "description": "Une copie de votre restaurant pour s’entraîner : même carte, même plan de salle, même PIN. Les commandes, paiements et justificatifs n’y sont jamais réels et n’apparaissent dans aucun rapport.",
+      "create": "Créer le mode exercice",
+      "creating": "Création …",
+      "created": "Mode exercice créé",
+      "since": "Copie du {date}",
+      "pair": "Associer",
+      "paired": "Associé",
+      "renew": "Copier à nouveau",
+      "renewTitle": "Copier à nouveau le mode exercice ?",
+      "renewText": "L’exercice repart avec votre carte et votre personnel actuels. Les appareils d’exercice actuels sont dissociés et doivent être associés à nouveau."
     }
   }
 }

@@ -130,6 +130,9 @@
     "subscription": {
       "past_due": "Pago de la suscripción pendiente: avise al dueño.",
       "suspended": "Suscripción suspendida: se puede seguir vendiendo; avise al dueño."
+    },
+    "training": {
+      "band": "Modo práctica – nada es real"
     }
   }
 }

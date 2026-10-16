@@ -2,7 +2,7 @@ import { createDb, schema as s } from '@pos/db';
 import { testDatabaseUrl } from '@pos/db/testing';
 import { expect, type Page, test } from '@playwright/test';
 import { eq } from 'drizzle-orm';
-import { openShift, pairPos, posLocalData, unlockPos } from './pos-helpers';
+import { demoTerminal, openShift, pairPos, posLocalData, unlockPos } from './pos-helpers';
 
 /**
  * Phase 4 gate, cash (RF-D12…RF-D15, RF-D19, RNF-02, DEC-038): a shift opens, takes cash, moves
@@ -17,7 +17,7 @@ async function shiftsOf(terminalPrefix: string) {
     const [terminal] = await db
       .select({ id: s.terminals.id })
       .from(s.terminals)
-      .where(eq(s.terminals.orderNumberPrefix, terminalPrefix));
+      .where(demoTerminal(db, terminalPrefix));
     return await db.select().from(s.shifts).where(eq(s.shifts.terminalId, terminal!.id));
   } finally {
     await pool.end();

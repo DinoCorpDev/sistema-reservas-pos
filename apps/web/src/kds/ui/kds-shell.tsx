@@ -11,6 +11,7 @@ import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
 import { LanguageMenu } from '@/device/ui/language-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
+import { TrainingBand } from '@/device/ui/training-band';
 import {
   advanceItem,
   readyTicket,
@@ -115,6 +116,7 @@ export function KdsShell() {
 
   return (
     <Tabs defaultValue="open" className="flex min-h-dvh flex-col gap-0">
+      <TrainingBand />
       <header className="flex flex-wrap items-center gap-3 border-b bg-card px-3 py-2">
         <h1 className="text-xl font-bold" data-testid="kds-station">
           {station.name}

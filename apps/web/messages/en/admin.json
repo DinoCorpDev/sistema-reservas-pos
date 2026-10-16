@@ -465,7 +465,11 @@
         "api": "API for your own integrations",
         "multi_location": "Several locations"
       }
-    }
+    },
+    "createTraining": "Create training copy for {name}",
+    "createTrainingConfirm": "Create",
+    "createTrainingText": "Copies menu, floor plan, stations, staff (same PINs) and devices into a separate training organization. A previous copy is replaced and its devices unpaired.",
+    "trainingCreated": "Training copy created"
   },
   "onboarding": {
     "start": "New restaurant",
@@ -553,6 +557,19 @@
     "statusNotice": {
       "past_due": "A payment for your subscription is due. Operation goes on; please settle it so nothing is suspended.",
       "suspended": "Your subscription is suspended: you can keep selling and closing, but add nothing. Please contact DINOLABS."
+    },
+    "training": {
+      "title": "Training mode",
+      "description": "A copy of your restaurant to practise on: same menu, same floor plan, same PINs. Orders, payments and receipts there are never real and appear in no report.",
+      "create": "Create training copy",
+      "creating": "Creating …",
+      "created": "Training copy created",
+      "since": "Copy of {date}",
+      "pair": "Pair",
+      "paired": "Paired",
+      "renew": "Copy again",
+      "renewTitle": "Copy the training again?",
+      "renewText": "Training starts over with your current menu and staff. The current training devices are unpaired and must be paired again."
     }
   }
 }

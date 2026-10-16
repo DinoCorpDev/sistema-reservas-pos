@@ -9,6 +9,22 @@ import { and, eq, inArray } from 'drizzle-orm';
  */
 
 /**
+ * A seeded terminal of the demo restaurant by its prefix. A practice copy (RF-F22) has the same
+ * prefixes in its own organization, so the organization is part of the condition.
+ */
+export const demoTerminal = (db: ReturnType<typeof createDb>['db'], prefix: string) =>
+  and(
+    eq(s.terminals.orderNumberPrefix, prefix),
+    inArray(
+      s.terminals.organizationId,
+      db
+        .select({ id: s.organizations.id })
+        .from(s.organizations)
+        .where(eq(s.organizations.slug, 'demo-gastro')),
+    ),
+  );
+
+/**
  * A fresh pairing code for a seeded terminal of the demo location (e.g. "Kasse 1", K1). Like the
  * backoffice, it unpairs the terminal first: a paired one refuses a new device (DEC-041).
  */
@@ -21,7 +37,7 @@ export async function issuePairingCode(
     const [terminal] = await db
       .select({ id: s.terminals.id })
       .from(s.terminals)
-      .where(and(eq(s.terminals.orderNumberPrefix, prefix), eq(s.terminals.isActive, true)));
+      .where(and(demoTerminal(db, prefix), eq(s.terminals.isActive, true)));
     if (!terminal) throw new Error(`No terminal with prefix ${prefix} in the E2E database`);
     const code = pairingCode();
     await db
@@ -63,7 +79,7 @@ export async function cloudState(prefix = 'K1') {
     const [terminal] = await db
       .select({ id: s.terminals.id })
       .from(s.terminals)
-      .where(eq(s.terminals.orderNumberPrefix, prefix));
+      .where(demoTerminal(db, prefix));
     const terminalId = terminal!.id;
     const operations = await db
       .select({ id: s.syncOperations.id, type: s.syncOperations.operation })
