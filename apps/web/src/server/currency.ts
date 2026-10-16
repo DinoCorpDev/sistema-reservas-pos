@@ -2,7 +2,7 @@ import 'server-only';
 import { locations } from '@pos/api';
 import { asCurrency, type Currency } from '@pos/core';
 import { cache } from 'react';
-import { moneyOf } from '@/components/money';
+import { moneyOf } from '@/components/money-format';
 import { currentActor, deps } from './actor';
 
 /** The currency of the backoffice's current location (DEC-047), once per request. */
