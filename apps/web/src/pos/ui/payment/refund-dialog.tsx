@@ -1,6 +1,7 @@
 'use client';
 
-import { formatChf, type PaymentState, type Rappen, rappen, roundCashTo5 } from '@pos/core';
+import { type PaymentState, type Rappen, rappen } from '@pos/core';
+import { formatPosMoney, roundPosCash } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import {
   Dialog,
@@ -49,7 +50,7 @@ export function RefundDialog({
             {payment
               ? t('description', {
                   method: tm(payment.method),
-                  amount: formatChf(payment.amountRappen),
+                  amount: formatPosMoney(payment.amountRappen),
                 })
               : null}
           </DialogDescription>
@@ -92,17 +93,22 @@ function RefundBody({
   const total = amount !== null && tip !== null ? rappen(amount + tip) : null;
   // Cash goes back rounded to CHF 0.05, like it was collected (RN-06, DEC-038).
   const handBack =
-    total === null ? null : payment.method === 'cash' ? roundCashTo5(total).payable : total;
+    total === null ? null : payment.method === 'cash' ? roundPosCash(total).payable : total;
   const tcash = useTranslations('posCash.payment');
 
   async function confirm() {
     if (busy) return;
     if (amount === null || amount <= 0 || amount > refundable.amountRappen) {
-      setError(t('errors.amount', { max: formatChf(refundable.amountRappen) }));
+      setError(
+        t('errors.amount', {
+          min: formatPosMoney(rappen(1)),
+          max: formatPosMoney(refundable.amountRappen),
+        }),
+      );
       return;
     }
     if (tip === null || tip > refundable.tipRappen) {
-      setError(t('errors.tip', { max: formatChf(refundable.tipRappen) }));
+      setError(t('errors.tip', { max: formatPosMoney(refundable.tipRappen) }));
       return;
     }
     const text = reason.trim();
@@ -137,7 +143,7 @@ function RefundBody({
         <Field
           label={t('amount')}
           htmlFor="refund-amount"
-          hint={t('max', { amount: formatChf(refundable.amountRappen) })}
+          hint={t('max', { amount: formatPosMoney(refundable.amountRappen) })}
         >
           <Input
             id="refund-amount"
@@ -156,7 +162,7 @@ function RefundBody({
           <Field
             label={t('tip')}
             htmlFor="refund-tip"
-            hint={t('tipMax', { amount: formatChf(refundable.tipRappen) })}
+            hint={t('tipMax', { amount: formatPosMoney(refundable.tipRappen) })}
           >
             <Input
               id="refund-tip"
@@ -202,8 +208,8 @@ function RefundBody({
         {handBack !== null && handBack > 0 && (
           <p className="rounded-lg bg-muted px-3 py-2 text-sm" data-testid="refund-hand-back">
             {payment.method === 'cash'
-              ? t('handBackCash', { amount: formatChf(handBack) })
-              : t('handBackTerminal', { amount: formatChf(handBack) })}
+              ? t('handBackCash', { amount: formatPosMoney(handBack) })
+              : t('handBackTerminal', { amount: formatPosMoney(handBack) })}
           </p>
         )}
         {error && (

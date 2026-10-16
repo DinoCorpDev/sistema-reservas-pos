@@ -188,7 +188,7 @@
       "percent": "Prozent",
       "amount": "Betrag",
       "valuePercent": "Rabatt in %",
-      "valueAmount": "Rabatt in CHF",
+      "valueAmount": "Rabatt in {currency}",
       "invalidPercent": "Geben Sie einen Wert von 0.01 bis 100 ein.",
       "invalidAmount": "Geben Sie einen Betrag grösser als 0 ein, z. B. 5.50.",
       "reason": "Grund",

@@ -192,18 +192,24 @@
     "tableOwnership_restricted": "Attribué (seulement le serveur responsable)",
     "discountAbove": "Rabais soumis à validation au-delà de (%)",
     "voidSentItem": "L’annulation d’articles envoyés exige une validation",
-    "refundAbove": "Remboursement soumis à validation au-delà de (CHF, 0 = toujours)",
+    "refundAbove": "Remboursement soumis à validation au-delà de ({currency}, 0 = toujours)",
     "blockMinutesBefore": "Bloquer la table avant la réservation (minutes)",
     "noShowAfter": "No-show après (minutes)",
     "defaultDuration": "Durée par défaut d’une réservation (minutes)",
     "kitchenAlert": "Alerte cuisine après (minutes)",
-    "customerNameFrom": "Nom du client sur le ticket dès (CHF)",
+    "customerNameFrom": "Nom du client sur le ticket dès ({currency})",
     "maxPinAttempts": "Essais PIN erronés avant blocage",
     "pinLockMinutes": "Blocage PIN (minutes)",
     "printMaxDelay": "Ne plus imprimer après (minutes)",
     "hubUrls": "Adresses des hubs",
     "hubUrlsHint": "Une adresse par ligne, dans l’ordre. Le premier hub attribue les numéros de commande ; vide = aucun hub.",
-    "oneDevicePerPerson": "Une personne connectée sur un seul appareil à la fois"
+    "oneDevicePerPerson": "Une personne connectée sur un seul appareil à la fois",
+    "nit": "NIT",
+    "nitHint": "Numéro fiscal en {country}, avec le chiffre de contrôle : 900.123.456-7.",
+    "countries": {
+      "CH": "Suisse",
+      "CO": "Colombie"
+    }
   },
   "floor": {
     "title": "Zones & tables",

@@ -1,6 +1,7 @@
 'use client';
 
-import { formatChf, type OrderState } from '@pos/core';
+import { type OrderState } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pos/ui/tabs';
 import { cn } from '@pos/ui/utils';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -206,7 +207,7 @@ function OpenOrderList({
                     SECOND_LINE,
                   )}
                 >
-                  {formatChf(order.totalRappen)}
+                  {formatPosMoney(order.totalRappen)}
                 </span>
                 <span
                   className={cn(
@@ -215,7 +216,7 @@ function OpenOrderList({
                   )}
                 >
                   <span className="sm:hidden">{t('balanceShort')} </span>
-                  {formatChf(order.balanceRappen)}
+                  {formatPosMoney(order.balanceRappen)}
                 </span>
                 <span
                   className={cn(
@@ -286,7 +287,7 @@ function ClosedOrderList({
                     SECOND_LINE,
                   )}
                 >
-                  {formatChf(order.totalRappen)}
+                  {formatPosMoney(order.totalRappen)}
                 </span>
                 <span
                   className={cn(

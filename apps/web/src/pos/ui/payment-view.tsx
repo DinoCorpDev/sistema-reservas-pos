@@ -2,7 +2,6 @@
 
 import {
   type ContentLanguage,
-  formatChf,
   isContentLanguage,
   MoneyError,
   type OrderState,
@@ -10,8 +9,8 @@ import {
   paymentsOf,
   rappen,
   ReceiptError,
-  roundCashTo5,
 } from '@pos/core';
+import { formatPosMoney, roundPosCash } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Input, Textarea } from '@pos/ui/input';
@@ -218,7 +217,7 @@ function PaymentForm({ order }: { order: OrderState }) {
   // Cash (RN-06): what is handed over (sale + tip) is rounded to CHF 0.05.
   const cash =
     method === 'cash' && amount !== null && amountOk && tip !== null
-      ? roundCashTo5(rappen(amount + tip))
+      ? roundPosCash(rappen(amount + tip))
       : null;
   const change = cash && tendered !== null ? tendered - cash.payable : null;
   // Terminal (RF-D04, RF-D06): an approved amount above the sale is the tip.
@@ -236,7 +235,7 @@ function PaymentForm({ order }: { order: OrderState }) {
       : amount === null || amount <= 0
         ? te('invalidAmount')
         : amount > balance
-          ? te('aboveBalance', { balance: formatChf(balance) })
+          ? te('aboveBalance', { balance: formatPosMoney(balance) })
           : null;
 
   const texts: Record<FieldKey, string> = {
@@ -309,7 +308,8 @@ function PaymentForm({ order }: { order: OrderState }) {
   function prepare(): { error: string; field?: 'customer' } | { input: PaymentInput } {
     if (!method) return { error: te('chooseMethod') };
     if (amount === null || amount <= 0) return { error: te('invalidAmount') };
-    if (amount > balance) return { error: te('aboveBalance', { balance: formatChf(balance) }) };
+    if (amount > balance)
+      return { error: te('aboveBalance', { balance: formatPosMoney(balance) }) };
     const name = customerName.trim();
     const address = customerAddress.trim();
     const common = {
@@ -322,9 +322,9 @@ function PaymentForm({ order }: { order: OrderState }) {
     if (method === 'cash') {
       if (tip === null) return { error: te('invalidTip') };
       if (tenderedInvalid) return { error: te('invalidTendered') };
-      const { payable } = roundCashTo5(rappen(amount + tip));
+      const { payable } = roundPosCash(rappen(amount + tip));
       if (tendered !== null && tendered < payable) {
-        return { error: te('insufficientTender', { amount: formatChf(payable) }) };
+        return { error: te('insufficientTender', { amount: formatPosMoney(payable) }) };
       }
       input = {
         ...common,
@@ -344,7 +344,7 @@ function PaymentForm({ order }: { order: OrderState }) {
     // RN-08 / DEC-009: from CHF 400 inclusive the receipt carries the customer's name.
     if (name === '' && amount >= threshold) {
       return {
-        error: te('customerNameRequired', { threshold: formatChf(threshold) }),
+        error: te('customerNameRequired', { threshold: formatPosMoney(threshold) }),
         field: 'customer',
       };
     }
@@ -354,17 +354,17 @@ function PaymentForm({ order }: { order: OrderState }) {
   function describe(caught: unknown): string {
     if (caught instanceof ReceiptError) {
       if (caught.code === 'CUSTOMER_NAME_REQUIRED') {
-        return te('customerNameRequired', { threshold: formatChf(threshold) });
+        return te('customerNameRequired', { threshold: formatPosMoney(threshold) });
       }
       return caught.code === 'VAT_UID_MISSING' ? te('vatUidMissing') : te('nothingToReceipt');
     }
     if (caught instanceof PaymentRuleError) {
       if (caught.code === 'INSUFFICIENT_TENDER') {
-        return te('insufficientTender', { amount: formatChf(cash?.payable ?? rappen(0)) });
+        return te('insufficientTender', { amount: formatPosMoney(cash?.payable ?? rappen(0)) });
       }
       // The balance may have changed meanwhile (a payment from another terminal).
       return amount !== null && amount > order.balanceRappen
-        ? te('aboveBalance', { balance: formatChf(order.balanceRappen) })
+        ? te('aboveBalance', { balance: formatPosMoney(order.balanceRappen) })
         : te('invalidAmount');
     }
     if (caught instanceof MoneyError) return te('invalidAmount');
@@ -431,7 +431,7 @@ function PaymentForm({ order }: { order: OrderState }) {
             (error === null ? amountProblem : null) ??
             (split && part
               ? t('partHint', { index: part.index, parts: split.parts })
-              : t('balanceHint', { balance: formatChf(balance) }))
+              : t('balanceHint', { balance: formatPosMoney(balance) }))
           }
         />
 
@@ -515,7 +515,7 @@ function PaymentForm({ order }: { order: OrderState }) {
                       setError(null);
                     }}
                   >
-                    {formatChf(value)}
+                    {formatPosMoney(value)}
                   </Button>
                 ))}
               </div>
@@ -523,7 +523,7 @@ function PaymentForm({ order }: { order: OrderState }) {
             <dl className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 rounded-lg bg-muted px-3 py-2">
               <dt className="text-sm">{t('collect')}</dt>
               <dd className="text-right font-semibold tabular-nums" data-testid="payment-collect">
-                {cash ? formatChf(cash.payable) : '–'}
+                {cash ? formatPosMoney(cash.payable) : '–'}
               </dd>
               {cash && cash.rounding !== 0 && (
                 <>
@@ -533,7 +533,7 @@ function PaymentForm({ order }: { order: OrderState }) {
                     data-testid="payment-rounding"
                   >
                     {cash.rounding > 0 ? '+' : ''}
-                    {formatChf(cash.rounding, { currency: false })}
+                    {formatPosMoney(cash.rounding, { currency: false })}
                   </dd>
                 </>
               )}
@@ -542,12 +542,12 @@ function PaymentForm({ order }: { order: OrderState }) {
                 className="text-right text-2xl font-bold tabular-nums"
                 data-testid="payment-change"
               >
-                {formatChf(rappen(change !== null && change > 0 ? change : 0))}
+                {formatPosMoney(rappen(change !== null && change > 0 ? change : 0))}
               </dd>
             </dl>
             {change !== null && change < 0 && (
               <p className="text-sm font-medium text-destructive">
-                {t('missing', { amount: formatChf(rappen(-change)) })}
+                {t('missing', { amount: formatPosMoney(rappen(-change)) })}
               </p>
             )}
             {change !== null && change > 0 && amount !== null && tendered !== null && (
@@ -591,7 +591,7 @@ function PaymentForm({ order }: { order: OrderState }) {
                   className="text-base font-semibold tabular-nums"
                   data-testid="payment-terminal-tip"
                 >
-                  {formatChf(rappen(terminalTip))}
+                  {formatPosMoney(rappen(terminalTip))}
                 </span>
               </p>
             )}
@@ -630,7 +630,7 @@ function PaymentForm({ order }: { order: OrderState }) {
             />
             {customerRequired && (
               <p className="text-sm text-muted-foreground">
-                {t('customerRequired', { threshold: formatChf(threshold) })}
+                {t('customerRequired', { threshold: formatPosMoney(threshold) })}
               </p>
             )}
           </div>
@@ -691,7 +691,7 @@ function PaymentForm({ order }: { order: OrderState }) {
         {collectNow !== null && collectNow > 0 && (
           <p className="flex items-baseline justify-between gap-2">
             <span className="text-sm text-muted-foreground">{t('collectNow')}</span>
-            <span className="text-xl font-bold tabular-nums">{formatChf(collectNow)}</span>
+            <span className="text-xl font-bold tabular-nums">{formatPosMoney(collectNow)}</span>
           </p>
         )}
         {error && (

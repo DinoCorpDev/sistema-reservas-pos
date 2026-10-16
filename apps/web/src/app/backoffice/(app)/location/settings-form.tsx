@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import { saveLocationSettings } from './actions';
+import { useMoney } from '@/components/money';
 
 /** Operating rules of the location (DEC-004): approval thresholds and timings, all configurable. */
 export function SettingsForm({
@@ -29,6 +30,7 @@ export function SettingsForm({
   settings: LocationSettings;
   canEdit: boolean;
 }) {
+  const money = useMoney();
   const t = useTranslations('location');
   const tc = useTranslations('common');
   const [form, setForm] = useState({
@@ -146,7 +148,7 @@ export function SettingsForm({
             </Select>
           </Field>
           {numberField('discountAbovePercent', t('discountAbove'))}
-          {numberField('refundAboveChf', t('refundAbove'), 0.05)}
+          {numberField('refundAboveChf', t('refundAbove', { currency: money.currency }), 0.05)}
           <div className="flex items-center gap-3 sm:col-span-2 lg:col-span-3">
             <Switch
               id="set-voidSentItem"
@@ -160,7 +162,11 @@ export function SettingsForm({
           {numberField('noShowAfterMinutes', t('noShowAfter'))}
           {numberField('defaultDurationMinutes', t('defaultDuration'))}
           {numberField('alertAfterMinutes', t('kitchenAlert'))}
-          {numberField('customerNameFromChf', t('customerNameFrom'), 0.05)}
+          {numberField(
+            'customerNameFromChf',
+            t('customerNameFrom', { currency: money.currency }),
+            0.05,
+          )}
           {numberField('maxPinAttempts', t('maxPinAttempts'))}
           {numberField('pinLockMinutes', t('pinLockMinutes'))}
           <div className="flex items-center gap-3 sm:col-span-2 lg:col-span-3">

@@ -1,5 +1,4 @@
 import { cash } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Button } from '@pos/ui/button';
 import { Card, CardContent } from '@pos/ui/card';
@@ -10,10 +9,9 @@ import { getFormatter, getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
 import { PrintButton } from '@/components/print-button';
+import { currentFormatter } from '@/server/currency';
 
 export const metadata: Metadata = { title: 'Kassenbuch' };
-
-const chf = (value: number) => formatChf(rappen(value), { currency: false });
 
 /**
  * The daily cash book (Kassenbuch, RF-D16): every franc that entered or left a drawer, in time
@@ -24,6 +22,7 @@ export default async function CashBookPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const chf = await currentFormatter({ symbol: false });
   const actor = await currentActor();
   const t = await getTranslations('cash');
   const tb = await getTranslations('cash.book');

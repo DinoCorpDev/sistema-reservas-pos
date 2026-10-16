@@ -188,7 +188,7 @@
       "percent": "Pourcentage",
       "amount": "Montant",
       "valuePercent": "Rabais en %",
-      "valueAmount": "Rabais en CHF",
+      "valueAmount": "Rabais en {currency}",
       "invalidPercent": "Saisissez une valeur de 0.01 à 100.",
       "invalidAmount": "Saisissez un montant supérieur à 0, p. ex. 5.50.",
       "reason": "Motif",

@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  type FoldState,
-  formatChf,
-  type PaymentState,
-  paymentsOf,
-  rappen,
-  refundsOf,
-} from '@pos/core';
+import { type FoldState, type PaymentState, paymentsOf, rappen, refundsOf } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Copy, LockOpen, Undo2 } from 'lucide-react';
@@ -123,7 +117,7 @@ export function ClosedOrderPanel({ orderId }: { orderId: string }) {
                       {tm(payment.method)}
                       {payment.splitLabel ? ` (${payment.splitLabel})` : ''}
                       {' · '}
-                      <span className="tabular-nums">{formatChf(payment.amountRappen)}</span>
+                      <span className="tabular-nums">{formatPosMoney(payment.amountRappen)}</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {when(payment.completedAt)}
@@ -133,10 +127,10 @@ export function ClosedOrderPanel({ orderId }: { orderId: string }) {
                     {(payment.tipRappen > 0 || payment.roundingRappen !== 0) && (
                       <p className="text-sm text-muted-foreground tabular-nums">
                         {payment.tipRappen > 0 &&
-                          t('tip', { amount: formatChf(payment.tipRappen) })}
+                          t('tip', { amount: formatPosMoney(payment.tipRappen) })}
                         {payment.tipRappen > 0 && payment.roundingRappen !== 0 ? ' · ' : ''}
                         {payment.roundingRappen !== 0 &&
-                          t('rounding', { amount: formatChf(payment.roundingRappen) })}
+                          t('rounding', { amount: formatPosMoney(payment.roundingRappen) })}
                       </p>
                     )}
                     {refundable.amountRappen === 0 && (
@@ -171,10 +165,12 @@ export function ClosedOrderPanel({ orderId }: { orderId: string }) {
                       <li key={refund.id} className="flex flex-wrap justify-between gap-x-3">
                         <span className="text-destructive tabular-nums">
                           {t('refundLine', {
-                            amount: formatChf(rappen(-(refund.amountRappen + refund.tipRappen))),
+                            amount: formatPosMoney(
+                              rappen(-(refund.amountRappen + refund.tipRappen)),
+                            ),
                           })}
                           {refund.tipRappen > 0 &&
-                            ` (${t('refundTip', { amount: formatChf(refund.tipRappen) })})`}
+                            ` (${t('refundTip', { amount: formatPosMoney(refund.tipRappen) })})`}
                         </span>
                         <span className="text-muted-foreground">
                           {refund.reason} · {when(refund.refundedAt)}
@@ -195,7 +191,7 @@ export function ClosedOrderPanel({ orderId }: { orderId: string }) {
         onOpenChange={(open) => !open && setRefunding(null)}
         onDone={(total) => {
           setRefunding(null);
-          setNotice(t('refunded', { amount: formatChf(total) }));
+          setNotice(t('refunded', { amount: formatPosMoney(total) }));
         }}
       />
       <ReopenDialog

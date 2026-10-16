@@ -1,6 +1,6 @@
 'use client';
 
-import { formatChf } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
 import { useTranslations } from 'next-intl';
@@ -126,7 +126,7 @@ function OrderScreen({ orderId }: { orderId: string }) {
             >
               {value === 'menu'
                 ? t('menu')
-                : t('ticketTab', { count: validCount, total: formatChf(order.totalRappen) })}
+                : t('ticketTab', { count: validCount, total: formatPosMoney(order.totalRappen) })}
             </button>
           ))}
         </div>

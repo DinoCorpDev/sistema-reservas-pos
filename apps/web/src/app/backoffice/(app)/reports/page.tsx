@@ -1,5 +1,4 @@
 import { cash, reports } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import type { Metadata } from 'next';
@@ -12,10 +11,10 @@ import { HourBars } from './_components/hour-bars';
 import { periodOf } from './_components/period';
 import { PeriodFilter } from './_components/period-filter';
 import { Stat, Stats } from './_components/stat';
+import { currentFormatter } from '@/server/currency';
 
 export const metadata: Metadata = { title: 'Berichte' };
 
-const chf = (value: number) => formatChf(rappen(value));
 const PRODUCTS_SHOWN = 30;
 
 /** Two columns of a breakdown: a name and its sales, with the count in between when known. */
@@ -24,7 +23,9 @@ function Breakdown({
   head,
   rows,
   empty,
+  chf,
 }: {
+  chf: (value: number) => string;
   title: string;
   head: [string, string, string];
   rows: { key: string; name: ReactNode; count: ReactNode; amount: number }[];
@@ -76,6 +77,7 @@ export default async function SalesReportPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const chf = await currentFormatter();
   const actor = await currentActor();
   const t = await getTranslations('reports');
   const ts = await getTranslations('reports.sales');
@@ -152,6 +154,7 @@ export default async function SalesReportPage({
 
         <div className="grid gap-6 lg:grid-cols-2">
           <Breakdown
+            chf={chf}
             title={ts('byDay')}
             head={[ts('day'), ts('count'), ts('amount')]}
             empty={t('empty')}
@@ -163,6 +166,7 @@ export default async function SalesReportPage({
             }))}
           />
           <Breakdown
+            chf={chf}
             title={ts('byWaiter')}
             head={[ts('person'), ts('count'), ts('amount')]}
             empty={t('empty')}
@@ -174,6 +178,7 @@ export default async function SalesReportPage({
             }))}
           />
           <Breakdown
+            chf={chf}
             title={ts('byChannel')}
             head={[ts('channel'), ts('count'), ts('amount')]}
             empty={t('empty')}
@@ -185,6 +190,7 @@ export default async function SalesReportPage({
             }))}
           />
           <Breakdown
+            chf={chf}
             title={ts('byMethod')}
             head={[ts('method'), ts('count'), ts('amount')]}
             empty={t('empty')}

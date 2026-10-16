@@ -1,6 +1,7 @@
 'use client';
 
-import { formatChf, type ReceiptContent, renderReceiptText } from '@pos/core';
+import { type ReceiptContent, renderReceiptText } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { Check, Printer } from 'lucide-react';
@@ -100,10 +101,10 @@ export function ReceiptView({
               {nextOrder && nextOrder.id !== orderId
                 ? t('nextOrder', {
                     number: nextOrder.displayNumber,
-                    amount: formatChf(nextOrder.balanceRappen),
+                    amount: formatPosMoney(nextOrder.balanceRappen),
                   })
                 : order && order.balanceRappen > 0
-                  ? t('balanceLeft', { amount: formatChf(order.balanceRappen) })
+                  ? t('balanceLeft', { amount: formatPosMoney(order.balanceRappen) })
                   : t('paidInFull')}
             </p>
           )}

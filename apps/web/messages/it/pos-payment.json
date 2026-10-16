@@ -11,7 +11,8 @@
       "de": "Deutsch",
       "fr": "Français",
       "it": "Italiano",
-      "en": "English"
+      "en": "English",
+      "es": "Español"
     },
     "channels": {
       "table": "Tavolo",
@@ -178,7 +179,7 @@
       "cancel": "Annulla",
       "close": "Chiudi",
       "errors": {
-        "amount": "L’importo deve essere compreso tra CHF 0.01 e {max}.",
+        "amount": "L’importo deve essere compreso tra {min} e {max}.",
         "tip": "La mancia non può superare {max}.",
         "reason": "Indichi un motivo.",
         "failed": "Non è stato possibile registrare il rimborso."

@@ -16,7 +16,7 @@ import type { KeyboardEvent } from 'react';
 export const COURSES = [0, 1, 2, 3] as const;
 
 /** Languages of short labels (variants, modifiers, groups); the catalog text is the main name. */
-export const LABEL_LANGUAGES = ['fr', 'it', 'en'] as const satisfies readonly ContentLanguage[];
+export const LABEL_LANGUAGES = ['fr', 'it', 'en', 'es'] as const satisfies readonly ContentLanguage[];
 export type LabelLanguage = (typeof LABEL_LANGUAGES)[number];
 
 /** Weekday bits of an availability rule (RF-B08): Monday = 1 … Sunday = 64. */

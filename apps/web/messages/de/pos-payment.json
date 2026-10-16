@@ -11,7 +11,8 @@
       "de": "Deutsch",
       "fr": "Français",
       "it": "Italiano",
-      "en": "English"
+      "en": "English",
+      "es": "Español"
     },
     "channels": {
       "table": "Tisch",
@@ -178,7 +179,7 @@
       "cancel": "Abbrechen",
       "close": "Schliessen",
       "errors": {
-        "amount": "Der Betrag muss zwischen CHF 0.01 und {max} liegen.",
+        "amount": "Der Betrag muss zwischen {min} und {max} liegen.",
         "tip": "Das Trinkgeld darf höchstens {max} betragen.",
         "reason": "Bitte geben Sie einen Grund an.",
         "failed": "Die Rückerstattung konnte nicht gebucht werden."

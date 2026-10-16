@@ -1,4 +1,5 @@
 import { locations, platform } from '@pos/api';
+import { asCurrency } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -6,6 +7,7 @@ import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { auth } from '@/auth';
 import { BackofficeNav } from '@/components/backoffice/nav';
+import { MoneyProvider } from '@/components/money';
 import { TopBar } from '@/components/backoffice/top-bar';
 import { currentActor, deps } from '@/server/actor';
 
@@ -16,6 +18,10 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
   const actor = await currentActor();
   const t = await getTranslations();
   const allLocations = await locations.listLocations(deps(), actor);
+  // Amounts on screen in the current location's currency (DEC-047).
+  const currency = asCurrency(
+    allLocations.find((location) => location.id === actor.locationId)?.currency,
+  );
   const permissions = [...actor.permissions];
   // A late payment or a suspended subscription, for whoever manages the location (DEC-045).
   const subscription = actor.permissions.has('location.manage')
@@ -56,7 +62,9 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
             </Link>
           </Alert>
         ) : null}
-        <main className="mx-auto w-full max-w-6xl flex-1 p-4 sm:p-6">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 p-4 sm:p-6">
+          <MoneyProvider currency={currency}>{children}</MoneyProvider>
+        </main>
       </div>
     </div>
   );

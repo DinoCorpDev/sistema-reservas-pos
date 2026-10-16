@@ -4,7 +4,11 @@ import type { admin } from '@pos/api';
 import {
   BUSINESS_PROFILES,
   type BusinessProfile,
+  CO_TAX_REGIMES,
   CONTENT_LANGUAGES,
+  type CoTaxRegime,
+  COUNTRIES,
+  type Country,
   UI_LANGUAGES,
 } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
@@ -33,6 +37,8 @@ const STEPS = ['organization', 'location', 'owner', 'review'] as const;
 
 interface Draft {
   profile: BusinessProfile;
+  country: Country;
+  taxRegime: CoTaxRegime;
   organization: { name: string; legalName: string; defaultLanguage: string };
   location: {
     name: string;
@@ -50,6 +56,8 @@ interface Draft {
 
 const initialDraft = (): Draft => ({
   profile: 'restaurant',
+  country: 'CH',
+  taxRegime: 'inc',
   organization: { name: '', legalName: '', defaultLanguage: 'de' },
   location: {
     name: '',
@@ -67,6 +75,8 @@ const initialDraft = (): Draft => ({
 
 const payloadOf = (draft: Draft) => ({
   profile: draft.profile,
+  country: draft.country,
+  taxRegime: draft.taxRegime,
   organization: {
     name: draft.organization.name.trim(),
     legalName: draft.organization.legalName.trim(),
@@ -78,7 +88,7 @@ const payloadOf = (draft: Draft) => ({
     street: draft.location.street.trim(),
     postalCode: draft.location.postalCode.trim(),
     city: draft.location.city.trim(),
-    canton: draft.location.canton.trim() || null,
+    canton: draft.country === 'CH' ? draft.location.canton.trim() || null : null,
     vatUid: draft.location.vatUid.trim() || null,
     languages: draft.location.languages,
     kitchenLanguage: draft.location.kitchenLanguage,
@@ -276,6 +286,7 @@ export function OnboardingWizard() {
   );
 
   const { organization: org, location: loc, owner } = draft;
+  const swiss = draft.country === 'CH';
 
   return (
     <>
@@ -378,6 +389,57 @@ export function OnboardingWizard() {
                       </SelectContent>
                     </Select>
                   </Field>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label={t('country')} htmlFor="ob-country">
+                      <Select
+                        value={draft.country}
+                        onValueChange={(value) => {
+                          const country = value as Country;
+                          setDraft((d) => ({ ...d, country }));
+                          // A Colombian restaurant usually works in Spanish (DEC-046).
+                          if (country === 'CO' && org.defaultLanguage === 'de') {
+                            setDefaultLanguage('es');
+                          }
+                        }}
+                      >
+                        <SelectTrigger id="ob-country">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COUNTRIES.map((country) => (
+                            <SelectItem key={country} value={country}>
+                              {t(`countries.${country}`)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    {draft.country === 'CO' ? (
+                      <Field
+                        label={t('taxRegime')}
+                        htmlFor="ob-tax-regime"
+                        hint={t(`taxRegimeHint.${draft.taxRegime}`)}
+                      >
+                        <Select
+                          value={draft.taxRegime}
+                          onValueChange={(value) =>
+                            setDraft((d) => ({ ...d, taxRegime: value as CoTaxRegime }))
+                          }
+                        >
+                          <SelectTrigger id="ob-tax-regime">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {CO_TAX_REGIMES.map((regime) => (
+                              <SelectItem key={regime} value={regime}>
+                                {t(`taxRegimes.${regime}`)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </Field>
+                    ) : null}
+                  </div>
                   {text(
                     'ob-org-name',
                     t('orgName'),
@@ -444,14 +506,21 @@ export function OnboardingWizard() {
                       maxLength: 200,
                     },
                   )}
-                  <div className="grid grid-cols-[6.5rem_1fr] gap-4 sm:grid-cols-[6.5rem_1fr_7rem]">
+                  <div
+                    className={cn(
+                      'grid grid-cols-[6.5rem_1fr] gap-4',
+                      swiss && 'sm:grid-cols-[6.5rem_1fr_7rem]',
+                    )}
+                  >
                     {text(
                       'ob-loc-postal',
                       t('postalCode'),
                       'location.postalCode',
                       loc.postalCode,
                       (postalCode) => setLocation({ postalCode }),
-                      { required: true, inputMode: 'numeric', pattern: '\\d{4}', maxLength: 4 },
+                      swiss
+                        ? { required: true, inputMode: 'numeric', pattern: '\\d{4}', maxLength: 4 }
+                        : { inputMode: 'numeric', pattern: '\\d{6}', maxLength: 6 },
                     )}
                     {text(
                       'ob-loc-city',
@@ -464,30 +533,32 @@ export function OnboardingWizard() {
                         maxLength: 100,
                       },
                     )}
-                    {text(
-                      'ob-loc-canton',
-                      t('canton'),
-                      'location.canton',
-                      loc.canton,
-                      (canton) => setLocation({ canton }),
-                      {
-                        maxLength: 2,
-                        pattern: '[A-Za-z]{2}',
-                        className: 'uppercase',
-                        hint: t('cantonHint'),
-                      },
-                    )}
+                    {swiss
+                      ? text(
+                          'ob-loc-canton',
+                          t('canton'),
+                          'location.canton',
+                          loc.canton,
+                          (canton) => setLocation({ canton }),
+                          {
+                            maxLength: 2,
+                            pattern: '[A-Za-z]{2}',
+                            className: 'uppercase',
+                            hint: t('cantonHint'),
+                          },
+                        )
+                      : null}
                   </div>
                   {text(
                     'ob-loc-uid',
-                    t('vatUid'),
+                    swiss ? t('vatUid') : t('nit'),
                     'location.vatUid',
                     loc.vatUid,
                     (vatUid) => setLocation({ vatUid }),
                     {
-                      placeholder: 'CHE-123.456.789',
+                      placeholder: swiss ? 'CHE-123.456.789' : '900.123.456-7',
                       maxLength: 32,
-                      hint: t('vatUidHint'),
+                      hint: swiss ? t('vatUidHint') : t('nitHint'),
                     },
                   )}
                   <fieldset className="grid gap-3">
@@ -571,6 +642,10 @@ export function OnboardingWizard() {
                 <form className="grid gap-4" onSubmit={submit}>
                   <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
                     <Summary label={t('profile')}>{t(`profiles.${draft.profile}`)}</Summary>
+                    <Summary label={t('country')}>
+                      {t(`countries.${draft.country}`)}
+                      {swiss ? '' : ` · ${t(`taxRegimes.${draft.taxRegime}`)}`}
+                    </Summary>
                     <Summary label={t('orgName')}>{org.name}</Summary>
                     <Summary label={t('orgLegalName')}>{org.legalName}</Summary>
                     <Summary label={t('defaultLanguage')}>{tl(org.defaultLanguage)}</Summary>
@@ -579,7 +654,7 @@ export function OnboardingWizard() {
                       {loc.street}, {loc.postalCode} {loc.city}
                       {loc.canton ? ` ${loc.canton.toUpperCase()}` : ''}
                     </Summary>
-                    <Summary label={t('vatUid')}>{loc.vatUid || '—'}</Summary>
+                    <Summary label={swiss ? t('vatUid') : t('nit')}>{loc.vatUid || '—'}</Summary>
                     <Summary label={t('languages')}>
                       {loc.languages.map((code) => tl(code)).join(', ')}
                     </Summary>

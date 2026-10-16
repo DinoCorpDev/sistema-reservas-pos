@@ -11,7 +11,8 @@
       "de": "Deutsch",
       "fr": "Français",
       "it": "Italiano",
-      "en": "English"
+      "en": "English",
+      "es": "Español"
     },
     "channels": {
       "table": "Table",
@@ -178,7 +179,7 @@
       "cancel": "Annuler",
       "close": "Fermer",
       "errors": {
-        "amount": "Le montant doit être compris entre CHF 0.01 et {max}.",
+        "amount": "Le montant doit être compris entre {min} et {max}.",
         "tip": "Le pourboire ne peut pas dépasser {max}.",
         "reason": "Veuillez indiquer un motif.",
         "failed": "Le remboursement n’a pas pu être enregistré."

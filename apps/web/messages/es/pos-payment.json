@@ -11,7 +11,8 @@
       "de": "Deutsch",
       "fr": "Français",
       "it": "Italiano",
-      "en": "English"
+      "en": "English",
+      "es": "Español"
     },
     "channels": {
       "table": "Mesa",
@@ -178,7 +179,7 @@
       "cancel": "Cancelar",
       "close": "Cerrar",
       "errors": {
-        "amount": "El monto debe estar entre CHF 0.01 y {max}.",
+        "amount": "El monto debe estar entre {min} y {max}.",
         "tip": "La propina no puede superar {max}.",
         "reason": "Indique un motivo.",
         "failed": "No se pudo registrar el reembolso."

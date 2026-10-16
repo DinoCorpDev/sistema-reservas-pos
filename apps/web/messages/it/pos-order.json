@@ -188,7 +188,7 @@
       "percent": "Percentuale",
       "amount": "Importo",
       "valuePercent": "Sconto in %",
-      "valueAmount": "Sconto in CHF",
+      "valueAmount": "Sconto in {currency}",
       "invalidPercent": "Inserisca un valore da 0.01 a 100.",
       "invalidAmount": "Inserisca un importo maggiore di 0, p. es. 5.50.",
       "reason": "Motivo",

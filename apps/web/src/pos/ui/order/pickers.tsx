@@ -1,6 +1,7 @@
 'use client';
 
-import { formatChf, type OrderItemState, type OrderState, tableViews } from '@pos/core';
+import { type OrderItemState, type OrderState, tableViews } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { cn } from '@pos/ui/utils';
 import { useTranslations } from 'next-intl';
 import { useId, useMemo } from 'react';
@@ -59,7 +60,7 @@ export function ItemPicker({
                 </span>
               )}
             </span>
-            <span className="shrink-0 tabular-nums">{formatChf(item.lineTotalRappen)}</span>
+            <span className="shrink-0 tabular-nums">{formatPosMoney(item.lineTotalRappen)}</span>
           </label>
         );
       })}
@@ -109,7 +110,7 @@ export function OrderPicker({
               </span>
               <span className="text-sm opacity-80">
                 {lookups.users.get(order.waiterUserId)?.displayName ?? tc('unknownUser')} ·{' '}
-                {formatChf(order.totalRappen)}
+                {formatPosMoney(order.totalRappen)}
               </span>
             </button>
           );

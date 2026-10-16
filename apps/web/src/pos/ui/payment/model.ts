@@ -3,13 +3,13 @@ import {
   type ContentLanguage,
   type FoldState,
   isContentLanguage,
-  parseChf,
   type PaymentState,
   type Rappen,
   rappen,
   refundsOf,
   splitEvenly,
 } from '@pos/core';
+import { parsePosMoney, posCurrency } from '@/pos/money';
 
 /**
  * Pure helpers of the payment screens: amounts typed by the cashier, the equal split (DEC-025)
@@ -19,24 +19,38 @@ import {
 
 // ── Amounts typed on the keypad or the keyboard ─────────────────────────────
 
-/** Up to CHF 999'999.99 with at most 2 decimals, as typed (thousands separators not allowed). */
+/**
+ * As typed, without thousands separators: up to CHF 999'999.99 with at most 2 decimals, or up to
+ * $999.999.999 in whole pesos (DEC-047).
+ */
 const TYPED_AMOUNT = /^\d{1,6}([.,]\d{0,2})?$/;
+const TYPED_PESOS = /^\d{1,9}$/;
+const typedAmount = () => (posCurrency() === 'COP' ? TYPED_PESOS : TYPED_AMOUNT);
 
 /** A CHF amount typed by the cashier ("20", "20.5", "20.00", "1'234.50"); null if not valid. */
 export function parseAmount(text: string): Rappen | null {
   const trimmed = text.trim().replace(/[.,]$/, '');
   if (trimmed === '') return null;
   try {
-    const value = parseChf(trimmed);
+    const value = parsePosMoney(trimmed);
     return value < 0 ? null : value;
   } catch {
     return null;
   }
 }
 
-/** Text of an amount input: "1234.50" (no separator, so it can be typed over and parsed back). */
+/**
+ * Text of an amount input: "1234.50", or "15000" in pesos (no thousands separator, so it can be
+ * typed over and parsed back).
+ */
 export function toAmountText(amount: number): string {
   const absolute = Math.abs(amount);
+  if (posCurrency() === 'COP') {
+    const centavos = absolute % 100;
+    return `${amount < 0 ? '-' : ''}${Math.trunc(absolute / 100)}${
+      centavos === 0 ? '' : `,${String(centavos).padStart(2, '0')}`
+    }`;
+  }
   const francs = Math.trunc(absolute / 100);
   const cents = String(absolute % 100).padStart(2, '0');
   return `${amount < 0 ? '-' : ''}${francs}.${cents}`;
@@ -49,11 +63,12 @@ export function toAmountText(amount: number): string {
 export function typeAmountKey(current: string, key: string, replace: boolean): string {
   const base = replace ? '' : current;
   if (key === '.' || key === ',') {
-    if (/[.,]/.test(base)) return base;
+    // Pesos are typed whole.
+    if (/[.,]/.test(base) || posCurrency() === 'COP') return base;
     return `${base === '' ? '0' : base}.`;
   }
   const next = base === '0' ? key : `${base}${key}`;
-  return TYPED_AMOUNT.test(next) ? next : base;
+  return typedAmount().test(next) ? next : base;
 }
 
 export function eraseAmountKey(current: string, replace: boolean): string {
@@ -61,11 +76,13 @@ export function eraseAmountKey(current: string, replace: boolean): string {
 }
 
 const BANKNOTES_RAPPEN = [1000, 2000, 5000, 10000, 20000] as const;
+/** $2.000 to $100.000, in centavos. */
+const BANKNOTES_CENTAVOS = [200_000, 500_000, 1_000_000, 2_000_000, 5_000_000, 10_000_000] as const;
 
 /** Quick "given" amounts for cash: the next round amounts in banknotes above what is due. */
 export function quickTenders(collect: Rappen, max = 4): Rappen[] {
   const result: number[] = [];
-  for (const note of BANKNOTES_RAPPEN) {
+  for (const note of posCurrency() === 'COP' ? BANKNOTES_CENTAVOS : BANKNOTES_RAPPEN) {
     const remainder = collect % note;
     const next = remainder === 0 ? collect : collect + (note - remainder);
     if (next > collect && !result.includes(next)) result.push(next);

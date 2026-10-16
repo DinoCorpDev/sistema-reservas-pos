@@ -1,10 +1,11 @@
 'use client';
 
-import { formatChf, rappen, type ShiftReport } from '@pos/core';
+import { rappen, type ShiftReport } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { useFormatter, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 
-const chf = (value: number) => formatChf(rappen(value));
+const chf = (value: number) => formatPosMoney(rappen(value));
 
 function Row({ label, value, strong }: { label: ReactNode; value: number; strong?: boolean }) {
   return (
@@ -104,13 +105,13 @@ export function ShiftReportView({
                 <tr key={`${rate.rateCode}${rate.rateBp}`}>
                   <td>{(rate.rateBp / 100).toFixed(1)} %</td>
                   <td className="text-right">
-                    {formatChf(rappen(rate.grossRappen), { currency: false })}
+                    {formatPosMoney(rappen(rate.grossRappen), { currency: false })}
                   </td>
                   <td className="text-right">
-                    {formatChf(rappen(rate.taxRappen), { currency: false })}
+                    {formatPosMoney(rappen(rate.taxRappen), { currency: false })}
                   </td>
                   <td className="text-right">
-                    {formatChf(rappen(rate.netRappen), { currency: false })}
+                    {formatPosMoney(rappen(rate.netRappen), { currency: false })}
                   </td>
                 </tr>
               ))}

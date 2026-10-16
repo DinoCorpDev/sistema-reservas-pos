@@ -1,7 +1,6 @@
 'use client';
 
 import type { catalog } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
@@ -16,6 +15,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { SoldOutButton } from './sold-out-button';
+import { useMoney } from '@/components/money';
 
 const ALL = 'all';
 
@@ -40,6 +40,7 @@ export function ProductsList({
   canManage: boolean;
   canSoldOut: boolean;
 }) {
+  const money = useMoney();
   const t = useTranslations('products');
   const tp = useTranslations('publication');
   const tc = useTranslations('common');
@@ -167,7 +168,7 @@ export function ProductsList({
                       ) : null}
                     </TableCell>
                     <TableCell className="text-right whitespace-nowrap tabular-nums">
-                      {formatChf(rappen(product.basePriceRappen))}
+                      {money.format(product.basePriceRappen)}
                     </TableCell>
                     <TableCell>
                       <div className="flex max-w-xs flex-wrap gap-1">

@@ -1,5 +1,6 @@
 import type { ClosingDto, DayClosePreview } from '@pos/api';
 import {
+  asCountry,
   type AuthorizationDecision,
   authorize,
   buildLineSnapshot,
@@ -39,6 +40,7 @@ import {
   type VoidReason,
 } from '@pos/core';
 import { ratesFor, translatedName } from './catalog';
+import { posCurrency, posRoundingStep } from './money';
 import { correctedNow } from '@/device/clock';
 import { dispatch } from '@/device/engine';
 import { CLOUD, callNode } from '@/device/http';
@@ -437,6 +439,7 @@ export async function pay(orderId: string, input: PaymentInput): Promise<IssuedR
     tipRappen: input.tipRappen === undefined ? undefined : rappen(input.tipRappen),
     tenderedRappen: input.tenderedRappen === undefined ? undefined : rappen(input.tenderedRappen),
     approvedRappen: input.approvedRappen === undefined ? undefined : rappen(input.approvedRappen),
+    roundingStep: posRoundingStep(),
   });
   const location = bootstrap.location;
   const language = input.language;
@@ -455,7 +458,10 @@ export async function pay(orderId: string, input: PaymentInput): Promise<IssuedR
       vatUid: location.vatUid,
       header: location.receiptHeader,
       footer: location.receiptFooter,
+      country: asCountry(location.country),
+      taxLabel: location.settings.tax?.label ?? null,
     },
+    currency: posCurrency(),
     receiptNumber,
     orderNumber: order.displayNumber,
     tableLabel: table?.label ?? null,
@@ -540,6 +546,7 @@ export async function refundPayment(
   const settled = settleRefund(payment.method === 'cash' ? 'cash' : 'other', {
     amountRappen: rappen(input.amountRappen),
     tipRappen: rappen(input.tipRappen ?? 0),
+    roundingStep: posRoundingStep(),
   });
   await record(
     'refund.record',

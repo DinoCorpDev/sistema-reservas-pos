@@ -1,7 +1,6 @@
 'use client';
 
 import type { catalog } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
@@ -59,6 +58,7 @@ import { ChfInput } from '@/components/backoffice/chf-input';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import * as actions from '../actions';
+import { useMoney } from '@/components/money';
 
 type Permissions = { manage: boolean; priceChange: boolean };
 
@@ -253,6 +253,7 @@ function OptionsCard({
   group: catalog.ModifierGroupDto;
   permissions: Permissions;
 }) {
+  const money = useMoney();
   const t = useTranslations('modifiers');
   const tc = useTranslations('common');
   const { draft: rows, dirty, setDraft: setRows, reset } = useDraft(optionsOf(group));
@@ -424,7 +425,7 @@ function OptionsCard({
                     {row.priceDeltaRappen ? (
                       <p className="text-sm text-muted-foreground md:col-span-3">
                         {t('surchargeShown', {
-                          price: formatChf(rappen(row.priceDeltaRappen)),
+                          price: money.format(row.priceDeltaRappen),
                         })}
                       </p>
                     ) : null}

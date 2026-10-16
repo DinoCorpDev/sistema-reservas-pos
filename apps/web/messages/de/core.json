@@ -192,18 +192,24 @@
     "tableOwnership_restricted": "Zugewiesen (nur die zuständige Servicekraft)",
     "discountAbove": "Rabatt braucht Freigabe über (%)",
     "voidSentItem": "Stornieren gesendeter Positionen braucht Freigabe",
-    "refundAbove": "Rückerstattung braucht Freigabe über (CHF, 0 = immer)",
+    "refundAbove": "Rückerstattung braucht Freigabe über ({currency}, 0 = immer)",
     "blockMinutesBefore": "Tisch vor Reservation blockieren (Minuten)",
     "noShowAfter": "No-Show nach (Minuten)",
     "defaultDuration": "Standarddauer einer Reservation (Minuten)",
     "kitchenAlert": "Küchenalarm nach (Minuten)",
-    "customerNameFrom": "Gastname auf Beleg ab (CHF)",
+    "customerNameFrom": "Gastname auf Beleg ab ({currency})",
     "maxPinAttempts": "PIN-Fehlversuche bis zur Sperre",
     "pinLockMinutes": "PIN-Sperre (Minuten)",
     "printMaxDelay": "Nicht mehr drucken nach (Minuten)",
     "hubUrls": "Hub-Adressen",
     "hubUrlsHint": "Eine Adresse pro Zeile, in Reihenfolge. Der erste Hub vergibt die Bestellnummern; leer = kein Hub.",
-    "oneDevicePerPerson": "Eine Person nur auf einem Gerät gleichzeitig angemeldet"
+    "oneDevicePerPerson": "Eine Person nur auf einem Gerät gleichzeitig angemeldet",
+    "nit": "NIT",
+    "nitHint": "Steuernummer in {country}, mit Prüfziffer: 900.123.456-7.",
+    "countries": {
+      "CH": "Schweiz",
+      "CO": "Kolumbien"
+    }
   },
   "floor": {
     "title": "Bereiche & Tische",

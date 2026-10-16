@@ -1,7 +1,8 @@
 'use client';
 
 import type { BootstrapDto } from '@pos/api';
-import { formatChf, type TableState, tableViews, type TableView } from '@pos/core';
+import { type TableState, tableViews, type TableView } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import {
   Dialog,
@@ -398,7 +399,7 @@ function ChooseOrderDialog({
                       {order.guestCount ? ` · ${tc('guests', { count: order.guestCount })}` : ''}
                     </span>
                   </span>
-                  <span className="tabular-nums">{formatChf(order.totalRappen)}</span>
+                  <span className="tabular-nums">{formatPosMoney(order.totalRappen)}</span>
                 </Button>
               ))}
               <Button size="lg" className="mt-2" onClick={() => onNew(choice.table)}>

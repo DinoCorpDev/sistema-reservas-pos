@@ -1,5 +1,4 @@
 import { cash, reports } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Card, CardContent, CardHeader, CardTitle } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import type { Metadata } from 'next';
@@ -10,10 +9,10 @@ import { PrintButton } from '@/components/print-button';
 import { periodOf } from '../_components/period';
 import { PeriodFilter } from '../_components/period-filter';
 import { Stat, Stats } from '../_components/stat';
+import { currentFormatter } from '@/server/currency';
 
 export const metadata: Metadata = { title: 'Storno & Rabatte' };
 
-const chf = (value: number) => formatChf(rappen(value));
 const KNOWN_REASONS = new Set([
   'entry_error',
   'guest_changed_mind',
@@ -32,6 +31,7 @@ export default async function AdjustmentsReportPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const chf = await currentFormatter();
   const actor = await currentActor();
   const t = await getTranslations('reports');
   const ta = await getTranslations('reports.adjustments');

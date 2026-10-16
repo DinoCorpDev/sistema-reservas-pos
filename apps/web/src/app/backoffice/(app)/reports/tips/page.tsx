@@ -1,5 +1,4 @@
 import { cash, reports } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Card, CardContent } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import type { Metadata } from 'next';
@@ -9,10 +8,9 @@ import { currentActor, deps } from '@/server/actor';
 import { PrintButton } from '@/components/print-button';
 import { periodOf } from '../_components/period';
 import { PeriodFilter } from '../_components/period-filter';
+import { currentFormatter } from '@/server/currency';
 
 export const metadata: Metadata = { title: 'Trinkgeld' };
-
-const chf = (value: number) => formatChf(rappen(value));
 
 /** Tips by person (RF-F07): outside the sales and without MWST (RN-07). */
 export default async function TipsReportPage({
@@ -20,6 +18,7 @@ export default async function TipsReportPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const chf = await currentFormatter();
   const actor = await currentActor();
   const t = await getTranslations('reports');
   const tt = await getTranslations('reports.tips');

@@ -1,6 +1,7 @@
 'use client';
 
-import { type FoldState, formatChf, itemsOf, type OrderState } from '@pos/core';
+import { type FoldState, itemsOf, type OrderState } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
@@ -99,7 +100,7 @@ export function SplitControls({
                 </span>
                 <span className="flex items-center gap-1 tabular-nums">
                   <Check className="size-4 text-success" aria-hidden />
-                  {formatChf(payment.amountRappen)}
+                  {formatPosMoney(payment.amountRappen)}
                 </span>
               </li>
             ))}
@@ -115,7 +116,7 @@ export function SplitControls({
                   {t('part', { index, parts: split.parts })}
                   {position === 0 && <Badge>{t('partNow')}</Badge>}
                 </span>
-                <span className="tabular-nums">{formatChf(amountRappen)}</span>
+                <span className="tabular-nums">{formatPosMoney(amountRappen)}</span>
               </li>
             ))}
           </ol>

@@ -522,7 +522,25 @@
     "profileHint": {
       "restaurant": "Plan «Restaurant», service à table avec plan de salle.",
       "cafe": "Plan «Café», vente au comptoir sans plan de salle et un rôle «Équipe» qui vend et encaisse, sans rapports, clôtures Z ni validations."
-    }
+    },
+    "country": "Pays",
+    "countries": {
+      "CH": "Suisse",
+      "CO": "Colombie"
+    },
+    "taxRegime": "Impôt",
+    "taxRegimes": {
+      "inc": "Impôt à la consommation INC 8 %",
+      "iva": "IVA 19 %",
+      "none": "Non assujetti (0 %)"
+    },
+    "taxRegimeHint": {
+      "inc": "La plupart des restaurants, cafés et bars.",
+      "iva": "Restaurants en franchise.",
+      "none": "Petits commerces non assujettis."
+    },
+    "nit": "NIT",
+    "nitHint": "Avec le chiffre de contrôle, p. ex. 900.123.456-7."
   },
   "myPlan": {
     "title": "Ma formule",

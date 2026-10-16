@@ -1,6 +1,7 @@
 'use client';
 
-import { countTotal, type DenominationCount, formatChf, rappen, type ShiftReport } from '@pos/core';
+import { countTotal, type DenominationCount, rappen, type ShiftReport } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import {
   Dialog,
@@ -41,7 +42,7 @@ import { ShiftReportView } from './cash/shift-report-view';
 import { useFoldMemo } from './order/hooks';
 import { parseAmount } from './payment/model';
 
-const chf = (value: number) => formatChf(rappen(value));
+const chf = (value: number) => formatPosMoney(rappen(value));
 
 /** Asks for the permission or a manager's PIN; null when cancelled (RN-15). */
 async function permitted(permission: 'shift.open' | 'shift.close' | 'cash.movement') {

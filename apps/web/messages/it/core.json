@@ -192,18 +192,24 @@
     "tableOwnership_restricted": "Assegnato (solo il cameriere responsabile)",
     "discountAbove": "Sconto da autorizzare oltre (%)",
     "voidSentItem": "Lo storno di articoli inviati richiede autorizzazione",
-    "refundAbove": "Rimborso da autorizzare oltre (CHF, 0 = sempre)",
+    "refundAbove": "Rimborso da autorizzare oltre ({currency}, 0 = sempre)",
     "blockMinutesBefore": "Bloccare il tavolo prima della riservazione (minuti)",
     "noShowAfter": "No-show dopo (minuti)",
     "defaultDuration": "Durata predefinita di una riservazione (minuti)",
     "kitchenAlert": "Allarme cucina dopo (minuti)",
-    "customerNameFrom": "Nome del cliente sullo scontrino da (CHF)",
+    "customerNameFrom": "Nome del cliente sullo scontrino da ({currency})",
     "maxPinAttempts": "Tentativi PIN errati prima del blocco",
     "pinLockMinutes": "Blocco PIN (minuti)",
     "printMaxDelay": "Non stampare più dopo (minuti)",
     "hubUrls": "Indirizzi degli hub",
     "hubUrlsHint": "Un indirizzo per riga, in ordine. Il primo hub assegna i numeri d’ordine; vuoto = nessun hub.",
-    "oneDevicePerPerson": "Una persona connessa su un solo dispositivo alla volta"
+    "oneDevicePerPerson": "Una persona connessa su un solo dispositivo alla volta",
+    "nit": "NIT",
+    "nitHint": "Numero fiscale in {country}, con la cifra di controllo: 900.123.456-7.",
+    "countries": {
+      "CH": "Svizzera",
+      "CO": "Colombia"
+    }
   },
   "floor": {
     "title": "Zone & tavoli",

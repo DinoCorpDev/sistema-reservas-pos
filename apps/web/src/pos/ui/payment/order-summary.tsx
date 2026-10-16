@@ -1,14 +1,7 @@
 'use client';
 
-import {
-  type FoldState,
-  formatChf,
-  itemsOf,
-  type OrderState,
-  paymentsOf,
-  rappen,
-  refundsOf,
-} from '@pos/core';
+import { type FoldState, itemsOf, type OrderState, paymentsOf, rappen, refundsOf } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { cn } from '@pos/ui/utils';
 import { useTranslations } from 'next-intl';
@@ -68,12 +61,12 @@ export function OrderSummary({
                   )}
                   {item.discountRappen > 0 && (
                     <Badge variant="secondary">
-                      {t('discount')} {formatChf(rappen(-item.discountRappen))}
+                      {t('discount')} {formatPosMoney(rappen(-item.discountRappen))}
                     </Badge>
                   )}
                 </div>
               </div>
-              <span className="shrink-0 tabular-nums">{formatChf(item.lineTotalRappen)}</span>
+              <span className="shrink-0 tabular-nums">{formatPosMoney(item.lineTotalRappen)}</span>
             </li>
           ))}
         </ul>
@@ -83,29 +76,29 @@ export function OrderSummary({
         {order.discountTotalRappen > 0 && (
           <>
             <dt className="text-muted-foreground">{t('subtotal')}</dt>
-            <dd className="text-right tabular-nums">{formatChf(order.subtotalRappen)}</dd>
+            <dd className="text-right tabular-nums">{formatPosMoney(order.subtotalRappen)}</dd>
             <dt className="text-muted-foreground">{t('discount')}</dt>
             <dd className="text-right tabular-nums">
-              {formatChf(rappen(-order.discountTotalRappen))}
+              {formatPosMoney(rappen(-order.discountTotalRappen))}
             </dd>
           </>
         )}
         <dt className="font-medium">{t('total')}</dt>
         <dd className="text-right font-medium tabular-nums" data-testid="payment-total">
-          {formatChf(order.totalRappen)}
+          {formatPosMoney(order.totalRappen)}
         </dd>
         {(payments.length > 0 || order.paidRappen !== 0) && (
           <>
             <dt className="text-muted-foreground">{t('paid')}</dt>
             <dd className="text-right tabular-nums" data-testid="payment-paid">
-              {formatChf(order.paidRappen)}
+              {formatPosMoney(order.paidRappen)}
             </dd>
           </>
         )}
         {order.tipTotalRappen > 0 && (
           <>
             <dt className="text-muted-foreground">{t('tips')}</dt>
-            <dd className="text-right tabular-nums">{formatChf(order.tipTotalRappen)}</dd>
+            <dd className="text-right tabular-nums">{formatPosMoney(order.tipTotalRappen)}</dd>
           </>
         )}
         <dt className="self-center text-base font-semibold">{t('balance')}</dt>
@@ -116,7 +109,7 @@ export function OrderSummary({
           )}
           data-testid="payment-balance"
         >
-          {formatChf(order.balanceRappen)}
+          {formatPosMoney(order.balanceRappen)}
         </dd>
       </dl>
 
@@ -132,17 +125,17 @@ export function OrderSummary({
                   {payment.tipRappen > 0 && (
                     <span className="text-muted-foreground">
                       {' '}
-                      · {t('tips')} {formatChf(payment.tipRappen)}
+                      · {t('tips')} {formatPosMoney(payment.tipRappen)}
                     </span>
                   )}
                 </span>
-                <span className="tabular-nums">{formatChf(payment.amountRappen)}</span>
+                <span className="tabular-nums">{formatPosMoney(payment.amountRappen)}</span>
               </li>
             ))}
             {refunded > 0 && (
               <li className="flex items-center justify-between gap-3 text-destructive">
                 <span>{t('refunded')}</span>
-                <span className="tabular-nums">{formatChf(rappen(-refunded))}</span>
+                <span className="tabular-nums">{formatPosMoney(rappen(-refunded))}</span>
               </li>
             )}
           </ul>

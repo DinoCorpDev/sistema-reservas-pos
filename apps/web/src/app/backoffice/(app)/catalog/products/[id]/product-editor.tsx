@@ -1,7 +1,6 @@
 'use client';
 
 import type { admin, catalog, people } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
@@ -28,6 +27,7 @@ import { ModifierGroupsTab } from './modifier-groups-tab';
 import { PricesTab } from './prices-tab';
 import { StationsTab } from './stations-tab';
 import { TranslationsTab } from './translations-tab';
+import { useMoney } from '@/components/money';
 
 /**
  * Panels stay mounted while hidden, so unsaved edits in one tab survive a look at another tab.
@@ -56,6 +56,7 @@ export function ProductEditor({
   stations: people.KitchenStationDto[] | null;
   permissions: EditorPermissions;
 }) {
+  const money = useMoney();
   const t = useTranslations('productEditor');
   const tc = useTranslations('common');
   const tp = useTranslations('publication');
@@ -91,7 +92,7 @@ export function ProductEditor({
       </Link>
       <PageHeader
         title={product.name}
-        description={[category?.name, formatChf(rappen(product.basePriceRappen))]
+        description={[category?.name, money.format(product.basePriceRappen)]
           .filter(Boolean)
           .join(' · ')}
         actions={

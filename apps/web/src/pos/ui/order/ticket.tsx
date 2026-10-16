@@ -3,13 +3,13 @@
 import {
   type ContentLanguage,
   type DiscountState,
-  formatChf,
   isContentLanguage,
   type OrderItemState,
   rappen,
   STANDARD_DISCOUNT_REASONS,
   VOID_REASONS,
 } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
 import { Minus, Plus, X } from 'lucide-react';
@@ -214,11 +214,11 @@ function TicketLine({
           </span>
           <span className="flex shrink-0 flex-col items-end tabular-nums">
             <span className={cn(voided && 'text-muted-foreground line-through')}>
-              {formatChf(rappen(item.grossRappen - own))}
+              {formatPosMoney(rappen(item.grossRappen - own))}
             </span>
             {own > 0 && (
               <span className="text-xs text-muted-foreground line-through">
-                {formatChf(item.grossRappen)}
+                {formatPosMoney(item.grossRappen)}
               </span>
             )}
           </span>
@@ -229,7 +229,7 @@ function TicketLine({
               .map((m) =>
                 m.priceDeltaRappen === 0
                   ? m.name
-                  : `${m.name} (+${formatChf(m.priceDeltaRappen, { currency: false })})`,
+                  : `${m.name} (+${formatPosMoney(m.priceDeltaRappen, { currency: false })})`,
               )
               .join(', ')}
           </span>
@@ -283,12 +283,12 @@ function Totals({
     <div className="grid shrink-0 gap-1 border-t bg-card p-3 text-sm">
       <div className={row}>
         <span>{t('subtotal')}</span>
-        <span className="tabular-nums">{formatChf(order.subtotalRappen)}</span>
+        <span className="tabular-nums">{formatPosMoney(order.subtotalRappen)}</span>
       </div>
       {lineDiscounts > 0 && (
         <div className={row}>
           <span>{t('lineDiscounts')}</span>
-          <span className="tabular-nums">{formatChf(rappen(-lineDiscounts))}</span>
+          <span className="tabular-nums">{formatPosMoney(rappen(-lineDiscounts))}</span>
         </div>
       )}
       {orderDiscount && (
@@ -306,29 +306,31 @@ function Totals({
               </Button>
             )}
           </span>
-          <span className="tabular-nums">{formatChf(rappen(-orderDiscount.amountRappen))}</span>
+          <span className="tabular-nums">
+            {formatPosMoney(rappen(-orderDiscount.amountRappen))}
+          </span>
         </div>
       )}
       <div className={cn(row, 'text-lg font-bold')}>
         <span>{t('total')}</span>
         <span data-testid="order-total" className="tabular-nums">
-          {formatChf(order.totalRappen)}
+          {formatPosMoney(order.totalRappen)}
         </span>
       </div>
       <div className={cn(row, 'text-xs text-muted-foreground')}>
         <span>{t('tax')}</span>
-        <span className="tabular-nums">{formatChf(order.taxTotalRappen)}</span>
+        <span className="tabular-nums">{formatPosMoney(order.taxTotalRappen)}</span>
       </div>
       {order.paidRappen !== 0 && (
         <div className={row}>
           <span>{t('paid')}</span>
-          <span className="tabular-nums">{formatChf(order.paidRappen)}</span>
+          <span className="tabular-nums">{formatPosMoney(order.paidRappen)}</span>
         </div>
       )}
       <div className={cn(row, 'font-semibold')}>
         <span>{t('balance')}</span>
         <span data-testid="order-balance" className="tabular-nums">
-          {formatChf(order.balanceRappen)}
+          {formatPosMoney(order.balanceRappen)}
         </span>
       </div>
     </div>

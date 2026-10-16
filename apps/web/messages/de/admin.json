@@ -522,7 +522,25 @@
     "profileHint": {
       "restaurant": "Plan «Restaurant», Service am Tisch mit Saalplan.",
       "cafe": "Plan «Café», Verkauf an der Theke ohne Saalplan und eine Rolle «Team», die verkauft und kassiert, aber keine Berichte, Z-Abschlüsse oder Freigaben sieht."
-    }
+    },
+    "country": "Land",
+    "countries": {
+      "CH": "Schweiz",
+      "CO": "Kolumbien"
+    },
+    "taxRegime": "Steuer",
+    "taxRegimes": {
+      "inc": "Konsumsteuer INC 8 %",
+      "iva": "IVA 19 %",
+      "none": "Nicht steuerpflichtig (0 %)"
+    },
+    "taxRegimeHint": {
+      "inc": "Die meisten Restaurants, Cafés und Bars.",
+      "iva": "Franchise-Restaurants.",
+      "none": "Kleine Betriebe ohne Steuerpflicht."
+    },
+    "nit": "NIT",
+    "nitHint": "Mit Prüfziffer, z. B. 900.123.456-7."
   },
   "myPlan": {
     "title": "Mein Plan",

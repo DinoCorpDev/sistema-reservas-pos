@@ -192,18 +192,24 @@
     "tableOwnership_restricted": "Assigned (only the table's waiter)",
     "discountAbove": "Discount needs approval above (%)",
     "voidSentItem": "Voiding items already sent needs approval",
-    "refundAbove": "Refund needs approval above (CHF, 0 = always)",
+    "refundAbove": "Refund needs approval above ({currency}, 0 = always)",
     "blockMinutesBefore": "Block table before reservation (minutes)",
     "noShowAfter": "No-show after (minutes)",
     "defaultDuration": "Default reservation length (minutes)",
     "kitchenAlert": "Kitchen alert after (minutes)",
-    "customerNameFrom": "Guest name on receipt from (CHF)",
+    "customerNameFrom": "Guest name on receipt from ({currency})",
     "maxPinAttempts": "Failed PIN attempts before lockout",
     "pinLockMinutes": "PIN lockout (minutes)",
     "printMaxDelay": "Stop printing after (minutes)",
     "hubUrls": "Hub addresses",
     "hubUrlsHint": "One address per line, in order. The first hub numbers the orders; empty = no hub.",
-    "oneDevicePerPerson": "A person is signed in on one device at a time"
+    "oneDevicePerPerson": "A person is signed in on one device at a time",
+    "nit": "NIT",
+    "nitHint": "Tax number in {country}, with its check digit: 900.123.456-7.",
+    "countries": {
+      "CH": "Switzerland",
+      "CO": "Colombia"
+    }
   },
   "floor": {
     "title": "Areas & tables",

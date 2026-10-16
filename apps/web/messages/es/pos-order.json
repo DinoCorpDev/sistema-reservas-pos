@@ -188,7 +188,7 @@
       "percent": "Porcentaje",
       "amount": "Monto",
       "valuePercent": "Descuento en %",
-      "valueAmount": "Descuento en CHF",
+      "valueAmount": "Descuento en {currency}",
       "invalidPercent": "Ingrese un valor de 0.01 a 100.",
       "invalidAmount": "Ingrese un monto mayor que 0, p. ej. 5.50.",
       "reason": "Motivo",

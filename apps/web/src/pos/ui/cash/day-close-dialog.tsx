@@ -1,7 +1,8 @@
 'use client';
 
 import type { ClosingDto, DayClosePreview } from '@pos/api';
-import { type DailyClosingTotals, formatChf, type PaymentMethod, rappen } from '@pos/core';
+import { type DailyClosingTotals, type PaymentMethod, rappen } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import {
   Dialog,
@@ -32,7 +33,7 @@ type Step =
   | { name: 'review'; token: string; preview: DayClosePreview }
   | { name: 'done'; closing: ClosingDto };
 
-const chf = (value: number) => formatChf(rappen(value));
+const chf = (value: number) => formatPosMoney(rappen(value));
 
 /**
  * Closing the business day from the POS (RF-D15, RF-D19, RF-D11): a manager's PIN, then what

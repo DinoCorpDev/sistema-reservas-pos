@@ -18,13 +18,15 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import { saveLocation } from './actions';
-
-const CONTENT_LANGUAGES = ['de', 'fr', 'it', 'en'] as const;
+import { asCountry, CONTENT_LANGUAGES } from '@pos/core';
 
 export function LocationForm({ location, canEdit }: { location: LocationDto; canEdit: boolean }) {
   const t = useTranslations('location');
   const tc = useTranslations('common');
   const tl = useTranslations('languages');
+  // Address and tax id follow the location's country, which does not change (DEC-047).
+  const country = asCountry(location.country);
+  const swiss = country === 'CH';
   const [form, setForm] = useState({
     name: location.name,
     legalName: location.legalName,
@@ -56,7 +58,7 @@ export function LocationForm({ location, canEdit }: { location: LocationDto; can
     event.preventDefault();
     void run(location.id, {
       ...form,
-      canton: form.canton.trim() || null,
+      canton: swiss ? form.canton.trim() || null : null,
       vatUid: form.vatUid.trim() || null,
       phone: form.phone.trim() || null,
       email: form.email.trim() || null,
@@ -93,26 +95,30 @@ export function LocationForm({ location, canEdit }: { location: LocationDto; can
           {text('name', t('name'), { required: true })}
           {text('legalName', t('legalName'), { required: true })}
           {text('street', t('street'), { required: true })}
-          <div className="grid grid-cols-[7rem_1fr_5rem] gap-3">
+          <div
+            className={
+              swiss ? 'grid grid-cols-[7rem_1fr_5rem] gap-3' : 'grid grid-cols-[7rem_1fr] gap-3'
+            }
+          >
             {text('postalCode', t('postalCode'), {
-              required: true,
+              required: swiss,
               inputMode: 'numeric',
-              maxLength: 4,
+              maxLength: swiss ? 4 : 6,
             })}
             {text('city', t('city'), { required: true })}
-            {text('canton', t('canton'), { maxLength: 2 })}
+            {swiss ? text('canton', t('canton'), { maxLength: 2 }) : null}
           </div>
           <Field
-            label={t('vatUid')}
+            label={swiss ? t('vatUid') : t('nit')}
             htmlFor="loc-vatUid"
-            hint={t('vatUidHint')}
+            hint={swiss ? t('vatUidHint') : t('nitHint', { country: t(`countries.${country}`) })}
             error={fieldErrors.vatUid}
           >
             <Input
               id="loc-vatUid"
               value={form.vatUid}
               onChange={set('vatUid')}
-              placeholder="CHE-123.456.789"
+              placeholder={swiss ? 'CHE-123.456.789' : '900.123.456-7'}
               disabled={!canEdit}
               aria-invalid={!!fieldErrors.vatUid}
             />

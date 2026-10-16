@@ -1,6 +1,5 @@
 'use client';
 
-import { formatChf, rappen } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Button } from '@pos/ui/button';
 import { Input } from '@pos/ui/input';
@@ -9,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { closeDayAction } from './actions';
+import { useMoney } from '@/components/money';
 
 const toText = (value: number) => (value / 100).toFixed(2);
 const parse = (text: string): number | null => {
@@ -28,6 +28,7 @@ export function DayCloseForm({
   businessDate: string;
   toReconcile: { method: string; posTotalRappen: number }[];
 }) {
+  const money = useMoney();
   const t = useTranslations('cash.close');
   const tm = useTranslations('posPayment.methods');
   const router = useRouter();
@@ -72,7 +73,7 @@ export function DayCloseForm({
             <Field
               label={t('terminalTotal', { method: tm(method) })}
               htmlFor={`terminal-${method}`}
-              hint={t('posTotal', { amount: formatChf(rappen(posTotalRappen)) })}
+              hint={t('posTotal', { amount: money.format(posTotalRappen) })}
             >
               <Input
                 id={`terminal-${method}`}
@@ -84,7 +85,7 @@ export function DayCloseForm({
             </Field>
             {differs && typed !== null && (
               <Field
-                label={t('reason', { difference: formatChf(rappen(typed - posTotalRappen)) })}
+                label={t('reason', { difference: money.format(typed - posTotalRappen) })}
                 htmlFor={`reason-${method}`}
               >
                 <Input

@@ -1,7 +1,7 @@
 'use client';
 
 import type { catalog } from '@pos/api';
-import { type Channel, CHANNELS, formatChf, rappen } from '@pos/core';
+import { type Channel, CHANNELS } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
@@ -37,6 +37,7 @@ import { useServerAction } from '@/components/backoffice/use-server-action';
 import { replaceChannelPrices, replaceVariants, updateLocationSettings } from '../../actions';
 import { SoldOutButton } from '../../sold-out-button';
 import type { EditorLocation, TabProps } from './editor-shared';
+import { useMoney } from '@/components/money';
 
 const EVERYWHERE = 'all';
 const NO_VARIANT = 'none';
@@ -559,6 +560,7 @@ function LocationCard({
   permissions,
   location,
 }: TabProps & { location: EditorLocation | null }) {
+  const money = useMoney();
   const t = useTranslations('locationSettings');
   const te = useTranslations('productEditor');
   const tc = useTranslations('common');
@@ -612,13 +614,13 @@ function LocationCard({
           <Field
             label={t('price')}
             htmlFor="location-price"
-            hint={t('priceHint', { price: formatChf(rappen(product.basePriceRappen)) })}
+            hint={t('priceHint', { price: money.format(product.basePriceRappen) })}
             error={save.fieldErrors.priceRappen}
           >
             <ChfInput
               id="location-price"
               value={draft.priceRappen}
-              placeholder={formatChf(rappen(product.basePriceRappen), { currency: false })}
+              placeholder={money.format(product.basePriceRappen, { symbol: false })}
               disabled={!canEdit || !permissions.priceChange}
               onKeyDown={commitAmountOnEnter}
               onValueChange={(priceRappen) => setDraft((d) => ({ ...d, priceRappen }))}

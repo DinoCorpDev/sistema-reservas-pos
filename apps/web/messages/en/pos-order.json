@@ -188,7 +188,7 @@
       "percent": "Percentage",
       "amount": "Amount",
       "valuePercent": "Discount in %",
-      "valueAmount": "Discount in CHF",
+      "valueAmount": "Discount in {currency}",
       "invalidPercent": "Enter a value from 0.01 to 100.",
       "invalidAmount": "Enter an amount greater than 0, e.g. 5.50.",
       "reason": "Reason",

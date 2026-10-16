@@ -1,12 +1,7 @@
 'use client';
 
-import {
-  formatChf,
-  type OrderState,
-  orderTableState,
-  serviceGroupOf,
-  type TableState,
-} from '@pos/core';
+import { type OrderState, orderTableState, serviceGroupOf, type TableState } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { cn } from '@pos/ui/utils';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -141,7 +136,7 @@ function CounterOrderCard({
       <span className="flex items-end justify-between gap-2 text-sm">
         <span className="truncate">{waiter}</span>
         <span className="shrink-0 text-right tabular-nums">
-          <span className="block text-base font-semibold">{formatChf(order.totalRappen)}</span>
+          <span className="block text-base font-semibold">{formatPosMoney(order.totalRappen)}</span>
           {minutes !== null && <span className="opacity-80">{minutesLabel(minutes)}</span>}
         </span>
       </span>

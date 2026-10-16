@@ -192,18 +192,24 @@
     "tableOwnership_restricted": "Asignado (solo el mesero encargado)",
     "discountAbove": "El descuento requiere autorización por encima de (%)",
     "voidSentItem": "Anular ítems ya enviados requiere autorización",
-    "refundAbove": "El reembolso requiere autorización por encima de (CHF, 0 = siempre)",
+    "refundAbove": "El reembolso requiere autorización por encima de ({currency}, 0 = siempre)",
     "blockMinutesBefore": "Bloquear la mesa antes de la reserva (minutos)",
     "noShowAfter": "No-show después de (minutos)",
     "defaultDuration": "Duración estándar de una reserva (minutos)",
     "kitchenAlert": "Alerta de cocina después de (minutos)",
-    "customerNameFrom": "Nombre del cliente en el recibo desde (CHF)",
+    "customerNameFrom": "Nombre del cliente en el recibo desde ({currency})",
     "maxPinAttempts": "Intentos fallidos de PIN antes del bloqueo",
     "pinLockMinutes": "Bloqueo de PIN (minutos)",
     "printMaxDelay": "Dejar de imprimir después de (minutos)",
     "hubUrls": "Direcciones de los hubs",
     "hubUrlsHint": "Una dirección por línea, en orden. El primer hub numera los pedidos; vacío = sin hub.",
-    "oneDevicePerPerson": "Una persona con sesión en un solo dispositivo a la vez"
+    "oneDevicePerPerson": "Una persona con sesión en un solo dispositivo a la vez",
+    "nit": "NIT",
+    "nitHint": "Número tributario en {country}, con dígito de verificación: 900.123.456-7.",
+    "countries": {
+      "CH": "Suiza",
+      "CO": "Colombia"
+    }
   },
   "floor": {
     "title": "Áreas y mesas",

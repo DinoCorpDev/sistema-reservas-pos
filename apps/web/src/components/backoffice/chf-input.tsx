@@ -1,12 +1,14 @@
 'use client';
 
-import { formatChf, MoneyError, parseChf, rappen } from '@pos/core';
+import { MoneyError } from '@pos/core';
 import { Input } from '@pos/ui/input';
 import { type ComponentProps, useEffect, useState } from 'react';
+import { useMoney } from '@/components/money';
 
 /**
- * Amount input in CHF that works in integer rappen (PA-08): the user types `12.50` or `1'234.50`,
- * the form receives 1250 / 123450. Invalid text keeps the last valid value and marks the field.
+ * Amount input in the location's currency that works in integer minor units (PA-08, DEC-047):
+ * the user types `12.50` or `1'234.50` (CHF), `15000` or `15.000` (COP); the form receives
+ * 1250 / 123450 / 1500000. Invalid text keeps the last valid value and marks the field.
  */
 export function ChfInput({
   value,
@@ -16,14 +18,14 @@ export function ChfInput({
   value: number | null;
   onValueChange: (rappenValue: number | null) => void;
 }) {
-  const display = (v: number | null) =>
-    v === null ? '' : formatChf(rappen(v), { currency: false });
+  const money = useMoney();
+  const display = (v: number | null) => (v === null ? '' : money.format(v, { symbol: false }));
   const [text, setText] = useState(display(value));
   const [invalid, setInvalid] = useState(false);
 
   useEffect(() => {
-    setText(display(value));
-  }, [value]);
+    setText(value === null ? '' : money.format(value, { symbol: false }));
+  }, [value, money]);
 
   const commit = () => {
     if (text.trim() === '') {
@@ -31,7 +33,7 @@ export function ChfInput({
       return onValueChange(null);
     }
     try {
-      const parsed = parseChf(text);
+      const parsed = money.parse(text);
       if (parsed < 0) throw new MoneyError('negative');
       setInvalid(false);
       setText(display(parsed));
@@ -44,7 +46,7 @@ export function ChfInput({
   return (
     <div className="relative">
       <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
-        CHF
+        {money.currency}
       </span>
       <Input
         {...props}

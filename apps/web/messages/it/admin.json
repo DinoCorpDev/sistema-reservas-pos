@@ -522,7 +522,25 @@
     "profileHint": {
       "restaurant": "Piano «Ristorante», servizio al tavolo con piantina della sala.",
       "cafe": "Piano «Caffè», vendita al banco senza piantina e un ruolo «Squadra» che vende e incassa, senza report, chiusure Z né approvazioni."
-    }
+    },
+    "country": "Paese",
+    "countries": {
+      "CH": "Svizzera",
+      "CO": "Colombia"
+    },
+    "taxRegime": "Imposta",
+    "taxRegimes": {
+      "inc": "Imposta sul consumo INC 8 %",
+      "iva": "IVA 19 %",
+      "none": "Non soggetto (0 %)"
+    },
+    "taxRegimeHint": {
+      "inc": "La maggior parte di ristoranti, caffè e bar.",
+      "iva": "Ristoranti in franchising.",
+      "none": "Piccole attività non soggette."
+    },
+    "nit": "NIT",
+    "nitHint": "Con la cifra di controllo, ad es. 900.123.456-7."
   },
   "myPlan": {
     "title": "Il mio piano",

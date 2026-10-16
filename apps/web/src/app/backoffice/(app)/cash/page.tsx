@@ -1,5 +1,4 @@
 import { cash } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
@@ -13,6 +12,7 @@ import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
 import { ClosingTotals } from './closing-totals';
 import { DayCloseForm } from './day-close-form';
+import { currentMoney } from '@/server/currency';
 
 export const metadata: Metadata = { title: 'Kasse' };
 
@@ -28,6 +28,7 @@ export default async function CashPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const money = await currentMoney();
   const actor = await currentActor();
   const t = await getTranslations('cash');
   const canClose = actor.permissions.has('day.close');
@@ -113,7 +114,7 @@ export default async function CashPage({
                       <li key={order.id}>
                         {t('close.openOrder', {
                           number: order.displayNumber,
-                          amount: formatChf(rappen(order.balanceRappen)),
+                          amount: money.format(order.balanceRappen),
                         })}
                       </li>
                     ))}
@@ -167,14 +168,14 @@ export default async function CashPage({
                         </TableCell>
                         <TableCell>{closing.businessDate}</TableCell>
                         <TableCell className="text-right tabular-nums">
-                          {formatChf(rappen(closing.totals.grossSalesRappen))}
+                          {money.format(closing.totals.grossSalesRappen)}
                         </TableCell>
                         <TableCell className="text-right tabular-nums">
                           {closing.totals.cash.differenceRappen === 0 ? (
-                            formatChf(rappen(0))
+                            money.format(0)
                           ) : (
                             <Badge variant="warning">
-                              {formatChf(rappen(closing.totals.cash.differenceRappen))}
+                              {money.format(closing.totals.cash.differenceRappen)}
                             </Badge>
                           )}
                         </TableCell>

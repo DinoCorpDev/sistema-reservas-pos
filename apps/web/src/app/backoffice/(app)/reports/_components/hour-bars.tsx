@@ -1,14 +1,15 @@
 'use client';
 
-import { formatChf, rappen } from '@pos/core';
 import { Tooltip } from '@pos/ui/tooltip';
 import { useTranslations } from 'next-intl';
+import { useMoney } from '@/components/money';
 
 /**
  * Sales by hour as thin bars of one hue (one series: no legend, the title names it). Each bar
  * shows its hour and amount on hover or focus; the table next to it carries the same figures.
  */
 export function HourBars({ hours }: { hours: { key: number; salesRappen: number }[] }) {
+  const money = useMoney();
   const t = useTranslations('reports.sales');
   const highest = Math.max(1, ...hours.map((hour) => hour.salesRappen));
   return (
@@ -18,7 +19,7 @@ export function HourBars({ hours }: { hours: { key: number; salesRappen: number 
           const share = Math.max(0, hour.salesRappen) / highest;
           const label = t('hourTooltip', {
             hour: String(hour.key).padStart(2, '0'),
-            amount: formatChf(rappen(hour.salesRappen)),
+            amount: money.format(hour.salesRappen),
           });
           return (
             <Tooltip key={hour.key} content={label}>

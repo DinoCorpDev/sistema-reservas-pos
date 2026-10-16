@@ -522,7 +522,25 @@
     "profileHint": {
       "restaurant": "Plan «Restaurante», servicio a la mesa con plano de salón.",
       "cafe": "Plan «Café», venta en mostrador sin plano de mesas y un rol «Equipo» que vende y cobra, sin reportes, cierres Z ni aprobaciones."
-    }
+    },
+    "country": "País",
+    "countries": {
+      "CH": "Suiza",
+      "CO": "Colombia"
+    },
+    "taxRegime": "Impuesto",
+    "taxRegimes": {
+      "inc": "Impuesto al consumo (INC) 8 %",
+      "iva": "IVA 19 %",
+      "none": "No responsable (0 %)"
+    },
+    "taxRegimeHint": {
+      "inc": "La mayoría de restaurantes, cafés y bares.",
+      "iva": "Restaurantes de franquicia.",
+      "none": "Negocios pequeños no responsables del impuesto."
+    },
+    "nit": "NIT",
+    "nitHint": "Con dígito de verificación, p. ej. 900.123.456-7."
   },
   "myPlan": {
     "title": "Mi plan",

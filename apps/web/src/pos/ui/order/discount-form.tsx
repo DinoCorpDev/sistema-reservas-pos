@@ -2,13 +2,12 @@
 
 import {
   type DiscountKind,
-  formatChf,
   MoneyError,
-  parseChf,
   type Rappen,
   rappen,
   STANDARD_DISCOUNT_REASONS,
 } from '@pos/core';
+import { formatPosMoney, parsePosMoney, posCurrency } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
@@ -24,7 +23,7 @@ type Reason = (typeof STANDARD_DISCOUNT_REASONS)[number];
 
 function parseAmount(input: string): number | null {
   try {
-    const amount = parseChf(input);
+    const amount = parsePosMoney(input);
     return amount > 0 ? amount : null;
   } catch (error) {
     if (error instanceof MoneyError) return null;
@@ -93,7 +92,7 @@ export function DiscountForm({
 
   return (
     <div className="grid gap-5">
-      <p className="text-sm text-muted-foreground">{t('base', { amount: formatChf(base) })}</p>
+      <p className="text-sm text-muted-foreground">{t('base', { amount: formatPosMoney(base) })}</p>
       {base <= 0 && <p className="text-destructive">{t('nothingToDiscount')}</p>}
 
       {presets.length > 0 && (
@@ -121,7 +120,7 @@ export function DiscountForm({
                 <span className="text-sm opacity-80">
                   {preset.kind === 'percent'
                     ? formatPercentBp(preset.value)
-                    : formatChf(rappen(preset.value))}
+                    : formatPosMoney(rappen(preset.value))}
                 </span>
               </Button>
             ))}
@@ -162,7 +161,9 @@ export function DiscountForm({
           ))}
         </div>
         <Field
-          label={kind === 'percent' ? t('valuePercent') : t('valueAmount')}
+          label={
+            kind === 'percent' ? t('valuePercent') : t('valueAmount', { currency: posCurrency() })
+          }
           htmlFor={valueId}
           error={
             value.trim() !== '' && parsed === null

@@ -2,13 +2,13 @@
 
 import {
   type Channel,
-  formatChf,
   MAX_COURSE,
   type MenuModifierGroup,
   type MenuProduct,
   rappen,
   validateModifierSelection,
 } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import {
   Dialog,
@@ -153,8 +153,8 @@ function ProductForm({
         <DialogTitle>{product.name}</DialogTitle>
         <DialogDescription>
           {product.description
-            ? `${formatChf(product.priceRappen)} · ${product.description}`
-            : formatChf(product.priceRappen)}
+            ? `${formatPosMoney(product.priceRappen)} · ${product.description}`
+            : formatPosMoney(product.priceRappen)}
         </DialogDescription>
       </DialogHeader>
 
@@ -169,7 +169,7 @@ function ProductForm({
                   selected={variant.id === variantId}
                   onClick={() => setVariantId(variant.id)}
                   label={variant.name}
-                  price={formatChf(variant.priceRappen)}
+                  price={formatPosMoney(variant.priceRappen)}
                 />
               ))}
             </ChoiceGroup>
@@ -198,7 +198,7 @@ function ProductForm({
                       price={
                         modifier.priceDeltaRappen === 0
                           ? null
-                          : `+ ${formatChf(modifier.priceDeltaRappen)}`
+                          : `+ ${formatPosMoney(modifier.priceDeltaRappen)}`
                       }
                     />
                   );
@@ -245,7 +245,7 @@ function ProductForm({
 
       <DialogFooter className="items-center">
         <p className="mr-auto text-lg font-semibold tabular-nums" aria-live="polite">
-          {t('total', { amount: formatChf(rappen(unitPrice * (quantity ?? 0))) })}
+          {t('total', { amount: formatPosMoney(rappen(unitPrice * (quantity ?? 0))) })}
         </p>
         <Button type="button" variant="outline" size="lg" onClick={onClose}>
           {tc('cancel')}

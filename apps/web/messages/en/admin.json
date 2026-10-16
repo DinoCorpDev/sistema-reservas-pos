@@ -522,7 +522,25 @@
     "profileHint": {
       "restaurant": "«Restaurant» plan, table service with a floor plan.",
       "cafe": "«Café» plan, counter sales without a floor plan and a «Team» role that sells and takes payments, without reports, Z closings or approvals."
-    }
+    },
+    "country": "Country",
+    "countries": {
+      "CH": "Switzerland",
+      "CO": "Colombia"
+    },
+    "taxRegime": "Tax",
+    "taxRegimes": {
+      "inc": "Consumption tax INC 8 %",
+      "iva": "VAT (IVA) 19 %",
+      "none": "Not liable (0 %)"
+    },
+    "taxRegimeHint": {
+      "inc": "Most restaurants, cafés and bars.",
+      "iva": "Franchise restaurants.",
+      "none": "Small businesses not liable for tax."
+    },
+    "nit": "NIT",
+    "nitHint": "With its check digit, e.g. 900.123.456-7."
   },
   "myPlan": {
     "title": "My plan",

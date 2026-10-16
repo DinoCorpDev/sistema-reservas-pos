@@ -11,7 +11,8 @@
       "de": "Deutsch",
       "fr": "Français",
       "it": "Italiano",
-      "en": "English"
+      "en": "English",
+      "es": "Español"
     },
     "channels": {
       "table": "Table",
@@ -178,7 +179,7 @@
       "cancel": "Cancel",
       "close": "Close",
       "errors": {
-        "amount": "The amount must be between CHF 0.01 and {max}.",
+        "amount": "The amount must be between {min} and {max}.",
         "tip": "The tip can’t be more than {max}.",
         "reason": "Please give a reason.",
         "failed": "The refund couldn’t be recorded."

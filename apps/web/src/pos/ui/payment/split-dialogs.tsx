@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  formatChf,
-  itemsOf,
-  type OrderItemState,
-  type Rappen,
-  rappen,
-  splitEvenly,
-} from '@pos/core';
+import { itemsOf, type OrderItemState, type Rappen, rappen, splitEvenly } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import {
@@ -153,7 +147,7 @@ function EqualSplitBody({
               .sort(([a], [b]) => b - a)
               .map(([amount, count]) => (
                 <li key={amount} className="tabular-nums">
-                  {t('previewGroup', { count, amount: formatChf(rappen(amount)) })}
+                  {t('previewGroup', { count, amount: formatPosMoney(rappen(amount)) })}
                 </li>
               ))}
           </ul>
@@ -306,7 +300,7 @@ function SplitItemsBody({
                       <Badge variant="outline">{t('seat', { seat: item.seat })}</Badge>
                     )}
                   </span>
-                  <span className="tabular-nums">{formatChf(item.lineTotalRappen)}</span>
+                  <span className="tabular-nums">{formatPosMoney(item.lineTotalRappen)}</span>
                 </Button>
               );
             })
@@ -335,7 +329,7 @@ function SplitItemsBody({
                   <span className="shrink-0 tabular-nums">
                     {t('seatSummary', {
                       count: group.items.length,
-                      amount: formatChf(group.totalRappen),
+                      amount: formatPosMoney(group.totalRappen),
                     })}
                   </span>
                 </Button>
@@ -345,7 +339,7 @@ function SplitItemsBody({
       <p className="text-sm tabular-nums" aria-live="polite">
         {chosen.length > 0 && !keepsSome
           ? t('keepOne')
-          : t('selection', { count: chosen.length, amount: formatChf(chosenTotal) })}
+          : t('selection', { count: chosen.length, amount: formatPosMoney(chosenTotal) })}
       </p>
       {error && (
         <p className="text-sm text-destructive" role="alert">

@@ -1,5 +1,5 @@
 import type { sync } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
+import { type Currency, formatMoney, rappen } from '@pos/core';
 
 /**
  * What the conflict screen shows of each stored operation. The frozen payload stays on the
@@ -29,7 +29,7 @@ export type ConflictRow = Pick<
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
-function hintOf(operation: string, payload: unknown): ConflictHint | null {
+function hintOf(operation: string, payload: unknown, currency: Currency): ConflictHint | null {
   if (!isRecord(payload)) return null;
   if (operation === 'payment.record' || operation === 'refund.record') {
     const { amountRappen, method } = payload;
@@ -37,7 +37,7 @@ function hintOf(operation: string, payload: unknown): ConflictHint | null {
     if (typeof method !== 'string') return null;
     return {
       kind: operation === 'payment.record' ? 'payment' : 'refund',
-      amount: formatChf(rappen(amountRappen)),
+      amount: formatMoney(rappen(amountRappen), currency),
       method,
     };
   }
@@ -50,7 +50,10 @@ function hintOf(operation: string, payload: unknown): ConflictHint | null {
 }
 
 /** Open conflicts first, then the resolved ones; each group newest first (as listed). */
-export function toConflictRows(conflicts: sync.SyncConflictDto[]): ConflictRow[] {
+export function toConflictRows(
+  conflicts: sync.SyncConflictDto[],
+  currency: Currency = 'CHF',
+): ConflictRow[] {
   const rows = conflicts.map((conflict): ConflictRow => ({
     id: conflict.id,
     operation: conflict.operation,
@@ -62,7 +65,7 @@ export function toConflictRows(conflicts: sync.SyncConflictDto[]): ConflictRow[]
     resolvedAt: conflict.resolvedAt,
     resolvedByUserId: conflict.resolvedByUserId,
     codes: [...new Set(conflict.conflicts.map((c) => c.code))],
-    hint: hintOf(conflict.operation, conflict.payload),
+    hint: hintOf(conflict.operation, conflict.payload, currency),
   }));
   return [...rows.filter((row) => !row.resolvedAt), ...rows.filter((row) => row.resolvedAt)];
 }

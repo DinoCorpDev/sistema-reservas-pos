@@ -1,19 +1,25 @@
 'use client';
 
 import {
-  CHF_DENOMINATIONS,
   countTotal,
   type DenominationCount,
   type DenominationKey,
-  formatChf,
+  denominationsOf,
+  FIRST_BANKNOTE,
+  formatMoney,
+  rappen,
 } from '@pos/core';
+import { formatPosMoney, posCurrency } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import { Input } from '@pos/ui/input';
 import { Minus, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-/** CHF 5 Rp … CHF 1000: coins up to CHF 5, notes from CHF 10. */
-const label = (value: number) => (value < 100 ? `${value} Rp.` : `${value / 100}.–`);
+/** CHF 5 Rp … CHF 1000 (coins up to CHF 5, notes from CHF 10), or $50 … $100.000 (DEC-047). */
+const label = (value: number) => {
+  if (posCurrency() === 'COP') return formatMoney(rappen(value), 'COP');
+  return value < 100 ? `${value} Rp.` : `${value / 100}.–`;
+};
 
 /**
  * Counting cash by denomination (RF-D12, RF-D14): one row per coin and note, with ± buttons
@@ -31,9 +37,12 @@ export function DenominationCounter({
   const t = useTranslations('posCash.count');
   const set = (key: DenominationKey, pieces: number) =>
     onChange({ ...value, [key]: Math.max(0, Math.min(99_999, Math.trunc(pieces) || 0)) });
+  const currency = posCurrency();
+  const denominations = denominationsOf(currency);
+  const firstNote = FIRST_BANKNOTE[currency];
   const groups = [
-    { title: t('notes'), values: CHF_DENOMINATIONS.filter((d) => d >= 1000).reverse() },
-    { title: t('coins'), values: CHF_DENOMINATIONS.filter((d) => d < 1000).reverse() },
+    { title: t('notes'), values: denominations.filter((d) => d >= firstNote).reverse() },
+    { title: t('coins'), values: denominations.filter((d) => d < firstNote).reverse() },
   ];
   return (
     // Sized by its own width, not the screen's: inside a dialog the groups stack and every
@@ -92,7 +101,7 @@ export function DenominationCounter({
                   </Button>
                   <span className="hidden text-right text-sm text-muted-foreground tabular-nums @md:block">
                     {pieces > 0
-                      ? formatChf(countTotalOf(denomination, pieces), { currency: false })
+                      ? formatPosMoney(countTotalOf(denomination, pieces), { currency: false })
                       : ''}
                   </span>
                 </div>
@@ -104,7 +113,7 @@ export function DenominationCounter({
       <p className="flex items-baseline justify-between rounded-lg bg-muted px-3 py-2">
         <span className="font-medium">{t('total')}</span>
         <span className="text-2xl font-bold tabular-nums" data-testid="count-total">
-          {formatChf(countTotal(value))}
+          {formatPosMoney(countTotal(value))}
         </span>
       </p>
     </div>

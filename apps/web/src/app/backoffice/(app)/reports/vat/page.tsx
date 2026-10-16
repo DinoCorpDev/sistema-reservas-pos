@@ -1,5 +1,5 @@
 import { cash, reports } from '@pos/api';
-import { formatChf, rappen, VAT_GRANULARITIES, type VatGranularity } from '@pos/core';
+import { VAT_GRANULARITIES, type VatGranularity } from '@pos/core';
 import { Button } from '@pos/ui/button';
 import { Card, CardContent } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
@@ -12,10 +12,9 @@ import { currentActor, deps } from '@/server/actor';
 import { PrintButton } from '@/components/print-button';
 import { periodOf, periodQuery } from '../_components/period';
 import { PeriodFilter } from '../_components/period-filter';
+import { currentFormatter } from '@/server/currency';
 
 export const metadata: Metadata = { title: 'MWST' };
-
-const chf = (value: number) => formatChf(rappen(value), { currency: false });
 
 /**
  * MWST by rate and period (RF-F02): turnover, tax and net per rate by month, quarter or
@@ -26,6 +25,7 @@ export default async function VatReportPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const chf = await currentFormatter({ symbol: false });
   const actor = await currentActor();
   const t = await getTranslations('reports');
   const tv = await getTranslations('reports.vat');

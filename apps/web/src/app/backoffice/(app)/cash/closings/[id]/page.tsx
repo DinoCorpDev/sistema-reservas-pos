@@ -1,5 +1,4 @@
 import { cash } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
@@ -12,6 +11,7 @@ import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
 import { ClosingTotals } from '../../closing-totals';
 import { PrintButton } from '@/components/print-button';
+import { currentMoney } from '@/server/currency';
 
 export const metadata: Metadata = { title: 'Tagesabschluss' };
 
@@ -20,6 +20,7 @@ export const metadata: Metadata = { title: 'Tagesabschluss' };
  * and the money of the day that arrived after it, shown as a correction (never inside it).
  */
 export default async function ClosingPage({ params }: { params: Promise<{ id: string }> }) {
+  const money = await currentMoney();
   const { id } = await params;
   const actor = await currentActor();
   const t = await getTranslations('cash');
@@ -73,7 +74,7 @@ export default async function ClosingPage({ params }: { params: Promise<{ id: st
             <CardContent>
               <p className="text-sm">
                 {t('detail.correctionTurnover', {
-                  amount: formatChf(rappen(closing.corrections.totals.grossSalesRappen)),
+                  amount: money.format(closing.corrections.totals.grossSalesRappen),
                 })}
               </p>
             </CardContent>

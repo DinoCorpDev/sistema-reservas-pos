@@ -1,6 +1,7 @@
 'use client';
 
-import { type Channel, formatChf, isContentLanguage, type MenuProduct } from '@pos/core';
+import { type Channel, isContentLanguage, type MenuProduct } from '@pos/core';
+import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
 import { Input } from '@pos/ui/input';
@@ -179,7 +180,7 @@ export function ProductPanel({
                         options && 'pr-10',
                       )}
                     >
-                      {formatChf(product.priceRappen)}
+                      {formatPosMoney(product.priceRappen)}
                     </span>
                     {product.reason && (
                       <span className="text-xs font-semibold text-destructive">

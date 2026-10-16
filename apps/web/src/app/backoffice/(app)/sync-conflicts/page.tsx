@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
+import { currentCurrency } from '@/server/currency';
 import { ConflictList } from './conflict-list';
 import { toConflictRows } from './rows';
 
@@ -51,7 +52,7 @@ export default async function SyncConflictsPage({
     <>
       <PageHeader title={t('title')} description={t('description')} />
       <ConflictList
-        rows={toConflictRows(conflicts)}
+        rows={toConflictRows(conflicts, await currentCurrency())}
         includeResolved={includeResolved}
         users={users.map((user) => ({ id: user.id, name: user.displayName }))}
         terminals={terminals.map((terminal) => ({ id: terminal.id, name: terminal.name }))}

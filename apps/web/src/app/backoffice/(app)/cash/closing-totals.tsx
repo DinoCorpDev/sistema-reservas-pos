@@ -1,9 +1,9 @@
-import { type DailyClosingTotals, formatChf, rappen } from '@pos/core';
+import { type DailyClosingTotals } from '@pos/core';
 import { Card, CardContent, CardHeader, CardTitle } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import { getTranslations } from 'next-intl/server';
+import { currentFormatter } from '@/server/currency';
 
-const chf = (value: number) => formatChf(rappen(value));
 const num = 'text-right tabular-nums';
 
 /**
@@ -12,6 +12,7 @@ const num = 'text-right tabular-nums';
  * view serves the preview, the closing and its printout.
  */
 export async function ClosingTotals({ totals }: { totals: DailyClosingTotals }) {
+  const chf = await currentFormatter();
   const t = await getTranslations('cash.totals');
   const tm = await getTranslations('posPayment.methods');
   return (

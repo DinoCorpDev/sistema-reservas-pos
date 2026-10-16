@@ -4,9 +4,10 @@ import { Input } from '@pos/ui/input';
 import { Label } from '@pos/ui/label';
 import { cn } from '@pos/ui/utils';
 import type { ReactNode } from 'react';
+import { posCurrency } from '@/pos/money';
 
 /**
- * A CHF amount: typed with the on-screen keypad (it types into the highlighted field) or with a
+ * An amount in the location's currency: typed with the on-screen keypad (it types into the highlighted field) or with a
  * keyboard. Focusing it makes it the keypad's target and selects the text, so the next key
  * replaces the proposed amount.
  */
@@ -51,7 +52,7 @@ export function AmountField({
           aria-hidden
           className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground"
         >
-          CHF
+          {posCurrency()}
         </span>
         <Input
           id={id}

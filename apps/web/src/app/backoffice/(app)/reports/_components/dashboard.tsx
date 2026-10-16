@@ -1,5 +1,4 @@
 import { reports } from '@pos/api';
-import { formatChf, rappen } from '@pos/core';
 import { Button } from '@pos/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@pos/ui/card';
 import Link from 'next/link';
@@ -7,8 +6,7 @@ import { getFormatter, getTranslations } from 'next-intl/server';
 import { currentActor, deps } from '@/server/actor';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { Stat } from './stat';
-
-const chf = (value: number) => formatChf(rappen(value));
+import { currentFormatter } from '@/server/currency';
 
 /**
  * The owner's view of today (RF-F10), first thing in the backoffice and made for a phone: sales
@@ -16,6 +14,7 @@ const chf = (value: number) => formatChf(rappen(value));
  * Refreshes itself every 30 seconds.
  */
 export async function OwnerDashboard() {
+  const chf = await currentFormatter();
   const actor = await currentActor();
   const t = await getTranslations('reports.dashboard');
   const tr = await getTranslations('reports');
