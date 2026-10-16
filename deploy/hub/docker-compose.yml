@@ -1,0 +1,73 @@
+# The hub of one location (DEC-028, docs/SYNC.md §11): on a small Linux PC in the restaurant's
+# LAN, always on. It keeps the location working without internet, numbers the orders and prints.
+# The cloud stays the source of truth; the hub has its own MySQL with the same schema.
+#
+#   deploy/hub/install-hub.sh    # asks for the cloud URL and the pairing code, starts everything
+#
+# Docker starts it again after a power cut (restart: unless-stopped).
+
+name: pos-hub
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: pos_hub
+      MYSQL_USER: pos
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+      # A small PC: a modest buffer pool is enough for one location.
+      - --innodb-buffer-pool-size=256M
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '-p${MYSQL_ROOT_PASSWORD}']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # The hub's own schema, before each start (the migrations only add).
+  migrate:
+    image: pos-hub:${APP_VERSION:-local}
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+      target: hub
+      args: { APP_VERSION: '${APP_VERSION:-local}' }
+    restart: 'no'
+    environment:
+      HUB_DATABASE_URL: mysql://pos:${MYSQL_PASSWORD}@mysql:3306/pos_hub
+    command: ['pnpm', '--filter', '@pos/db', 'db:migrate']
+    depends_on:
+      mysql: { condition: service_healthy }
+
+  hub:
+    image: pos-hub:${APP_VERSION:-local}
+    restart: unless-stopped
+    ports:
+      - '${HUB_PORT:-4100}:4100'
+    environment:
+      HUB_DATABASE_URL: mysql://pos:${MYSQL_PASSWORD}@mysql:3306/pos_hub
+      HUB_CLOUD_URL: ${HUB_CLOUD_URL}
+      # Only for the first start; once paired the hub keeps its token in /data.
+      HUB_PAIRING_CODE: ${HUB_PAIRING_CODE:-}
+      HUB_AUTHORITY: ${HUB_AUTHORITY:-true}
+      HUB_ALLOWED_ORIGINS: ${HUB_ALLOWED_ORIGINS:-}
+      APP_VERSION: ${APP_VERSION:-local}
+      LOG_DIR: /data/logs
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    volumes:
+      - hub-data:/data
+    depends_on:
+      mysql: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+
+volumes:
+  mysql-data:
+  hub-data:

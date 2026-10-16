@@ -19,7 +19,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 ARG APP_VERSION=dev
 # The same id names the build, the service worker's precache and the version devices report.
 ENV APP_VERSION=$APP_VERSION POS_BUILD_ID=$APP_VERSION NEXT_OUTPUT=standalone
-RUN pnpm --filter @pos/web build && pnpm --filter @pos/hub build
+RUN pnpm --filter @pos/web build
 
 # ── Web ────────────────────────────────────────────────────────────────────────
 FROM node:22-bookworm-slim AS web
@@ -46,7 +46,14 @@ USER node
 CMD ["pnpm", "--filter", "@pos/db", "outbox:work"]
 
 # ── Hub (LAN) ──────────────────────────────────────────────────────────────────
-FROM build AS hub
+# Built on its own: the location's mini PC installs only the hub and its packages and never
+# builds the web. It also runs the migrations of its own database (deploy/hub).
+FROM base AS hub
+COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --filter "@pos/hub..."
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+RUN pnpm --filter @pos/hub build && mkdir -p /data && chown node:node /data
 ENV NODE_ENV=production HUB_PORT=4100 HUB_STATE_FILE=/data/.hub-state.json
 WORKDIR /repo/apps/hub
 USER node

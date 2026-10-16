@@ -220,7 +220,20 @@ logs web | jq -r 'select(.status >= 500) | .route' | sort | uniq -c | sort -rn
   - instalar con «Agregar a pantalla de inicio»: la app queda como «Kasse» o «Küche», con su propio ícono.
   - **Nunca** borrar los datos del navegador de una tablet: ahí se guarda lo pendiente de enviar.
 - **Impresoras:** térmicas ESC/POS por red (TCP 9100). Se dan de alta en «Dispositivos y estaciones» con su IP y se prueban con «Testdruck».
-- **Hub:** un equipo siempre encendido en la LAN. Su instalación en un mini PC Linux se documenta con el instalador del hub. Mientras no esté, las tablets sincronizan directo con la nube; para imprimir y para trabajar sin internet hace falta el hub.
+- **Hub:** un mini PC Linux (Debian o Ubuntu) siempre encendido en la LAN, con Docker y su plugin `compose`.
+  1. En el backoffice, en «Dispositivos y estaciones», crear un aparato de tipo «Hub» y generar su código de vinculación (válido 15 min).
+  2. En el mini PC:
+     ```bash
+     git clone https://github.com/ingJuanMolano/sistema-reservas-pos.git
+     cd sistema-reservas-pos
+     sudo deploy/hub/install-hub.sh
+     ```
+     El script pide la URL de la nube y el código, genera `deploy/hub/.env` con contraseñas al azar, compila y levanta el hub con su MySQL, espera a que quede vinculado y borra el código del archivo.
+  3. Dar al mini PC una IP fija en el router. Docker lo vuelve a levantar solo después de un corte de luz.
+  4. **Actualizar:** `git pull && sudo deploy/hub/install-hub.sh`.
+  5. **Reinstalar o cambiar de equipo:** desvincular el hub en el backoffice, generar un código nuevo, borrar `deploy/hub/.env` y correr el script otra vez.
+  - Mientras no haya hub, las tablets sincronizan directo con la nube. Para imprimir y para trabajar sin internet hace falta el hub.
+  - El instalador de Windows para un equipo «todo en uno» queda para cuando se elija ese hardware.
 
 ---
 
@@ -253,3 +266,4 @@ logs web | jq -r 'select(.status >= 500) | .route' | sort | uniq -c | sort -rn
 - [ ] Una alerta de prueba llega por correo y se resuelve (§5).
 - [ ] El chequeo externo de `/api/v1/health` está configurado y avisa.
 - [ ] HTTPS válido en `DOMAIN` (Caddy).
+- [ ] `install-hub.sh` en un mini PC: se vincula, sobrevive a un reinicio y aparece con señal en `/support/status`.
