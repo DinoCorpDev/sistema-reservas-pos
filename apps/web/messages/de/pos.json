@@ -133,6 +133,9 @@
     },
     "training": {
       "band": "Übungsmodus – keine echten Bestellungen"
+    },
+    "help": {
+      "open": "Hilfe öffnen"
     }
   }
 }

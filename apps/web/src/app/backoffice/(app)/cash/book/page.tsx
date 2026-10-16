@@ -9,7 +9,7 @@ import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
-import { PrintButton } from '../print-button';
+import { PrintButton } from '@/components/print-button';
 
 export const metadata: Metadata = { title: 'Kassenbuch' };
 

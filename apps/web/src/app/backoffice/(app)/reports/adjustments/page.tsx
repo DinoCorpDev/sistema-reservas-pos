@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
-import { PrintButton } from '../../cash/print-button';
+import { PrintButton } from '@/components/print-button';
 import { periodOf } from '../_components/period';
 import { PeriodFilter } from '../_components/period-filter';
 import { Stat, Stats } from '../_components/stat';

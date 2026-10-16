@@ -86,7 +86,8 @@
     "support_banner": "Sie arbeiten als DINOLABS-Support in dieser Organisation. Jede Aktion wird protokolliert.",
     "support_leave": "Organisation verlassen",
     "reports": "Berichte",
-    "plan": "Mein Plan"
+    "plan": "Mein Plan",
+    "help": "Hilfe"
   },
   "auth": {
     "title": "Anmelden",
@@ -248,6 +249,7 @@
     "apiKeys": "Schlüssel, um andere Systeme (wie Zitas) mit begrenzten Rechten an die API der Kasse anzubinden.",
     "account": "Ihr Benutzer: Name, Passwort und Sprache der Oberfläche.",
     "reports": "Umsatz, MWST, Trinkgeld, Stornos und Zeiten eines Zeitraums, dazu die Exporte für Buchhaltung, Treuhand und Archiv.",
-    "plan": "Plan, Add-ons, Nutzung und Monatspreis Ihres Restaurants."
+    "plan": "Plan, Add-ons, Nutzung und Monatspreis Ihres Restaurants.",
+    "help": "Kurzanleitungen für jede Rolle, zum Lesen oder Drucken."
   }
 }

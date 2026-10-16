@@ -133,6 +133,9 @@
     },
     "training": {
       "band": "Mode exercice – aucune vraie commande"
+    },
+    "help": {
+      "open": "Ouvrir l’aide"
     }
   }
 }

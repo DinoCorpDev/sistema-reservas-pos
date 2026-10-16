@@ -9,6 +9,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
+import { HelpLink } from '@/device/ui/help-link';
 import { LanguageMenu } from '@/device/ui/language-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import { TrainingBand } from '@/device/ui/training-band';
@@ -134,6 +135,7 @@ export function KdsShell() {
             {user?.displayName}
           </span>
           <LanguageMenu />
+          <HelpLink role="kitchen" />
           <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
             <Lock />
           </Button>

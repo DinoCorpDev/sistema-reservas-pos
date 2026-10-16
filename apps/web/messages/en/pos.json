@@ -133,6 +133,9 @@
     },
     "training": {
       "band": "Training mode – no real orders"
+    },
+    "help": {
+      "open": "Open help"
     }
   }
 }

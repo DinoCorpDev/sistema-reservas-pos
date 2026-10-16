@@ -86,7 +86,8 @@
     "support_banner": "Está trabajando en esta organización como soporte de DINOLABS. Cada acción queda registrada.",
     "support_leave": "Salir de la organización",
     "reports": "Reportes",
-    "plan": "Mi plan"
+    "plan": "Mi plan",
+    "help": "Ayuda"
   },
   "auth": {
     "title": "Iniciar sesión",
@@ -248,6 +249,7 @@
     "apiKeys": "Claves para conectar otros sistemas (como Zitas) a la API del POS, con permisos limitados.",
     "account": "Tu usuario: nombre, contraseña e idioma de la interfaz.",
     "reports": "Ventas, MWST, propinas, anulaciones y tiempos de un período, más las exportaciones para la contabilidad, la fiduciaria y el archivo.",
-    "plan": "Plan, add-ons, uso y precio mensual de su restaurante."
+    "plan": "Plan, add-ons, uso y precio mensual de su restaurante.",
+    "help": "Manuales cortos para cada rol, para leer o imprimir."
   }
 }

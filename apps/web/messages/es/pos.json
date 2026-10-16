@@ -133,6 +133,9 @@
     },
     "training": {
       "band": "Modo práctica – nada es real"
+    },
+    "help": {
+      "open": "Abrir la ayuda"
     }
   }
 }

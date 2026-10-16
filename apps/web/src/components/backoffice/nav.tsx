@@ -4,20 +4,21 @@ import { Tooltip } from '@pos/ui/tooltip';
 import { cn } from '@pos/ui/utils';
 import {
   ChartColumnIcon,
+  CircleHelpIcon,
   CloudAlertIcon,
-  CreditCardIcon,
   ContactIcon,
+  CreditCardIcon,
   FolderTreeIcon,
   KeyRoundIcon,
   LayoutDashboardIcon,
   LayoutGridIcon,
   LifeBuoyIcon,
   ListPlusIcon,
-  type LucideIcon,
   MonitorSmartphoneIcon,
   PercentIcon,
   ScrollTextIcon,
   StoreIcon,
+  type LucideIcon,
   UserCogIcon,
   UsersIcon,
   UtensilsCrossedIcon,
@@ -25,7 +26,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { helpLanguageOf } from '@/help/manuals';
 
 interface NavItem {
   href: string;
@@ -33,6 +35,8 @@ interface NavItem {
   icon: LucideIcon;
   /** Shown only with this permission (the page checks it again on the server). */
   permission?: string;
+  /** Opens in a new tab, outside the backoffice (the manuals, RNF-21). */
+  external?: boolean;
 }
 
 const SECTIONS: NavItem[][] = [
@@ -93,6 +97,7 @@ const SECTIONS: NavItem[][] = [
     },
     { href: '/backoffice/plan', key: 'plan', icon: CreditCardIcon, permission: 'location.manage' },
     { href: '/backoffice/account', key: 'account', icon: UserCogIcon },
+    { href: '/help', key: 'help', icon: CircleHelpIcon, external: true },
   ],
 ];
 
@@ -106,6 +111,7 @@ export function BackofficeNav({
   const t = useTranslations('nav');
   const th = useTranslations('navHint');
   const pathname = usePathname();
+  const locale = useLocale();
   const allowed = new Set(permissions);
   const isActive = (href: string) => {
     if (href === '/backoffice') return pathname === href;
@@ -123,12 +129,13 @@ export function BackofficeNav({
         if (visible.length === 0) return null;
         return (
           <ul key={index} className="grid gap-1">
-            {visible.map(({ href, key, icon: Icon }) => (
+            {visible.map(({ href, key, icon: Icon, external }) => (
               <li key={href}>
                 {/* What each section is for, while the team learns the backoffice. */}
                 <Tooltip content={th(key)}>
                   <Link
-                    href={href}
+                    href={external ? `${href}/${helpLanguageOf(locale)}/owner` : href}
+                    {...(external ? { target: '_blank', rel: 'noopener' } : {})}
                     onClick={onNavigate}
                     aria-current={isActive(href) ? 'page' : undefined}
                     className={cn(

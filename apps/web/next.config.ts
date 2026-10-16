@@ -40,6 +40,13 @@ const withSerwist = withSerwistInit({
         revision: buildId,
       })),
     ]),
+    // The manuals open from the POS and the KDS without internet (RNF-21).
+    ...['de', 'es'].flatMap((lang) =>
+      ['', '/waiter', '/kitchen', '/manager', '/owner'].map((role) => ({
+        url: `/help/${lang}${role}`,
+        revision: buildId,
+      })),
+    ),
   ],
   disable: process.env.NODE_ENV === 'development',
 });

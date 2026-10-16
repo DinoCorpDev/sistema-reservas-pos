@@ -7,7 +7,7 @@ import { getFormatter, getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
-import { PrintButton } from '../cash/print-button';
+import { PrintButton } from '@/components/print-button';
 import { HourBars } from './_components/hour-bars';
 import { periodOf } from './_components/period';
 import { PeriodFilter } from './_components/period-filter';

@@ -8,9 +8,10 @@ import { Archive, Beer, LayoutGrid, ListOrdered, Lock, ShoppingBag, Wallet } fro
 import { useTranslations } from 'next-intl';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
+import { HelpLink } from '@/device/ui/help-link';
 import { LanguageMenu } from '@/device/ui/language-menu';
-import { TrainingBand } from '@/device/ui/training-band';
 import { StatusIndicator } from '@/device/ui/status-indicator';
+import { TrainingBand } from '@/device/ui/training-band';
 import { hasCashDrawer, hubReceiptPrinter, openDrawer } from '../actions';
 import { requestApproval, usePosUi } from '../ui-store';
 import { ApprovalDialog } from './approval-dialog';
@@ -155,6 +156,7 @@ export function PosShell() {
             {user?.displayName}
           </span>
           <LanguageMenu />
+          <HelpLink role={canCash ? 'manager' : 'waiter'} />
           <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
             <Lock />
           </Button>

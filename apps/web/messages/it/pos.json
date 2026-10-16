@@ -133,6 +133,9 @@
     },
     "training": {
       "band": "Modalità esercitazione – nessun ordine reale"
+    },
+    "help": {
+      "open": "Apri la guida"
     }
   }
 }

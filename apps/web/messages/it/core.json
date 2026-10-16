@@ -86,7 +86,8 @@
     "support_banner": "Sta lavorando in questa organizzazione come supporto DINOLABS. Ogni azione viene registrata.",
     "support_leave": "Lascia l’organizzazione",
     "reports": "Rapporti",
-    "plan": "Il mio piano"
+    "plan": "Il mio piano",
+    "help": "Guida"
   },
   "auth": {
     "title": "Accesso",
@@ -248,6 +249,7 @@
     "apiKeys": "Chiavi per collegare altri sistemi (come Zitas) all’API della cassa, con permessi limitati.",
     "account": "Il tuo utente: nome, password e lingua dell’interfaccia.",
     "reports": "Fatturato, IVA, mance, storni e tempi di un periodo, più le esportazioni per la contabilità, la fiduciaria e l’archivio.",
-    "plan": "Piano, add-on, uso e prezzo mensile del vostro ristorante."
+    "plan": "Piano, add-on, uso e prezzo mensile del vostro ristorante.",
+    "help": "Guide brevi per ogni ruolo, da leggere o stampare."
   }
 }
