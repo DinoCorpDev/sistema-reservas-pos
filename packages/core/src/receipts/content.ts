@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { PAYMENT_METHODS } from '../payments/constants';
 import { CONTENT_LANGUAGES } from '../shared/languages';
+import { CURRENCIES } from '../shared/money';
 import { TAX_RATE_CODES } from '../tax/constants';
 
 const amount = z.int();
@@ -74,6 +75,8 @@ export const receiptContentSchema = z.object({
   partial: z.object({ paidBeforeRappen: amount, balanceAfterRappen: amount }).nullable(),
   /** Mandatory from CHF 400 (RN-08, DEC-009); the address is optional (RF-D22). */
   customer: z.object({ name: text(200), address: text(500).nullable() }).nullable(),
+  /** Currency of the amounts (DEC-047); absent on receipts from before, which are in CHF. */
+  currency: z.enum(CURRENCIES).optional(),
   /** Issued in a training organization (RF-F22): printed as not valid. Absent on real receipts. */
   training: z.literal(true).optional(),
 });

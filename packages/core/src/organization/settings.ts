@@ -63,6 +63,15 @@ export const locationSettingsSchema = z.object({
       maxDelayMinutes: z.int().min(1).max(240).default(15),
     })
     .prefault({}),
+  tax: z
+    .object({
+      /**
+       * Name of the tax on receipts and reports (DEC-047): `INC` or `IVA` in Colombia; null uses
+       * the receipt language's (MWST, TVA, IVA, VAT).
+       */
+      label: z.string().trim().min(1).max(20).nullable().default(null),
+    })
+    .prefault({}),
   receipts: z
     .object({
       /** From this total (Rp) the system asks for the customer name on the receipt (RN-08: CHF 400+). */

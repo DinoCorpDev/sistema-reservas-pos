@@ -3,7 +3,7 @@ import { CONTENT_LANGUAGES } from '../shared/languages';
 import { rappen } from '../shared/money';
 import { extractTax } from '../tax/calculation';
 import type { TaxRateCode } from '../tax/constants';
-import { buildReceipt, type ReceiptLineInput } from './build';
+import { buildReceipt, formatVatNumber, type ReceiptLineInput } from './build';
 import type { ReceiptContent } from './content';
 import { formatRate, RECEIPT_COLUMNS, renderReceiptText } from './render';
 
@@ -363,5 +363,58 @@ describe('renderReceiptText (80 mm, 42 columns)', () => {
 
   it('fits a narrower paper width (58 mm, 32 columns)', () => {
     expectWithinWidth(renderReceiptText(content(), { width: 32 }), 32);
+  });
+});
+
+describe('a receipt in Colombia (DEC-047)', () => {
+  const cop = (overrides: Parameters<typeof content>[0] = {}) =>
+    content({
+      language: 'es',
+      currency: 'COP',
+      location: {
+        name: 'Café Demo Bogotá',
+        legalName: 'Café Demo SAS',
+        street: 'Calle 85 # 12-30',
+        postalCode: '110221',
+        city: 'Bogotá',
+        vatUid: '8001972684',
+        header: null,
+        footer: null,
+        country: 'CO',
+        taxLabel: 'INC',
+      },
+      lines: [receiptLine('Capuchino', 800_000, 2, NORMAL)],
+      // Colombia's default (DEC-047): the name is asked from $1.000.000.
+      customerNameFromRappen: 100_000_000,
+      payment: {
+        amountRappen: rappen(1_600_000),
+        tenderedRappen: rappen(2_000_000),
+        changeRappen: rappen(400_000),
+      },
+      ...overrides,
+    });
+
+  it('prints the NIT, pesos and the INC instead of the Swiss UID, CHF and MWST', () => {
+    const receipt = cop();
+    expect(receipt.currency).toBe('COP');
+    expect(receipt.location.vatNumber).toBe('NIT 800.197.268-4');
+    expect(receipt.labels.vat).toBe('INC');
+    const text = renderReceiptText(receipt).join('\n');
+    expect(text).toContain('NIT 800.197.268-4');
+    expect(text).toMatch(/TOTAL COP\s+16\.000/);
+    expect(text).not.toContain('CHF');
+    expect(text).not.toContain('MWST');
+  });
+});
+
+describe('the UID on Swiss receipts (RN-08)', () => {
+  it('prints the suffix once, also when the UID is stored with it', () => {
+    expect(formatVatNumber('CHE-123.456.788 MWST', 'de')).toBe('CHE-123.456.788 MWST');
+    expect(formatVatNumber('CHE-123.456.788 MWST', 'fr')).toBe('CHE-123.456.788 TVA');
+    expect(formatVatNumber('CHE-123.456.788', 'it')).toBe('CHE-123.456.788 IVA');
+  });
+
+  it('a CHF receipt carries no currency field, as before (same content and hash)', () => {
+    expect(content()).not.toHaveProperty('currency');
   });
 });

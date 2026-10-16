@@ -1,4 +1,4 @@
-import { formatChf, type Rappen } from '../shared/money';
+import { formatMoney, type Rappen } from '../shared/money';
 import { localMoment } from '../shared/time';
 import type { ReceiptContent } from './content';
 
@@ -9,8 +9,6 @@ import type { ReceiptContent } from './content';
 export const RECEIPT_COLUMNS = 42;
 /** 58 mm paper prints 32 columns; narrower layouts are not supported. */
 const MIN_WIDTH = 24;
-
-const money = (amount: Rappen | number) => formatChf(amount as Rappen, { currency: false });
 
 /** 810 bp → "8.1%". */
 export function formatRate(rateBp: number): string {
@@ -63,6 +61,10 @@ export function renderReceiptText(
   options: { copyAt?: string; width?: number } = {},
 ): string[] {
   const width = Math.max(options.width ?? RECEIPT_COLUMNS, MIN_WIDTH);
+  // Receipts from before DEC-047 carry no currency: they are in CHF.
+  const currency = content.currency ?? 'CHF';
+  const money = (amount: Rappen | number) =>
+    formatMoney(amount as Rappen, currency, { symbol: false });
   const l = content.labels;
   const rule = '-'.repeat(width);
   const out: string[] = [];
@@ -122,7 +124,11 @@ export function renderReceiptText(
     out.push(...columns(l.discount ?? '', money(-content.totals.discountRappen), width));
   }
   out.push(
-    ...columns(`${(l.total ?? '').toUpperCase()} CHF`, money(content.totals.totalRappen), width),
+    ...columns(
+      `${(l.total ?? '').toUpperCase()} ${currency}`,
+      money(content.totals.totalRappen),
+      width,
+    ),
   );
   out.push(rule);
 

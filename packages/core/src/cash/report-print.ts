@@ -1,6 +1,6 @@
 import type { PaymentMethod } from '../payments/constants';
 import { type PrintDocument, type PrintLine, rule, wrapped } from '../printing/document';
-import { formatChf, rappen } from '../shared/money';
+import { type Currency, formatMoney, rappen } from '../shared/money';
 import type { ContentLanguage } from '../shared/languages';
 import type { CashMovementKind } from './constants';
 import type { ShiftReport } from './report';
@@ -180,8 +180,6 @@ const pair = (label: string, value: string, width: number, bold = false): PrintL
   return { text: `${left}${' '.repeat(width - left.length - value.length)}${value}`, bold };
 };
 
-const money = (value: number) => formatChf(rappen(value), { currency: false });
-
 function localTime(iso: string, timeZone: string): string {
   return new Intl.DateTimeFormat('de-CH', {
     timeZone,
@@ -200,9 +198,11 @@ function localTime(iso: string, timeZone: string): string {
 export function shiftReportDocument(
   report: ShiftReport,
   close: { countedRappen: number; expectedRappen: number; comment: string | null },
-  options: { width: number; labels: ShiftReportLabels },
+  options: { width: number; labels: ShiftReportLabels; currency?: Currency },
 ): PrintDocument {
   const { width, labels } = options;
+  const money = (value: number) =>
+    formatMoney(rappen(value), options.currency ?? 'CHF', { symbol: false });
   const lines: PrintLine[] = [
     { text: labels.title, bold: true, size: 'tall', align: 'center' },
     { text: report.ownerName, align: 'center' },

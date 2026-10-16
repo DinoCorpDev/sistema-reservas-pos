@@ -1,4 +1,5 @@
 import {
+  asCurrency,
   columnsFor,
   type ContentLanguage,
   drawerDocument,
@@ -6,8 +7,8 @@ import {
   isContentLanguage,
   KITCHEN_LABELS,
   type KitchenCatalog,
-  type KitchenTicketState,
   kitchenCatalog,
+  type KitchenTicketState,
   normalizeAllergies,
   type Operation,
   type OperationOf,
@@ -315,7 +316,11 @@ export function planPrintJobs(op: Operation, state: FoldState, config: PrintConf
               expectedRappen: op.payload.expectedCashRappen,
               comment: op.payload.differenceComment,
             },
-            { width: columnsFor(printer.paperWidthMm), labels: SHIFT_REPORT_LABELS[language] },
+            {
+              width: columnsFor(printer.paperWidthMm),
+              labels: SHIFT_REPORT_LABELS[language],
+              currency: asCurrency(config.location.currency),
+            },
           ),
         },
       ]);

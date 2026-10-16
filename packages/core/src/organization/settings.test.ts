@@ -11,6 +11,7 @@ describe('location settings', () => {
       reservations: { blockMinutesBefore: 15, noShowAfterMinutes: 20, defaultDurationMinutes: 120 },
       kitchen: { alertAfterMinutes: 12 },
       printing: { maxDelayMinutes: 15 },
+      tax: { label: null },
       receipts: { customerNameFromRappen: 40000 },
       security: { maxPinAttempts: 5, pinLockMinutes: 5, oneDevicePerPerson: true },
       pos: {

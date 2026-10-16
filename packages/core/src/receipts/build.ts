@@ -1,7 +1,8 @@
 import type { OrderItemState } from '../orders/state';
 import type { PaymentMethod } from '../payments/constants';
+import { type Country, formatNit, isValidNit } from '../shared/countries';
 import type { ContentLanguage } from '../shared/languages';
-import { type Rappen, rappen } from '../shared/money';
+import { type Currency, type Rappen, rappen } from '../shared/money';
 import { allocate, extractTax, summarizeByRate, type TaxSummaryLine } from '../tax/calculation';
 import type { ReceiptContent } from './content';
 import { flattenLabels, RECEIPT_LABELS, TRAINING_RECEIPT_LABELS } from './labels';
@@ -25,15 +26,29 @@ export interface ReceiptLocation {
   street: string;
   postalCode: string;
   city: string;
-  /** UID `CHE-123.456.789`; printed with the MWST/TVA/IVA suffix. */
+  /** UID `CHE-123.456.789` (printed with the MWST/TVA/IVA suffix) or, in Colombia, the NIT. */
   vatUid: string | null;
   header: string | null;
   footer: string | null;
+  /** Switzerland when missing (DEC-047). */
+  country?: Country;
+  /** The name of the tax on the receipt (`INC`, `IVA`); the language's MWST label when null. */
+  taxLabel?: string | null;
 }
 
-/** The UID as printed (RN-08): `CHE-123.456.789 MWST` (TVA in French, IVA in Italian). */
-export function formatVatNumber(vatUid: string, language: ContentLanguage): string {
-  return `${vatUid} ${RECEIPT_LABELS[language].vatSuffix}`;
+/**
+ * The tax id as printed (RN-08, DEC-047): `CHE-123.456.789 MWST` (TVA in French, IVA in
+ * Italian and Spanish), or `NIT 900.123.456-7` in Colombia. A UID stored with its suffix gets
+ * the receipt language's one instead, never two.
+ */
+export function formatVatNumber(
+  vatUid: string,
+  language: ContentLanguage,
+  country: Country = 'CH',
+): string {
+  if (country === 'CO') return `NIT ${isValidNit(vatUid) ? formatNit(vatUid) : vatUid.trim()}`;
+  const bare = vatUid.trim().replace(/\s*(MWST|TVA|IVA)$/i, '');
+  return `${bare} ${RECEIPT_LABELS[language].vatSuffix}`;
 }
 
 type TaxedLine = Pick<
@@ -138,10 +153,12 @@ export function buildReceipt(input: {
   customerNameFromRappen: number;
   /** A training organization (RF-F22): the receipt says it is not valid. */
   training?: boolean;
+  /** CHF when missing (DEC-047). */
+  currency?: Currency;
 }): ReceiptContent {
   const { language, location, payment, order } = input;
   if (!location.vatUid) {
-    throw new ReceiptError('VAT_UID_MISSING', 'The location has no UID for the receipt (RN-08)');
+    throw new ReceiptError('VAT_UID_MISSING', 'The location has no tax id for the receipt (RN-08)');
   }
   if (input.lines.length === 0) {
     throw new ReceiptError('NOTHING_TO_RECEIPT', 'A receipt needs at least one line');
@@ -150,7 +167,7 @@ export function buildReceipt(input: {
   if (payment.amountRappen >= input.customerNameFromRappen && customerName === '') {
     throw new ReceiptError(
       'CUSTOMER_NAME_REQUIRED',
-      'From CHF 400 the receipt carries the customer name (RN-08)',
+      'From the configured amount (CHF 400) the receipt carries the customer name (RN-08)',
     );
   }
 
@@ -162,6 +179,7 @@ export function buildReceipt(input: {
     language,
     labels: {
       ...flattenLabels(RECEIPT_LABELS[language]),
+      ...(location.taxLabel ? { vat: location.taxLabel } : {}),
       ...(input.training ? { training: TRAINING_RECEIPT_LABELS[language] } : {}),
     },
     location: {
@@ -170,7 +188,7 @@ export function buildReceipt(input: {
       street: location.street,
       postalCode: location.postalCode,
       city: location.city,
-      vatNumber: formatVatNumber(location.vatUid, language),
+      vatNumber: formatVatNumber(location.vatUid, language, location.country),
       header: location.header,
       footer: location.footer,
     },
@@ -215,5 +233,7 @@ export function buildReceipt(input: {
         ? null
         : { name: customerName, address: input.customer?.address?.trim() || null },
     ...(input.training ? { training: true as const } : {}),
+    // CHF receipts stay as they were before DEC-047 (same content, same hash).
+    ...(input.currency && input.currency !== 'CHF' ? { currency: input.currency } : {}),
   };
 }
