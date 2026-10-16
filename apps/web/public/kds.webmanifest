@@ -1,0 +1,33 @@
+{
+  "id": "/kds",
+  "name": "Sistema Reservas POS – Küche",
+  "short_name": "Küche",
+  "description": "Küchenmonitor: Bons pro Station – auch ohne Internet.",
+  "start_url": "/kds",
+  "scope": "/kds",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "de",
+  "background_color": "#ffffff",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "/icons/kds-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/kds-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/kds-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

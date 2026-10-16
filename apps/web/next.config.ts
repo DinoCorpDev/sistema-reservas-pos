@@ -32,6 +32,14 @@ const withSerwist = withSerwistInit({
   additionalPrecacheEntries: [
     { url: '/pos', revision: buildId },
     { url: '/kds', revision: buildId },
+    // What an installed POS or KDS asks for at launch, also without network.
+    ...['pos', 'kds'].flatMap((app) => [
+      { url: `/${app}.webmanifest`, revision: buildId },
+      ...['192', '512', 'maskable-512', 'apple-180'].map((icon) => ({
+        url: `/icons/${app}-${icon}.png`,
+        revision: buildId,
+      })),
+    ]),
   ],
   disable: process.env.NODE_ENV === 'development',
 });
