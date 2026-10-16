@@ -209,7 +209,10 @@
     "countries": {
       "CH": "Svizzera",
       "CO": "Colombia"
-    }
+    },
+    "nitWillBe": "Sarà salvato come {nit}.",
+    "nitWrongDigit": "La cifra di controllo è sbagliata. Quella giusta sarebbe {nit}.",
+    "nitInvalid": "Non è un NIT. Esempio: 900.123.456-7."
   },
   "floor": {
     "title": "Zone & tavoli",

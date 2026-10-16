@@ -209,7 +209,10 @@
     "countries": {
       "CH": "Switzerland",
       "CO": "Colombia"
-    }
+    },
+    "nitWillBe": "Will be saved as {nit}.",
+    "nitWrongDigit": "The check digit is wrong. It should be {nit}.",
+    "nitInvalid": "That is not a NIT. Example: 900.123.456-7."
   },
   "floor": {
     "title": "Areas & tables",

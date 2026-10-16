@@ -10,6 +10,7 @@ import {
   COUNTRIES,
   type Country,
   isValidTaxId,
+  nitSuggestion,
 } from '../shared/countries';
 
 /**
@@ -46,7 +47,9 @@ export function locationFieldProblems(
       path: 'vatUid',
       message:
         country === 'CO'
-          ? 'Invalid NIT: check digit (900.123.456-7)'
+          ? nitSuggestion(vatUid)
+            ? `Wrong NIT check digit: ${nitSuggestion(vatUid)}`
+            : 'Not a NIT (900.123.456-7)'
           : 'Invalid Swiss UID (CHE-123.456.789)',
     });
   }

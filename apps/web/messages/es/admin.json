@@ -540,7 +540,10 @@
       "none": "Negocios pequeños no responsables del impuesto."
     },
     "nit": "NIT",
-    "nitHint": "Con dígito de verificación, p. ej. 900.123.456-7."
+    "nitHint": "Con o sin dígito de verificación, p. ej. 900.123.456-7 o 900.123.456.",
+    "nitWillBe": "Se guardará como {nit}.",
+    "nitWrongDigit": "El dígito de verificación no coincide. Debería ser {nit}.",
+    "nitInvalid": "No es un NIT válido. Ejemplo: 900.123.456-7."
   },
   "myPlan": {
     "title": "Mi plan",

@@ -540,7 +540,10 @@
       "none": "Small businesses not liable for tax."
     },
     "nit": "NIT",
-    "nitHint": "With its check digit, e.g. 900.123.456-7."
+    "nitHint": "With or without the check digit, e.g. 900.123.456-7 or 900.123.456.",
+    "nitWillBe": "Will be saved as {nit}.",
+    "nitWrongDigit": "The check digit is wrong. It should be {nit}.",
+    "nitInvalid": "That is not a NIT. Example: 900.123.456-7."
   },
   "myPlan": {
     "title": "My plan",

@@ -540,7 +540,10 @@
       "none": "Petits commerces non assujettis."
     },
     "nit": "NIT",
-    "nitHint": "Avec le chiffre de contrôle, p. ex. 900.123.456-7."
+    "nitHint": "Avec ou sans chiffre de contrôle, p. ex. 900.123.456-7 ou 900.123.456.",
+    "nitWillBe": "Sera enregistré comme {nit}.",
+    "nitWrongDigit": "Le chiffre de contrôle est faux. Le bon serait {nit}.",
+    "nitInvalid": "Ce n’est pas un NIT. Exemple : 900.123.456-7."
   },
   "myPlan": {
     "title": "Ma formule",

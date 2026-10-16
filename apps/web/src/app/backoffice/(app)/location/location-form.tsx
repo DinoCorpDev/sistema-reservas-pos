@@ -18,7 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import { saveLocation } from './actions';
-import { asCountry, CONTENT_LANGUAGES } from '@pos/core';
+import { asCountry, CONTENT_LANGUAGES, formatNit, isValidNit, nitSuggestion } from '@pos/core';
 
 export function LocationForm({ location, canEdit }: { location: LocationDto; canEdit: boolean }) {
   const t = useTranslations('location');
@@ -111,8 +111,20 @@ export function LocationForm({ location, canEdit }: { location: LocationDto; can
           <Field
             label={swiss ? t('vatUid') : t('nit')}
             htmlFor="loc-vatUid"
-            hint={swiss ? t('vatUidHint') : t('nitHint', { country: t(`countries.${country}`) })}
-            error={fieldErrors.vatUid}
+            hint={
+              swiss
+                ? t('vatUidHint')
+                : isValidNit(form.vatUid)
+                  ? t('nitWillBe', { nit: formatNit(form.vatUid) })
+                  : t('nitHint', { country: t(`countries.${country}`) })
+            }
+            error={
+              !swiss && fieldErrors.vatUid
+                ? nitSuggestion(form.vatUid)
+                  ? t('nitWrongDigit', { nit: nitSuggestion(form.vatUid) ?? '' })
+                  : t('nitInvalid')
+                : fieldErrors.vatUid
+            }
           >
             <Input
               id="loc-vatUid"

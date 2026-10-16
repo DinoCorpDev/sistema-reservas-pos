@@ -7,6 +7,7 @@ import {
   isValidPostalCode,
   isValidTaxId,
   nitCheckDigit,
+  nitSuggestion,
 } from './countries';
 
 describe('countries (DEC-047)', () => {
@@ -25,7 +26,7 @@ describe('countries (DEC-047)', () => {
   it('rejects a wrong check digit, letters or a too short number', () => {
     for (const nit of [
       '800.197.268-5',
-      '800197268',
+      '8001972685',
       'ABC.197.268-4',
       '123-4',
       '',
@@ -33,6 +34,19 @@ describe('countries (DEC-047)', () => {
     ]) {
       expect(isValidNit(nit)).toBe(false);
     }
+  });
+
+  it('accepts the number alone and computes its check digit, as it is often printed', () => {
+    expect(isValidNit('800.197.268')).toBe(true);
+    expect(formatNit('800197268')).toBe('800.197.268-4');
+    expect(formatNit('901.234.567')).toBe('901.234.567-7');
+  });
+
+  it('tells the right check digit when the typed one is wrong', () => {
+    expect(nitSuggestion('9012345671')).toBe('901.234.567-7');
+    expect(nitSuggestion('901.234.567-1')).toBe('901.234.567-7');
+    expect(nitSuggestion('901.234.567-7')).toBeNull();
+    expect(nitSuggestion('hello')).toBeNull();
   });
 
   it('formats a NIT for the receipt', () => {

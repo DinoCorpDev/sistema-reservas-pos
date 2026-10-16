@@ -540,7 +540,10 @@
       "none": "Piccole attività non soggette."
     },
     "nit": "NIT",
-    "nitHint": "Con la cifra di controllo, ad es. 900.123.456-7."
+    "nitHint": "Con o senza cifra di controllo, ad es. 900.123.456-7 o 900.123.456.",
+    "nitWillBe": "Sarà salvato come {nit}.",
+    "nitWrongDigit": "La cifra di controllo è sbagliata. Quella giusta sarebbe {nit}.",
+    "nitInvalid": "Non è un NIT. Esempio: 900.123.456-7."
   },
   "myPlan": {
     "title": "Il mio piano",

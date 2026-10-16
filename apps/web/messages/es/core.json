@@ -209,7 +209,10 @@
     "countries": {
       "CH": "Suiza",
       "CO": "Colombia"
-    }
+    },
+    "nitWillBe": "Se guardará como {nit}.",
+    "nitWrongDigit": "El dígito de verificación no coincide. Debería ser {nit}.",
+    "nitInvalid": "No es un NIT válido. Ejemplo: 900.123.456-7."
   },
   "floor": {
     "title": "Áreas y mesas",

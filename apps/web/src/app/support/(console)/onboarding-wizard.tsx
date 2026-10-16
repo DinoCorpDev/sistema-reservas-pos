@@ -9,6 +9,9 @@ import {
   type CoTaxRegime,
   COUNTRIES,
   type Country,
+  formatNit,
+  isValidNit,
+  nitSuggestion,
   UI_LANGUAGES,
 } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
@@ -253,11 +256,11 @@ export function OnboardingWizard() {
     path: string,
     value: string,
     onChange: (value: string) => void,
-    props: ComponentProps<typeof Input> & { hint?: ReactNode } = {},
+    props: ComponentProps<typeof Input> & { hint?: ReactNode; errorText?: string } = {},
   ) => {
-    const { hint, ...inputProps } = props;
+    const { hint, errorText, ...inputProps } = props;
     return (
-      <Field label={label} htmlFor={id} hint={hint} error={error(path)}>
+      <Field label={label} htmlFor={id} hint={hint} error={errorText ?? error(path)}>
         <Input
           id={id}
           autoComplete="off"
@@ -287,6 +290,13 @@ export function OnboardingWizard() {
 
   const { organization: org, location: loc, owner } = draft;
   const swiss = draft.country === 'CH';
+  // The NIT as it will be saved, or why it is refused, in the user's words (DEC-047).
+  const nitHint = (value: string) =>
+    isValidNit(value) ? t('nitWillBe', { nit: formatNit(value) }) : t('nitHint');
+  const nitError = (value: string) => {
+    const suggestion = nitSuggestion(value);
+    return suggestion ? t('nitWrongDigit', { nit: suggestion }) : t('nitInvalid');
+  };
 
   return (
     <>
@@ -558,7 +568,9 @@ export function OnboardingWizard() {
                     {
                       placeholder: swiss ? 'CHE-123.456.789' : '900.123.456-7',
                       maxLength: 32,
-                      hint: swiss ? t('vatUidHint') : t('nitHint'),
+                      hint: swiss ? t('vatUidHint') : nitHint(loc.vatUid),
+                      errorText:
+                        !swiss && error('location.vatUid') ? nitError(loc.vatUid) : undefined,
                     },
                   )}
                   <fieldset className="grid gap-3">

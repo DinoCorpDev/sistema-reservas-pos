@@ -53,8 +53,6 @@ export const COUNTRY_PROFILES: Readonly<Record<Country, CountryProfile>> = {
 
 // ── NIT (Colombia) ───────────────────────────────────────────────────────────
 
-/** `900.123.456-7`, `900123456-7` or `9001234567` (the last digit is the check digit). */
-const NIT_PATTERN = /^(\d{1,3}(?:\.?\d{3}){1,4})-?(\d)$/;
 /** DIAN weights, from the rightmost digit of the number. */
 const NIT_WEIGHTS = [3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71] as const;
 
@@ -66,20 +64,64 @@ export function nitCheckDigit(number: string): number {
   return remainder > 1 ? 11 - remainder : remainder;
 }
 
+const groupNit = (number: string) => number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+/**
+ * How a typed NIT reads (DEC-047):
+ * - with a dash, the digit after it is the check digit (`900.123.456-7`, `900123456-7`);
+ * - without a dash, ten digits or more end with the check digit (`9001234567`);
+ * - up to nine digits without a dash are the number alone, as often printed without its check
+ *   digit (`900.123.456`): the check digit is computed.
+ * `expected` is the right check digit, to tell the user when the typed one is wrong.
+ */
+export function readNit(
+  value: string,
+): { valid: boolean; number: string; checkDigit: number; expected: number } | null {
+  const text = value.trim().replace(/\s+/g, '');
+  const withDash = /^([\d.]+)-(\d)$/.exec(text);
+  const plain = /^[\d.]+$/.test(text) ? text.replaceAll('.', '') : null;
+  let number: string;
+  let checkDigit: number | null;
+  if (withDash) {
+    number = withDash[1]!.replaceAll('.', '');
+    checkDigit = Number(withDash[2]);
+  } else if (plain && plain.length >= 10) {
+    number = plain.slice(0, -1);
+    checkDigit = Number(plain.slice(-1));
+  } else if (plain) {
+    number = plain;
+    checkDigit = null;
+  } else {
+    return null;
+  }
+  if (!/^\d+$/.test(number) || number.length < 6 || number.length > 15) return null;
+  const expected = nitCheckDigit(number);
+  return {
+    valid: checkDigit === null || checkDigit === expected,
+    number,
+    checkDigit: checkDigit ?? expected,
+    expected,
+  };
+}
+
 export function isValidNit(value: string): boolean {
-  const match = NIT_PATTERN.exec(value.trim());
-  if (!match) return false;
-  const number = match[1]!.replaceAll('.', '');
-  if (number.length < 6 || number.length > 15) return false;
-  return nitCheckDigit(number) === Number(match[2]);
+  return readNit(value)?.valid ?? false;
 }
 
 /** Canonical format: `900.123.456-7`. */
 export function formatNit(value: string): string {
-  const match = NIT_PATTERN.exec(value.trim());
-  if (!match || !isValidNit(value)) throw new TypeError(`Invalid NIT: "${value}"`);
-  const number = match[1]!.replaceAll('.', '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  return `${number}-${match[2]}`;
+  const nit = readNit(value);
+  if (!nit?.valid) throw new TypeError(`Invalid NIT: "${value}"`);
+  return `${groupNit(nit.number)}-${nit.checkDigit}`;
+}
+
+/**
+ * Why a NIT is refused, in the user's words: the right check digit when only it is wrong
+ * (`901.234.567-7`), else null (not a NIT at all).
+ */
+export function nitSuggestion(value: string): string | null {
+  const nit = readNit(value);
+  return nit && !nit.valid ? `${groupNit(nit.number)}-${nit.expected}` : null;
 }
 
 // ── By country ───────────────────────────────────────────────────────────────

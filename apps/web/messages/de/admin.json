@@ -540,7 +540,10 @@
       "none": "Kleine Betriebe ohne Steuerpflicht."
     },
     "nit": "NIT",
-    "nitHint": "Mit Prüfziffer, z. B. 900.123.456-7."
+    "nitHint": "Mit oder ohne Prüfziffer, z. B. 900.123.456-7 oder 900.123.456.",
+    "nitWillBe": "Wird gespeichert als {nit}.",
+    "nitWrongDigit": "Die Prüfziffer stimmt nicht. Richtig wäre {nit}.",
+    "nitInvalid": "Das ist keine NIT. Beispiel: 900.123.456-7."
   },
   "myPlan": {
     "title": "Mein Plan",

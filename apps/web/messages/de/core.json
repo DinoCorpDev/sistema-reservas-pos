@@ -209,7 +209,10 @@
     "countries": {
       "CH": "Schweiz",
       "CO": "Kolumbien"
-    }
+    },
+    "nitWillBe": "Wird gespeichert als {nit}.",
+    "nitWrongDigit": "Die Prüfziffer stimmt nicht. Richtig wäre {nit}.",
+    "nitInvalid": "Das ist keine NIT. Beispiel: 900.123.456-7."
   },
   "floor": {
     "title": "Bereiche & Tische",
