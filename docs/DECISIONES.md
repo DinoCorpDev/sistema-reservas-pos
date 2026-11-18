@@ -545,6 +545,15 @@ Sale del brandbook de Zitas V3.0 (`D:\Paginas dinolabs\Diseños zitas`).
 - **Íconos de las apps:** la caja usa la Z blanca sobre Deep Intelligence y la cocina la Z oscura sobre blanco. Las dos se reconocen como Zitas y se distinguen en la pantalla de inicio.
 - **Lo que no cambia:** los colores de estado de mesas y comandas, los avisos, la franja naranja del modo práctica y los objetivos táctiles de 44 px. Son lenguaje de trabajo, no decoración.
 
+## DEC-050 · El gerente tiene todos los permisos
+
+Juan lo pidió (18 nov 2026): el gerente maneja el restaurante como el dueño y necesita usar todos los módulos.
+
+- El rol «Gerencia» recibe, como «Administrador», todos los permisos de `PERMISSIONS`. Antes le faltaban carta, precios, impuestos, sede, personal, anonimizar clientes y dar acceso a soporte.
+- La migración 0022 se los agrega a los gerentes de las organizaciones existentes. Si un dueño había quitado a propósito alguno de esos permisos, se respeta.
+- El dueño todavía puede limitar al gerente desde el backoffice, en «Personal» → roles.
+- Siguen protegidas las reglas que no dependen del rol: no se puede desactivar al único administrador, y las acciones sobre los umbrales de la sede siguen pidiendo la autorización con PIN.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

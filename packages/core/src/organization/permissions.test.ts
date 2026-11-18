@@ -46,6 +46,7 @@ describe('default role permissions', () => {
     ]) {
       expect(DEFAULT_ROLE_PERMISSIONS.manager).toContain(permission);
     }
-    expect(DEFAULT_ROLE_PERMISSIONS.manager).not.toContain('tax.manage');
+    // Every module, like the administrator (DEC-050).
+    expect([...DEFAULT_ROLE_PERMISSIONS.manager]).toEqual([...PERMISSIONS]);
   });
 });

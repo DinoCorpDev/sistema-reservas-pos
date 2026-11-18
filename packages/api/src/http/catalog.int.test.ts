@@ -673,7 +673,8 @@ describe('RF-B17 · price, tax and availability changes are audited', () => {
 
   it('forbids catalog edits to staff without catalog.manage', async () => {
     const productId = id(products, 'Cappuccino');
-    for (const headers of [manager, waiter, kitchen]) {
+    // The manager has catalog.manage like the owner (DEC-050).
+    for (const headers of [waiter, kitchen]) {
       const response = await call('PATCH', `/catalog/products/${productId}`, headers, {
         name: 'Hacked',
       });

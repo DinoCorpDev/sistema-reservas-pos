@@ -53,23 +53,12 @@ export type Permission = (typeof PERMISSIONS)[number];
 export const ROLE_KEYS = ['admin', 'manager', 'cashier', 'waiter', 'kitchen'] as const;
 export type RoleKey = (typeof ROLE_KEYS)[number];
 
-const MANAGER_PERMISSIONS: readonly Permission[] = PERMISSIONS.filter(
-  (permission) =>
-    ![
-      'catalog.manage',
-      'catalog.price_change',
-      'tax.manage',
-      'location.manage',
-      'user.manage',
-      'customer.anonymize',
-      'support.grant_access',
-    ].includes(permission),
-);
-
 /** Default permissions of the predefined roles; the seed and organization setup copy them. */
 export const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<RoleKey, readonly Permission[]>> = {
   admin: PERMISSIONS,
-  manager: MANAGER_PERMISSIONS,
+  // The manager runs the restaurant like the owner and needs every module (DEC-050). The owner
+  // can still narrow it per organization in the backoffice.
+  manager: PERMISSIONS,
   cashier: [
     'order.create',
     'order.transfer',

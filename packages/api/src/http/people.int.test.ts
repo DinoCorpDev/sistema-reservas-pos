@@ -719,7 +719,7 @@ describe('users and roles (RF-A04, RF-A05, RF-A07, RF-A08, RF-A12)', () => {
     const managerRole = roles.find((r) => r.key === 'manager')!;
     await api.request('PUT', `/roles/${managerRole.id}/permissions`, {
       headers: admin,
-      body: { permissions: [...managerRole.permissions, 'user.manage'] },
+      body: { permissions: [...new Set([...managerRole.permissions, 'user.manage'])] },
     });
     const manager = api.as(demoSession(demo, 'manager'));
     const deactivateAdmin = await api.request('PATCH', `/users/${demo.users.admin.id}`, {
