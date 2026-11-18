@@ -1,4 +1,4 @@
-# CLAUDE.md · Sistema Reservas POS (DINOLABS)
+# CLAUDE.md · Zitas POS (DINOLABS)
 
 POS para restaurantes en Suiza. El restaurante opera **mesa → pedido → cocina → pago → cierre**, 24/7 y **sin internet**. El Core POS es la única fuente de verdad y todo se expone por API. Zitas (otro repositorio) es solo una capa digital que lee y escribe en el Core por API: **no se reimplementa aquí**.
 

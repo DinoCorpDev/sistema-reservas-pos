@@ -7,10 +7,10 @@ import { SiteUpdateBanner } from '@/device/ui/update-banner';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: { default: 'Sistema Reservas POS', template: '%s · Sistema Reservas POS' },
+  title: { default: 'Zitas POS', template: '%s · Zitas POS' },
   description:
     'Core POS für Restaurants in der Schweiz: Tisch, Bestellung, Küche, Zahlung, Abschluss.',
-  applicationName: 'Sistema Reservas POS',
+  applicationName: 'Zitas POS',
 };
 
 export const viewport: Viewport = {

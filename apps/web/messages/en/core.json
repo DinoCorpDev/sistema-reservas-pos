@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Sistema Reservas POS",
+    "name": "Zitas POS",
     "tagline": "Table → order → kitchen → payment → close-out. Even without internet."
   },
   "common": {

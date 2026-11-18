@@ -524,6 +524,10 @@ Juan lo pidió para mostrar el sistema a clientes en Colombia (15 oct 2026).
   - los periodos de declaración de Colombia en los reportes;
   - las sedes en dos países dentro de una misma organización.
 
+## DEC-048 · El producto se llama «Zitas POS»
+
+Juan le puso nombre al producto (18 nov 2026). Reemplaza al «Sistema Reservas POS» provisional (DEC-004) en la interfaz, los manifiestos de las apps instalables, la documentación de la API y la cuenta de 2FA. Lo interno (paquetes, repositorio y bases locales de los aparatos) conserva su nombre, así los aparatos vinculados no pierden nada. Es solo el nombre: no cambia DEC-044 (sin integración con la app Zitas de reservas).
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

@@ -86,7 +86,7 @@ export async function startTwoFactor(deps: ServiceDeps, actor: Actor) {
   return {
     secret,
     uri: generateURI({
-      issuer: 'Sistema Reservas POS',
+      issuer: 'Zitas POS',
       label: user.email ?? user.displayName,
       secret,
     }),

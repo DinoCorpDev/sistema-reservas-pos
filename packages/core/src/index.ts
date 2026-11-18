@@ -1,5 +1,5 @@
 /**
- * @pos/core — pure domain of Sistema Reservas POS.
+ * @pos/core — pure domain of Zitas POS.
  *
  * Rules for this package (see CLAUDE.md):
  * - No framework, ORM, network or UI dependencies (enforced by ESLint).

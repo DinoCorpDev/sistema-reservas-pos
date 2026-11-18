@@ -1,4 +1,4 @@
-# OPERACIONES · Sistema Reservas POS
+# OPERACIONES · Zitas POS
 
 Runbook para soporte y operación de DINOLABS: cómo se instala, se actualiza, se vigila y se respalda la nube, y cómo se da de alta un restaurante.
 

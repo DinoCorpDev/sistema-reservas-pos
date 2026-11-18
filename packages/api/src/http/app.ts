@@ -125,7 +125,7 @@ export function createApiApp(deps: ApiDependencies) {
   app.doc31('/openapi.json', {
     openapi: '3.1.0',
     info: {
-      title: 'Sistema Reservas POS API',
+      title: 'Zitas POS API',
       version: '1.0.0',
       description:
         'Core POS REST API v1. Amounts are integers in rappen (CHF 1.00 = 100); prices include MWST. ' +
@@ -135,7 +135,7 @@ export function createApiApp(deps: ApiDependencies) {
   });
   app.get(
     '/docs',
-    Scalar({ url: `${API_BASE_PATH}/openapi.json`, pageTitle: 'Sistema Reservas POS API' }),
+    Scalar({ url: `${API_BASE_PATH}/openapi.json`, pageTitle: 'Zitas POS API' }),
   );
 
   return app;

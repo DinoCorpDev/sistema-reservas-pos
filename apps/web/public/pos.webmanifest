@@ -1,6 +1,6 @@
 {
   "id": "/pos",
-  "name": "Sistema Reservas POS – Kasse",
+  "name": "Zitas POS – Kasse",
   "short_name": "Kasse",
   "description": "Kasse und Service: Tische, Bestellungen, Zahlungen – auch ohne Internet.",
   "start_url": "/pos",

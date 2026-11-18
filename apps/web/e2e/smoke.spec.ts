@@ -4,7 +4,7 @@ test.describe('Smoke', () => {
   test('the home page links every operating surface', async ({ page }) => {
     await page.goto('/');
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Sistema Reservas POS' }),
+      page.getByRole('heading', { level: 1, name: 'Zitas POS' }),
     ).toBeVisible();
     for (const href of ['/pos', '/kds', '/backoffice']) {
       await expect(page.locator(`a[href="${href}"]`)).toBeVisible();

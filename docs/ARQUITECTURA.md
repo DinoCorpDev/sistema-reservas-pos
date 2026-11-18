@@ -1,4 +1,4 @@
-# Arquitectura · Sistema Reservas POS
+# Arquitectura · Zitas POS
 
 Este documento explica cómo está construido el sistema y cómo cumple los 12 principios de arquitectura (PA-01…PA-12) del [documento de requerimientos](requerimientos.txt). Las decisiones puntuales están en [DECISIONES.md](DECISIONES.md); el estado de cada requerimiento, en [TRAZABILIDAD.md](TRAZABILIDAD.md). Las reglas detalladas de sincronización están en [SYNC.md](SYNC.md).
 

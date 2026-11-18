@@ -1,7 +1,7 @@
 {
   "name": "sistema-reservas-pos",
   "private": true,
-  "description": "Sistema Reservas POS — offline-first Core POS for restaurants in Switzerland (DINOLABS)",
+  "description": "Zitas POS — offline-first Core POS for restaurants in Switzerland (DINOLABS)",
   "packageManager": "pnpm@10.34.6",
   "engines": {
     "node": ">=22.12"
