@@ -689,6 +689,11 @@ describe('RF-B17 · price, tax and availability changes are audited', () => {
       ).status,
     ).toBe(403);
     expect((await getProduct(productId)).name).toBe('Cappuccino');
+    // The manager edits the catalog like the owner (DEC-050).
+    const byManager = await call('PATCH', `/catalog/products/${productId}`, manager, {
+      name: 'Cappuccino',
+    });
+    expect(byManager.status).toBe(200);
   });
 });
 
