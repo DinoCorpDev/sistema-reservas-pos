@@ -6,6 +6,7 @@ import { getLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { SiteUpdateBanner } from '@/device/ui/update-banner';
 import './globals.css';
+import { THEME_SCRIPT } from '@/components/theme/theme';
 
 // The brand's typefaces (DEC-049), served with the build, so the POS has them offline too.
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
@@ -35,7 +36,15 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = await getLocale();
   return (
-    <html lang={locale} className={`${inter.variable} ${chakra.variable}`}>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${chakra.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Light or dark before the first paint (DEC-049). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-dvh">
         <NextIntlClientProvider>
           <SiteUpdateBanner />

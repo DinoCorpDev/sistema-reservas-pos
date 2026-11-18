@@ -24,6 +24,7 @@ import {
 import { useNow, useStationBoard } from '../board';
 import { type TicketActions, TicketCard } from './ticket-card';
 import { ZitasMark } from '@/components/brand/zitas-logo';
+import { ThemeMenu } from '@/components/theme/theme-menu';
 
 /**
  * The kitchen display of one station (RF-C20…RF-C28): the open tickets oldest first, a notice
@@ -136,6 +137,7 @@ export function KdsShell() {
           <span className="text-sm font-medium" data-testid="kds-user">
             {user?.displayName}
           </span>
+          <ThemeMenu />
           <LanguageMenu />
           <HelpLink role="kitchen" />
           <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>

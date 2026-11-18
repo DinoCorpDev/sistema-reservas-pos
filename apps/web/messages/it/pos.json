@@ -115,6 +115,12 @@
       "signOutPending": "{count, plural, one {# operazione non è ancora} other {# operazioni non sono ancora}} nel cloud. Si colleghi al Wi-Fi del ristorante e riprovi.",
       "signOutFailed": "Disconnessione non riuscita. Verifichi la connessione e riprovi."
     },
+    "theme": {
+      "label": "Aspetto",
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "system": "Automatico"
+    },
     "language": {
       "label": "Cambia lingua"
     },

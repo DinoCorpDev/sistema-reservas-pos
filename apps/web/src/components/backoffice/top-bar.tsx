@@ -19,6 +19,7 @@ import { useState, useTransition } from 'react';
 import { leaveOrganization, logout, setUiLanguage, switchLocation } from '@/app/backoffice/actions';
 import { LanguagePicker } from '@/components/language-picker';
 import { BackofficeNav } from './nav';
+import { ThemeMenu } from '@/components/theme/theme-menu';
 
 export function TopBar({
   locations,
@@ -86,6 +87,7 @@ export function TopBar({
       </DropdownMenu>
 
       <div className="ml-auto flex items-center gap-2">
+        <ThemeMenu />
         <LanguagePicker onChange={setUiLanguage} label={t('language')} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

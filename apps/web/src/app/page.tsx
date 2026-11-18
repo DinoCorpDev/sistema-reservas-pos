@@ -5,6 +5,7 @@ import { LanguagePicker } from '@/components/language-picker';
 import { setLoginLanguage } from './login/actions';
 import { ZitasLogo } from '@/components/brand/zitas-logo';
 import { ChefHatIcon, LayoutDashboardIcon, StoreIcon } from 'lucide-react';
+import { ThemeMenu } from '@/components/theme/theme-menu';
 
 const MODULES = [
   { key: 'pos', href: '/pos', icon: StoreIcon },
@@ -39,7 +40,10 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="text-foreground">
-            <LanguagePicker onChange={setLoginLanguage} label={t('nav.language')} />
+            <div className="flex items-center gap-2">
+              <ThemeMenu />
+              <LanguagePicker onChange={setLoginLanguage} label={t('nav.language')} />
+            </div>
           </div>
         </div>
       </header>

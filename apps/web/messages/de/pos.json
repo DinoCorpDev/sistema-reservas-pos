@@ -115,6 +115,12 @@
       "signOutPending": "{count, plural, one {# Vorgang ist} other {# Vorgänge sind}} noch nicht in der Cloud. Verbinden Sie sich mit dem WLAN des Restaurants und versuchen Sie es erneut.",
       "signOutFailed": "Abmelden hat nicht geklappt. Prüfen Sie die Verbindung und versuchen Sie es erneut."
     },
+    "theme": {
+      "label": "Darstellung",
+      "light": "Hell",
+      "dark": "Dunkel",
+      "system": "Automatisch"
+    },
     "language": {
       "label": "Sprache ändern"
     },

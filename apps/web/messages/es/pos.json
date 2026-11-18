@@ -115,6 +115,12 @@
       "signOutPending": "{count, plural, one {# operación todavía no llegó} other {# operaciones todavía no llegaron}} a la nube. Conéctate al Wi-Fi del restaurante e intenta de nuevo.",
       "signOutFailed": "No se pudo cerrar sesión. Revisa la conexión e intenta de nuevo."
     },
+    "theme": {
+      "label": "Apariencia",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Automático"
+    },
     "language": {
       "label": "Cambiar idioma"
     },

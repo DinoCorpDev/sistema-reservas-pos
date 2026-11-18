@@ -30,6 +30,7 @@ import { TableNotices } from './table-notices';
 import { UnpairButton } from './unpair-button';
 import { UnsentDialog } from './unsent-dialog';
 import { ZitasMark } from '@/components/brand/zitas-logo';
+import { ThemeMenu } from '@/components/theme/theme-menu';
 
 /** Permissions that open the cash screen: running a shift, moving cash or closing the day. */
 const CASH_PERMISSIONS = ['shift.open', 'shift.close', 'cash.movement', 'day.close'] as const;
@@ -161,6 +162,7 @@ export function PosShell() {
           <span className="truncate text-sm font-medium" data-testid="pos-user">
             {user?.displayName}
           </span>
+          <ThemeMenu />
           <LanguageMenu />
           <HelpLink role={canCash ? 'manager' : 'waiter'} />
           <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>

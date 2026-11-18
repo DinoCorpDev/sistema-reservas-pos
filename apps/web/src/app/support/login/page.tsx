@@ -8,6 +8,7 @@ import { LanguagePicker } from '@/components/language-picker';
 import { LoginForm } from '@/components/login-form';
 import { loginStaff, setLoginLanguage } from '../../login/actions';
 import { ZitasLogo } from '@/components/brand/zitas-logo';
+import { ThemeMenu } from '@/components/theme/theme-menu';
 
 export const metadata: Metadata = { title: 'Support' };
 
@@ -27,7 +28,10 @@ export default async function SupportLoginPage() {
             <ZitasLogo onDark />
           </p>
           <div className="text-foreground">
-            <LanguagePicker onChange={setLoginLanguage} label={t('nav.language')} />
+            <div className="flex items-center gap-2">
+              <ThemeMenu />
+              <LanguagePicker onChange={setLoginLanguage} label={t('nav.language')} />
+            </div>
           </div>
         </div>
         <Card>

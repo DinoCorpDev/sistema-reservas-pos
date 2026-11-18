@@ -540,6 +540,7 @@ Sale del brandbook de Zitas V3.0 (`D:\Paginas dinolabs\Diseños zitas`). Juan pi
 - **Logo:** el símbolo Z con el punto y el wordmark «zitas» se dibujan en vector (`components/brand/zitas-logo.tsx`), en positivo y en negativo. Los PNG del brandbook son pequeños y vienen con estilo sticker. «POS» va al lado del logo como nombre del producto.
 - **Íconos de las apps:** la caja usa la Z blanca sobre Deep Intelligence y la cocina la Z oscura sobre blanco.
 - **Lo que no cambia:** los colores de estado de mesas y comandas, los avisos, el botón verde de cobrar, la franja naranja del modo práctica y los objetivos táctiles de 44 px. Son lenguaje de trabajo, no decoración.
+- **Modo claro y oscuro:** cada pantalla tiene un botón de apariencia (Claro, Oscuro o Automático, que sigue al dispositivo). La elección se guarda en cada dispositivo (`localStorage`, clave `zitas-theme`): la caja junto a la ventana y la pantalla de cocina en un rincón oscuro eligen cada una la suya. Se aplica antes de pintar la página, así que no hay parpadeo. El oscuro usa Deep Intelligence de fondo con tarjetas `#131A28` y el mismo teal. El ticket impreso y los códigos QR siguen en blanco.
 
 ## DEC-050 · El gerente tiene todos los permisos
 

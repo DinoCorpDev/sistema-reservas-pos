@@ -7,6 +7,7 @@ import { auth } from '@/auth';
 import { logoutStaff } from './actions';
 import { ConsoleNav } from './console-nav';
 import { ZitasMark } from '@/components/brand/zitas-logo';
+import { ThemeMenu } from '@/components/theme/theme-menu';
 
 /** Support console guard and shell: DINOLABS staff only (RF-A10, DEC-017). */
 export default async function SupportConsoleLayout({ children }: { children: ReactNode }) {
@@ -21,6 +22,7 @@ export default async function SupportConsoleLayout({ children }: { children: Rea
         <span className="font-semibold">{t('title')}</span>
         <ConsoleNav />
         <div className="ml-auto flex items-center gap-3">
+          <ThemeMenu className="border-white/15 bg-white/5 text-chrome-foreground hover:bg-white/15 hover:text-chrome-foreground" />
           <span className="hidden text-sm text-chrome-foreground/60 sm:inline">
             {t('signedInAs', { name: session.user.name ?? '' })}
           </span>
