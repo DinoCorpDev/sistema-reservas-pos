@@ -1,11 +1,12 @@
 import { Button } from '@pos/ui/button';
-import { LifeBuoyIcon, LogOutIcon } from 'lucide-react';
+import { LogOutIcon } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { auth } from '@/auth';
 import { logoutStaff } from './actions';
 import { ConsoleNav } from './console-nav';
+import { ZitasMark } from '@/components/brand/zitas-logo';
 
 /** Support console guard and shell: DINOLABS staff only (RF-A10, DEC-017). */
 export default async function SupportConsoleLayout({ children }: { children: ReactNode }) {
@@ -16,7 +17,7 @@ export default async function SupportConsoleLayout({ children }: { children: Rea
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
-        <LifeBuoyIcon className="size-6 text-primary" aria-hidden />
+        <ZitasMark className="size-7" />
         <span className="font-semibold">{t('title')}</span>
         <ConsoleNav />
         <div className="ml-auto flex items-center gap-3">

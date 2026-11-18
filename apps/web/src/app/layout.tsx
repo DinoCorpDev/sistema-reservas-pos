@@ -1,10 +1,20 @@
 import { Toaster } from '@pos/ui/toaster';
 import type { Metadata, Viewport } from 'next';
+import { Chakra_Petch, Inter } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { SiteUpdateBanner } from '@/device/ui/update-banner';
 import './globals.css';
+
+// The brand's typefaces (DEC-049), served with the build, so the POS has them offline too.
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+const chakra = Chakra_Petch({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-chakra',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: { default: 'Zitas POS', template: '%s · Zitas POS' },
@@ -25,7 +35,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = await getLocale();
   return (
-    <html lang={locale}>
+    <html lang={locale} className={`${inter.variable} ${chakra.variable}`}>
       <body className="min-h-dvh">
         <NextIntlClientProvider>
           <SiteUpdateBanner />

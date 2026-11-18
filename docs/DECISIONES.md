@@ -528,6 +528,23 @@ Juan lo pidió para mostrar el sistema a clientes en Colombia (15 oct 2026).
 
 Juan le puso nombre al producto (18 nov 2026). Reemplaza al «Sistema Reservas POS» provisional (DEC-004) en la interfaz, los manifiestos de las apps instalables, la documentación de la API y la cuenta de 2FA. Lo interno (paquetes, repositorio y bases locales de los aparatos) conserva su nombre, así los aparatos vinculados no pierden nada. Es solo el nombre: no cambia DEC-044 (sin integración con la app Zitas de reservas).
 
+## DEC-049 · La identidad visual de Zitas en el POS
+
+Sale del brandbook de Zitas V3.0 (`D:\Paginas dinolabs\Diseños zitas`).
+
+- **Colores** (tokens en `packages/ui/src/styles/globals.css`):
+  - Deep Intelligence `#0B0F19` para el texto y las acciones principales;
+  - Zitas Teal `#20B8BD` como acento: el punto, el foco, lo activo y el progreso;
+  - Soft Background `#F6F8FA` de fondo, con tarjetas blancas;
+  - Soft Ice `#E6EBEF` para lo secundario.
+
+  Los botones principales van en Deep Intelligence con texto blanco, como los del brandbook: el teal con texto blanco no llega a un contraste legible. En modo oscuro el principal es teal sobre Deep Intelligence.
+
+- **Tipografías:** Inter para la interfaz y Chakra Petch para la marca. Las sirve el propio build, así que funcionan sin conexión.
+- **Logo:** el símbolo Z con el punto y el wordmark «zitas» se dibujan en vector (`components/brand/zitas-logo.tsx`), nítidos a cualquier tamaño. Los PNG del brandbook son pequeños y vienen con estilo sticker. «POS» va al lado del logo como nombre del producto, fuera de su área de seguridad.
+- **Íconos de las apps:** la caja usa la Z blanca sobre Deep Intelligence y la cocina la Z oscura sobre blanco. Las dos se reconocen como Zitas y se distinguen en la pantalla de inicio.
+- **Lo que no cambia:** los colores de estado de mesas y comandas, los avisos, la franja naranja del modo práctica y los objetivos táctiles de 44 px. Son lenguaje de trabajo, no decoración.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

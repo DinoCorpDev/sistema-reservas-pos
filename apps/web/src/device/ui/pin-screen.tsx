@@ -11,6 +11,7 @@ import { APP_VERSION } from '../version';
 import { ErrorDialog } from './error-dialog';
 import { NumPad } from './num-pad';
 import { StatusIndicator } from './status-indicator';
+import { ZitasLogo } from '@/components/brand/zitas-logo';
 
 const MAX_PIN = 6;
 
@@ -56,6 +57,7 @@ export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 p-6">
       <TrainingBand />
       <div className="flex flex-col items-center gap-1 text-center">
+        <ZitasLogo size="sm" className="mb-3" />
         <p className="text-lg font-semibold">{location}</p>
         <p className="text-sm text-muted-foreground">{terminal}</p>
         <StatusIndicator className="mt-2" />

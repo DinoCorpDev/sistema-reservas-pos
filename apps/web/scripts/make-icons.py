@@ -3,15 +3,18 @@ The install icons of the POS and the KDS (public/icons), drawn without image lib
 
     python scripts/make-icons.py public/icons
 
-A plate between a fork and a knife on the app's blue for the till, a kitchen ticket on slate
-for the kitchen display. The maskable ones keep the glyph inside the safe zone.
+The Zitas app icon (brandbook V3.0, DEC-049): the white Z with its teal dot on Deep
+Intelligence for the till, and the dark Z on white for the kitchen display, so both read as
+Zitas and are told apart on a home screen. The maskable ones keep the glyph inside the safe zone.
 """
 import math, struct, sys, zlib
 
 OUT = sys.argv[1]
 WHITE = (255, 255, 255)
-POS_BG = (42, 79, 166)   # the app's primary blue
-KDS_BG = (30, 41, 59)    # slate, the kitchen display's dark header
+DEEP = (11, 15, 25)      # Deep Intelligence #0B0F19
+TEAL = (32, 184, 189)    # Zitas Teal #20B8BD
+POS_BG = DEEP
+KDS_BG = (246, 248, 250)  # Soft Background #F6F8FA
 
 def rounded(x, y, x0, y0, x1, y1, r):
     if x < x0 or x > x1 or y < y0 or y > y1:
@@ -23,27 +26,32 @@ def rounded(x, y, x0, y0, x1, y1, r):
 def circle(x, y, cx, cy, r):
     return (x - cx) ** 2 + (y - cy) ** 2 <= r * r
 
-def pos_glyph(x, y, bg):
-    # A plate between a fork and a knife.
-    if circle(x, y, 0.5, 0.5, 0.2):
-        return bg if circle(x, y, 0.5, 0.5, 0.145) and not circle(x, y, 0.5, 0.5, 0.125) else WHITE
-    if rounded(x, y, 0.205, 0.30, 0.235, 0.70, 0.015):  # fork handle
-        return WHITE
-    if 0.17 <= x <= 0.27 and 0.30 <= y <= 0.42:  # fork tines
-        if (0.17 <= x <= 0.19) or (0.21 <= x <= 0.23) or (0.25 <= x <= 0.27) or y >= 0.39:
-            return WHITE
-    if rounded(x, y, 0.765, 0.30, 0.805, 0.70, 0.02):  # knife
-        return WHITE
-    return None
+def near_segment(x, y, ax, ay, bx, by, r):
+    dx, dy = bx - ax, by - ay
+    t = max(0.0, min(1.0, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)))
+    px, py = ax + t * dx, ay + t * dy
+    return (x - px) ** 2 + (y - py) ** 2 <= r * r
 
-def kds_glyph(x, y, bg):
-    # A kitchen ticket: a white card with three lines.
-    if rounded(x, y, 0.30, 0.22, 0.70, 0.78, 0.04):
-        for top, right in ((0.33, 0.62), (0.45, 0.62), (0.57, 0.52)):
-            if rounded(x, y, 0.38, top, right, top + 0.05, 0.02):
-                return bg
-        return WHITE
-    return None
+# The symbol as drawn in components/brand/zitas-logo.tsx (viewBox 0..100), placed in the
+# middle 64 % of the icon.
+Z_POINTS = [(17, 21), (70, 21), (21, 79), (62, 79)]
+STROKE = 7.5
+DOT = (82, 79, 9.5)
+
+def z_glyph(z_color):
+    def glyph(x, y, bg):
+        u = (x - 0.18) / 0.64 * 100
+        v = (y - 0.18) / 0.64 * 100 + 0  # vertical centre of the mark
+        if circle(u, v, DOT[0], DOT[1], DOT[2]):
+            return TEAL
+        for (ax, ay), (bx, by) in zip(Z_POINTS, Z_POINTS[1:]):
+            if near_segment(u, v, ax, ay, bx, by, STROKE):
+                return z_color
+        return None
+    return glyph
+
+pos_glyph = z_glyph(WHITE)
+kds_glyph = z_glyph(DEEP)
 
 def render(size, bg, glyph, maskable):
     ss = 4

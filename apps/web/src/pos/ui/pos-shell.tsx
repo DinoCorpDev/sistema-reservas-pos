@@ -29,6 +29,7 @@ import { SendConfirmDialog } from './send-confirm-dialog';
 import { TableNotices } from './table-notices';
 import { UnpairButton } from './unpair-button';
 import { UnsentDialog } from './unsent-dialog';
+import { ZitasMark } from '@/components/brand/zitas-logo';
 
 /** Permissions that open the cash screen: running a shift, moving cash or closing the day. */
 const CASH_PERMISSIONS = ['shift.open', 'shift.close', 'cash.movement', 'day.close'] as const;
@@ -92,7 +93,10 @@ export function PosShell() {
       <TrainingBand />
       <SubscriptionNotice />
       <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 max-md:min-h-14 md:static md:flex-wrap">
-        <span className="mr-2 hidden font-semibold md:inline">{location}</span>
+        <span className="mr-2 hidden items-center gap-2 font-semibold md:inline-flex">
+          <ZitasMark className="size-6" />
+          {location}
+        </span>
         <nav
           className={cn(
             'flex flex-wrap gap-1',

@@ -70,7 +70,7 @@ export function SetupChecklist({
           className="h-2.5 w-full overflow-hidden rounded-full bg-muted"
         >
           <div
-            className={checklist.complete ? 'h-full bg-success' : 'h-full bg-primary'}
+            className={checklist.complete ? 'h-full bg-success' : 'h-full bg-brand'}
             style={{ width: `${percent}%` }}
           />
         </div>

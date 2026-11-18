@@ -23,6 +23,7 @@ import {
 } from '../actions';
 import { useNow, useStationBoard } from '../board';
 import { type TicketActions, TicketCard } from './ticket-card';
+import { ZitasMark } from '@/components/brand/zitas-logo';
 
 /**
  * The kitchen display of one station (RF-C20…RF-C28): the open tickets oldest first, a notice
@@ -119,6 +120,7 @@ export function KdsShell() {
     <Tabs defaultValue="open" className="flex min-h-dvh flex-col gap-0">
       <TrainingBand />
       <header className="flex flex-wrap items-center gap-3 border-b bg-card px-3 py-2">
+        <ZitasMark className="size-7" />
         <h1 className="text-xl font-bold" data-testid="kds-station">
           {station.name}
         </h1>

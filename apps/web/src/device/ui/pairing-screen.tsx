@@ -15,6 +15,7 @@ import {
 } from '../boot';
 import { ErrorDialog } from './error-dialog';
 import { NumPad } from './num-pad';
+import { ZitasLogo } from '@/components/brand/zitas-logo';
 
 const MAX_PIN = 6;
 
@@ -30,6 +31,7 @@ export function PairingScreen() {
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 p-6 max-sm:justify-start max-sm:p-0">
       <Card className="max-sm:min-h-dvh max-sm:rounded-none max-sm:border-0 max-sm:shadow-none">
         <CardHeader>
+          <ZitasLogo size="sm" className="mb-3" />
           <CardTitle>{t('title')}</CardTitle>
           {!pinStep && <CardDescription>{t('description')}</CardDescription>}
         </CardHeader>

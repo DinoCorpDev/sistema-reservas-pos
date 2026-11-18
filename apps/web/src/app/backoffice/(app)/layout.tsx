@@ -10,6 +10,7 @@ import { BackofficeNav } from '@/components/backoffice/nav';
 import { MoneyProvider } from '@/components/money';
 import { TopBar } from '@/components/backoffice/top-bar';
 import { currentActor, deps } from '@/server/actor';
+import { ZitasLogo } from '@/components/brand/zitas-logo';
 
 /** Backoffice shell (RF-F21): navigation by permission, location switch, language and account. */
 export default async function BackofficeAppLayout({ children }: { children: ReactNode }) {
@@ -32,7 +33,8 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
     <div className="flex min-h-dvh">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto border-r bg-card p-4 lg:flex print:hidden">
         <Link href="/backoffice" className="px-3 text-lg font-semibold">
-          {t('app.name')}
+          <span className="sr-only">{t('app.name')}</span>
+          <ZitasLogo />
         </Link>
         <BackofficeNav permissions={permissions} />
         <p className="mt-auto px-3 text-xs text-muted-foreground">

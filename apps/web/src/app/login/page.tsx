@@ -7,6 +7,7 @@ import { auth } from '@/auth';
 import { LanguagePicker } from '@/components/language-picker';
 import { LoginForm } from '@/components/login-form';
 import { loginUser, setLoginLanguage } from './actions';
+import { ZitasLogo } from '@/components/brand/zitas-logo';
 
 export const metadata: Metadata = { title: 'Login' };
 
@@ -17,7 +18,10 @@ export default async function LoginPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 p-6">
       <div className="flex items-center justify-between gap-4">
-        <p className="font-semibold">{t('app.name')}</p>
+        <p>
+          <span className="sr-only">{t('app.name')}</span>
+          <ZitasLogo />
+        </p>
         <LanguagePicker onChange={setLoginLanguage} label={t('nav.language')} />
       </div>
       <Card>

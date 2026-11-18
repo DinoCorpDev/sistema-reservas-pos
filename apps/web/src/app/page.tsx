@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { LanguagePicker } from '@/components/language-picker';
 import { setLoginLanguage } from './login/actions';
+import { ZitasLogo } from '@/components/brand/zitas-logo';
 
 const MODULES = [
   { key: 'pos', href: '/pos' },
@@ -21,7 +22,10 @@ export default async function HomePage() {
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col justify-center gap-8 p-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
-          <h1 className="text-4xl font-semibold">{t('app.name')}</h1>
+          <h1 className="text-4xl font-semibold">
+            <span className="sr-only">{t('app.name')}</span>
+            <ZitasLogo size="lg" />
+          </h1>
           <p className="text-lg text-muted-foreground">{t('app.tagline')}</p>
         </div>
         <LanguagePicker onChange={setLoginLanguage} label={t('nav.language')} />

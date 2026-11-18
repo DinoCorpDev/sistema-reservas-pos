@@ -5,46 +5,61 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Design tokens (shadcn/ui convention). Neutral palette until the brand is defined. */
+/*
+ * Design tokens (shadcn/ui convention) in the Zitas palette (brandbook V3.0, DEC-049):
+ * Deep Intelligence #0B0F19, Zitas Teal #20B8BD, Soft Ice #E6EBEF, Soft Background #F6F8FA;
+ * support: Coral #FF6B5B, Yellow #FFCB57, Mint #B6E6D9, Warm Sand #F7F4EA.
+ * Primary actions are Deep Intelligence with white text (teal with white text does not reach
+ * a readable contrast); teal is the accent: the dot, focus, active and highlighted things.
+ */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.18 0.01 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.01 260);
-  --primary: oklch(0.45 0.16 260);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.96 0.005 260);
-  --secondary-foreground: oklch(0.25 0.01 260);
-  --muted: oklch(0.96 0.005 260);
-  --muted-foreground: oklch(0.5 0.01 260);
-  --accent: oklch(0.95 0.01 260);
-  --accent-foreground: oklch(0.25 0.01 260);
-  --destructive: oklch(0.58 0.22 27);
-  --success: oklch(0.6 0.15 150);
-  --warning: oklch(0.78 0.16 75);
-  --border: oklch(0.91 0.005 260);
-  --input: oklch(0.91 0.005 260);
-  --ring: oklch(0.6 0.12 260);
+  --radius: 0.75rem;
+  --background: #f6f8fa;
+  --foreground: #0b0f19;
+  --card: #ffffff;
+  --card-foreground: #0b0f19;
+  --primary: #0b0f19;
+  --primary-foreground: #ffffff;
+  --secondary: #e6ebef;
+  --secondary-foreground: #0b0f19;
+  --muted: #eef2f5;
+  --muted-foreground: #5b6474;
+  --accent: #e3f5f5;
+  --accent-foreground: #0b0f19;
+  --destructive: #d93f30;
+  --success: #1f9d6b;
+  --warning: #ffcb57;
+  --border: #e1e7ec;
+  --input: #d7dee5;
+  --ring: #20b8bd;
+  /* The brand accent: the dot, active items, highlights; strong = teal readable as text. */
+  --brand: #20b8bd;
+  --brand-strong: #0e7f83;
+  --brand-foreground: #0b0f19;
+  --brand-soft: #e3f5f5;
 }
 
 .dark {
-  --background: oklch(0.16 0.01 260);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.2 0.01 260);
-  --card-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.7 0.14 260);
-  --primary-foreground: oklch(0.16 0.01 260);
-  --secondary: oklch(0.27 0.01 260);
-  --secondary-foreground: oklch(0.97 0 0);
-  --muted: oklch(0.27 0.01 260);
-  --muted-foreground: oklch(0.7 0.01 260);
-  --accent: oklch(0.3 0.01 260);
-  --accent-foreground: oklch(0.97 0 0);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.55 0.1 260);
+  --background: #0b0f19;
+  --foreground: #f6f8fa;
+  --card: #131a28;
+  --card-foreground: #f6f8fa;
+  --primary: #20b8bd;
+  --primary-foreground: #0b0f19;
+  --secondary: #1d2535;
+  --secondary-foreground: #f6f8fa;
+  --muted: #1a2130;
+  --muted-foreground: #a3adbd;
+  --accent: #16343a;
+  --accent-foreground: #f6f8fa;
+  --destructive: #ff6b5b;
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 16%);
+  --ring: #20b8bd;
+  --brand: #20b8bd;
+  --brand-strong: #4fd3d7;
+  --brand-foreground: #0b0f19;
+  --brand-soft: #16343a;
 }
 
 @theme inline {
@@ -66,6 +81,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  /* Inter for the interface, Chakra Petch for the brand (set by the app's font loader). */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-brand: var(--font-chakra), var(--font-inter), ui-sans-serif, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
