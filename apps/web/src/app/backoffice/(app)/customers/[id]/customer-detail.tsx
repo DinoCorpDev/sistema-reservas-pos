@@ -184,7 +184,7 @@ export function CustomerDetail({
                   {t('consentVersion')} {item.textVersion}
                 </p>
                 <details className="text-sm">
-                  <summary className="flex min-h-11 cursor-pointer items-center font-medium text-primary">
+                  <summary className="flex min-h-11 cursor-pointer items-center font-medium text-brand-strong">
                     {t('showText')}
                   </summary>
                   <p className="rounded-md bg-muted p-3 whitespace-pre-wrap">{item.textSnapshot}</p>

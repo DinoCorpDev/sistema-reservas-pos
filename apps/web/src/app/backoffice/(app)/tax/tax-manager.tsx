@@ -161,7 +161,7 @@ export function TaxManager({
   return (
     <div className="grid gap-6">
       <Alert variant="info" className="grid-cols-[auto_1fr] gap-x-3">
-        <InfoIcon className="row-span-2 size-5 text-primary" aria-hidden />
+        <InfoIcon className="row-span-2 size-5 text-brand-strong" aria-hidden />
         <AlertTitle>{t('frozenTitle')}</AlertTitle>
         <AlertDescription>
           {t('frozenText')}

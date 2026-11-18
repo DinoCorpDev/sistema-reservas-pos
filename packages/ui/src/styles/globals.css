@@ -9,34 +9,39 @@
  * Design tokens (shadcn/ui convention) in the Zitas palette (brandbook V3.0, DEC-049):
  * Deep Intelligence #0B0F19, Zitas Teal #20B8BD, Soft Ice #E6EBEF, Soft Background #F6F8FA;
  * support: Coral #FF6B5B, Yellow #FFCB57, Mint #B6E6D9, Warm Sand #F7F4EA.
- * Primary actions are Deep Intelligence with white text (teal with white text does not reach
- * a readable contrast); teal is the accent: the dot, focus, active and highlighted things.
+ * Primary actions are Zitas Teal with Deep Intelligence text (7.9:1; teal with white text
+ * would not be readable). The chrome — backoffice sidebar, POS, KDS and support bars — is Deep
+ * Intelligence, the brand's dark surface. Text in teal uses `brand-strong` (readable on white).
  */
 :root {
   --radius: 0.75rem;
-  --background: #f6f8fa;
+  --background: #f1f7f8;
   --foreground: #0b0f19;
   --card: #ffffff;
   --card-foreground: #0b0f19;
-  --primary: #0b0f19;
-  --primary-foreground: #ffffff;
+  --primary: #20b8bd;
+  --primary-foreground: #0b0f19;
   --secondary: #e6ebef;
   --secondary-foreground: #0b0f19;
-  --muted: #eef2f5;
-  --muted-foreground: #5b6474;
-  --accent: #e3f5f5;
+  --muted: #e9f0f3;
+  --muted-foreground: #556070;
+  --accent: #d9f2f3;
   --accent-foreground: #0b0f19;
   --destructive: #d93f30;
   --success: #1f9d6b;
   --warning: #ffcb57;
-  --border: #e1e7ec;
-  --input: #d7dee5;
+  --border: #dbe5ea;
+  --input: #cfdbe2;
   --ring: #20b8bd;
   /* The brand accent: the dot, active items, highlights; strong = teal readable as text. */
   --brand: #20b8bd;
   --brand-strong: #0e7f83;
   --brand-foreground: #0b0f19;
-  --brand-soft: #e3f5f5;
+  --brand-soft: #d9f2f3;
+  /* The dark chrome: sidebar and top bars. */
+  --chrome: #0b0f19;
+  --chrome-foreground: #f6f8fa;
+  --chrome-accent: rgb(32 184 189 / 18%);
 }
 
 .dark {
@@ -60,6 +65,9 @@
   --brand-strong: #4fd3d7;
   --brand-foreground: #0b0f19;
   --brand-soft: #16343a;
+  --chrome: #070a12;
+  --chrome-foreground: #f6f8fa;
+  --chrome-accent: rgb(32 184 189 / 22%);
 }
 
 @theme inline {
@@ -85,6 +93,9 @@
   --color-brand-strong: var(--brand-strong);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-soft: var(--brand-soft);
+  --color-chrome: var(--chrome);
+  --color-chrome-foreground: var(--chrome-foreground);
+  --color-chrome-accent: var(--chrome-accent);
   /* Inter for the interface, Chakra Petch for the brand (set by the app's font loader). */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-brand: var(--font-chakra), var(--font-inter), ui-sans-serif, sans-serif;

@@ -34,10 +34,13 @@ export function ZitasLogo({
   className,
   size = 'md',
   product = true,
+  onDark = false,
 }: {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   product?: boolean;
+  /** The negative logo, on Deep Intelligence (brandbook: «Logo en negativo»). */
+  onDark?: boolean;
 }) {
   const sizes = {
     sm: { mark: 'size-6', word: 'text-xl', product: 'text-[0.6rem] px-1.5 py-0.5' },
@@ -46,7 +49,10 @@ export function ZitasLogo({
   }[size];
   return (
     // Decorative: where it names the page, the caller adds the name for screen readers.
-    <span aria-hidden className={cn('inline-flex items-center gap-2', className)}>
+    <span
+      aria-hidden
+      className={cn('inline-flex items-center gap-2', onDark && 'text-white', className)}
+    >
       <ZitasMark className={sizes.mark} />
       <span className={cn('font-brand leading-none font-semibold tracking-tight', sizes.word)}>
         zitas
@@ -54,7 +60,8 @@ export function ZitasLogo({
       {product ? (
         <span
           className={cn(
-            'ml-1 rounded-full bg-brand-soft font-brand font-semibold tracking-wider text-brand-strong uppercase',
+            'ml-1 rounded-full font-brand font-semibold tracking-wider uppercase',
+            onDark ? 'bg-white/10 text-brand' : 'bg-brand-soft text-brand-strong',
             sizes.product,
           )}
         >

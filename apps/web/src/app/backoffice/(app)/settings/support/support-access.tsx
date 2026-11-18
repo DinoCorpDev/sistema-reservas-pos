@@ -70,7 +70,7 @@ export function SupportAccess({
               { icon: ClockIcon, text: t('how3') },
             ].map(({ icon: Icon, text }) => (
               <li key={text} className="flex items-start gap-3">
-                <Icon className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                <Icon className="mt-0.5 size-5 shrink-0 text-brand-strong" aria-hidden />
                 <span>{text}</span>
               </li>
             ))}

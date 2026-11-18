@@ -74,7 +74,9 @@ export function PosShell() {
     cn(
       'relative gap-2',
       'max-md:h-16 max-md:flex-col max-md:gap-0.5 max-md:rounded-none max-md:px-1 max-md:text-xs',
-      active && 'bg-accent max-md:bg-transparent max-md:text-primary',
+      'md:text-chrome-foreground/80 md:hover:bg-white/10 md:hover:text-chrome-foreground',
+      active &&
+        'md:bg-primary md:text-primary-foreground md:hover:bg-primary/90 md:hover:text-primary-foreground max-md:text-brand-strong',
     );
   const badge = (group: ServiceGroup) => (
     <ReadyBadge
@@ -92,7 +94,7 @@ export function PosShell() {
     <div className="flex min-h-dvh flex-col">
       <TrainingBand />
       <SubscriptionNotice />
-      <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 max-md:min-h-14 md:static md:flex-wrap">
+      <header className="sticky top-0 z-20 flex items-center gap-2 bg-chrome px-3 py-2 text-chrome-foreground max-md:min-h-14 md:static md:flex-wrap">
         <span className="mr-2 hidden items-center gap-2 font-semibold md:inline-flex">
           <ZitasMark className="size-6" />
           {location}
@@ -100,7 +102,7 @@ export function PosShell() {
         <nav
           className={cn(
             'flex flex-wrap gap-1',
-            'max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:grid max-md:gap-0 max-md:border-t max-md:bg-card max-md:pb-[env(safe-area-inset-bottom)] max-md:shadow-[0_-1px_8px_rgb(0_0_0/0.06)]',
+            'max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:grid max-md:gap-0 max-md:border-t max-md:bg-card max-md:pb-[env(safe-area-inset-bottom)] max-md:text-foreground max-md:shadow-[0_-1px_8px_rgb(0_0_0/0.06)]',
             canCash ? 'max-md:grid-cols-5' : 'max-md:grid-cols-4',
             inOrder && 'max-md:hidden',
           )}
@@ -148,7 +150,7 @@ export function PosShell() {
             </Button>
           )}
         </nav>
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:ml-auto md:flex-none md:gap-3">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:ml-auto md:flex-none md:gap-3 [&_[data-slot=button]]:border-white/15 [&_[data-slot=button]]:bg-white/5 [&_[data-slot=button]]:text-chrome-foreground [&_[data-slot=button]:hover]:bg-white/15 [&_[data-slot=button]:hover]:text-chrome-foreground">
           {drawer && (
             <Button variant="outline" className="gap-2" onClick={() => void drawerOpen()}>
               <Archive /> <span className="max-md:sr-only">{t('drawer')}</span>

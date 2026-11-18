@@ -66,7 +66,7 @@ export function CounterView({ channel }: { channel: CounterChannel }) {
             type="button"
             disabled={opening}
             onClick={() => void openNew()}
-            className="flex min-h-32 w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/50 bg-primary/5 p-4 text-lg font-semibold text-primary transition-colors outline-none hover:bg-primary/10 focus-visible:ring-[3px] focus-visible:ring-ring/50 active:bg-primary/15 disabled:opacity-60"
+            className="flex min-h-32 w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/50 bg-primary/5 p-4 text-lg font-semibold text-brand-strong transition-colors outline-none hover:bg-primary/10 focus-visible:ring-[3px] focus-visible:ring-ring/50 active:bg-primary/15 disabled:opacity-60"
           >
             <Plus className="size-10" aria-hidden />
             {t('newOrder')}

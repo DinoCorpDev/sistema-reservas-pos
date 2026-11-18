@@ -21,7 +21,7 @@ export const buttonVariants = cva(
         destructive:
           'bg-destructive text-white hover:bg-destructive/90 active:bg-destructive/80 focus-visible:ring-destructive/40',
         ghost: 'hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
-        link: 'text-primary underline-offset-4 hover:underline',
+        link: 'text-brand-strong underline-offset-4 hover:underline',
       },
       size: {
         default: 'min-h-11 px-4 py-2',

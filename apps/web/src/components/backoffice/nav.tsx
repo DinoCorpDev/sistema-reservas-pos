@@ -104,9 +104,12 @@ const SECTIONS: NavItem[][] = [
 export function BackofficeNav({
   permissions,
   onNavigate,
+  tone = 'light',
 }: {
   permissions: string[];
   onNavigate?: () => void;
+  /** `dark` in the Deep Intelligence sidebar; `light` in the mobile menu. */
+  tone?: 'light' | 'dark';
 }) {
   const t = useTranslations('nav');
   const th = useTranslations('navHint');
@@ -139,11 +142,28 @@ export function BackofficeNav({
                     onClick={onNavigate}
                     aria-current={isActive(href) ? 'page' : undefined}
                     className={cn(
-                      'flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors hover:bg-accent',
-                      isActive(href) && 'bg-accent text-accent-foreground',
+                      'flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors',
+                      tone === 'dark'
+                        ? 'text-chrome-foreground/75 hover:bg-white/5 hover:text-chrome-foreground'
+                        : 'hover:bg-accent',
+                      isActive(href) &&
+                        (tone === 'dark'
+                          ? 'bg-chrome-accent text-chrome-foreground'
+                          : 'bg-accent text-accent-foreground'),
                     )}
                   >
-                    <Icon className="size-5 shrink-0 text-muted-foreground" />
+                    <Icon
+                      className={cn(
+                        'size-5 shrink-0',
+                        isActive(href)
+                          ? tone === 'dark'
+                            ? 'text-brand'
+                            : 'text-brand-strong'
+                          : tone === 'dark'
+                            ? 'text-chrome-foreground/55'
+                            : 'text-muted-foreground',
+                      )}
+                    />
                     {t(key)}
                   </Link>
                 </Tooltip>

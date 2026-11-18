@@ -16,16 +16,20 @@ export default async function SupportConsoleLayout({ children }: { children: Rea
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
+      <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 bg-chrome px-4 text-chrome-foreground">
         <ZitasMark className="size-7" />
         <span className="font-semibold">{t('title')}</span>
         <ConsoleNav />
         <div className="ml-auto flex items-center gap-3">
-          <span className="hidden text-sm text-muted-foreground sm:inline">
+          <span className="hidden text-sm text-chrome-foreground/60 sm:inline">
             {t('signedInAs', { name: session.user.name ?? '' })}
           </span>
           <form action={logoutStaff}>
-            <Button type="submit" variant="ghost">
+            <Button
+              type="submit"
+              variant="ghost"
+              className="hover:bg-white/10 hover:text-chrome-foreground"
+            >
               <LogOutIcon /> {t('logout')}
             </Button>
           </form>

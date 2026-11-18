@@ -119,7 +119,7 @@ export function KdsShell() {
   return (
     <Tabs defaultValue="open" className="flex min-h-dvh flex-col gap-0">
       <TrainingBand />
-      <header className="flex flex-wrap items-center gap-3 border-b bg-card px-3 py-2">
+      <header className="flex flex-wrap items-center gap-3 bg-chrome px-3 py-2 text-chrome-foreground [&_[data-slot=button]]:border-white/15 [&_[data-slot=button]]:bg-white/5 [&_[data-slot=button]]:text-chrome-foreground [&_[data-slot=button]:hover]:bg-white/15 [&_[data-slot=button]:hover]:text-chrome-foreground">
         <ZitasMark className="size-7" />
         <h1 className="text-xl font-bold" data-testid="kds-station">
           {station.name}

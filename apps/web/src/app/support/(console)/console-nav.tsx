@@ -25,8 +25,9 @@ export function ConsoleNav() {
             href={link.href}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'flex min-h-11 items-center rounded-lg px-3 text-sm font-medium hover:bg-accent',
-              active && 'bg-accent text-accent-foreground',
+              'flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-chrome-foreground/75 hover:bg-white/10 hover:text-chrome-foreground',
+              active &&
+                'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
             )}
           >
             {t(link.key)}
