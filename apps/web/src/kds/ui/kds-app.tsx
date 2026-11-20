@@ -36,8 +36,9 @@ export function KdsApp() {
   const station = fixedId
     ? (bootstrap?.stations.find((s) => s.id === fixedId) ?? null)
     : (choosable.find((s) => s.id === chosenId) ?? null);
+  const lockLanguage = usePos((state) => state.lockLanguage);
   const language = asDeviceLanguage(
-    user?.uiLanguage ?? bootstrap?.location.kitchenLanguage ?? chosenLanguage(),
+    user?.uiLanguage ?? lockLanguage ?? bootstrap?.location.kitchenLanguage ?? chosenLanguage(),
   );
   const [messages, setMessages] = useState<{ language: string; messages: Messages } | null>(null);
 

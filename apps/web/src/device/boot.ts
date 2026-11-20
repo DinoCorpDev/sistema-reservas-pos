@@ -27,11 +27,12 @@ export async function bootDevice(): Promise<void> {
   // A new version is offered by the update banner on every screen.
   void registerPosWorker();
   await loadClock();
-  const [device, bootstrap, credentials, revoked] = await Promise.all([
+  const [device, bootstrap, credentials, revoked, lockLanguage] = await Promise.all([
     getMeta('device'),
     getMeta('bootstrap'),
     getMeta('credentials'),
     getMeta('revoked'),
+    getMeta('lockLanguage'),
   ]);
   // A waiter's phone unpaired in the backoffice keeps nothing of the shift once the cloud has
   // all of it: it starts over at the pairing screen (DEC-036).
@@ -46,6 +47,7 @@ export async function bootDevice(): Promise<void> {
     credentials: credentials ?? null,
     // Deactivated in the backoffice: a reload does not bring the screens back (DEC-035).
     revoked: revoked !== undefined,
+    lockLanguage: lockLanguage ?? null,
   });
   await refold();
   // Another tab of this app on the device may record operations too (engine.ts).

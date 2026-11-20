@@ -9,10 +9,9 @@ import {
   DropdownMenuTrigger,
 } from '@pos/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { asDeviceLanguage, DEVICE_LANGUAGES } from '../i18n';
 import { chooseLanguage } from '../language';
-import { usePos } from '../store';
 
 /** Each language in its own words, so anyone finds theirs whatever the screen shows now. */
 const NATIVE_NAMES: Record<(typeof DEVICE_LANGUAGES)[number], string> = {
@@ -23,10 +22,13 @@ const NATIVE_NAMES: Record<(typeof DEVICE_LANGUAGES)[number], string> = {
   es: 'Español',
 };
 
-/** The globe next to the person's name: their own language on this device (RF-A08). */
+/**
+ * The globe next to the person's name (their own language on this device) and on the PIN screen
+ * (the language of that screen on this device) (RF-A08).
+ */
 export function LanguageMenu() {
   const t = useTranslations('pos.language');
-  const current = usePos((state) => asDeviceLanguage(state.user?.uiLanguage));
+  const current = asDeviceLanguage(useLocale());
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

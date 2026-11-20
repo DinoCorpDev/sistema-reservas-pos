@@ -57,6 +57,8 @@ export interface PosState {
    * with the presence and is cleared when the display locks.
    */
   kitchenStationId: string | null;
+  /** Language of the PIN screen chosen on this device; null keeps the location's (RF-A08). */
+  lockLanguage: string | null;
 }
 
 /**
@@ -76,6 +78,7 @@ export const usePos = create<PosState>(() => ({
   presence: null,
   revoked: false,
   kitchenStationId: null,
+  lockLanguage: null,
 }));
 
 export const getPos = () => usePos.getState();

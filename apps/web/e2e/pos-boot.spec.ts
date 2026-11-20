@@ -31,3 +31,16 @@ test('pairs, unlocks with a PIN and keeps working offline', async ({ page, conte
   await expect(page.getByTestId('sync-level')).toHaveAttribute('data-level', 'standalone');
   await context.setOffline(false);
 });
+
+/** The globe of the PIN screen switches that screen's language on this device (RF-A08). */
+test('the PIN screen has its own language', async ({ page }) => {
+  await pairPos(page);
+  await page.getByTestId('language-menu').click();
+  await page.getByRole('menuitemradio', { name: 'Español' }).click();
+  await expect(page.getByRole('heading', { name: 'Ingrese su PIN' })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Ingrese su PIN' })).toBeVisible();
+  await page.getByTestId('language-menu').click();
+  await page.getByRole('menuitemradio', { name: 'Deutsch' }).click();
+  await expect(page.getByRole('heading', { name: 'PIN eingeben' })).toBeVisible();
+});

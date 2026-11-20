@@ -9,6 +9,7 @@ import { usePos } from '../store';
 import { TrainingBand } from './training-band';
 import { APP_VERSION } from '../version';
 import { ErrorDialog } from './error-dialog';
+import { LanguageMenu } from './language-menu';
 import { NumPad } from './num-pad';
 import { StatusIndicator } from './status-indicator';
 import { ZitasLogo } from '@/components/brand/zitas-logo';
@@ -56,6 +57,10 @@ export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 p-6">
       <TrainingBand />
+      {/* Before the PIN: the language of this screen on this device (RF-A08). */}
+      <div className="fixed right-4 top-4">
+        <LanguageMenu />
+      </div>
       <div className="flex flex-col items-center gap-1 text-center">
         <ZitasLogo size="sm" className="mb-3" />
         <p className="text-lg font-semibold">{location}</p>

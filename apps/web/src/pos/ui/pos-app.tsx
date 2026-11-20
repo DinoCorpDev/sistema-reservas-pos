@@ -25,8 +25,9 @@ export function PosApp() {
   const bootstrap = usePos((state) => state.bootstrap);
   const user = usePos((state) => state.user);
   const revoked = usePos((state) => state.revoked);
+  const lockLanguage = usePos((state) => state.lockLanguage);
   const language = asDeviceLanguage(
-    user?.uiLanguage ?? bootstrap?.location.defaultLanguage ?? chosenLanguage(),
+    user?.uiLanguage ?? lockLanguage ?? bootstrap?.location.defaultLanguage ?? chosenLanguage(),
   );
   const [messages, setMessages] = useState<{ language: string; messages: Messages } | null>(null);
 

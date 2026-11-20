@@ -53,6 +53,8 @@ export interface MetaValues {
   revoked: { at: string };
   /** Language each person chose on this device, by user id (RF-A08). */
   languages: Record<string, string>;
+  /** Language of the PIN screen on this device, chosen with its globe (RF-A08). */
+  lockLanguage: string;
 }
 
 export type MetaKey = keyof MetaValues;
