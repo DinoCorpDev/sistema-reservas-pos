@@ -33,6 +33,8 @@ export const PERMISSIONS = [
   'catalog.manage',
   'catalog.price_change',
   'tax.manage',
+  /** Raw materials, recipes and stock movements (DEC-051). */
+  'inventory.manage',
   // floor, reservations and customers
   'reservation.checkin',
   'reservation.manage',

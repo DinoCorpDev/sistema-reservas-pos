@@ -13,7 +13,7 @@ describe('EVENT_TYPES (section 16)', () => {
   });
 
   it('covers every event listed in the requirements document', () => {
-    expect(EVENT_TYPES).toHaveLength(36);
+    expect(EVENT_TYPES).toHaveLength(38);
     for (const type of [
       'order.created',
       'order.split',

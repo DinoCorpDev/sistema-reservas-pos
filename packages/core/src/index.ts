@@ -18,6 +18,7 @@ export * from './shared/csv';
 
 export * from './organization';
 export * from './catalog';
+export * from './inventory';
 export * from './tax';
 export * from './tables';
 export * from './orders';

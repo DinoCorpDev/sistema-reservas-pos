@@ -38,6 +38,8 @@ export const EVENT_TYPES = [
   'catalog.product_updated',
   'catalog.product_sold_out',
   'catalog.product_available',
+  'inventory.movement_recorded',
+  'inventory.recipe_changed',
   'tax.rule_changed',
   'sync.conflict_detected',
   'device.offline',

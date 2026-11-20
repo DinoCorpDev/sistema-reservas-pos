@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from '../shared/schema';
 import { CONTENT_LANGUAGES, UI_LANGUAGES } from '../shared/languages';
 import { QR_MODES } from '../tables/constants';
 import { CREATABLE_TERMINAL_TYPES, PRINTER_KINDS, PRINTER_PROTOCOLS } from './constants';
@@ -59,24 +60,6 @@ export function locationFieldProblems(
 const text = (max: number) => z.string().trim().min(1).max(max);
 const optionalText = (max: number) => z.string().trim().max(max).nullable().optional();
 const hhmm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Expected HH:MM');
-
-type WithoutDefaults<T extends z.ZodRawShape> = {
-  [K in keyof T]: T[K] extends z.ZodDefault<infer Inner> ? Inner : T[K];
-};
-
-/**
- * PATCH schema of a create schema: every field optional and WITHOUT its default. Zod 4 keeps
- * inner defaults under `.partial()`, which would silently reset omitted fields on update.
- */
-function patchOf<T extends z.ZodRawShape>(schema: z.ZodObject<T>) {
-  const shape = Object.fromEntries(
-    Object.entries(schema.shape).map(([key, field]) => [
-      key,
-      field instanceof z.ZodDefault ? field.unwrap() : field,
-    ]),
-  ) as WithoutDefaults<T>;
-  return z.object(shape).partial();
-}
 
 export const openingHoursSchema = z.partialRecord(
   z.enum(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']),
