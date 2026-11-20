@@ -272,6 +272,9 @@
     },
     "approval": {
       "grant": "Autorizzare azioni con PIN (responsabile)"
+    },
+    "inventory": {
+      "manage": "Gestire inventario e ricette"
     }
   },
   "apiKeys": {

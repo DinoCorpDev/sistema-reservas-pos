@@ -1,0 +1,110 @@
+{
+  "inventory": {
+    "title": "Inventory",
+    "description": "Raw materials, how much is left and what is running low. Every sale takes its recipe when it goes to the kitchen.",
+    "list": "Raw materials",
+    "listHint": "Those at or under their alert level come first, in red.",
+    "new": "New raw material",
+    "edit": "Edit raw material",
+    "empty": "No raw materials yet. Create the first one, for example «Beef» in kilos.",
+    "noLocation": "Choose a location above to see the stock.",
+    "recipes": "Recipes",
+    "unit": "Measured in",
+    "units": {
+      "g": "Weight (g and kg)",
+      "ml": "Volume (ml and l)",
+      "unit": "Pieces"
+    },
+    "unitShort": {
+      "kg": "kg",
+      "g": "g",
+      "l": "l",
+      "ml": "ml",
+      "unit": "pcs"
+    },
+    "unitFixed": "The unit cannot be changed later.",
+    "onHand": "Stock",
+    "threshold": "Alert at",
+    "thresholdHint": "At this amount or less it shows «Running low». Leave empty for no alert.",
+    "noThreshold": "No alert",
+    "state": {
+      "low": "Running low",
+      "ok": "OK",
+      "inactive": "Inactive"
+    },
+    "saved": "Raw material saved",
+    "deleteTitle": "Delete «{name}»?",
+    "deleteText": "It is hidden; its movements stay in the history.",
+    "inUse": "A recipe uses this raw material. Remove it from the recipe or deactivate it.",
+    "deleted": "Raw material deleted",
+    "invalidQuantity": "Type a number, for example 19.5.",
+    "card": {
+      "label": "Running low",
+      "detail": "{count, plural, =0 {Nothing running low} one {raw material at its alert level} other {raw materials at their alert level}}"
+    },
+    "movement": {
+      "title": "{kind}: {name}",
+      "kinds": {
+        "purchase": "Purchase",
+        "waste": "Waste",
+        "adjustment": "Adjustment",
+        "count": "Count"
+      },
+      "hints": {
+        "purchase": "What came from the supplier. Added to the stock.",
+        "waste": "What was lost: expired, damaged, dropped. Taken from the stock.",
+        "adjustment": "Corrects the stock. Use a negative number to subtract.",
+        "count": "What there is now according to a physical count. The system stores the difference."
+      },
+      "quantity": "Quantity",
+      "note": "Note",
+      "notePlaceholder": "Supplier, invoice, reason…",
+      "save": "Record",
+      "recorded": "Movement recorded",
+      "now": "Current stock: {quantity}"
+    },
+    "history": {
+      "title": "History of «{name}»",
+      "back": "Back to inventory",
+      "movements": "Movements",
+      "movementsHint": "Purchases, waste, adjustments and counts, newest first.",
+      "noMovements": "No movements yet.",
+      "days": "Use per day",
+      "daysHint": "What sales and kitchen waste (voided dishes already prepared) took.",
+      "noDays": "Nothing with this raw material has been sold yet.",
+      "date": "Date",
+      "kind": "Kind",
+      "change": "Change",
+      "counted": "Counted",
+      "by": "By",
+      "note": "Note",
+      "sold": "Sales",
+      "wasted": "Kitchen waste"
+    }
+  },
+  "recipes": {
+    "title": "Recipes",
+    "description": "How much of each raw material every dish uses. When a dish goes to the kitchen, it is taken from the inventory.",
+    "products": "Products",
+    "productsHint": "A variant with its own recipe replaces the product's; without one it uses the product's.",
+    "modifiers": "Modifier options",
+    "modifiersHint": "Added to the dish's recipe, for example «extra fries».",
+    "noRecipe": "No recipe",
+    "usesProduct": "Same as product",
+    "onlyMissing": "Only without recipe",
+    "missing": "{count, plural, one {# product without recipe} other {# products without recipe}}",
+    "edit": "Edit recipe",
+    "dialogTitle": "Recipe of «{name}»",
+    "dialogHint": "Amounts for one unit sold. Changes apply from now on: what was sold stays.",
+    "ingredient": "Raw material",
+    "quantity": "Quantity",
+    "addLine": "Add raw material",
+    "removeLine": "Remove",
+    "chooseIngredient": "Choose…",
+    "noIngredients": "Create raw materials in Inventory first.",
+    "saved": "Recipe saved",
+    "empty": "The catalog has no products.",
+    "noModifiers": "No modifier options.",
+    "search": "Search product…"
+  }
+}

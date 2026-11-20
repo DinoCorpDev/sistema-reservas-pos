@@ -1,0 +1,110 @@
+{
+  "inventory": {
+    "title": "Inventar",
+    "description": "Rohwaren, wie viel noch da ist und was knapp wird. Jeder Verkauf zieht sein Rezept ab, sobald er an die Küche geht.",
+    "list": "Rohwaren",
+    "listHint": "Was auf oder unter der Meldemenge ist, steht zuoberst und in Rot.",
+    "new": "Neue Rohware",
+    "edit": "Rohware bearbeiten",
+    "empty": "Noch keine Rohwaren. Erfassen Sie die erste, zum Beispiel «Rindfleisch» in Kilo.",
+    "noLocation": "Wählen Sie oben einen Standort, um den Bestand zu sehen.",
+    "recipes": "Rezepte",
+    "unit": "Gemessen in",
+    "units": {
+      "g": "Gewicht (g und kg)",
+      "ml": "Volumen (ml und l)",
+      "unit": "Stück"
+    },
+    "unitShort": {
+      "kg": "kg",
+      "g": "g",
+      "l": "l",
+      "ml": "ml",
+      "unit": "Stk."
+    },
+    "unitFixed": "Die Einheit lässt sich später nicht ändern.",
+    "onHand": "Bestand",
+    "threshold": "Melden bei",
+    "thresholdHint": "Ab dieser Menge oder weniger wird «Wird knapp» angezeigt. Leer lassen für keine Meldung.",
+    "noThreshold": "Keine Meldung",
+    "state": {
+      "low": "Wird knapp",
+      "ok": "Genug",
+      "inactive": "Inaktiv"
+    },
+    "saved": "Rohware gespeichert",
+    "deleteTitle": "«{name}» löschen?",
+    "deleteText": "Sie wird ausgeblendet; ihre Bewegungen bleiben im Verlauf.",
+    "inUse": "Ein Rezept verwendet diese Rohware. Entfernen Sie sie aus dem Rezept oder deaktivieren Sie sie.",
+    "deleted": "Rohware gelöscht",
+    "invalidQuantity": "Geben Sie eine Zahl ein, zum Beispiel 19,5.",
+    "card": {
+      "label": "Wird knapp",
+      "detail": "{count, plural, =0 {Nichts wird knapp} one {Rohware auf der Meldemenge} other {Rohwaren auf der Meldemenge}}"
+    },
+    "movement": {
+      "title": "{kind}: {name}",
+      "kinds": {
+        "purchase": "Einkauf",
+        "waste": "Verlust",
+        "adjustment": "Korrektur",
+        "count": "Inventur"
+      },
+      "hints": {
+        "purchase": "Was vom Lieferanten kam. Wird zum Bestand addiert.",
+        "waste": "Was verloren ging: abgelaufen, beschädigt, heruntergefallen. Wird abgezogen.",
+        "adjustment": "Korrigiert den Bestand. Negative Zahl zum Abziehen.",
+        "count": "Was laut Zählung jetzt da ist. Das System speichert die Differenz."
+      },
+      "quantity": "Menge",
+      "note": "Notiz",
+      "notePlaceholder": "Lieferant, Rechnung, Grund…",
+      "save": "Erfassen",
+      "recorded": "Bewegung erfasst",
+      "now": "Aktueller Bestand: {quantity}"
+    },
+    "history": {
+      "title": "Verlauf von «{name}»",
+      "back": "Zurück zum Inventar",
+      "movements": "Bewegungen",
+      "movementsHint": "Einkäufe, Verluste, Korrekturen und Inventuren, die neuesten zuerst.",
+      "noMovements": "Noch keine Bewegungen.",
+      "days": "Verbrauch pro Tag",
+      "daysHint": "Was Verkäufe und Küchenverlust (stornierte, schon zubereitete Gerichte) abgezogen haben.",
+      "noDays": "Mit dieser Rohware wurde noch nichts verkauft.",
+      "date": "Datum",
+      "kind": "Art",
+      "change": "Änderung",
+      "counted": "Gezählt",
+      "by": "Von",
+      "note": "Notiz",
+      "sold": "Verkäufe",
+      "wasted": "Küchenverlust"
+    }
+  },
+  "recipes": {
+    "title": "Rezepte",
+    "description": "Wie viel jedes Gericht von jeder Rohware braucht. Geht ein Gericht an die Küche, wird es vom Inventar abgezogen.",
+    "products": "Produkte",
+    "productsHint": "Eine Variante mit eigenem Rezept ersetzt das des Produkts; ohne Rezept gilt das des Produkts.",
+    "modifiers": "Optionen der Zusätze",
+    "modifiersHint": "Kommen zum Rezept des Gerichts dazu, zum Beispiel «Extraportion Pommes».",
+    "noRecipe": "Kein Rezept",
+    "usesProduct": "Wie das Produkt",
+    "onlyMissing": "Nur ohne Rezept",
+    "missing": "{count, plural, one {# Produkt ohne Rezept} other {# Produkte ohne Rezept}}",
+    "edit": "Rezept bearbeiten",
+    "dialogTitle": "Rezept von «{name}»",
+    "dialogHint": "Mengen für eine verkaufte Einheit. Änderungen gelten ab jetzt: Bereits Verkauftes bleibt.",
+    "ingredient": "Rohware",
+    "quantity": "Menge",
+    "addLine": "Rohware hinzufügen",
+    "removeLine": "Entfernen",
+    "chooseIngredient": "Wählen…",
+    "noIngredients": "Erfassen Sie zuerst Rohwaren im Inventar.",
+    "saved": "Rezept gespeichert",
+    "empty": "Der Katalog hat keine Produkte.",
+    "noModifiers": "Keine Optionen von Zusätzen.",
+    "search": "Produkt suchen…"
+  }
+}

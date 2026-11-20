@@ -272,6 +272,9 @@
     },
     "approval": {
       "grant": "Autorizar acciones con PIN (gerente)"
+    },
+    "inventory": {
+      "manage": "Gestionar inventario y recetas"
     }
   },
   "apiKeys": {

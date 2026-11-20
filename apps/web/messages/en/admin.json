@@ -309,6 +309,13 @@
     },
     "subscription": {
       "changed": "Subscription changed"
+    },
+    "inventory": {
+      "ingredient_created": "Raw material created",
+      "ingredient_updated": "Raw material changed",
+      "ingredient_deleted": "Raw material deleted",
+      "movement_recorded": "Stock movement",
+      "recipe_changed": "Recipe changed"
     }
   },
   "supportAccess": {

@@ -46,6 +46,7 @@ Cada módulo vive en `packages/core/src/<módulo>` y expone sus casos de uso. To
 | -------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------- | ---- |
 | `organization` | Organización, sedes, áreas, terminales, estaciones, impresoras, usuarios, roles, permisos, PIN, settings por sede        | RF-A01…A12            | 1    |
 | `catalog`      | Catálogo maestro, variantes, modificadores, alérgenos, origen, traducciones, disponibilidad, precios por canal, agotados | RF-B01…B18            | 1    |
+| `inventory`    | Materias primas, recetas por producto/variante/modificador, movimientos y consumo derivado de las ventas (DEC-051)       | Podría (post-piloto)  | 6    |
 | `tax`          | MWST con vigencia; tasa por categoría + canal + consumo; congelada en la línea                                           | RF-B12, B13, RN-01…07 | 1    |
 | `tables`       | Mapa, estado derivado, unir/separar/mover                                                                                | RF-C01…C06            | 2    |
 | `orders`       | Motor de órdenes offline, cursos, anulaciones, descuentos, dividir/transferir/unir, cierre automático                    | RF-C07…C19            | 2    |

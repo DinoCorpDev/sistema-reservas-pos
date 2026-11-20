@@ -551,6 +551,23 @@ Juan lo pidió (18 nov 2026): el gerente maneja el restaurante como el dueño y 
 - El dueño todavía puede limitar al gerente desde el backoffice, en «Personal» → roles.
 - Siguen protegidas las reglas que no dependen del rol: no se puede desactivar al único administrador, y las acciones sobre los umbrales de la sede siguen pidiendo la autorización con PIN.
 
+## DEC-051 · Inventario por receta
+
+Juan lo pidió (20 nov 2026): saber cuánta materia prima queda, que cada plato vendido descuente lo que gasta y que avise cuando algo baja de un nivel que él elige. El documento lo deja para después del piloto (línea 388: «Inventario por receta y costo por plato»), así que se adelanta como _Podría_ y sin el costo por plato.
+
+- **Materias primas** (`ingredients`): de la organización, con unidad fija (`g`, `ml` o `unit`) y un nivel de alerta opcional. Las cantidades son enteros en la unidad base (gramos, ml, piezas), igual que el dinero en rappen. En pantalla se ven en kg y l desde 1000.
+- **Recetas** (`recipe_lines`): cuánto gasta una unidad de un producto, de una variante o de una opción de modificador. Una variante con receta propia reemplaza la del producto; los modificadores se suman, por la cantidad elegida.
+- **Movimientos a mano** (`stock_movements`, append-only con triggers): compra, merma, ajuste y conteo. El conteo guarda la diferencia contra el stock calculado en ese momento.
+- **Consumo de las ventas** (`stock_consumptions`): una proyección más, escrita en `sync/push` junto a la de órdenes y en la misma transacción. Se calcula con `stockUsage()` de `@pos/core` sobre el fold completo y se escribe por (ítem, materia prima), así que repetir un push no cambia nada y una operación que llega tarde corrige el resultado.
+  - Venta: el ítem salió de `pending` (enviado a cocina o servido directo en la barra).
+  - Devuelto: anulado antes de empezar a prepararse; no resta.
+  - Merma: anulado ya en preparación, o con motivo «error de cocina» o «calidad» (las estaciones con solo impresora nunca dicen «preparando»).
+  - La receta se congela con la primera fila del ítem: cambiar una receta no reescribe lo vendido.
+- **Stock** = movimientos − ventas − merma, por sede. **Por agotarse** = stock en el nivel de alerta o por debajo: sale en rojo en Inventario y como tarjeta en el Resumen.
+- **Sin conexión:** la caja vende igual que siempre; el descuento ocurre en la nube cuando llegan las operaciones. El hub y los dispositivos no cambian.
+- Permiso nuevo `inventory.manage` (administrador y gerente; la migración 0025 se lo da a los existentes). Eventos `inventory.movement_recorded` e `inventory.recipe_changed`.
+- **Para después:** costo por plato y margen (precio en las compras), avisos por correo o WhatsApp, «agotado» automático en la caja cuando una materia prima llega a 0, y nivel de alerta distinto por sede.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

@@ -87,7 +87,9 @@
     "support_leave": "Lascia l’organizzazione",
     "reports": "Rapporti",
     "plan": "Il mio piano",
-    "help": "Guida"
+    "help": "Guida",
+    "inventory": "Inventario",
+    "recipes": "Ricette"
   },
   "auth": {
     "title": "Accesso",
@@ -259,6 +261,8 @@
     "account": "Il tuo utente: nome, password e lingua dell’interfaccia.",
     "reports": "Fatturato, IVA, mance, storni e tempi di un periodo, più le esportazioni per la contabilità, la fiduciaria e l’archivio.",
     "plan": "Piano, add-on, uso e prezzo mensile del vostro ristorante.",
-    "help": "Guide brevi per ogni ruolo, da leggere o stampare."
+    "help": "Guide brevi per ogni ruolo, da leggere o stampare.",
+    "inventory": "Materie prime, scorte e avvisi di ciò che sta finendo.",
+    "recipes": "Quanto usa ogni piatto di ogni materia prima."
   }
 }

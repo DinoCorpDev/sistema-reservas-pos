@@ -309,6 +309,13 @@
     },
     "subscription": {
       "changed": "Suscripción cambiada"
+    },
+    "inventory": {
+      "ingredient_created": "Materia prima creada",
+      "ingredient_updated": "Materia prima modificada",
+      "ingredient_deleted": "Materia prima eliminada",
+      "movement_recorded": "Movimiento de stock",
+      "recipe_changed": "Receta cambiada"
     }
   },
   "supportAccess": {

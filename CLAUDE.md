@@ -3,7 +3,7 @@
 POS para restaurantes en Suiza. El restaurante opera **mesa → pedido → cocina → pago → cierre**, 24/7 y **sin internet**. El Core POS es la única fuente de verdad y todo se expone por API. Zitas (otro repositorio) es solo una capa digital que lee y escribe en el Core por API: **no se reimplementa aquí**.
 
 - **Alcance:** `docs/requerimientos.txt` manda (126 RF, 23 RNF, 24 RN, 12 PA). El MVP es todo lo "Debe" de las secciones 7 a 14. Si algo no está en el documento, se propone la opción más simple que respete los principios y se marca como _Podría_.
-- **Fuera del MVP:** inventario, fidelización, nómina, delivery e integración directa con terminales de pago.
+- **Fuera del MVP:** fidelización, nómina, delivery e integración directa con terminales de pago. El inventario por receta se adelantó como _Podría_ (DEC-051), sin costos por plato.
 - **Documentos:** `docs/ARQUITECTURA.md` (cómo está hecho), `docs/DECISIONES.md` (decisiones DEC-xxx), `docs/TRAZABILIDAD.md` (estado de cada requerimiento), `docs/PROMPT_MAESTRO_POS.md` (encargo original y plan por fases).
 
 ## Forma de trabajar
@@ -16,7 +16,7 @@ POS para restaurantes en Suiza. El restaurante opera **mesa → pedido → cocin
 
 ## Principios no negociables (PA-01…PA-12)
 
-1. **Monolito modular + API-first.** Módulos en `packages/core`: `organization`, `catalog`, `tax`, `tables`, `orders`, `kitchen`, `payments`, `cash`, `receipts`, `customers`, `reservations`, `reports`, `audit`, `sync`. Cada función existe primero como caso de uso del dominio y como endpoint de la API, y después como pantalla. `packages/core` es puro: sin Next, React, Drizzle, mysql2, Hono, Dexie ni ws (lo vigila ESLint).
+1. **Monolito modular + API-first.** Módulos en `packages/core`: `organization`, `catalog`, `inventory`, `tax`, `tables`, `orders`, `kitchen`, `payments`, `cash`, `receipts`, `customers`, `reservations`, `reports`, `audit`, `sync`. Cada función existe primero como caso de uso del dominio y como endpoint de la API, y después como pantalla. `packages/core` es puro: sin Next, React, Drizzle, mysql2, Hono, Dexie ni ws (lo vigila ESLint).
 2. **Una sola fuente de verdad.** Productos, clientes, órdenes y pagos viven una vez, en el Core.
 3. **Offline-first en la sede.** Cada terminal guarda localmente (IndexedDB/Dexie) y sincroniza por cola. KDS e impresoras funcionan en la LAN sin nube. Tomar pedidos, enviar a cocina, cobrar en efectivo o con terminal independiente, imprimir y abrir/cerrar turno funcionan al menos 24 h sin conexión (RNF-02).
 4. **Pagos desacoplados.** El motor de órdenes no conoce al proveedor. Interfaz `PaymentAdapter` con `cash`, `external-terminal` y `online` (stub, DEC-003). Agregar un proveedor no toca órdenes ni caja.

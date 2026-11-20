@@ -1,0 +1,110 @@
+{
+  "inventory": {
+    "title": "Inventario",
+    "description": "Materia prima, cuánto queda y qué se está acabando. Cada venta descuenta su receta al enviarse a cocina.",
+    "list": "Materias primas",
+    "listHint": "Las que están en su nivel de alerta o por debajo salen primero, en rojo.",
+    "new": "Nueva materia prima",
+    "edit": "Editar materia prima",
+    "empty": "Todavía no hay materias primas. Cree la primera, por ejemplo «Carne de res» en kilos.",
+    "noLocation": "Elija una sede arriba para ver el stock.",
+    "recipes": "Recetas",
+    "unit": "Se mide en",
+    "units": {
+      "g": "Peso (g y kg)",
+      "ml": "Volumen (ml y l)",
+      "unit": "Unidades"
+    },
+    "unitShort": {
+      "kg": "kg",
+      "g": "g",
+      "l": "l",
+      "ml": "ml",
+      "unit": "uds."
+    },
+    "unitFixed": "La unidad no se puede cambiar después.",
+    "onHand": "Stock",
+    "threshold": "Avisar con",
+    "thresholdHint": "Cuando quede esta cantidad o menos, se marca «Por agotarse». Déjelo vacío para no avisar.",
+    "noThreshold": "Sin alerta",
+    "state": {
+      "low": "Por agotarse",
+      "ok": "Bien",
+      "inactive": "Inactiva"
+    },
+    "saved": "Materia prima guardada",
+    "deleteTitle": "¿Eliminar «{name}»?",
+    "deleteText": "Se oculta; sus movimientos quedan en el historial.",
+    "inUse": "Una receta usa esta materia prima. Quítela de la receta o desactívela.",
+    "deleted": "Materia prima eliminada",
+    "invalidQuantity": "Escriba un número, por ejemplo 19,5.",
+    "card": {
+      "label": "Por agotarse",
+      "detail": "{count, plural, =0 {Nada por agotarse} one {materia prima en su nivel de alerta} other {materias primas en su nivel de alerta}}"
+    },
+    "movement": {
+      "title": "{kind}: {name}",
+      "kinds": {
+        "purchase": "Compra",
+        "waste": "Merma",
+        "adjustment": "Ajuste",
+        "count": "Conteo"
+      },
+      "hints": {
+        "purchase": "Lo que llegó del proveedor. Se suma al stock.",
+        "waste": "Lo que se perdió: vencido, dañado, se cayó. Se resta del stock.",
+        "adjustment": "Corrige el stock. Use un número negativo para restar.",
+        "count": "Lo que hay ahora según el conteo físico. El sistema guarda la diferencia."
+      },
+      "quantity": "Cantidad",
+      "note": "Nota",
+      "notePlaceholder": "Proveedor, factura, motivo…",
+      "save": "Registrar",
+      "recorded": "Movimiento registrado",
+      "now": "Stock actual: {quantity}"
+    },
+    "history": {
+      "title": "Historial de «{name}»",
+      "back": "Volver al inventario",
+      "movements": "Movimientos",
+      "movementsHint": "Compras, mermas, ajustes y conteos, del más reciente al más antiguo.",
+      "noMovements": "Todavía no hay movimientos.",
+      "days": "Consumo por día",
+      "daysHint": "Lo que descontaron las ventas y la merma de cocina (platos anulados ya preparados).",
+      "noDays": "Todavía no se ha vendido nada con esta materia prima.",
+      "date": "Fecha",
+      "kind": "Tipo",
+      "change": "Cambio",
+      "counted": "Contado",
+      "by": "Por",
+      "note": "Nota",
+      "sold": "Ventas",
+      "wasted": "Merma de cocina"
+    }
+  },
+  "recipes": {
+    "title": "Recetas",
+    "description": "Cuánto gasta cada plato de cada materia prima. Al enviar un plato a cocina, se descuenta del inventario.",
+    "products": "Productos",
+    "productsHint": "Una variante con receta propia reemplaza la del producto; sin receta usa la del producto.",
+    "modifiers": "Opciones de modificadores",
+    "modifiersHint": "Se suman a la receta del plato, por ejemplo «porción extra de papas».",
+    "noRecipe": "Sin receta",
+    "usesProduct": "Usa la del producto",
+    "onlyMissing": "Solo sin receta",
+    "missing": "{count, plural, one {# producto sin receta} other {# productos sin receta}}",
+    "edit": "Editar receta",
+    "dialogTitle": "Receta de «{name}»",
+    "dialogHint": "Cantidades para una unidad vendida. Los cambios valen desde ahora: lo ya vendido no cambia.",
+    "ingredient": "Materia prima",
+    "quantity": "Cantidad",
+    "addLine": "Agregar materia prima",
+    "removeLine": "Quitar",
+    "chooseIngredient": "Elija…",
+    "noIngredients": "Primero cree materias primas en Inventario.",
+    "saved": "Receta guardada",
+    "empty": "No hay productos en el catálogo.",
+    "noModifiers": "No hay opciones de modificadores.",
+    "search": "Buscar producto…"
+  }
+}

@@ -87,7 +87,9 @@
     "support_leave": "Organisation verlassen",
     "reports": "Berichte",
     "plan": "Mein Plan",
-    "help": "Hilfe"
+    "help": "Hilfe",
+    "inventory": "Inventar",
+    "recipes": "Rezepte"
   },
   "auth": {
     "title": "Anmelden",
@@ -259,6 +261,8 @@
     "account": "Ihr Benutzer: Name, Passwort und Sprache der Oberfläche.",
     "reports": "Umsatz, MWST, Trinkgeld, Stornos und Zeiten eines Zeitraums, dazu die Exporte für Buchhaltung, Treuhand und Archiv.",
     "plan": "Plan, Add-ons, Nutzung und Monatspreis Ihres Restaurants.",
-    "help": "Kurzanleitungen für jede Rolle, zum Lesen oder Drucken."
+    "help": "Kurzanleitungen für jede Rolle, zum Lesen oder Drucken.",
+    "inventory": "Rohwaren, Bestand und Meldungen, was knapp wird.",
+    "recipes": "Wie viel jedes Gericht von jeder Rohware braucht."
   }
 }

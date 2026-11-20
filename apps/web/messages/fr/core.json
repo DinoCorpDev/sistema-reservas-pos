@@ -87,7 +87,9 @@
     "support_leave": "Quitter l’organisation",
     "reports": "Rapports",
     "plan": "Ma formule",
-    "help": "Aide"
+    "help": "Aide",
+    "inventory": "Inventaire",
+    "recipes": "Recettes"
   },
   "auth": {
     "title": "Connexion",
@@ -259,6 +261,8 @@
     "account": "Votre utilisateur : nom, mot de passe et langue de l’interface.",
     "reports": "Chiffre d’affaires, TVA, pourboires, annulations et temps d’une période, plus les exports pour la comptabilité, la fiduciaire et l’archive.",
     "plan": "Formule, options, utilisation et prix mensuel de votre restaurant.",
-    "help": "Guides courts pour chaque rôle, à lire ou à imprimer."
+    "help": "Guides courts pour chaque rôle, à lire ou à imprimer.",
+    "inventory": "Matières premières, stock et alertes de ce qui manque bientôt.",
+    "recipes": "Combien chaque plat utilise de chaque matière première."
   }
 }

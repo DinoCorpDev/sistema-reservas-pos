@@ -9,6 +9,7 @@ import { activateOperation } from '../services/admin/setup';
 import { onboardOrganization } from '../services/admin/support';
 import { createArea, createTable } from '../services/locations';
 import * as catalog from '../services/catalog';
+import * as inventory from '../services/inventory';
 import * as people from '../services/people';
 
 /**
@@ -49,6 +50,34 @@ const DEMO_ALLERGENS: Record<string, Allergen[]> = {
   'POSTRE-PANDEBONO': ['milk', 'eggs'],
   'POSTRE-TRES-LECHES': ['milk', 'eggs', 'gluten'],
   'POSTRE-OBLEA': ['milk', 'gluten'],
+};
+
+/** Raw materials of the demo: name, unit, alert level and the first purchase. */
+const DEMO_INGREDIENTS: [string, 'g' | 'ml' | 'unit', number, number][] = [
+  ['Café molido', 'g', 1_000, 5_000],
+  ['Leche', 'ml', 5_000, 20_000],
+  ['Huevos', 'unit', 30, 90],
+  ['Pechuga de pollo', 'g', 3_000, 8_000],
+  ['Papa criolla', 'g', 4_000, 10_000],
+  ['Queso campesino', 'g', 1_500, 4_000],
+  ['Masa de arepa', 'g', 2_000, 6_000],
+];
+
+/** Per unit sold, by SKU (`SKU:Variant` for a variant with its own recipe). */
+const DEMO_RECIPES: Record<string, Record<string, number>> = {
+  'CAFE-TINTO': { 'Café molido': 10 },
+  'CAFE-AMERICANO': { 'Café molido': 15 },
+  'CAFE-CAPUCHINO': { 'Café molido': 15, Leche: 150 },
+  'CAFE-CAPUCHINO:Grande': { 'Café molido': 20, Leche: 250 },
+  'CAFE-LATTE': { 'Café molido': 15, Leche: 200 },
+  'CAFE-PERICO': { 'Café molido': 10, Leche: 60 },
+  'DESAYUNO-HUEVOS-PERICOS': { Huevos: 3 },
+  'DESAYUNO-CALENTADO': { Huevos: 1, 'Masa de arepa': 100 },
+  'DESAYUNO-CHANGUA': { Leche: 250, Huevos: 1 },
+  'COMER-AREPA-QUESO': { 'Masa de arepa': 150, 'Queso campesino': 60 },
+  'COMER-EMPANADAS': { 'Masa de arepa': 120, 'Papa criolla': 80 },
+  'COMER-SANDUCHE': { 'Pechuga de pollo': 120, 'Queso campesino': 30 },
+  'COMER-AJIACO': { 'Pechuga de pollo': 200, 'Papa criolla': 250 },
 };
 
 const rootEnv = resolve(import.meta.dirname, '../../../../.env');
@@ -263,6 +292,53 @@ async function activateDemo(): Promise<void> {
         confirmed: true,
       });
     }
+    await seedInventory(actor);
     await activateOperation({ db: database }, actor);
+  }
+}
+
+/**
+ * Raw materials with stock and the recipes of the demo menu (DEC-051). Repeatable: only what is
+ * missing is created, and only products without a recipe get one.
+ */
+async function seedInventory(actor: Actor): Promise<void> {
+  const created = new Map(
+    (await inventory.listIngredients(deps, actor)).map((i) => [i.name, i.id]),
+  );
+  for (const [name, unit, threshold, bought] of DEMO_INGREDIENTS) {
+    if (created.has(name)) continue;
+    const ingredient = await inventory.createIngredient(deps, actor, {
+      name,
+      unit,
+      lowStockThreshold: threshold,
+      isActive: true,
+    });
+    await inventory.recordMovement(deps, actor, ingredient.id, {
+      kind: 'purchase',
+      quantity: bought,
+      note: 'Compra inicial (demo)',
+    });
+    created.set(name, ingredient.id);
+  }
+  const lines = (recipe: Record<string, number>) =>
+    Object.entries(recipe).map(([name, quantity]) => ({
+      ingredientId: created.get(name)!,
+      quantity,
+    }));
+  const recipes = new Map(
+    (await inventory.listRecipes(deps, actor)).products.map((p) => [p.id, p]),
+  );
+  for (const product of await catalog.listProducts(deps, actor, {})) {
+    const current = recipes.get(product.id);
+    const recipe = DEMO_RECIPES[product.sku ?? ''];
+    if (recipe && current?.lines.length === 0) {
+      await inventory.replaceRecipe(deps, actor, 'product', product.id, { lines: lines(recipe) });
+    }
+    for (const variant of current?.variants ?? []) {
+      const own = DEMO_RECIPES[`${product.sku}:${variant.name}`];
+      if (own && variant.lines.length === 0) {
+        await inventory.replaceRecipe(deps, actor, 'variant', variant.id, { lines: lines(own) });
+      }
+    }
   }
 }

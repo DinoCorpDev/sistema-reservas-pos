@@ -1,0 +1,110 @@
+{
+  "inventory": {
+    "title": "Inventaire",
+    "description": "Matières premières, ce qui reste et ce qui manque bientôt. Chaque vente déduit sa recette dès qu'elle part en cuisine.",
+    "list": "Matières premières",
+    "listHint": "Celles à leur niveau d'alerte ou en dessous apparaissent en premier, en rouge.",
+    "new": "Nouvelle matière première",
+    "edit": "Modifier la matière première",
+    "empty": "Pas encore de matières premières. Créez la première, par exemple « Bœuf » en kilos.",
+    "noLocation": "Choisissez un établissement en haut pour voir le stock.",
+    "recipes": "Recettes",
+    "unit": "Mesurée en",
+    "units": {
+      "g": "Poids (g et kg)",
+      "ml": "Volume (ml et l)",
+      "unit": "Pièces"
+    },
+    "unitShort": {
+      "kg": "kg",
+      "g": "g",
+      "l": "l",
+      "ml": "ml",
+      "unit": "pce"
+    },
+    "unitFixed": "L'unité ne peut plus être changée ensuite.",
+    "onHand": "Stock",
+    "threshold": "Alerter à",
+    "thresholdHint": "À cette quantité ou moins, elle s'affiche « Bientôt épuisé ». Laissez vide pour aucune alerte.",
+    "noThreshold": "Sans alerte",
+    "state": {
+      "low": "Bientôt épuisé",
+      "ok": "Suffisant",
+      "inactive": "Inactive"
+    },
+    "saved": "Matière première enregistrée",
+    "deleteTitle": "Supprimer « {name} » ?",
+    "deleteText": "Elle est masquée ; ses mouvements restent dans l'historique.",
+    "inUse": "Une recette utilise cette matière première. Retirez-la de la recette ou désactivez-la.",
+    "deleted": "Matière première supprimée",
+    "invalidQuantity": "Saisissez un nombre, par exemple 19,5.",
+    "card": {
+      "label": "Bientôt épuisé",
+      "detail": "{count, plural, =0 {Rien ne manque} one {matière première à son niveau d'alerte} other {matières premières à leur niveau d'alerte}}"
+    },
+    "movement": {
+      "title": "{kind} : {name}",
+      "kinds": {
+        "purchase": "Achat",
+        "waste": "Perte",
+        "adjustment": "Correction",
+        "count": "Inventaire"
+      },
+      "hints": {
+        "purchase": "Ce qui est arrivé du fournisseur. Ajouté au stock.",
+        "waste": "Ce qui a été perdu : périmé, abîmé, tombé. Retiré du stock.",
+        "adjustment": "Corrige le stock. Nombre négatif pour retirer.",
+        "count": "Ce qu'il y a maintenant selon le comptage. Le système enregistre la différence."
+      },
+      "quantity": "Quantité",
+      "note": "Note",
+      "notePlaceholder": "Fournisseur, facture, motif…",
+      "save": "Enregistrer",
+      "recorded": "Mouvement enregistré",
+      "now": "Stock actuel : {quantity}"
+    },
+    "history": {
+      "title": "Historique de « {name} »",
+      "back": "Retour à l'inventaire",
+      "movements": "Mouvements",
+      "movementsHint": "Achats, pertes, corrections et inventaires, les plus récents d'abord.",
+      "noMovements": "Pas encore de mouvements.",
+      "days": "Consommation par jour",
+      "daysHint": "Ce que les ventes et les pertes de cuisine (plats annulés déjà préparés) ont déduit.",
+      "noDays": "Rien n'a encore été vendu avec cette matière première.",
+      "date": "Date",
+      "kind": "Type",
+      "change": "Variation",
+      "counted": "Compté",
+      "by": "Par",
+      "note": "Note",
+      "sold": "Ventes",
+      "wasted": "Pertes de cuisine"
+    }
+  },
+  "recipes": {
+    "title": "Recettes",
+    "description": "Combien chaque plat utilise de chaque matière première. Quand un plat part en cuisine, il est déduit de l'inventaire.",
+    "products": "Produits",
+    "productsHint": "Une variante avec sa propre recette remplace celle du produit ; sinon elle utilise celle du produit.",
+    "modifiers": "Options des suppléments",
+    "modifiersHint": "S'ajoutent à la recette du plat, par exemple « portion de frites en plus ».",
+    "noRecipe": "Sans recette",
+    "usesProduct": "Comme le produit",
+    "onlyMissing": "Seulement sans recette",
+    "missing": "{count, plural, one {# produit sans recette} other {# produits sans recette}}",
+    "edit": "Modifier la recette",
+    "dialogTitle": "Recette de « {name} »",
+    "dialogHint": "Quantités pour une unité vendue. Les changements valent dès maintenant : ce qui est vendu ne change pas.",
+    "ingredient": "Matière première",
+    "quantity": "Quantité",
+    "addLine": "Ajouter une matière première",
+    "removeLine": "Retirer",
+    "chooseIngredient": "Choisir…",
+    "noIngredients": "Créez d'abord des matières premières dans l'inventaire.",
+    "saved": "Recette enregistrée",
+    "empty": "Le catalogue n'a pas de produits.",
+    "noModifiers": "Pas d'options de suppléments.",
+    "search": "Chercher un produit…"
+  }
+}

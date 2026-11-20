@@ -272,6 +272,9 @@
     },
     "approval": {
       "grant": "Approve actions with PIN (manager)"
+    },
+    "inventory": {
+      "manage": "Manage inventory and recipes"
     }
   },
   "apiKeys": {

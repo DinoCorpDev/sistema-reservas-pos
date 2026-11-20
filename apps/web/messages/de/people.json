@@ -272,6 +272,9 @@
     },
     "approval": {
       "grant": "Aktionen mit PIN freigeben (Führungsperson)"
+    },
+    "inventory": {
+      "manage": "Inventar und Rezepte verwalten"
     }
   },
   "apiKeys": {

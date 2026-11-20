@@ -3,6 +3,7 @@
 import { Tooltip } from '@pos/ui/tooltip';
 import { cn } from '@pos/ui/utils';
 import {
+  BookOpenTextIcon,
   ChartColumnIcon,
   CircleHelpIcon,
   CloudAlertIcon,
@@ -14,6 +15,7 @@ import {
   LayoutGridIcon,
   LifeBuoyIcon,
   ListPlusIcon,
+  PackageIcon,
   MonitorSmartphoneIcon,
   PercentIcon,
   ScrollTextIcon,
@@ -66,6 +68,18 @@ const SECTIONS: NavItem[][] = [
     { href: '/backoffice/catalog/categories', key: 'categories', icon: FolderTreeIcon },
     { href: '/backoffice/catalog/modifiers', key: 'modifiers', icon: ListPlusIcon },
     { href: '/backoffice/tax', key: 'tax', icon: PercentIcon },
+    {
+      href: '/backoffice/inventory',
+      key: 'inventory',
+      icon: PackageIcon,
+      permission: 'inventory.manage',
+    },
+    {
+      href: '/backoffice/inventory/recipes',
+      key: 'recipes',
+      icon: BookOpenTextIcon,
+      permission: 'inventory.manage',
+    },
   ],
   [
     {
@@ -121,6 +135,10 @@ export function BackofficeNav({
     // Products live at /backoffice/catalog and /backoffice/catalog/products/[id].
     if (href === '/backoffice/catalog') {
       return pathname === href || pathname.startsWith('/backoffice/catalog/products');
+    }
+    // Recipes live under the inventory but have their own entry.
+    if (href === '/backoffice/inventory') {
+      return pathname.startsWith(href) && !pathname.startsWith('/backoffice/inventory/recipes');
     }
     return pathname.startsWith(href);
   };

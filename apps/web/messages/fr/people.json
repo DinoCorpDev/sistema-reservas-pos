@@ -272,6 +272,9 @@
     },
     "approval": {
       "grant": "Valider des actions avec PIN (responsable)"
+    },
+    "inventory": {
+      "manage": "Gérer l'inventaire et les recettes"
     }
   },
   "apiKeys": {

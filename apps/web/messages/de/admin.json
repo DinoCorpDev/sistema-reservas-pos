@@ -309,6 +309,13 @@
     },
     "subscription": {
       "changed": "Abo geändert"
+    },
+    "inventory": {
+      "ingredient_created": "Rohware erfasst",
+      "ingredient_updated": "Rohware geändert",
+      "ingredient_deleted": "Rohware gelöscht",
+      "movement_recorded": "Lagerbewegung",
+      "recipe_changed": "Rezept geändert"
     }
   },
   "supportAccess": {

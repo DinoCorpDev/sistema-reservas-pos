@@ -42,6 +42,7 @@ const GROUPS: { key: string; permissions: readonly Permission[] }[] = [
       'catalog.manage',
       'catalog.price_change',
       'tax.manage',
+      'inventory.manage',
     ],
   },
   {
