@@ -26,6 +26,7 @@ export * as account from './services/account';
 export * as locations from './services/locations';
 export * as people from './services/people';
 export * as catalog from './services/catalog';
+export * as inventory from './services/inventory';
 export * as admin from './services/admin';
 export * as orders from './services/orders';
 export * as sync from './services/sync';

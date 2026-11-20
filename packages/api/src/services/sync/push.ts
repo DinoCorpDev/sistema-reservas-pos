@@ -26,6 +26,7 @@ import { ApiError } from '../../errors';
 import { locationUserPermissions } from '../people/terminal-auth';
 import type { ServiceDeps } from '../shared';
 import { type ProjectionResult, writeProjection } from './projection';
+import { projectStock } from '../inventory/projection';
 import { refoldShifts } from './shifts';
 import {
   existingOperations,
@@ -275,6 +276,8 @@ async function refoldAndProject(
     group.orderIds.size > 0
       ? await writeProjection(tx, scope, state, group.orderIds)
       : { previous: new Map(), renumbered: new Map(), insertedReceipts: [], tickets: [] };
+  // What the sold items took from stock, from the same fold (DEC-051).
+  if (group.orderIds.size > 0) await projectStock(tx, scope, state, group.orderIds);
 
   // A number stored with a suffix is a conflict of the operation that created the order.
   const renumberedBy = new Map<string, string>();

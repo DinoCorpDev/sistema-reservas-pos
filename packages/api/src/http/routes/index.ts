@@ -2,6 +2,7 @@ import type { ApiApp } from '../env';
 import { registerAdminRoutes } from './admin';
 import { registerCashRoutes } from './cash';
 import { registerCatalogRoutes } from './catalog';
+import { registerInventoryRoutes } from './inventory';
 import { registerLocationRoutes } from './locations';
 import { registerPeopleRoutes } from './people';
 import { registerPosRoutes } from './pos';
@@ -15,6 +16,7 @@ export function registerRoutes(app: ApiApp) {
   registerLocationRoutes(app);
   registerPeopleRoutes(app);
   registerCatalogRoutes(app);
+  registerInventoryRoutes(app);
   registerAdminRoutes(app);
   registerSyncRoutes(app);
   registerPosRoutes(app);
