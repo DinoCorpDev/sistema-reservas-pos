@@ -131,7 +131,7 @@ describe('demo seed: Restaurant Demo Zürich', () => {
 });
 
 describe('append-only tables (RN-10)', () => {
-  it.each(['audit_events', 'receipts', 'daily_closings'])(
+  it.each(['audit_events', 'receipts', 'daily_closings', 'stock_movements'])(
     'has UPDATE and DELETE triggers on %s',
     async (table) => {
       const [rows] = (await db.execute(

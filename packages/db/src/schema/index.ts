@@ -2,6 +2,7 @@ export * from './cash';
 export * from './catalog';
 export * from './customers';
 export * from './hub';
+export * from './inventory';
 export * from './kitchen';
 export * from './orders';
 export * from './organization';

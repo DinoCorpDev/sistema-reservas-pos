@@ -162,6 +162,27 @@
       "when": 1795018088231,
       "tag": "0022_manager_all_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1795193784150,
+      "tag": "0023_inventory",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1795193788388,
+      "tag": "0024_stock_movements_append_only",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1795193792182,
+      "tag": "0025_inventory_permission",
+      "breakpoints": true
     }
   ]
 }

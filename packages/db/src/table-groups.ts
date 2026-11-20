@@ -56,6 +56,8 @@ export const TABLE_GROUPS = {
     s.supportAccessGrants,
     s.subscriptions,
     s.subscriptionAddons,
+    s.ingredients,
+    s.recipeLines,
   ],
   /** Syncable daily operations: required org + location, no hard FKs, soft delete, version. */
   operational: [
@@ -74,9 +76,10 @@ export const TABLE_GROUPS = {
     s.shifts,
     s.cashMovements,
     s.paymentReconciliations,
+    s.stockConsumptions,
   ],
   /** Insert-only; MySQL triggers reject UPDATE and DELETE (RN-10). */
-  appendOnly: [s.auditEvents, s.receipts, s.dailyClosings],
+  appendOnly: [s.auditEvents, s.receipts, s.dailyClosings, s.stockMovements],
   /** Infrastructure for events, sync and numbering. */
   infrastructure: [
     s.outboxEvents,
@@ -92,4 +95,9 @@ export const TABLE_GROUPS = {
 } as const;
 
 /** Append-only tables by SQL name, used by the triggers migration. */
-export const APPEND_ONLY_TABLE_NAMES = ['audit_events', 'receipts', 'daily_closings'] as const;
+export const APPEND_ONLY_TABLE_NAMES = [
+  'audit_events',
+  'receipts',
+  'daily_closings',
+  'stock_movements',
+] as const;
