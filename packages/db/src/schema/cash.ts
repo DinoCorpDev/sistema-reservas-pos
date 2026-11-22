@@ -4,13 +4,13 @@ import {
   date,
   index,
   int,
-  json,
   mysqlTable,
   text,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
 import {
+  json,
   locationId,
   organizationId,
   primaryId,

@@ -51,9 +51,24 @@ export async function createDatabase(url: string, options: { reset?: boolean } =
   return database;
 }
 
+/**
+ * MariaDB has no UUID_TO_BIN (MySQL 8), and migrations 0009 and 0012 call it. On MariaDB an
+ * equivalent stored function (same result as MySQL without swap_flag) is created first, so the
+ * migrations stay as they were applied (DEC-052). On MySQL nothing changes.
+ */
+async function ensureMariaDbCompat(pool: ReturnType<typeof createDb>['pool']) {
+  const [rows] = await pool.query('SELECT VERSION() AS version');
+  const [{ version }] = rows as [{ version: string }];
+  if (!/mariadb/i.test(version)) return;
+  await pool.query(
+    "CREATE FUNCTION IF NOT EXISTS UUID_TO_BIN(value CHAR(36)) RETURNS BINARY(16) DETERMINISTIC RETURN UNHEX(REPLACE(value, '-', ''))",
+  );
+}
+
 export async function migrateDatabase(url: string) {
   const { db, pool } = createDb(url, { connectionLimit: 1 });
   try {
+    await ensureMariaDbCompat(pool);
     await migrate(db, { migrationsFolder: MIGRATIONS_DIR });
   } finally {
     await pool.end();

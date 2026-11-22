@@ -1,5 +1,5 @@
-import { char, json, mysqlTable, text, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
-import { organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
+import { char, mysqlTable, text, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
+import { json, organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
 import { locations, organizations } from './organization';
 import { users } from './users';
 

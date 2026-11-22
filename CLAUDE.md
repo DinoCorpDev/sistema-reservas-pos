@@ -58,7 +58,7 @@ POS para restaurantes en Suiza. El restaurante opera **mesa → pedido → cocin
   - Solo el hub imprime: los trabajos se derivan de las operaciones con clave idempotente (`apps/hub/src/printing`).
 - **Textos de la interfaz:** `apps/web/messages/<idioma>/<módulo>.json`. El alemán es la referencia; si falta una clave en otro idioma, se muestra en alemán.
 - **Esquema:** una tabla nueva se clasifica en `packages/db/src/table-groups.ts` y debe pasar `schema.test.ts`. Migraciones solo con `pnpm db:generate` (nunca editar una migración ya aplicada). El SQL a mano va en una migración `--custom`.
-- **Columnas:** `id`/FKs como `uuid()` (`BINARY(16)`), dinero como `rappen('x_rappen')`, tiempos con `utcDatetime()`, y `...timestamps()` y `...syncColumns()` de `packages/db/src/columns.ts`. Estados como `varchar` validados en el dominio (DEC-006). Sin FK en tablas operativas (DEC-007).
+- **Columnas:** `id`/FKs como `uuid()` (`BINARY(16)`), dinero como `rappen('x_rappen')`, tiempos con `utcDatetime()`, JSON con `json()` (nunca el de `drizzle-orm/mysql-core`: también corre en MariaDB, DEC-052), y `...timestamps()` y `...syncColumns()` de `packages/db/src/columns.ts`. Estados como `varchar` validados en el dominio (DEC-006). Sin FK en tablas operativas (DEC-007).
 - **Validación:** Zod en toda frontera (API, formularios, mensajes de sync).
 - **UI:** componentes de `@pos/ui`; objetivos táctiles ≥ 44 px; máximo 3 toques para agregar un ítem simple (RNF-22).
 - **Versiones:** se fijan en `catalog:` de `pnpm-workspace.yaml`. Next 15.5, TypeScript 5.9 y ESLint 9 están fijados a propósito (DEC-010).

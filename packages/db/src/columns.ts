@@ -39,6 +39,23 @@ export const uuid = customType<{ data: string; driverData: Buffer }>({
 
 export const uuidCodec = { toBuffer: uuidToBuffer, fromBuffer: bufferToUuid };
 
+/**
+ * JSON column (`.$type<T>()` gives it its shape). The pool returns JSON as text (`jsonStrings`
+ * in client.ts) and it is parsed here, so MySQL 8 (native JSON) and MariaDB (JSON is LONGTEXT)
+ * read the same values (DEC-052). Use this one, not `json` from drizzle-orm/mysql-core.
+ */
+export const json = customType<{ data: unknown; driverData: string }>({
+  dataType() {
+    return 'json';
+  },
+  toDriver(value) {
+    return JSON.stringify(value);
+  },
+  fromDriver(value) {
+    return typeof value === 'string' ? (JSON.parse(value) as unknown) : value;
+  },
+});
+
 /** UUID v7 primary key; generated here if the device does not send one. */
 export const primaryId = () => uuid('id').primaryKey().$defaultFn(newId);
 

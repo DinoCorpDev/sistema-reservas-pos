@@ -1,13 +1,5 @@
-import {
-  boolean,
-  index,
-  int,
-  json,
-  mysqlTable,
-  uniqueIndex,
-  varchar,
-} from 'drizzle-orm/mysql-core';
-import { locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
+import { boolean, index, int, mysqlTable, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
+import { json, locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
 
 /**
  * Printing infrastructure (DEC-031, DEC-032). Only the location hub reaches the printers.

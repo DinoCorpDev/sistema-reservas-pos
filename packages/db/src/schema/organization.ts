@@ -4,14 +4,21 @@ import {
   boolean,
   char,
   int,
-  json,
   mysqlTable,
   smallint,
   text,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
-import { locationId, organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
+import {
+  json,
+  locationId,
+  organizationId,
+  primaryId,
+  timestamps,
+  utcDatetime,
+  uuid,
+} from '../columns';
 
 /** Opening hours per day: list of `["HH:MM", "HH:MM"]` slots (RF-A02). */
 export type OpeningHours = Partial<

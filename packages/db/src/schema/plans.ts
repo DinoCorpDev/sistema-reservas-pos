@@ -2,13 +2,12 @@ import {
   boolean,
   char,
   int,
-  json,
   mysqlTable,
   smallint,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
-import { organizationId, primaryId, timestamps, utcDatetime } from '../columns';
+import { json, organizationId, primaryId, timestamps, utcDatetime } from '../columns';
 import { organizations } from './organization';
 
 /**

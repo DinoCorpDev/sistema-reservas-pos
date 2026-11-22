@@ -2,13 +2,20 @@ import {
   boolean,
   char,
   index,
-  json,
   mysqlTable,
   text,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
-import { locationId, organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
+import {
+  json,
+  locationId,
+  organizationId,
+  primaryId,
+  timestamps,
+  utcDatetime,
+  uuid,
+} from '../columns';
 import { organizations } from './organization';
 import { users } from './users';
 

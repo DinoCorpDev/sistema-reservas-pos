@@ -1,14 +1,13 @@
 import {
   char,
   index,
-  json,
   mysqlTable,
   smallint,
   text,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
-import { locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
+import { json, locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
 
 /**
  * Issued receipt with its content frozen exactly as printed (RF-D20, RN-08).

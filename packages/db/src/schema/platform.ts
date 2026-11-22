@@ -2,14 +2,13 @@ import {
   bigint,
   index,
   int,
-  json,
   mysqlTable,
   smallint,
   text,
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/mysql-core';
-import { locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
+import { json, locationId, organizationId, primaryId, utcDatetime, uuid } from '../columns';
 
 /**
  * Append-only audit of every sensitive operation (RF-F11, RN-10, RN-11): who, who authorized,

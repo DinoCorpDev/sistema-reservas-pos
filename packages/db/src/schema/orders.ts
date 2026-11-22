@@ -3,7 +3,6 @@ import {
   date,
   index,
   int,
-  json,
   mysqlTable,
   smallint,
   text,
@@ -11,6 +10,7 @@ import {
   varchar,
 } from 'drizzle-orm/mysql-core';
 import {
+  json,
   locationId,
   organizationId,
   primaryId,

@@ -568,6 +568,19 @@ Juan lo pidió (20 nov 2026): saber cuánta materia prima queda, que cada plato 
 - Permiso nuevo `inventory.manage` (administrador y gerente; la migración 0025 se lo da a los existentes). Eventos `inventory.movement_recorded` e `inventory.recipe_changed`.
 - **Para después:** costo por plato y margen (precio en las compras), avisos por correo o WhatsApp, «agotado» automático en la caja cuando una materia prima llega a 0, y nivel de alerta distinto por sede.
 
+## DEC-052 · La base también puede ser MariaDB
+
+Juan lo pidió (22 nov 2026): la demo en línea corre en Vercel con la base de un hosting compartido (Hostinger), que es MariaDB 11.8 y no MySQL 8 (DEC-002). Se preguntó una vez si cambiar a MySQL 8 y Juan eligió adaptar.
+
+- MySQL 8 sigue siendo la base de referencia: Docker Compose, CI, tests de integración y el despliegue en Suiza no cambian. MariaDB (10.6 o más nueva) se soporta además, con tres ajustes que en MySQL no cambian nada:
+  - **JSON:** MariaDB guarda el JSON como LONGTEXT y mysql2 lo entrega como texto. El pool pide el JSON siempre como texto (`jsonStrings`) y la columna `json()` de `packages/db/src/columns.ts` lo convierte. Toda columna JSON nueva usa esa, nunca la de `drizzle-orm/mysql-core`. El SQL del esquema es el mismo: no hay migración nueva.
+  - **`UUID_TO_BIN`:** no existe en MariaDB y la usan las migraciones 0009 y 0012. Solo en MariaDB, `migrateDatabase()` crea antes una función guardada equivalente (`UNHEX(REPLACE(uuid, '-', ''))`, igual que MySQL sin `swap_flag`). Las migraciones aplicadas no se editan.
+  - **Conexiones inactivas:** el hosting compartido cierra una conexión inactiva a los 20 s. Cada conexión sube su `wait_timeout` a 5 minutos como mínimo, por encima de los 60 s en que el pool suelta las suyas.
+- Los triggers append-only funcionan igual en MariaDB.
+- **Probado a mano en MariaDB:** migraciones, siembra, triggers, backoffice, vinculación de una caja, venta con tarjeta, recibo y reportes. Los tests de integración siguen en MySQL: necesitan crear bases y el hosting compartido no lo permite.
+- El repositorio es público: una base accesible desde internet se siembra con `SEED_ADMIN_PASSWORD` y `SEED_SUPPORT_PASSWORD` propios, nunca con las contraseñas de desarrollo.
+- El hosting compartido permite 75 conexiones por usuario. Alcanza para la demo; el hosting del piloto sigue siendo la decisión abierta de abajo.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |
