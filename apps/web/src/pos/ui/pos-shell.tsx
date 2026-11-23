@@ -1,6 +1,8 @@
 'use client';
 
 import { readyToServe, type ServiceGroup } from '@pos/core';
+import { ActionGroup } from '@pos/ui/action-group';
+import { Avatar } from '@pos/ui/avatar';
 import { Button } from '@pos/ui/button';
 import { toast } from '@pos/ui/toaster';
 import { cn } from '@pos/ui/utils';
@@ -71,13 +73,15 @@ export function PosShell() {
   // thumb, and hide inside an order, which has its own action bar there. From md up they sit in
   // the header, as on the tablets.
   const inOrder = view.name === 'order' || view.name === 'payment' || view.name === 'receipt';
+  // From md up the places are one segmented pill (DEC-053); white bar in light, dark in dark.
   const tab = (active: boolean) =>
     cn(
       'relative gap-2',
       'max-md:h-16 max-md:flex-col max-md:gap-0.5 max-md:rounded-none max-md:px-1 max-md:text-xs',
-      'md:text-chrome-foreground/80 md:hover:bg-white/10 md:hover:text-chrome-foreground',
+      'md:rounded-full md:px-4 md:text-sm md:text-muted-foreground md:hover:bg-card md:hover:text-foreground',
+      'dark:md:text-chrome-foreground/75 dark:md:hover:bg-white/10 dark:md:hover:text-chrome-foreground',
       active &&
-        'md:bg-primary md:text-primary-foreground md:hover:bg-primary/90 md:hover:text-primary-foreground max-md:text-brand-strong',
+        'md:bg-primary md:text-primary-foreground md:shadow-[0_0_0_1px_var(--glow),0_8px_20px_-10px_var(--glow)] md:hover:bg-primary/90 md:hover:text-primary-foreground dark:md:text-primary-foreground dark:md:hover:bg-primary/90 dark:md:hover:text-primary-foreground max-md:text-brand-strong',
     );
   const badge = (group: ServiceGroup) => (
     <ReadyBadge
@@ -95,14 +99,14 @@ export function PosShell() {
     <div className="flex min-h-dvh flex-col">
       <TrainingBand />
       <SubscriptionNotice />
-      <header className="sticky top-0 z-20 flex items-center gap-2 bg-chrome px-3 py-2 text-chrome-foreground max-md:min-h-14 md:static md:flex-wrap">
-        <span className="mr-2 hidden items-center gap-2 font-semibold md:inline-flex">
-          <ZitasMark className="size-6" />
-          {location}
+      <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 text-foreground max-md:min-h-14 md:static md:flex-wrap md:gap-x-3 md:gap-y-2 md:px-4 2xl:flex-nowrap dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground">
+        <span className="mr-1 hidden min-w-0 items-center gap-2.5 font-semibold md:inline-flex">
+          <ZitasMark className="size-7 shrink-0" />
+          <span className="truncate">{location}</span>
         </span>
         <nav
           className={cn(
-            'flex flex-wrap gap-1',
+            'flex flex-wrap gap-1 md:order-last md:w-fit md:flex-nowrap md:overflow-x-auto md:rounded-full md:border md:bg-muted/60 md:p-1 2xl:order-none dark:md:border-white/10 dark:md:bg-white/5',
             'max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:grid max-md:gap-0 max-md:border-t max-md:bg-card max-md:pb-[env(safe-area-inset-bottom)] max-md:text-foreground max-md:shadow-[0_-1px_8px_rgb(0_0_0/0.06)]',
             canCash ? 'max-md:grid-cols-5' : 'max-md:grid-cols-4',
             inOrder && 'max-md:hidden',
@@ -151,7 +155,7 @@ export function PosShell() {
             </Button>
           )}
         </nav>
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:ml-auto md:flex-none md:gap-3 [&_[data-slot=button]]:border-white/15 [&_[data-slot=button]]:bg-white/5 [&_[data-slot=button]]:text-chrome-foreground [&_[data-slot=button]:hover]:bg-white/15 [&_[data-slot=button]:hover]:text-chrome-foreground">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:ml-auto md:flex-none md:gap-2.5 dark:[&>[data-slot=button]]:border-white/15 dark:[&>[data-slot=button]]:bg-white/5 dark:[&>[data-slot=button]]:text-chrome-foreground dark:[&>[data-slot=button]:hover]:bg-white/15 dark:[&>[data-slot=button]:hover]:text-chrome-foreground">
           {drawer && (
             <Button variant="outline" className="gap-2" onClick={() => void drawerOpen()}>
               <Archive /> <span className="max-md:sr-only">{t('drawer')}</span>
@@ -159,15 +163,21 @@ export function PosShell() {
           )}
           {terminalType === 'pos' && <PhonePairingButton />}
           <StatusIndicator className="max-md:mr-auto" />
-          <span className="truncate text-sm font-medium" data-testid="pos-user">
-            {user?.displayName}
+          {/* Who is serving: avatar and name, the name alone is the test hook. */}
+          <span className="flex min-w-0 items-center gap-2">
+            {user ? <Avatar name={user.displayName} colorKey={user.id} size="sm" /> : null}
+            <span className="truncate text-sm font-medium" data-testid="pos-user">
+              {user?.displayName}
+            </span>
           </span>
-          <ThemeMenu />
-          <LanguageMenu />
-          <HelpLink role={canCash ? 'manager' : 'waiter'} />
-          <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
-            <Lock />
-          </Button>
+          <ActionGroup className="dark:divide-white/10 dark:border-white/10 dark:bg-white/5 dark:[&_[data-slot=button]]:text-chrome-foreground/80">
+            <ThemeMenu />
+            <LanguageMenu />
+            <HelpLink role={canCash ? 'manager' : 'waiter'} />
+            <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
+              <Lock />
+            </Button>
+          </ActionGroup>
           {terminalType === 'phone' && <SignOutButton />}
           {terminalType === 'pos' && <UnpairButton />}
         </div>

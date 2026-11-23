@@ -3,9 +3,11 @@
 import { type Channel, isContentLanguage, type MenuProduct } from '@pos/core';
 import { formatPosMoney } from '@/pos/money';
 import { Button } from '@pos/ui/button';
+import { solidByIndex } from '@pos/ui/category-tone';
+import { EmptyState } from '@pos/ui/empty-state';
 import { cn } from '@pos/ui/utils';
 import { Input } from '@pos/ui/input';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SearchX, SlidersHorizontal, UtensilsCrossed, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { menuFor } from '../../catalog';
@@ -54,6 +56,11 @@ export function ProductPanel({
   const addLine = useAddLine(orderId, channel);
 
   const categories = menu?.categories ?? [];
+  // Each category keeps its colour by its place in the menu, as in the backoffice (DEC-053).
+  const toneOf = new Map<string, string>();
+  categories.forEach((entry, index) => {
+    for (const product of entry.products) toneOf.set(product.id, solidByIndex(index));
+  });
   const category = categories.find((entry) => entry.id === categoryId) ?? categories[0];
   const needle = query === null ? '' : searchable(query.trim());
   const products = needle
@@ -131,16 +138,24 @@ export function ProductPanel({
           >
             <Search />
           </Button>
-          {categories.map((entry) => {
+          {categories.map((entry, index) => {
             const active = entry.id === category?.id;
             return (
               <Button
                 key={entry.id}
                 variant={active ? 'default' : 'outline'}
-                className="shrink-0"
+                className="shrink-0 rounded-full pl-3"
                 aria-pressed={active}
                 onClick={() => setCategoryId(entry.id)}
               >
+                <span
+                  aria-hidden
+                  className={cn(
+                    'size-2.5 shrink-0 rounded-full',
+                    solidByIndex(index),
+                    active && 'ring-2 ring-white/70',
+                  )}
+                />
                 {entry.name}
               </Button>
             );
@@ -149,11 +164,11 @@ export function ProductPanel({
       )}
       <div className="min-h-0 flex-1 overflow-y-auto p-2">
         {!category ? (
-          <p className="p-6 text-center text-muted-foreground">{t('empty')}</p>
+          <EmptyState icon={<UtensilsCrossed />} title={t('empty')} className="m-2" />
         ) : products.length === 0 ? (
-          <p className="p-6 text-center text-muted-foreground">{t('noMatch')}</p>
+          <EmptyState icon={<SearchX />} title={t('noMatch')} className="m-2" />
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-2">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-2.5">
             {products.map((product) => {
               const options =
                 product.orderable && !needsChoice(product) && product.modifierGroups.length > 0;
@@ -168,18 +183,34 @@ export function ProductPanel({
                     disabled={!product.orderable}
                     onClick={() => tap(product)}
                     className={cn(
-                      'h-full w-full items-stretch justify-between gap-1 text-left whitespace-normal transition-[transform,box-shadow] duration-150',
+                      'relative h-full w-full items-stretch justify-between gap-1.5 overflow-hidden rounded-xl pt-3.5 text-left whitespace-normal shadow-card transition-[transform,box-shadow] duration-150 hover:shadow-raised',
                       count > 0 && 'border-primary/50 bg-primary/5',
                       flashId === product.id && 'scale-[0.97] ring-2 ring-primary',
                     )}
                   >
-                    <span className="line-clamp-3 font-semibold">{product.name}</span>
+                    {/* The category's colour, as a stripe along the top. */}
                     <span
+                      aria-hidden
                       className={cn(
-                        'text-sm text-muted-foreground tabular-nums',
-                        options && 'pr-10',
+                        'absolute inset-x-0 top-0 h-1.5',
+                        toneOf.get(product.id) ?? 'bg-muted',
                       )}
-                    >
+                    />
+                    {product.imageUrl ? (
+                      // Online only: offline the image fails and hides, the stripe stays.
+                      // eslint-disable-next-line @next/next/no-img-element -- any host, works offline-first
+                      <img
+                        src={product.imageUrl}
+                        alt=""
+                        loading="lazy"
+                        className="h-16 w-full rounded-md object-cover"
+                        onError={(event) => {
+                          event.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : null}
+                    <span className="line-clamp-3 font-semibold">{product.name}</span>
+                    <span className={cn('text-base font-bold tabular-nums', options && 'pr-10')}>
                       {formatPosMoney(product.priceRappen)}
                     </span>
                     {product.reason && (

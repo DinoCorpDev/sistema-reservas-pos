@@ -14,7 +14,24 @@ const TONES = [
   'bg-(--cat-8-bg) text-(--cat-8-fg)',
 ] as const;
 
+/** The solid colour of each tone: a dot or a stripe that marks a category (POS, DEC-053). */
+const SOLIDS = [
+  'bg-(--cat-1-fg)',
+  'bg-(--cat-2-fg)',
+  'bg-(--cat-3-fg)',
+  'bg-(--cat-4-fg)',
+  'bg-(--cat-5-fg)',
+  'bg-(--cat-6-fg)',
+  'bg-(--cat-7-fg)',
+  'bg-(--cat-8-fg)',
+] as const;
+
 export const TONE_COUNT = TONES.length;
+
+/** Solid colour classes for the i-th category of an ordered list. */
+export function solidByIndex(index: number): string {
+  return SOLIDS[((index % SOLIDS.length) + SOLIDS.length) % SOLIDS.length]!;
+}
 
 /** FNV-1a: a small, stable hash of a string. */
 function hash(value: string): number {

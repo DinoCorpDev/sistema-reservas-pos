@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@pos/ui/button';
+import { ChefHat } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePos } from '@/device/store';
 import { StatusIndicator } from '@/device/ui/status-indicator';
@@ -20,35 +21,38 @@ export function StationPicker({ stations }: { stations: readonly ChoosableStatio
   const terminal = usePos((state) => state.device?.terminalName);
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-6 p-6">
-      <div className="flex flex-col items-center gap-1 text-center">
-        <p className="text-lg font-semibold">{location}</p>
-        <p className="text-sm text-muted-foreground">{terminal}</p>
-        <StatusIndicator className="mt-2" />
-      </div>
-      <div className="text-center">
-        <h1 className="text-3xl font-semibold">{t('title')}</h1>
-        <p className="mt-1 text-muted-foreground">{t('hint')}</p>
-      </div>
-      {stations.length === 0 ? (
-        <p className="text-center text-lg" role="alert">
-          {t('none')}
-        </p>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {stations.map((station) => (
-            <Button
-              key={station.id}
-              variant="outline"
-              className="h-28 text-2xl font-semibold whitespace-normal"
-              data-testid="station-choice"
-              onClick={() => usePos.setState({ kitchenStationId: station.id })}
-            >
-              {station.name}
-            </Button>
-          ))}
+    <main className="flex min-h-dvh flex-col items-center justify-center bg-atmosphere p-6">
+      <div className="flex w-full max-w-3xl flex-col gap-6">
+        <div className="flex flex-col items-center gap-1 text-center">
+          <p className="text-lg font-semibold">{location}</p>
+          <p className="text-sm text-muted-foreground">{terminal}</p>
+          <StatusIndicator className="mt-2" />
         </div>
-      )}
+        <div className="text-center">
+          <h1 className="font-brand text-3xl font-semibold">{t('title')}</h1>
+          <p className="mt-1 text-muted-foreground">{t('hint')}</p>
+        </div>
+        {stations.length === 0 ? (
+          <p className="text-center text-lg" role="alert">
+            {t('none')}
+          </p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {stations.map((station) => (
+              <Button
+                key={station.id}
+                variant="outline"
+                className="h-32 flex-col gap-3 rounded-2xl text-2xl font-semibold whitespace-normal shadow-card hover:shadow-raised [&_svg]:size-8"
+                data-testid="station-choice"
+                onClick={() => usePos.setState({ kitchenStationId: station.id })}
+              >
+                <ChefHat aria-hidden className="text-brand-strong" />
+                {station.name}
+              </Button>
+            ))}
+          </div>
+        )}
+      </div>
     </main>
   );
 }

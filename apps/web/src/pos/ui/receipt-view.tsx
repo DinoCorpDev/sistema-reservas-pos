@@ -4,7 +4,7 @@ import { type ReceiptContent, renderReceiptText } from '@pos/core';
 import { formatPosMoney } from '@/pos/money';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
-import { Check, Printer } from 'lucide-react';
+import { Check, CircleCheckBig, Printer } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { usePos } from '@/device/store';
@@ -90,24 +90,37 @@ export function ReceiptView({
     <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 print:block print:overflow-visible print:p-0">
       <style>{PRINT_CSS}</style>
       <div className="flex flex-wrap items-center gap-3 print:hidden">
-        <div className="mr-auto grid gap-1">
-          <h1 className="flex flex-wrap items-center gap-2 text-lg font-semibold">
-            {t('title', { number: content.receiptNumber })}
-            {copyAt && <Badge variant="warning">{t('copy')}</Badge>}
-            {content.partial && !copyAt && <Badge variant="secondary">{t('partial')}</Badge>}
-          </h1>
-          {!copyAt && (
-            <p className="text-sm text-muted-foreground" aria-live="polite">
-              {nextOrder && nextOrder.id !== orderId
-                ? t('nextOrder', {
-                    number: nextOrder.displayNumber,
-                    amount: formatPosMoney(nextOrder.balanceRappen),
-                  })
-                : order && order.balanceRappen > 0
-                  ? t('balanceLeft', { amount: formatPosMoney(order.balanceRappen) })
-                  : t('paidInFull')}
-            </p>
-          )}
+        <div className="mr-auto flex items-center gap-3">
+          {/* Paid: a large green check, read from across the counter (DEC-053). */}
+          <span
+            aria-hidden
+            className={
+              copyAt
+                ? 'grid size-12 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground'
+                : 'grid size-12 shrink-0 place-items-center rounded-full bg-success/12 text-success ring-8 ring-success/5'
+            }
+          >
+            {copyAt ? <Printer className="size-6" /> : <CircleCheckBig className="size-6" />}
+          </span>
+          <div className="grid gap-1">
+            <h1 className="flex flex-wrap items-center gap-2 font-brand text-xl font-semibold">
+              {t('title', { number: content.receiptNumber })}
+              {copyAt && <Badge variant="warning">{t('copy')}</Badge>}
+              {content.partial && !copyAt && <Badge variant="secondary">{t('partial')}</Badge>}
+            </h1>
+            {!copyAt && (
+              <p className="text-sm text-muted-foreground" aria-live="polite">
+                {nextOrder && nextOrder.id !== orderId
+                  ? t('nextOrder', {
+                      number: nextOrder.displayNumber,
+                      amount: formatPosMoney(nextOrder.balanceRappen),
+                    })
+                  : order && order.balanceRappen > 0
+                    ? t('balanceLeft', { amount: formatPosMoney(order.balanceRappen) })
+                    : t('paidInFull')}
+              </p>
+            )}
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {sent && (
@@ -157,7 +170,7 @@ export function ReceiptView({
           id="pos-receipt"
           data-testid="receipt-text"
           lang={content.language}
-          className="w-fit max-w-full overflow-x-auto rounded-md border bg-white px-4 py-5 font-mono text-[11px] leading-snug whitespace-pre text-black shadow-sm sm:text-[13px]"
+          className="w-fit max-w-full overflow-x-auto rounded-lg border bg-white px-5 py-6 font-mono text-[11px] leading-snug whitespace-pre text-black shadow-raised sm:text-[13px]"
         >
           {text}
         </pre>

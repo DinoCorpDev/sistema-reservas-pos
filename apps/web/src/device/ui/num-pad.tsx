@@ -18,7 +18,9 @@ export function NumPad({
   extraKey?: string;
 }) {
   const t = useTranslations('pos.keypad');
-  const key = 'min-h-16 text-2xl font-semibold';
+  // Keys like cards (DEC-053): a soft shadow, a press that sinks, figures that line up.
+  const key =
+    'min-h-16 rounded-xl text-2xl font-semibold tabular-nums shadow-card active:translate-y-px active:shadow-none';
   return (
     <div className="grid grid-cols-3 gap-2" role="group" aria-label={t('label')}>
       {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (

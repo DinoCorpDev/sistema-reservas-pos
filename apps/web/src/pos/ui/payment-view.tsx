@@ -89,7 +89,9 @@ function PaymentScreen({ orderId }: { orderId: string }) {
         <Button variant="ghost" onClick={() => navigate({ name: 'order', orderId })}>
           <ArrowLeft /> {t('backToOrder')}
         </Button>
-        <h1 className="text-lg font-semibold">{t('title', { number: order.displayNumber })}</h1>
+        <h1 className="font-brand text-xl font-semibold">
+          {t('title', { number: order.displayNumber })}
+        </h1>
         <Badge variant="secondary">
           {table ? t('table', { label: table.label }) : tc(order.channel)}
         </Badge>
@@ -127,7 +129,7 @@ function SettledPanel({ order }: { order: OrderState }) {
         : t('settled');
   return (
     <div className="grid content-start gap-3 md:col-span-1 lg:col-span-2">
-      <div className="grid gap-3 rounded-xl border bg-card p-4">
+      <div className="grid gap-3 rounded-xl border bg-card p-4 shadow-card">
         <p className="font-medium" aria-live="polite">
           {message}
         </p>
@@ -411,7 +413,7 @@ function PaymentForm({ order }: { order: OrderState }) {
     <>
       <section
         aria-label={t('formTitle')}
-        className="grid content-start gap-5 rounded-xl border bg-card p-4"
+        className="grid content-start gap-5 rounded-xl border bg-card p-4 shadow-card"
       >
         <SplitControls
           order={order}
@@ -452,7 +454,7 @@ function PaymentForm({ order }: { order: OrderState }) {
                 variant={method === key ? 'default' : 'outline'}
                 aria-pressed={method === key}
                 disabled={key === 'cash' && cashState === 'no_shift'}
-                className="h-auto min-h-16 flex-col gap-1 px-2"
+                className="h-auto min-h-20 flex-col gap-1.5 rounded-xl px-2 text-base font-semibold [&_svg]:size-7"
                 onClick={() => chooseMethod(key)}
               >
                 <Icon aria-hidden />
@@ -520,7 +522,7 @@ function PaymentForm({ order }: { order: OrderState }) {
                 ))}
               </div>
             )}
-            <dl className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 rounded-lg bg-muted px-3 py-2">
+            <dl className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 rounded-xl border bg-surface-2 px-4 py-3">
               <dt className="text-sm">
                 {t('collect', { step: formatPosMoney(rappen(posRoundingStep())) })}
               </dt>
@@ -541,7 +543,10 @@ function PaymentForm({ order }: { order: OrderState }) {
               )}
               <dt className="font-medium">{t('change')}</dt>
               <dd
-                className="text-right text-2xl font-bold tabular-nums"
+                className={cn(
+                  'text-right text-3xl font-bold tabular-nums',
+                  change !== null && change > 0 && 'text-emerald-700 dark:text-emerald-400',
+                )}
                 data-testid="payment-change"
               >
                 {formatPosMoney(rappen(change !== null && change > 0 ? change : 0))}
@@ -679,7 +684,7 @@ function PaymentForm({ order }: { order: OrderState }) {
 
       <aside
         aria-label={t('actionsTitle')}
-        className="sticky bottom-0 z-10 grid content-start gap-3 rounded-xl border bg-card p-3 shadow-sm md:static md:col-start-2 md:shadow-none lg:sticky lg:top-3 lg:col-start-auto"
+        className="sticky bottom-0 z-10 grid content-start gap-3 rounded-xl border bg-card p-3 shadow-raised md:static md:col-start-2 md:shadow-card lg:sticky lg:top-3 lg:col-start-auto"
       >
         <div className="hidden gap-2 md:grid">
           <p className="text-sm text-muted-foreground">
@@ -693,7 +698,7 @@ function PaymentForm({ order }: { order: OrderState }) {
         {collectNow !== null && collectNow > 0 && (
           <p className="flex items-baseline justify-between gap-2">
             <span className="text-sm text-muted-foreground">{t('collectNow')}</span>
-            <span className="text-xl font-bold tabular-nums">{formatPosMoney(collectNow)}</span>
+            <span className="text-2xl font-bold tabular-nums">{formatPosMoney(collectNow)}</span>
           </p>
         )}
         {error && (

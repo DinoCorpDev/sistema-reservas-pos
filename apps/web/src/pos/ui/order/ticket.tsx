@@ -12,7 +12,8 @@ import {
 import { formatPosMoney, posTaxName } from '@/pos/money';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
-import { Minus, Plus, X } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import { Minus, Plus, ReceiptText, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { removeDiscount, updateItem, voidItem } from '../../actions';
 import { translatedName } from '../../catalog';
@@ -80,11 +81,11 @@ export function Ticket({
     <section className={cn('flex min-h-0 flex-col bg-card', className)} aria-label={t('title')}>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {items.length === 0 ? (
-          <p className="p-6 text-center text-muted-foreground">{t('empty')}</p>
+          <EmptyState icon={<ReceiptText />} title={t('empty')} className="m-3" compact />
         ) : (
           courses.map((course) => (
             <div key={course}>
-              <h2 className="sticky top-0 z-10 border-b bg-muted px-3 py-1.5 text-sm font-semibold">
+              <h2 className="eyebrow sticky top-0 z-10 border-b bg-surface-2 px-3 py-2">
                 {t('course', { course })}
               </h2>
               <ul>
@@ -164,7 +165,7 @@ function TicketLine({
       data-testid="line"
       data-item-id={item.id}
       data-status={item.prepStatus}
-      className="flex items-stretch gap-1 border-b px-1.5 py-1"
+      className="flex items-stretch gap-1 border-b px-2 py-1.5"
     >
       {editable && pending ? (
         <div className="flex shrink-0 items-center">
@@ -237,17 +238,20 @@ function TicketLine({
         {item.note && <span className="text-sm italic">{t('note', { note: item.note })}</span>}
         <span className="flex flex-wrap items-center gap-1.5 text-xs">
           <span
-            className={cn('rounded px-1.5 py-0.5 font-medium', ITEM_STATUS_STYLES[item.prepStatus])}
+            className={cn(
+              'inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium',
+              ITEM_STATUS_STYLES[item.prepStatus],
+            )}
           >
             {ts(item.prepStatus)}
           </span>
           {item.seat !== null && (
-            <span className="rounded bg-muted px-1.5 py-0.5">
+            <span className="rounded-full bg-muted px-2 py-0.5">
               {tc('seat', { seat: item.seat })}
             </span>
           )}
           {discount && !voided && (
-            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-amber-900">
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-amber-900">
               {t('lineDiscount', { label: label(discount) })}
             </span>
           )}
@@ -280,7 +284,7 @@ function Totals({
   const lineDiscounts = order.discountTotalRappen - (orderDiscount?.amountRappen ?? 0);
   const row = 'flex items-center justify-between gap-3';
   return (
-    <div className="grid shrink-0 gap-1 border-t bg-card p-3 text-sm">
+    <div className="m-2 grid shrink-0 gap-1 rounded-xl border bg-surface-2 p-3 text-sm">
       <div className={row}>
         <span>{t('subtotal')}</span>
         <span className="tabular-nums">{formatPosMoney(order.subtotalRappen)}</span>
@@ -311,7 +315,7 @@ function Totals({
           </span>
         </div>
       )}
-      <div className={cn(row, 'text-lg font-bold')}>
+      <div className={cn(row, 'mt-1 border-t pt-2 text-xl font-bold')}>
         <span>{t('total')}</span>
         <span data-testid="order-total" className="tabular-nums">
           {formatPosMoney(order.totalRappen)}

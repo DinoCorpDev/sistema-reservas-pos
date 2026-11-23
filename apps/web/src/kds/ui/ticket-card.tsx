@@ -10,8 +10,31 @@ import {
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
 import { cn } from '@pos/ui/utils';
-import { Check, ChefHat, HandPlatter, Printer, RotateCcw, ShieldAlert } from 'lucide-react';
+import {
+  Armchair,
+  Beer,
+  Check,
+  ChefHat,
+  Clock3,
+  HandPlatter,
+  Printer,
+  RotateCcw,
+  ShieldAlert,
+  ShoppingBag,
+} from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
+
+/** Where the ticket is for, as an icon beside the table or number (DEC-053). */
+const CHANNEL_ICONS = { table: Armchair, bar: Beer, takeaway: ShoppingBag } as const;
+
+/** The dot of each item status: the same colours as the item backgrounds below. */
+const ITEM_DOTS: Record<string, string> = {
+  sent: 'bg-sky-500',
+  preparing: 'bg-amber-500',
+  ready: 'bg-emerald-500',
+  served: 'bg-slate-400',
+  voided: 'bg-destructive',
+};
 
 const ITEM_STYLES: Record<string, string> = {
   sent: 'bg-card',
@@ -65,11 +88,14 @@ export function TicketCard({
   const live = ticket.items.filter((i) => i.status !== 'voided' && i.status !== 'served');
   const hasSent = live.some((i) => i.status === 'sent');
   const allReady = live.length > 0 && live.every((i) => i.status === 'ready');
+  const readyShare =
+    live.length === 0 ? 0 : live.filter((i) => i.status === 'ready').length / live.length;
+  const ChannelIcon = CHANNEL_ICONS[ticket.channel as keyof typeof CHANNEL_ICONS] ?? ChefHat;
 
   return (
     <article
       className={cn(
-        'flex flex-col overflow-hidden rounded-xl border-2 bg-card shadow-sm',
+        'flex flex-col overflow-hidden rounded-2xl border-2 bg-card shadow-card',
         ticket.alert
           ? 'border-destructive'
           : ticket.status === 'preparing'
@@ -85,30 +111,63 @@ export function TicketCard({
     >
       <header
         className={cn(
-          'flex items-start justify-between gap-2 px-3 py-2',
-          ticket.alert ? 'bg-destructive text-white' : 'bg-muted',
+          'flex items-start justify-between gap-2 px-3 py-2.5',
+          ticket.alert ? 'bg-destructive text-white' : 'bg-surface-2',
         )}
       >
-        <div className="min-w-0">
-          <h2 className="truncate text-xl font-bold">{where}</h2>
-          <p className={cn('text-sm', ticket.alert ? 'text-white/90' : 'text-muted-foreground')}>
-            {[
-              ticket.channel === 'table' ? `#${ticket.displayNumber}` : null,
-              format.dateTime(new Date(ticket.sentAt), { hour: '2-digit', minute: '2-digit' }),
-              waiterName,
-            ]
-              .filter(Boolean)
-              .join(' · ')}
-          </p>
+        <div className="flex min-w-0 items-start gap-2.5">
+          <span
+            aria-hidden
+            className={cn(
+              'mt-0.5 grid size-9 shrink-0 place-items-center rounded-lg',
+              ticket.alert ? 'bg-white/20' : 'bg-brand-soft text-brand-strong',
+            )}
+          >
+            <ChannelIcon className="size-5" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="truncate font-brand text-xl font-semibold">{where}</h2>
+            <p className={cn('text-sm', ticket.alert ? 'text-white/90' : 'text-muted-foreground')}>
+              {[
+                ticket.channel === 'table' ? `#${ticket.displayNumber}` : null,
+                format.dateTime(new Date(ticket.sentAt), { hour: '2-digit', minute: '2-digit' }),
+                waiterName,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </p>
+          </div>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <span className="text-2xl font-bold tabular-nums" data-testid="kds-elapsed">
+          {/* The minutes since it was sent; red with the delay alert (RF-C24). */}
+          <span
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xl font-bold tabular-nums',
+              ticket.alert
+                ? 'bg-white/20'
+                : ticket.status === 'preparing'
+                  ? 'bg-amber-100 text-amber-900 dark:bg-amber-400/15 dark:text-amber-100'
+                  : 'border bg-card',
+            )}
+            data-testid="kds-elapsed"
+          >
+            <Clock3 className="size-4" aria-hidden />
             {t('minutes', { minutes: ticket.elapsedMinutes })}
           </span>
           {ticket.hasStorno && <Badge variant="destructive">{labels.storno}</Badge>}
           {ticket.reprintCount > 0 && <Badge variant="outline">{labels.reprint}</Badge>}
         </div>
       </header>
+
+      {/* How much of the ticket is ready. */}
+      {live.length > 0 ? (
+        <div className="h-1.5 bg-muted" aria-hidden>
+          <div
+            className="h-full bg-emerald-500 transition-[width] duration-300"
+            style={{ width: `${Math.round(readyShare * 100)}%` }}
+          />
+        </div>
+      ) : null}
 
       {/* A guest is allergic: whatever this ticket lists, keep it away from them (DEC-037). */}
       {ticket.allergies && (
@@ -149,7 +208,7 @@ export function TicketCard({
                     disabled={!movable}
                     onClick={() => actions.advance(ticket, item.itemId)}
                     className={cn(
-                      'flex min-h-11 flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left disabled:cursor-default',
+                      'flex min-h-12 flex-col items-start gap-0.5 rounded-xl border px-3 py-2 text-left transition-colors duration-150 disabled:cursor-default',
                       ITEM_STYLES[item.status],
                     )}
                     data-testid="kds-item"
@@ -164,7 +223,11 @@ export function TicketCard({
                         {item.quantity}× {item.name}
                         {item.variantName ? ` (${item.variantName})` : ''}
                       </span>
-                      <span className="shrink-0 text-xs font-medium no-underline">
+                      <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium no-underline">
+                        <span
+                          aria-hidden
+                          className={cn('size-2 rounded-full', ITEM_DOTS[item.status])}
+                        />
                         {item.status === 'voided' ? labels.storno : t(`status.${item.status}`)}
                       </span>
                     </span>
@@ -213,7 +276,7 @@ export function TicketCard({
         ))}
       </div>
 
-      <footer className="flex flex-wrap gap-2 border-t p-2">
+      <footer className="flex flex-wrap gap-2 border-t bg-surface-2 p-2.5 [&_[data-slot=button]]:min-h-12">
         {!done && hasSent && (
           <Button variant="outline" className="flex-1 gap-2" onClick={() => actions.start(ticket)}>
             <ChefHat /> {t('start')}

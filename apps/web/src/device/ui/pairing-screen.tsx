@@ -28,8 +28,8 @@ export function PairingScreen() {
   const [pinStep, setPinStep] = useState(false);
   return (
     // On a phone the card takes the whole screen (DEC-036).
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 p-6 max-sm:justify-start max-sm:p-0">
-      <Card className="max-sm:min-h-dvh max-sm:rounded-none max-sm:border-0 max-sm:shadow-none">
+    <main className="flex min-h-dvh flex-col items-center justify-center bg-atmosphere p-6 max-sm:justify-start max-sm:p-0">
+      <Card className="w-full max-w-md rounded-3xl shadow-raised max-sm:min-h-dvh max-sm:rounded-none max-sm:border-0 max-sm:shadow-none">
         <CardHeader>
           <ZitasLogo size="sm" className="mb-3" />
           <CardTitle>{t('title')}</CardTitle>
@@ -151,7 +151,7 @@ export function PairingForm({ onPinStep }: { onPinStep?: (pinStep: boolean) => v
           {Array.from({ length: Math.max(4, pin.length) }, (_, index) => (
             <span
               key={index}
-              className={`size-4 rounded-full border-2 border-foreground ${index < pin.length ? 'bg-foreground' : ''}`}
+              className={`size-4 rounded-full border-2 transition-colors duration-150 ${index < pin.length ? 'border-brand bg-brand shadow-[0_0_0_4px_var(--glow)]' : 'border-muted-foreground/40'}`}
             />
           ))}
         </div>

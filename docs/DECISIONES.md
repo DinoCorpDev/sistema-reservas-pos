@@ -601,13 +601,21 @@ Juan lo pidió (23 nov 2026): la interfaz se veía «a puro HTML». Quería que 
 - **Claro por defecto, con las dos opciones a la vista** (Juan, 23 nov 2026: «no sé si ese color oscuro funcione; deja las dos opciones»):
   - Sin una elección guardada, la app es clara. Antes seguía al dispositivo.
   - El backoffice y los logins tienen un selector visible de sol y luna (`ThemeToggle`). El modo «Automático» sigue en el menú de la caja y la cocina, y se guarda como cualquier otra elección.
-  - El menú lateral del backoffice es blanco en modo claro y Deep Intelligence en oscuro. Esto cambia DEC-049 solo en el backoffice: las barras de la caja y de la cocina y el panel de marca de los logins siguen oscuros.
+  - El menú lateral del backoffice es blanco en modo claro y Deep Intelligence en oscuro. Desde la fase 2 las barras de la caja y de la cocina siguen la misma regla. Solo el panel de marca de los logins queda siempre oscuro.
 - **En todo el backoffice:**
   - Cada página dice en qué sección está: `PageHeader` recibe `nav` y toma el ícono y la sección del menú (`components/backoffice/nav-items.ts`).
   - Los avisos llevan el ícono de su tipo.
   - Las listas vacías usan `EmptyState`.
   - No hay `loading.tsx`: con él, Next precarga cada página del menú (unas 15 por vista), y eso multiplica las consultas y las conexiones a la base.
   - Diálogos, menús y selects tienen esquinas más grandes, sombra teñida y una entrada corta.
+- **Fase 2, caja y cocina** (Juan, 23 nov 2026):
+  - **Barra superior:** la navegación es una píldora segmentada. Por debajo de 1536 px va en su propia fila, para no partirse.
+  - **Mesas:** cada mesa muestra un ícono por estado (`TABLE_STATE_ICONS`), la etiqueta legible y los comensales y minutos en chips.
+  - **Productos:** llevan una franja del color de su categoría (`solidByIndex`, el mismo orden de la carta que en el backoffice).
+  - **Ticket, cobro y recibo:** el ticket vacío usa `EmptyState`, los métodos de pago son baldosas grandes, el cambio va en verde y el recibo abre con un check de pagado.
+  - **PIN y vinculación:** son una tarjeta central con los puntos del PIN en teal.
+  - **Comandas:** cabecera con el ícono del canal, chip de minutos (rojo con la alerta de siempre), barra de ítems listos y un punto por estado.
+  - **Modo oscuro:** los colores de estado tienen variantes `dark:` y son los mismos tonos de siempre.
 - **Lo que no cambia:** los colores de estado de mesas, ítems y pagos, el botón verde de cobrar, la franja de práctica y los objetivos de 44 px. Las acciones de fila siguen siendo botones con su nombre, así que los lectores de pantalla y las pruebas e2e las encuentran igual.
 
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada

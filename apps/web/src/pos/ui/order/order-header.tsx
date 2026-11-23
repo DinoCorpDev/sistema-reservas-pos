@@ -54,7 +54,7 @@ export function OrderHeader({ order, lookups }: { order: OrderState; lookups: Lo
           </Button>
         )}
         <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h1 className="text-lg font-bold md:text-xl">
+          <h1 className="font-brand text-xl font-semibold md:text-2xl">
             {table ? tc('table', { label: table.label }) : tch(order.channel)}
             {joined.length > 0 && (
               <span className="ml-1 text-base font-medium text-muted-foreground">
@@ -81,7 +81,7 @@ export function OrderHeader({ order, lookups }: { order: OrderState; lookups: Lo
           )}
           <span className="text-muted-foreground">{t('waiter', { name: waiter })}</span>
           {table && order.channel !== 'table' && (
-            <span className="rounded bg-muted px-2 py-0.5">{tch(order.channel)}</span>
+            <span className="rounded-full bg-muted px-2.5 py-0.5">{tch(order.channel)}</span>
           )}
           {order.customerName && <span className="font-medium">{order.customerName}</span>}
           {order.paymentStatus !== 'unpaid' && (

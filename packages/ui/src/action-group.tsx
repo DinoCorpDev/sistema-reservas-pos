@@ -20,7 +20,7 @@ export function ActionGroup({
       aria-label={label}
       className={cn(
         'inline-flex items-center divide-x overflow-hidden rounded-lg border bg-card shadow-xs',
-        '[&_[data-slot=button]]:rounded-none [&_[data-slot=button]]:text-muted-foreground [&_[data-slot=button]:hover]:text-foreground',
+        '[&_[data-slot=button]]:rounded-none [&_[data-slot=button]]:border-0 [&_[data-slot=button]]:bg-transparent [&_[data-slot=button]]:text-muted-foreground [&_[data-slot=button]]:shadow-none [&_[data-slot=button]:hover]:text-foreground',
         className,
       )}
     >

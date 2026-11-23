@@ -64,7 +64,7 @@ export function ActionBar({ data, onMore }: { data: OrderData; onMore: () => voi
 
   return (
     // On a phone (DEC-036): one row of four big buttons, icon over label, above the home bar.
-    <div className="grid shrink-0 grid-cols-4 gap-1.5 border-t bg-card p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:flex md:flex-wrap md:items-center md:justify-end md:gap-2 md:pb-2">
+    <div className="grid shrink-0 grid-cols-4 gap-1.5 border-t bg-card p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-10px_28px_-20px_rgb(11_15_25/30%)] md:flex md:flex-wrap md:items-center md:justify-end md:gap-2.5 md:px-3 md:pb-2.5 md:pt-2.5">
       <Button
         size="lg"
         variant="outline"

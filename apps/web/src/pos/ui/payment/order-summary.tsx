@@ -31,7 +31,10 @@ export function OrderSummary({
   return (
     <section
       aria-labelledby="payment-summary-title"
-      className={cn('flex min-h-0 flex-col gap-3 rounded-xl border bg-card p-4', className)}
+      className={cn(
+        'flex min-h-0 flex-col gap-3 rounded-xl border bg-card p-4 shadow-card',
+        className,
+      )}
     >
       <h2 id="payment-summary-title" className="text-base font-semibold">
         {t('title')}

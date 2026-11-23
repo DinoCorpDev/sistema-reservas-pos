@@ -55,43 +55,48 @@ export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 p-6">
-      <TrainingBand />
+    <main className="relative flex min-h-dvh flex-col items-center bg-atmosphere p-4 sm:p-6">
+      <div className="absolute inset-x-0 top-0">
+        <TrainingBand />
+      </div>
       {/* Before the PIN: the language of this screen on this device (RF-A08). */}
       <div className="fixed right-4 top-4">
         <LanguageMenu />
       </div>
-      <div className="flex flex-col items-center gap-1 text-center">
-        <ZitasLogo size="sm" className="mb-3" />
-        <p className="text-lg font-semibold">{location}</p>
-        <p className="text-sm text-muted-foreground">{terminal}</p>
-        <StatusIndicator className="mt-2" />
+      {/* One card in the middle of the screen (DEC-053). */}
+      <div className="my-auto flex w-full max-w-sm flex-col gap-5 rounded-3xl border bg-card p-6 shadow-raised">
+        <div className="flex flex-col items-center gap-1 text-center">
+          <ZitasLogo size="sm" className="mb-3" />
+          <p className="text-lg font-semibold">{location}</p>
+          <p className="text-sm text-muted-foreground">{terminal}</p>
+          <StatusIndicator className="mt-2" />
+        </div>
+        {heading}
+        <h1 className="text-center font-brand text-2xl font-semibold">{t('title')}</h1>
+        <div
+          className="flex justify-center gap-3"
+          aria-label={t('entered', { count: pin.length })}
+          data-testid="pin-dots"
+        >
+          {Array.from({ length: Math.max(4, pin.length) }, (_, index) => (
+            <span
+              key={index}
+              className={`size-4 rounded-full border-2 transition-colors duration-150 ${index < pin.length ? 'border-brand bg-brand shadow-[0_0_0_4px_var(--glow)]' : 'border-muted-foreground/40'}`}
+            />
+          ))}
+        </div>
+        <NumPad
+          onDigit={(digit) => setPin((value) => (value.length < MAX_PIN ? value + digit : value))}
+          onBackspace={() => setPin((value) => value.slice(0, -1))}
+          onClear={() => setPin('')}
+        />
+        <Button size="lg" onClick={() => void submit()} disabled={pin.length < 4 || busy}>
+          {busy ? t('checking') : t('unlock')}
+        </Button>
+        <p className="text-center text-xs text-muted-foreground" data-testid="app-version">
+          v{APP_VERSION}
+        </p>
       </div>
-      {heading}
-      <h1 className="text-center text-2xl font-semibold">{t('title')}</h1>
-      <div
-        className="flex justify-center gap-3"
-        aria-label={t('entered', { count: pin.length })}
-        data-testid="pin-dots"
-      >
-        {Array.from({ length: Math.max(4, pin.length) }, (_, index) => (
-          <span
-            key={index}
-            className={`size-4 rounded-full border-2 border-foreground ${index < pin.length ? 'bg-foreground' : ''}`}
-          />
-        ))}
-      </div>
-      <NumPad
-        onDigit={(digit) => setPin((value) => (value.length < MAX_PIN ? value + digit : value))}
-        onBackspace={() => setPin((value) => value.slice(0, -1))}
-        onClear={() => setPin('')}
-      />
-      <Button size="lg" onClick={() => void submit()} disabled={pin.length < 4 || busy}>
-        {busy ? t('checking') : t('unlock')}
-      </Button>
-      <p className="text-center text-xs text-muted-foreground" data-testid="app-version">
-        v{APP_VERSION}
-      </p>
       <ErrorDialog
         title={t('errorTitle')}
         message={message}

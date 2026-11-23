@@ -2,9 +2,11 @@
 
 import type { KitchenTicketView } from '@pos/core';
 import { Button } from '@pos/ui/button';
+import { ActionGroup } from '@pos/ui/action-group';
+import { Avatar } from '@pos/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pos/ui/tabs';
 import { toast } from '@pos/ui/toaster';
-import { Lock } from 'lucide-react';
+import { ChefHat, Clock3, Lock } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { lockTerminal } from '@/device/pin';
@@ -120,29 +122,45 @@ export function KdsShell() {
   return (
     <Tabs defaultValue="open" className="flex min-h-dvh flex-col gap-0">
       <TrainingBand />
-      <header className="flex flex-wrap items-center gap-3 bg-chrome px-3 py-2 text-chrome-foreground [&_[data-slot=button]]:border-white/15 [&_[data-slot=button]]:bg-white/5 [&_[data-slot=button]]:text-chrome-foreground [&_[data-slot=button]:hover]:bg-white/15 [&_[data-slot=button]:hover]:text-chrome-foreground">
+      {/* White in light, Deep Intelligence in dark (DEC-053); the station is the title. */}
+      <header className="flex flex-wrap items-center gap-3 border-b bg-card px-4 py-2.5 text-foreground dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground">
         <ZitasMark className="size-7" />
-        <h1 className="text-xl font-bold" data-testid="kds-station">
-          {station.name}
-        </h1>
-        <TabsList className="w-auto">
-          <TabsTrigger value="open">{t('tabs.open', { count: board.active.length })}</TabsTrigger>
-          <TabsTrigger value="done">{t('tabs.done')}</TabsTrigger>
+        <span className="flex items-center gap-2">
+          <span className="grid size-9 place-items-center rounded-lg bg-brand-soft text-brand-strong dark:bg-white/10 dark:text-brand">
+            <ChefHat className="size-5" aria-hidden />
+          </span>
+          <h1 className="font-brand text-xl font-semibold" data-testid="kds-station">
+            {station.name}
+          </h1>
+        </span>
+        <TabsList className="w-auto rounded-full dark:border-white/10 dark:bg-white/5">
+          <TabsTrigger value="open" className="rounded-full">
+            {t('tabs.open', { count: board.active.length })}
+          </TabsTrigger>
+          <TabsTrigger value="done" className="rounded-full">
+            {t('tabs.done')}
+          </TabsTrigger>
         </TabsList>
-        <span className="text-lg font-semibold tabular-nums">
+        <span className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-lg font-semibold tabular-nums dark:border-white/10">
+          <Clock3 className="size-4 text-muted-foreground" aria-hidden />
           {format.dateTime(new Date(now), { hour: '2-digit', minute: '2-digit' })}
         </span>
         <div className="ml-auto flex items-center gap-3">
           <StatusIndicator />
-          <span className="text-sm font-medium" data-testid="kds-user">
-            {user?.displayName}
+          <span className="flex items-center gap-2">
+            {user ? <Avatar name={user.displayName} colorKey={user.id} size="sm" /> : null}
+            <span className="text-sm font-medium" data-testid="kds-user">
+              {user?.displayName}
+            </span>
           </span>
-          <ThemeMenu />
-          <LanguageMenu />
-          <HelpLink role="kitchen" />
-          <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
-            <Lock />
-          </Button>
+          <ActionGroup className="dark:divide-white/10 dark:border-white/10 dark:bg-white/5 dark:[&_[data-slot=button]]:text-chrome-foreground/80">
+            <ThemeMenu />
+            <LanguageMenu />
+            <HelpLink role="kitchen" />
+            <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
+              <Lock />
+            </Button>
+          </ActionGroup>
         </div>
       </header>
       {printerHealth && !printerHealth.ok && (

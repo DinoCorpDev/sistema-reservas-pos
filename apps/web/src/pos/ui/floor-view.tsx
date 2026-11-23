@@ -13,7 +13,8 @@ import {
 } from '@pos/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pos/ui/tabs';
 import { cn } from '@pos/ui/utils';
-import { Clock, Link2, Plus, ShieldAlert, Users } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import { Armchair, Clock, Link2, Plus, ShieldAlert, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type CSSProperties, useId, useMemo, useState } from 'react';
 import { getPos, usePos } from '@/device/store';
@@ -21,7 +22,7 @@ import { usePosUi } from '../ui-store';
 import { byLabel, minutesSince } from './order/format';
 import { useElementWidth, useFoldMemo, useLookups, useNow } from './order/hooks';
 import { OpenTableDialog } from './order/open-table-dialog';
-import { LEGEND_STATES, TABLE_STATE_STYLES } from './order/status';
+import { LEGEND_STATES, TABLE_STATE_ICONS, TABLE_STATE_STYLES } from './order/status';
 
 type FloorTable = BootstrapDto['tables'][number];
 
@@ -107,8 +108,8 @@ export function FloorView() {
 
   if (!current) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6 text-center text-muted-foreground">
-        {t('empty')}
+      <div className="flex flex-1 items-center justify-center p-6">
+        <EmptyState icon={<Armchair />} title={t('empty')} />
       </div>
     );
   }
@@ -123,18 +124,39 @@ export function FloorView() {
         }}
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <TabsList aria-label={t('areas')}>
-            {areas.map(({ area }) => (
-              <TabsTrigger key={area.id} value={area.id} className="min-w-24 text-base">
-                {area.name}
-              </TabsTrigger>
-            ))}
+          <TabsList aria-label={t('areas')} className="rounded-full">
+            {areas.map(({ area, tables }) => {
+              // How many tables of the area are taken, beside its name (not part of its name).
+              const busy = tables.filter(
+                (table) => (floor.views.get(table.id)?.state ?? 'free') !== 'free',
+              ).length;
+              return (
+                <TabsTrigger
+                  key={area.id}
+                  value={area.id}
+                  className="min-w-24 rounded-full text-base"
+                >
+                  {area.name}
+                  {busy > 0 ? (
+                    <span
+                      aria-hidden
+                      className="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-semibold text-brand-strong tabular-nums"
+                    >
+                      {busy}
+                    </span>
+                  ) : null}
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
-          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs" aria-label={t('legend')}>
+          <ul className="flex flex-wrap gap-1.5 text-xs" aria-label={t('legend')}>
             {LEGEND_STATES.map((state) => (
-              <li key={state} className="flex items-center gap-1.5">
+              <li
+                key={state}
+                className="flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 font-medium"
+              >
                 <span
-                  className={cn('size-3.5 rounded border-2', TABLE_STATE_STYLES[state])}
+                  className={cn('size-3 rounded-full border-2', TABLE_STATE_STYLES[state])}
                   aria-hidden
                 />
                 {ts(state)}
@@ -224,13 +246,13 @@ function AreaMap({
         'grid gap-2 sm:gap-3',
         // Three tables per row on a phone held upright (DEC-036), more on a tablet.
         !positioned &&
-          'auto-rows-[minmax(5.25rem,auto)] grid-cols-[repeat(auto-fill,minmax(6.25rem,1fr))] sm:auto-rows-[minmax(6rem,auto)] sm:grid-cols-[repeat(auto-fill,minmax(7.5rem,1fr))]',
+          'auto-rows-[minmax(6.5rem,auto)] grid-cols-[repeat(auto-fill,minmax(6.75rem,1fr))] sm:auto-rows-[minmax(7.5rem,auto)] sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]',
       )}
       style={
         positioned
           ? {
               gridTemplateColumns: `repeat(${layout.cols}, minmax(0, 1fr))`,
-              gridTemplateRows: `repeat(${layout.rows}, minmax(5.5rem, auto))`,
+              gridTemplateRows: `repeat(${layout.rows}, minmax(7rem, auto))`,
             }
           : undefined
       }
@@ -290,6 +312,7 @@ function TableTile({
   const ts = useTranslations('posOrder.tableState');
   const tc = useTranslations('posOrder.common');
   const detailsId = useId();
+  const StateIcon = joinedToLabel ? Link2 : TABLE_STATE_ICONS[state];
   return (
     <button
       type="button"
@@ -300,46 +323,54 @@ function TableTile({
       onClick={onSelect}
       style={style}
       className={cn(
-        'flex min-h-22 min-w-0 flex-col justify-between gap-1 border-2 p-2 text-left shadow-xs transition-transform select-none active:scale-[0.97]',
+        'flex min-h-26 min-w-0 flex-col justify-between gap-2 border-2 p-3 text-left shadow-card transition-[transform,box-shadow] duration-150 select-none hover:shadow-raised active:scale-[0.97]',
         'outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
-        table.shape === 'round' ? 'rounded-[1.75rem] px-3' : 'rounded-xl',
+        table.shape === 'round' ? 'rounded-[1.75rem] px-4' : 'rounded-2xl',
         TABLE_STATE_STYLES[state],
       )}
     >
       <span className="flex items-start justify-between gap-1">
-        <span className="text-2xl leading-none font-bold">{table.label}</span>
-        {allergy && (
-          <span
-            className="ml-auto rounded-full bg-destructive p-1 text-white"
-            data-testid="table-allergy"
-          >
-            <ShieldAlert className="size-4" aria-hidden />
-            <span className="sr-only">{t('allergy')}</span>
-          </span>
-        )}
-        {orderCount > 1 && (
-          <span className="rounded-full bg-black/10 px-1.5 text-xs font-semibold">
-            ×{orderCount}
-          </span>
-        )}
+        <span className="font-brand text-3xl leading-none font-semibold">{table.label}</span>
+        <span className="flex items-center gap-1">
+          {orderCount > 1 && (
+            <span className="rounded-full bg-black/10 px-2 py-0.5 text-xs font-semibold dark:bg-white/15">
+              ×{orderCount}
+            </span>
+          )}
+          {allergy ? (
+            <span
+              className="grid size-8 place-items-center rounded-full bg-destructive text-white shadow-sm"
+              data-testid="table-allergy"
+            >
+              <ShieldAlert className="size-4" aria-hidden />
+              <span className="sr-only">{t('allergy')}</span>
+            </span>
+          ) : (
+            <span
+              aria-hidden
+              className="grid size-8 place-items-center rounded-full bg-black/5 dark:bg-white/10"
+            >
+              <StateIcon className="size-4" />
+            </span>
+          )}
+        </span>
       </span>
-      <span id={detailsId} className="flex min-w-0 flex-col gap-0.5 text-xs font-medium">
+      <span id={detailsId} className="flex min-w-0 flex-col gap-1.5">
         {/* Two lines on a narrow phone tile rather than a cut word. */}
-        <span className="line-clamp-2 leading-tight sm:truncate">
+        <span className="line-clamp-2 text-sm leading-tight font-semibold">
           {joinedToLabel ? t('joinedTo', { label: joinedToLabel }) : ts(state)}
         </span>
-        {(guests > 0 || minutes !== null || joinedToLabel) && (
-          <span className="flex flex-wrap items-center gap-x-2">
-            {joinedToLabel && <Link2 className="size-3.5" aria-hidden />}
+        {(guests > 0 || minutes !== null) && (
+          <span className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
             {guests > 0 && (
-              <span className="inline-flex items-center gap-0.5">
+              <span className="inline-flex items-center gap-1 rounded-full bg-black/5 px-2 py-0.5 dark:bg-white/10">
                 <Users className="size-3.5" aria-hidden />
                 <span className="sr-only">{tc('guests', { count: guests })}</span>
                 <span aria-hidden>{guests}</span>
               </span>
             )}
             {minutes !== null && (
-              <span className="inline-flex items-center gap-0.5 tabular-nums">
+              <span className="inline-flex items-center gap-1 rounded-full bg-black/5 px-2 py-0.5 tabular-nums dark:bg-white/10">
                 <Clock className="size-3.5" aria-hidden />
                 <span className="sr-only">{t('sinceSent', { minutes })}</span>
                 <span aria-hidden>{tc('minutes', { minutes })}</span>
