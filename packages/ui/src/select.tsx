@@ -18,7 +18,7 @@ export function SelectTrigger({
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       className={cn(
-        'flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 py-2 text-base whitespace-nowrap shadow-xs outline-none',
+        'flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-input bg-card px-3 py-2 text-base whitespace-nowrap shadow-xs transition-[border-color,box-shadow] duration-150 outline-none hover:border-brand/40',
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50',
         'data-[placeholder]:text-muted-foreground aria-invalid:border-destructive [&>span]:line-clamp-1',
         className,
@@ -45,7 +45,7 @@ export function SelectContent({
         data-slot="select-content"
         position={position}
         className={cn(
-          'relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-md',
+          'relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-xl border bg-card text-card-foreground shadow-raised',
           position === 'popper' && 'w-full min-w-(--radix-select-trigger-width) translate-y-1',
           className,
         )}
@@ -66,7 +66,7 @@ export function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        'relative flex min-h-11 w-full cursor-default items-center gap-2 rounded-md py-2 pr-8 pl-3 text-base outline-none select-none',
+        'relative flex min-h-11 w-full cursor-default items-center gap-2 rounded-lg py-2 pr-8 pl-3 text-base outline-none select-none',
         'focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         className,
       )}

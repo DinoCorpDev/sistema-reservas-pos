@@ -9,15 +9,17 @@ import { cn } from './utils';
  * `pos` is the size of the product buttons in the POS.
  */
 export const buttonVariants = cva(
-  'inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-base font-medium whitespace-nowrap transition-colors select-none outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0',
+  'inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-base font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-150 select-none outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80',
+        // The primary action glows softly in the brand teal (DEC-053).
+        default:
+          'bg-primary text-primary-foreground shadow-[0_0_0_1px_var(--glow),0_10px_24px_-12px_var(--glow)] hover:-translate-y-px hover:bg-primary/90 active:translate-y-0 active:bg-primary/80',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70',
         outline:
-          'border border-border bg-background hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+          'border border-border bg-card shadow-xs hover:border-brand/40 hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
         destructive:
           'bg-destructive text-white hover:bg-destructive/90 active:bg-destructive/80 focus-visible:ring-destructive/40',
         ghost: 'hover:bg-accent hover:text-accent-foreground active:bg-accent/80',

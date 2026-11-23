@@ -19,7 +19,7 @@ export function DropdownMenuContent({
       <DropdownMenuPrimitive.Content
         sideOffset={sideOffset}
         className={cn(
-          'z-50 min-w-[12rem] overflow-hidden rounded-lg border bg-card p-1 text-card-foreground shadow-md',
+          'z-50 min-w-[12rem] animate-enter overflow-hidden rounded-xl border bg-card p-1.5 text-card-foreground shadow-raised',
           className,
         )}
         {...props}
@@ -29,7 +29,7 @@ export function DropdownMenuContent({
 }
 
 const itemClass =
-  'relative flex min-h-11 cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4';
+  'relative flex min-h-11 cursor-default items-center gap-2.5 rounded-lg px-3 py-2 text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground [&_svg]:text-muted-foreground focus:[&_svg]:text-brand-strong data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4';
 
 export function DropdownMenuItem({
   className,
@@ -60,10 +60,7 @@ export function DropdownMenuLabel({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Label>) {
   return (
-    <DropdownMenuPrimitive.Label
-      className={cn('px-3 py-1.5 text-xs font-medium text-muted-foreground', className)}
-      {...props}
-    />
+    <DropdownMenuPrimitive.Label className={cn('eyebrow px-3 pt-2 pb-1.5', className)} {...props} />
   );
 }
 

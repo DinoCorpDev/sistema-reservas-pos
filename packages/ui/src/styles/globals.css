@@ -31,7 +31,7 @@
   --destructive: #d93f30;
   --success: #1f9d6b;
   --warning: #ffcb57;
-  --border: #dbe5ea;
+  --border: rgb(11 15 25 / 9%);
   --input: #cfdbe2;
   --ring: #20b8bd;
   /* The brand accent: the dot, active items, highlights; strong = teal readable as text. */
@@ -43,6 +43,34 @@
   --chrome: #0b0f19;
   --chrome-foreground: #f6f8fa;
   --chrome-accent: rgb(32 184 189 / 18%);
+  /*
+   * Depth (DEC-053): 1 px borders with alpha and shadows tinted with the brand, never flat grey.
+   * surface-2 is the band of table and card headers; glow is the light of the primary button.
+   */
+  --surface-2: #f6fafb;
+  --glow: rgb(32 184 189 / 38%);
+  --elevation-card: 0 1px 2px rgb(11 15 25 / 4%), 0 6px 20px -12px rgb(11 15 25 / 14%);
+  --elevation-raised: 0 2px 4px rgb(11 15 25 / 5%), 0 18px 36px -18px rgb(14 127 131 / 32%);
+  --atmosphere:
+    radial-gradient(1100px 420px at 78% -12%, rgb(32 184 189 / 12%), transparent 70%),
+    var(--background);
+  /* Category tones (support palette of the brandbook): a soft background and a readable text. */
+  --cat-1-bg: #d9f2f3;
+  --cat-1-fg: #0e7f83;
+  --cat-2-bg: #ffe3df;
+  --cat-2-fg: #b93a29;
+  --cat-3-bg: #fff1cc;
+  --cat-3-fg: #835b00;
+  --cat-4-bg: #dcf3ec;
+  --cat-4-fg: #1c7357;
+  --cat-5-bg: #e3e6fb;
+  --cat-5-fg: #3f47ad;
+  --cat-6-bg: #f3ecdc;
+  --cat-6-fg: #735727;
+  --cat-7-bg: #efe4fb;
+  --cat-7-fg: #7439b0;
+  --cat-8-bg: #dcecfb;
+  --cat-8-fg: #215c9e;
 }
 
 .dark {
@@ -70,6 +98,29 @@
   --chrome: #070a12;
   --chrome-foreground: #f6f8fa;
   --chrome-accent: rgb(32 184 189 / 22%);
+  --surface-2: #171f2f;
+  --glow: rgb(32 184 189 / 45%);
+  --elevation-card: inset 0 1px 0 rgb(255 255 255 / 4%), 0 10px 28px -18px rgb(0 0 0 / 70%);
+  --elevation-raised: inset 0 1px 0 rgb(255 255 255 / 6%), 0 20px 44px -22px rgb(32 184 189 / 34%);
+  --atmosphere:
+    radial-gradient(1100px 460px at 78% -12%, rgb(32 184 189 / 14%), transparent 70%),
+    var(--background);
+  --cat-1-bg: rgb(32 184 189 / 16%);
+  --cat-1-fg: #6fd9dc;
+  --cat-2-bg: rgb(255 107 91 / 16%);
+  --cat-2-fg: #ff9a8f;
+  --cat-3-bg: rgb(255 203 87 / 15%);
+  --cat-3-fg: #ffd77f;
+  --cat-4-bg: rgb(126 214 185 / 15%);
+  --cat-4-fg: #9fe0cc;
+  --cat-5-bg: rgb(120 132 240 / 18%);
+  --cat-5-fg: #aab3ff;
+  --cat-6-bg: rgb(227 214 184 / 12%);
+  --cat-6-fg: #e3d6b8;
+  --cat-7-bg: rgb(168 110 230 / 18%);
+  --cat-7-fg: #cfa8f5;
+  --cat-8-bg: rgb(92 160 230 / 18%);
+  --cat-8-fg: #9cc8f5;
 }
 
 @theme inline {
@@ -98,6 +149,10 @@
   --color-chrome: var(--chrome);
   --color-chrome-foreground: var(--chrome-foreground);
   --color-chrome-accent: var(--chrome-accent);
+  --color-surface-2: var(--surface-2);
+  --color-glow: var(--glow);
+  --shadow-card: var(--elevation-card);
+  --shadow-raised: var(--elevation-raised);
   /* Inter for the interface, Chakra Petch for the brand (set by the app's font loader). */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-brand: var(--font-chakra), var(--font-inter), ui-sans-serif, sans-serif;
@@ -118,5 +173,39 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Section labels: small capitals with tracking, the same everywhere (DEC-053). */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* The page background: a faint teal light from the top right, never a flat colour. */
+@utility bg-atmosphere {
+  background: var(--atmosphere);
+}
+
+/* Content enters once, short and calm; nothing moves for people who ask for less motion. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-enter {
+  animation: enter 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 }
