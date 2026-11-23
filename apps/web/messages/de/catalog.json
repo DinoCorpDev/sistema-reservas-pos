@@ -7,10 +7,10 @@
     "translationNameMissing": "Bitte auch den Namen übersetzen."
   },
   "products": {
-    "title": "Produkte",
-    "description": "Eine Produktkarte für Kasse, QR-Menü und Web. Änderungen gelten sofort auf allen Kanälen.",
-    "new": "Neues Produkt",
-    "newHint": "Varianten, Allergene, Übersetzungen und den Rest ergänzen Sie danach im Produkt.",
+    "title": "Speisekarte",
+    "description": "Alle Gerichte und Getränke für Kasse, QR-Menü und Web. Jedes Gericht hat sein Rezept, das vom Lager abzieht.",
+    "new": "Neues Gericht",
+    "newHint": "Rezept, Varianten, Allergene, Übersetzungen und den Rest ergänzen Sie danach im Gericht.",
     "created": "Produkt angelegt",
     "needCategory": "Legen Sie zuerst eine Kategorie an.",
     "toCategories": "Zu den Kategorien",
@@ -27,16 +27,23 @@
     "searchPlaceholder": "Name oder Artikelnummer",
     "showInactive": "Inaktive anzeigen",
     "noLocation": "Wählen Sie oben einen Standort, um Produkte als ausverkauft («86») zu markieren.",
-    "noResults": "Keine Produkte gefunden.",
-    "empty": "Noch keine Produkte. Legen Sie das erste Produkt an.",
+    "noResults": "Keine Gerichte gefunden.",
+    "empty": "Die Speisekarte ist noch leer. Legen Sie das erste Gericht an.",
     "soldOut": "Verfügbarkeit",
     "soldOutBadge": "Ausverkauft",
     "inactiveHere": "Am Standort inaktiv",
     "noResultsHint": "Ändern Sie den Filter oder die Suche.",
-    "emptyHint": "Legen Sie das erste Produkt an; es erscheint sofort an der Kasse, im QR-Menü und im Web."
+    "emptyHint": "Legen Sie das erste Gericht an; es erscheint sofort an der Kasse, im QR-Menü und im Web.",
+    "recipe": {
+      "column": "Rezept",
+      "with": "Mit Rezept",
+      "without": "Ohne Rezept",
+      "noStock": "Nicht auf Lager",
+      "onlyWithout": "Nur ohne Rezept"
+    }
   },
   "productEditor": {
-    "back": "Zurück zu den Produkten",
+    "back": "Zurück zur Speisekarte",
     "duplicate": "Duplizieren",
     "duplicated": "Kopie angelegt. Sie ist noch inaktiv.",
     "deleted": "Produkt entfernt",
@@ -54,7 +61,8 @@
       "allergens": "Allergene & Herkunft",
       "translations": "Übersetzungen",
       "availability": "Verfügbarkeit",
-      "stations": "Stationen"
+      "stations": "Stationen",
+      "recipe": "Rezept"
     },
     "needsAttention": "Unvollständig",
     "discard": "Verwerfen",

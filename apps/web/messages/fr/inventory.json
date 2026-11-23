@@ -30,7 +30,8 @@
     "state": {
       "low": "Bientôt épuisé",
       "ok": "Suffisant",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "out": "Épuisée"
     },
     "saved": "Matière première enregistrée",
     "deleteTitle": "Supprimer « {name} » ?",
@@ -61,7 +62,8 @@
       "notePlaceholder": "Fournisseur, facture, motif…",
       "save": "Enregistrer",
       "recorded": "Mouvement enregistré",
-      "now": "Stock actuel : {quantity}"
+      "now": "Stock actuel : {quantity}",
+      "ingredient": "Matière première"
     },
     "history": {
       "title": "Historique de « {name} »",
@@ -80,19 +82,43 @@
       "note": "Note",
       "sold": "Ventes",
       "wasted": "Pertes de cuisine"
+    },
+    "steps": {
+      "title": "Comment fonctionne le stock",
+      "one": "Créez vos matières premières",
+      "oneText": "Ce que vous achetez : viande en kg, bière en litres, pain à la pièce.",
+      "two": "Une recette par plat",
+      "twoText": "Dans la Carte, onglet «Recette» : ce qu'utilise une portion.",
+      "three": "Chaque vente se déduit",
+      "threeText": "Quand un plat part en cuisine, le stock baisse tout seul.",
+      "toMenu": "Vers la carte"
+    },
+    "usedIn": "Utilisée dans",
+    "usedInNone": "Dans aucune recette",
+    "summary": {
+      "total": "Matières premières",
+      "low": "Bientôt épuisées",
+      "out": "Épuisées"
+    },
+    "purchase": "Enregistrer un achat",
+    "usedInMore": "+{count}",
+    "tabs": {
+      "label": "Sections du stock",
+      "ingredients": "Matières premières",
+      "recipes": "Recettes"
     }
   },
   "recipes": {
     "title": "Recettes",
-    "description": "Combien chaque plat utilise de chaque matière première. Quand un plat part en cuisine, il est déduit de l'inventaire.",
-    "products": "Produits",
-    "productsHint": "Une variante avec sa propre recette remplace celle du produit ; sinon elle utilise celle du produit.",
+    "description": "Toutes les recettes d'un coup d'œil. La recette d'un plat se modifie plus facilement dans la Carte, onglet «Recette» ; celle des options des suppléments, ici.",
+    "products": "Plats",
+    "productsHint": "Une variante avec sa propre recette remplace celle du plat ; sinon elle utilise celle du plat.",
     "modifiers": "Options des suppléments",
     "modifiersHint": "S'ajoutent à la recette du plat, par exemple « portion de frites en plus ».",
     "noRecipe": "Sans recette",
-    "usesProduct": "Comme le produit",
+    "usesProduct": "Comme le plat",
     "onlyMissing": "Seulement sans recette",
-    "missing": "{count, plural, one {# produit sans recette} other {# produits sans recette}}",
+    "missing": "{count, plural, one {# plat sans recette} other {# plats sans recette}}",
     "edit": "Modifier la recette",
     "dialogTitle": "Recette de « {name} »",
     "dialogHint": "Quantités pour une unité vendue. Les changements valent dès maintenant : ce qui est vendu ne change pas.",
@@ -103,8 +129,29 @@
     "chooseIngredient": "Choisir…",
     "noIngredients": "Créez d'abord des matières premières dans l'inventaire.",
     "saved": "Recette enregistrée",
-    "empty": "Le catalogue n'a pas de produits.",
+    "empty": "La carte n’a aucun plat.",
     "noModifiers": "Pas d'options de suppléments.",
-    "search": "Chercher un produit…"
+    "search": "Chercher un plat…",
+    "inline": {
+      "title": "Recette de «{name}»",
+      "hint": "Ce qu'utilise une portion vendue. Quand le plat part en cuisine, cela se déduit du stock.",
+      "toInventory": "Vers le stock",
+      "emptyTitle": "Pas encore de recette",
+      "emptyHint": "Ajoutez ce que contient ce plat. S'il manque une matière première, créez-la ici.",
+      "newIngredient": "Nouvelle matière première",
+      "newIngredientTitle": "Nouvelle matière première",
+      "newIngredientHint": "Elle entre dans le stock et dans cette recette.",
+      "namePlaceholder": "p. ex. bœuf, tomates, bière",
+      "create": "Créer et utiliser",
+      "inStock": "En stock : {quantity}",
+      "perPortion": "Par portion",
+      "portions": "{count, plural, one {Assez pour # portion} other {Assez pour # portions}}",
+      "noPortions": "Stock insuffisant",
+      "save": "Enregistrer la recette",
+      "variantTitle": "Variante «{name}»",
+      "variantHint": "À remplir seulement si la variante utilise d'autres quantités.",
+      "variantEmpty": "Sans recette propre, la recette du plat s'applique.",
+      "missingIngredient": "Choisissez une matière première sur chaque ligne ou retirez la ligne."
+    }
   }
 }

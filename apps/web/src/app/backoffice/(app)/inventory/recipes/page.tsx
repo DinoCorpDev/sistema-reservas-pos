@@ -1,16 +1,17 @@
 import { inventory } from '@pos/api';
-import { Button } from '@pos/ui/button';
-import { PackageIcon } from 'lucide-react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import { InventoryTabs } from '@/components/backoffice/inventory/inventory-tabs';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
 import { RecipesManager } from './recipes-manager';
 
 export const metadata: Metadata = { title: 'Rezepte' };
 
-/** What each product, variant and modifier option uses of each raw material (DEC-051). */
+/**
+ * Every recipe at a glance, a tab of the inventory (DEC-051, DEC-053): the dishes (also edited in
+ * the menu, "Recipe" tab) and the modifier options, which are only edited here.
+ */
 export default async function RecipesPage() {
   const actor = await currentActor();
   const t = await getTranslations('recipes');
@@ -21,18 +22,8 @@ export default async function RecipesPage() {
   ]);
   return (
     <>
-      <PageHeader
-        nav="recipes"
-        title={t('title')}
-        description={t('description')}
-        actions={
-          <Button asChild variant="outline">
-            <Link href="/backoffice/inventory">
-              <PackageIcon /> {tInventory('title')}
-            </Link>
-          </Button>
-        }
-      />
+      <PageHeader nav="inventory" title={tInventory('title')} description={t('description')} />
+      <InventoryTabs current="recipes" />
       <RecipesManager recipes={recipes} ingredients={ingredients} />
     </>
   );

@@ -30,7 +30,8 @@
     "state": {
       "low": "Por agotarse",
       "ok": "Bien",
-      "inactive": "Inactiva"
+      "inactive": "Inactiva",
+      "out": "Agotada"
     },
     "saved": "Materia prima guardada",
     "deleteTitle": "¿Eliminar «{name}»?",
@@ -61,7 +62,8 @@
       "notePlaceholder": "Proveedor, factura, motivo…",
       "save": "Registrar",
       "recorded": "Movimiento registrado",
-      "now": "Stock actual: {quantity}"
+      "now": "Stock actual: {quantity}",
+      "ingredient": "Materia prima"
     },
     "history": {
       "title": "Historial de «{name}»",
@@ -80,19 +82,43 @@
       "note": "Nota",
       "sold": "Ventas",
       "wasted": "Merma de cocina"
+    },
+    "steps": {
+      "title": "Así funciona el inventario",
+      "one": "Cree sus materias primas",
+      "oneText": "Lo que compra: carne en kg, cerveza en litros, pan por unidad.",
+      "two": "Receta en cada plato",
+      "twoText": "En la Carta, pestaña «Receta»: lo que lleva una porción.",
+      "three": "Cada venta descuenta sola",
+      "threeText": "Al enviar un plato a cocina, el stock baja automáticamente.",
+      "toMenu": "Ir a la Carta"
+    },
+    "usedIn": "Se usa en",
+    "usedInNone": "En ninguna receta",
+    "summary": {
+      "total": "Materias primas",
+      "low": "Por agotarse",
+      "out": "Agotadas"
+    },
+    "purchase": "Registrar compra",
+    "usedInMore": "+{count}",
+    "tabs": {
+      "label": "Secciones del inventario",
+      "ingredients": "Materias primas",
+      "recipes": "Recetas"
     }
   },
   "recipes": {
     "title": "Recetas",
-    "description": "Cuánto gasta cada plato de cada materia prima. Al enviar un plato a cocina, se descuenta del inventario.",
-    "products": "Productos",
-    "productsHint": "Una variante con receta propia reemplaza la del producto; sin receta usa la del producto.",
+    "description": "Todas las recetas de un vistazo. La receta de un plato se edita más fácil en la Carta, pestaña «Receta»; la de las opciones de los extras, aquí.",
+    "products": "Platos",
+    "productsHint": "Una variante con receta propia reemplaza la del plato; si no, usa la del plato.",
     "modifiers": "Opciones de modificadores",
     "modifiersHint": "Se suman a la receta del plato, por ejemplo «porción extra de papas».",
     "noRecipe": "Sin receta",
-    "usesProduct": "Usa la del producto",
+    "usesProduct": "Como el plato",
     "onlyMissing": "Solo sin receta",
-    "missing": "{count, plural, one {# producto sin receta} other {# productos sin receta}}",
+    "missing": "{count, plural, one {# plato sin receta} other {# platos sin receta}}",
     "edit": "Editar receta",
     "dialogTitle": "Receta de «{name}»",
     "dialogHint": "Cantidades para una unidad vendida. Los cambios valen desde ahora: lo ya vendido no cambia.",
@@ -103,8 +129,29 @@
     "chooseIngredient": "Elija…",
     "noIngredients": "Primero cree materias primas en Inventario.",
     "saved": "Receta guardada",
-    "empty": "No hay productos en el catálogo.",
+    "empty": "La Carta no tiene platos.",
     "noModifiers": "No hay opciones de modificadores.",
-    "search": "Buscar producto…"
+    "search": "Buscar un plato…",
+    "inline": {
+      "title": "Receta de «{name}»",
+      "hint": "Lo que gasta una porción vendida. Al enviar el plato a cocina, se descuenta del inventario.",
+      "toInventory": "Ir al inventario",
+      "emptyTitle": "Este plato aún no tiene receta",
+      "emptyHint": "Agregue lo que lleva. Si falta una materia prima, créela aquí mismo.",
+      "newIngredient": "Nueva materia prima",
+      "newIngredientTitle": "Nueva materia prima",
+      "newIngredientHint": "Queda en el inventario y se agrega a esta receta.",
+      "namePlaceholder": "p. ej. carne de res, tomate, cerveza",
+      "create": "Crear y usar",
+      "inStock": "En stock: {quantity}",
+      "perPortion": "Por porción",
+      "portions": "{count, plural, one {Alcanza para # plato} other {Alcanza para # platos}}",
+      "noPortions": "No alcanza el stock",
+      "save": "Guardar receta",
+      "variantTitle": "Variante «{name}»",
+      "variantHint": "Llénela solo si la variante gasta cantidades distintas.",
+      "variantEmpty": "Sin receta propia, usa la receta del plato.",
+      "missingIngredient": "Elija una materia prima en cada línea o quite la línea."
+    }
   }
 }

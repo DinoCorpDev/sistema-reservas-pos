@@ -1,4 +1,4 @@
-import { admin, ApiError, catalog, locations, people } from '@pos/api';
+import { admin, ApiError, catalog, inventory, locations, people } from '@pos/api';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -6,7 +6,7 @@ import { currentActor, deps } from '@/server/actor';
 import { EDITOR_TABS } from './editor-shared';
 import { ProductEditor } from './product-editor';
 
-export const metadata: Metadata = { title: 'Produkt bearbeiten' };
+export const metadata: Metadata = { title: 'Gericht bearbeiten' };
 
 /** A removed (soft-deleted) or unknown product leads back to the list, also right after "Entfernen". */
 async function loadProduct(...args: Parameters<typeof catalog.getProduct>) {
@@ -29,16 +29,22 @@ export default async function ProductPage({
   const { id } = await params;
   if (!z.uuid().safeParse(id).success) notFound();
   const actor = await currentActor();
-  const [product, categories, tax, modifierGroups, allLocations, stations] = await Promise.all([
-    loadProduct(deps(), actor, id),
-    catalog.listCategories(deps(), actor),
-    admin.getTaxOverview(deps(), actor),
-    catalog.listModifierGroups(deps(), actor),
-    locations.listLocations(deps(), actor),
-    actor.locationId ? people.listKitchenStations(deps(), actor) : Promise.resolve(null),
-  ]);
+  const canInventory = actor.permissions.has('inventory.manage');
+  const [product, categories, tax, modifierGroups, allLocations, stations, ingredients, recipes] =
+    await Promise.all([
+      loadProduct(deps(), actor, id),
+      catalog.listCategories(deps(), actor),
+      admin.getTaxOverview(deps(), actor),
+      catalog.listModifierGroups(deps(), actor),
+      locations.listLocations(deps(), actor),
+      actor.locationId ? people.listKitchenStations(deps(), actor) : Promise.resolve(null),
+      // The recipe lives on the dish (DEC-051, DEC-053): what it uses and the stock to build it.
+      canInventory ? inventory.listIngredients(deps(), actor) : Promise.resolve(null),
+      canInventory ? inventory.listRecipes(deps(), actor) : Promise.resolve(null),
+    ]);
   const { tab } = await searchParams;
-  const initialTab = EDITOR_TABS.find((value) => value === tab) ?? 'basics';
+  const initialTab =
+    EDITOR_TABS.find((value) => value === tab && (value !== 'recipe' || canInventory)) ?? 'basics';
   const location = allLocations.find((l) => l.id === actor.locationId) ?? null;
 
   return (
@@ -61,10 +67,16 @@ export default async function ProductPage({
           : null
       }
       stations={stations}
+      recipe={
+        ingredients && recipes
+          ? { ingredients, product: recipes.products.find((p) => p.id === product.id) ?? null }
+          : null
+      }
       permissions={{
         manage: actor.permissions.has('catalog.manage'),
         priceChange: actor.permissions.has('catalog.price_change'),
         soldOut: actor.permissions.has('catalog.sold_out'),
+        inventory: canInventory,
       }}
     />
   );

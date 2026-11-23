@@ -13,8 +13,8 @@
     "quick": {
       "title": "Quick access",
       "products": {
-        "title": "Products",
-        "text": "Menu, prices and sold-out items"
+        "title": "Menu",
+        "text": "Dishes, prices, recipes and sold out"
       },
       "devices": {
         "title": "Pair devices",

@@ -69,7 +69,7 @@
     "devices": "Appareils & postes",
     "users": "Personnel",
     "catalog": "Catalogue",
-    "products": "Produits",
+    "products": "Carte",
     "categories": "Catégories",
     "modifiers": "Options",
     "tax": "TVA",
@@ -281,7 +281,7 @@
   "navSection": {
     "operation": "Exploitation",
     "location": "Établissement",
-    "menu": "Carte",
+    "menu": "Carte et stock",
     "control": "Clients et contrôle",
     "settings": "Paramètres"
   }

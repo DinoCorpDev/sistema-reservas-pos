@@ -7,10 +7,10 @@
     "translationNameMissing": "Please translate the name as well."
   },
   "products": {
-    "title": "Products",
-    "description": "One product list for the POS register, QR menu and web. Changes apply immediately on all channels.",
-    "new": "New product",
-    "newHint": "Add variants, allergens, translations and everything else afterwards in the product.",
+    "title": "Menu",
+    "description": "Every dish and drink for the POS, the QR menu and the web. Each dish has its recipe, which comes off the stock.",
+    "new": "New dish",
+    "newHint": "Add the recipe, variants, allergens, translations and everything else afterwards in the dish.",
     "created": "Product created",
     "needCategory": "Create a category first.",
     "toCategories": "Go to categories",
@@ -27,16 +27,23 @@
     "searchPlaceholder": "Name or item number",
     "showInactive": "Show inactive",
     "noLocation": "Choose a location at the top to mark products as sold out (“86”).",
-    "noResults": "No products found.",
-    "empty": "No products yet. Create the first product.",
+    "noResults": "No dishes found.",
+    "empty": "The menu is still empty. Create the first dish.",
     "soldOut": "Availability",
     "soldOutBadge": "Sold out",
     "inactiveHere": "Inactive at this location",
     "noResultsHint": "Change the filter or the search.",
-    "emptyHint": "Create the first product; it shows up right away on the POS, the QR menu and the web."
+    "emptyHint": "Create the first dish; it shows up right away on the POS, the QR menu and the web.",
+    "recipe": {
+      "column": "Recipe",
+      "with": "Has a recipe",
+      "without": "No recipe",
+      "noStock": "Out of stock",
+      "onlyWithout": "Only without a recipe"
+    }
   },
   "productEditor": {
-    "back": "Back to products",
+    "back": "Back to the menu",
     "duplicate": "Duplicate",
     "duplicated": "Copy created. It is still inactive.",
     "deleted": "Product removed",
@@ -54,7 +61,8 @@
       "allergens": "Allergens & origin",
       "translations": "Translations",
       "availability": "Availability",
-      "stations": "Stations"
+      "stations": "Stations",
+      "recipe": "Recipe"
     },
     "needsAttention": "Incomplete",
     "discard": "Discard",

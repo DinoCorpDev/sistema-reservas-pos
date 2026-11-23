@@ -30,7 +30,8 @@
     "state": {
       "low": "Sta finendo",
       "ok": "Sufficiente",
-      "inactive": "Inattiva"
+      "inactive": "Inattiva",
+      "out": "Esaurita"
     },
     "saved": "Materia prima salvata",
     "deleteTitle": "Eliminare «{name}»?",
@@ -61,7 +62,8 @@
       "notePlaceholder": "Fornitore, fattura, motivo…",
       "save": "Registra",
       "recorded": "Movimento registrato",
-      "now": "Scorte attuali: {quantity}"
+      "now": "Scorte attuali: {quantity}",
+      "ingredient": "Materia prima"
     },
     "history": {
       "title": "Storico di «{name}»",
@@ -80,19 +82,43 @@
       "note": "Nota",
       "sold": "Vendite",
       "wasted": "Perdite di cucina"
+    },
+    "steps": {
+      "title": "Come funziona il magazzino",
+      "one": "Create le materie prime",
+      "oneText": "Ciò che comprate: carne in kg, birra in litri, pane al pezzo.",
+      "two": "Una ricetta per piatto",
+      "twoText": "Nella Carta, scheda «Ricetta»: ciò che usa una porzione.",
+      "three": "Ogni vendita scala da sola",
+      "threeText": "Quando un piatto va in cucina, le scorte calano da sole.",
+      "toMenu": "Alla carta"
+    },
+    "usedIn": "Usata in",
+    "usedInNone": "In nessuna ricetta",
+    "summary": {
+      "total": "Materie prime",
+      "low": "In esaurimento",
+      "out": "Esaurite"
+    },
+    "purchase": "Registra acquisto",
+    "usedInMore": "+{count}",
+    "tabs": {
+      "label": "Sezioni del magazzino",
+      "ingredients": "Materie prime",
+      "recipes": "Ricette"
     }
   },
   "recipes": {
     "title": "Ricette",
-    "description": "Quanto usa ogni piatto di ogni materia prima. Quando un piatto va in cucina, viene scalato dall'inventario.",
-    "products": "Prodotti",
-    "productsHint": "Una variante con ricetta propria sostituisce quella del prodotto; senza usa quella del prodotto.",
+    "description": "Tutte le ricette a colpo d'occhio. La ricetta di un piatto si modifica più facilmente nella Carta, scheda «Ricetta»; quella delle opzioni degli extra, qui.",
+    "products": "Piatti",
+    "productsHint": "Una variante con ricetta propria sostituisce quella del piatto; altrimenti usa quella del piatto.",
     "modifiers": "Opzioni delle aggiunte",
     "modifiersHint": "Si sommano alla ricetta del piatto, per esempio «porzione extra di patatine».",
     "noRecipe": "Senza ricetta",
-    "usesProduct": "Come il prodotto",
+    "usesProduct": "Come il piatto",
     "onlyMissing": "Solo senza ricetta",
-    "missing": "{count, plural, one {# prodotto senza ricetta} other {# prodotti senza ricetta}}",
+    "missing": "{count, plural, one {# piatto senza ricetta} other {# piatti senza ricetta}}",
     "edit": "Modifica ricetta",
     "dialogTitle": "Ricetta di «{name}»",
     "dialogHint": "Quantità per un'unità venduta. Le modifiche valgono da ora: il già venduto non cambia.",
@@ -103,8 +129,29 @@
     "chooseIngredient": "Scegli…",
     "noIngredients": "Crea prima le materie prime nell'inventario.",
     "saved": "Ricetta salvata",
-    "empty": "Il catalogo non ha prodotti.",
+    "empty": "La carta non ha piatti.",
     "noModifiers": "Nessuna opzione di aggiunte.",
-    "search": "Cerca prodotto…"
+    "search": "Cerca un piatto…",
+    "inline": {
+      "title": "Ricetta di «{name}»",
+      "hint": "Ciò che usa una porzione venduta. Quando il piatto va in cucina, si scala dal magazzino.",
+      "toInventory": "Al magazzino",
+      "emptyTitle": "Ancora nessuna ricetta",
+      "emptyHint": "Aggiungete ciò che contiene il piatto. Se manca una materia prima, createla qui.",
+      "newIngredient": "Nuova materia prima",
+      "newIngredientTitle": "Nuova materia prima",
+      "newIngredientHint": "Entra in magazzino e in questa ricetta.",
+      "namePlaceholder": "p. es. manzo, pomodori, birra",
+      "create": "Crea e usa",
+      "inStock": "In magazzino: {quantity}",
+      "perPortion": "Per porzione",
+      "portions": "{count, plural, one {Basta per # porzione} other {Basta per # porzioni}}",
+      "noPortions": "Scorte insufficienti",
+      "save": "Salva ricetta",
+      "variantTitle": "Variante «{name}»",
+      "variantHint": "Compilatela solo se la variante usa quantità diverse.",
+      "variantEmpty": "Senza ricetta propria vale quella del piatto.",
+      "missingIngredient": "Scegliete una materia prima in ogni riga o togliete la riga."
+    }
   }
 }

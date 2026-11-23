@@ -69,7 +69,7 @@
     "devices": "Devices & stations",
     "users": "Staff",
     "catalog": "Catalogue",
-    "products": "Products",
+    "products": "Menu",
     "categories": "Categories",
     "modifiers": "Modifiers",
     "tax": "VAT (MWST)",
@@ -281,7 +281,7 @@
   "navSection": {
     "operation": "Operations",
     "location": "Venue",
-    "menu": "Menu",
+    "menu": "Menu & stock",
     "control": "Guests & control",
     "settings": "Settings"
   }

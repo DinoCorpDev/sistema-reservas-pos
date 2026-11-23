@@ -69,7 +69,7 @@
     "devices": "Geräte & Stationen",
     "users": "Mitarbeitende",
     "catalog": "Katalog",
-    "products": "Produkte",
+    "products": "Speisekarte",
     "categories": "Kategorien",
     "modifiers": "Zusatzoptionen",
     "tax": "MWST",
@@ -281,7 +281,7 @@
   "navSection": {
     "operation": "Tagesgeschäft",
     "location": "Standort",
-    "menu": "Angebot",
+    "menu": "Speisekarte & Lager",
     "control": "Gäste & Kontrolle",
     "settings": "Einstellungen"
   }

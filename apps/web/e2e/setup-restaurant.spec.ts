@@ -144,7 +144,7 @@ test('a new restaurant is set up from the backoffice alone and goes live', async
   await expect(page.getByRole('dialog')).toBeHidden();
 
   await page.goto('/backoffice/catalog');
-  await page.getByRole('button', { name: 'Neues Produkt' }).click();
+  await page.getByRole('button', { name: 'Neues Gericht' }).click();
   const newProduct = page.getByRole('dialog');
   await newProduct.getByLabel('Name', { exact: true }).fill('Berner Rösti');
   await newProduct.getByLabel('Preis').fill('24.50');

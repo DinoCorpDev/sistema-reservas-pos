@@ -1,6 +1,5 @@
 // Shared by the sidebar (client) and the page headers (server): no 'use client' here.
 import {
-  BookOpenTextIcon,
   ChartColumnIcon,
   CircleHelpIcon,
   CloudAlertIcon,
@@ -74,12 +73,6 @@ export const SECTIONS: { key: string; items: NavItem[] }[] = [
         href: '/backoffice/inventory',
         key: 'inventory',
         icon: PackageIcon,
-        permission: 'inventory.manage',
-      },
-      {
-        href: '/backoffice/inventory/recipes',
-        key: 'recipes',
-        icon: BookOpenTextIcon,
         permission: 'inventory.manage',
       },
     ],

@@ -11,27 +11,49 @@ import { Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { PencilIcon, SearchIcon, SearchXIcon, UtensilsCrossedIcon } from 'lucide-react';
+import {
+  BookOpenCheckIcon,
+  BookXIcon,
+  PackageXIcon,
+  PencilIcon,
+  SearchIcon,
+  SearchXIcon,
+  UtensilsCrossedIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { SoldOutButton } from './sold-out-button';
+import type { RecipeState } from '@/components/backoffice/inventory/recipe-state';
 import { useMoney } from '@/components/money';
 
 const ALL = 'all';
 
-type Filters = { categoryId: string; search: string; includeInactive: boolean };
+type Filters = {
+  categoryId: string;
+  search: string;
+  includeInactive: boolean;
+  withoutRecipe: boolean;
+};
+
+const RECIPE_BADGE = {
+  with: { variant: 'success', icon: BookOpenCheckIcon },
+  without: { variant: 'warning', icon: BookXIcon },
+  noStock: { variant: 'destructive', icon: PackageXIcon },
+} as const;
 
 /**
  * Product table with filters in the URL (category, search, inactive), RN-18 publication status and
- * the quick "86" at the current location.
+ * the quick "86" at the current location. With the inventory permission, each dish also shows
+ * whether it has its recipe (DEC-051).
  */
 export function ProductsList({
   products,
   categories,
   filters,
   atLocation,
+  recipes,
   canManage,
   canSoldOut,
 }: {
@@ -39,6 +61,8 @@ export function ProductsList({
   categories: catalog.CategoryDto[];
   filters: Filters;
   atLocation: { listed: string[]; soldOut: string[] } | null;
+  /** Recipe state per dish; null without the inventory permission. */
+  recipes: Record<string, RecipeState> | null;
   canManage: boolean;
   canSoldOut: boolean;
 }) {
@@ -59,7 +83,11 @@ export function ProductsList({
   };
   const listed = new Set(atLocation?.listed ?? []);
   const soldOut = new Set(atLocation?.soldOut ?? []);
-  const filtered = filters.categoryId !== '' || filters.search !== '' || filters.includeInactive;
+  const filtered =
+    filters.categoryId !== '' ||
+    filters.search !== '' ||
+    filters.includeInactive ||
+    filters.withoutRecipe;
 
   const apply = (next: Partial<Filters>) => {
     const merged = { ...filters, search, ...next };
@@ -67,6 +95,7 @@ export function ProductsList({
     if (merged.categoryId) params.set('category', merged.categoryId);
     if (merged.search.trim()) params.set('q', merged.search.trim());
     if (merged.includeInactive) params.set('inactive', '1');
+    if (merged.withoutRecipe) params.set('recipe', 'none');
     const query = params.toString();
     startTransition(() => router.replace(query ? `${pathname}?${query}` : pathname));
   };
@@ -124,6 +153,16 @@ export function ProductsList({
           />
           <Label htmlFor="filter-inactive">{t('showInactive')}</Label>
         </div>
+        {recipes ? (
+          <div className="flex min-h-11 items-center gap-3">
+            <Switch
+              id="filter-recipe"
+              checked={filters.withoutRecipe}
+              onCheckedChange={(checked) => apply({ withoutRecipe: checked })}
+            />
+            <Label htmlFor="filter-recipe">{t('recipe.onlyWithout')}</Label>
+          </div>
+        ) : null}
       </div>
 
       {atLocation === null ? <Alert variant="info">{t('noLocation')}</Alert> : null}
@@ -142,6 +181,7 @@ export function ProductsList({
                 <TableHead>{tc('name')}</TableHead>
                 <TableHead>{t('category')}</TableHead>
                 <TableHead className="text-right">{t('price')}</TableHead>
+                {recipes ? <TableHead>{t('recipe.column')}</TableHead> : null}
                 <TableHead>{tc('status')}</TableHead>
                 {atLocation ? <TableHead>{t('soldOut')}</TableHead> : null}
                 <TableHead className="text-right">{tc('actions')}</TableHead>
@@ -209,6 +249,14 @@ export function ProductsList({
                     <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
                       {money.format(product.basePriceRappen)}
                     </TableCell>
+                    {recipes ? (
+                      <TableCell>
+                        <RecipeBadge
+                          productId={product.id}
+                          state={recipes[product.id] ?? 'without'}
+                        />
+                      </TableCell>
+                    ) : null}
                     <TableCell>
                       <div className="flex max-w-xs flex-wrap gap-1">
                         {product.isActive ? (
@@ -270,5 +318,23 @@ export function ProductsList({
         )}
       </div>
     </div>
+  );
+}
+
+/** The recipe state of a dish; a click opens its "Recipe" tab. */
+function RecipeBadge({ productId, state }: { productId: string; state: RecipeState }) {
+  const t = useTranslations('products.recipe');
+  const { variant, icon: Icon } = RECIPE_BADGE[state];
+  const label = { with: t('with'), without: t('without'), noStock: t('noStock') }[state];
+  return (
+    <Link
+      href={`/backoffice/catalog/products/${productId}?tab=recipe`}
+      className="inline-flex min-h-11 items-center rounded-lg"
+    >
+      <Badge variant={variant} className="gap-1 whitespace-nowrap">
+        <Icon className="size-3.5" aria-hidden />
+        {label}
+      </Badge>
+    </Link>
   );
 }

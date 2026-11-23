@@ -30,7 +30,8 @@
     "state": {
       "low": "Running low",
       "ok": "OK",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "out": "Out"
     },
     "saved": "Raw material saved",
     "deleteTitle": "Delete «{name}»?",
@@ -61,7 +62,8 @@
       "notePlaceholder": "Supplier, invoice, reason…",
       "save": "Record",
       "recorded": "Movement recorded",
-      "now": "Current stock: {quantity}"
+      "now": "Current stock: {quantity}",
+      "ingredient": "Raw material"
     },
     "history": {
       "title": "History of «{name}»",
@@ -80,19 +82,43 @@
       "note": "Note",
       "sold": "Sales",
       "wasted": "Kitchen waste"
+    },
+    "steps": {
+      "title": "How the stock works",
+      "one": "Create your raw materials",
+      "oneText": "What you buy: meat in kg, beer in litres, bread by the piece.",
+      "two": "A recipe in each dish",
+      "twoText": "In the Menu, «Recipe» tab: what one portion uses.",
+      "three": "Every sale comes off",
+      "threeText": "When a dish goes to the kitchen, the stock goes down by itself.",
+      "toMenu": "Go to the menu"
+    },
+    "usedIn": "Used in",
+    "usedInNone": "In no recipe",
+    "summary": {
+      "total": "Raw materials",
+      "low": "Running low",
+      "out": "Out"
+    },
+    "purchase": "Record a purchase",
+    "usedInMore": "+{count}",
+    "tabs": {
+      "label": "Parts of the stock",
+      "ingredients": "Raw materials",
+      "recipes": "Recipes"
     }
   },
   "recipes": {
     "title": "Recipes",
-    "description": "How much of each raw material every dish uses. When a dish goes to the kitchen, it is taken from the inventory.",
-    "products": "Products",
-    "productsHint": "A variant with its own recipe replaces the product's; without one it uses the product's.",
+    "description": "Every recipe at a glance. A dish's recipe is easiest to edit in the Menu, «Recipe» tab; the recipes of add-on options, here.",
+    "products": "Dishes",
+    "productsHint": "A variant with its own recipe replaces the dish's; otherwise it uses the dish's.",
     "modifiers": "Modifier options",
     "modifiersHint": "Added to the dish's recipe, for example «extra fries».",
     "noRecipe": "No recipe",
-    "usesProduct": "Same as product",
+    "usesProduct": "Same as the dish",
     "onlyMissing": "Only without recipe",
-    "missing": "{count, plural, one {# product without recipe} other {# products without recipe}}",
+    "missing": "{count, plural, one {# dish without a recipe} other {# dishes without a recipe}}",
     "edit": "Edit recipe",
     "dialogTitle": "Recipe of «{name}»",
     "dialogHint": "Amounts for one unit sold. Changes apply from now on: what was sold stays.",
@@ -103,8 +129,29 @@
     "chooseIngredient": "Choose…",
     "noIngredients": "Create raw materials in Inventory first.",
     "saved": "Recipe saved",
-    "empty": "The catalog has no products.",
+    "empty": "The menu has no dishes.",
     "noModifiers": "No modifier options.",
-    "search": "Search product…"
+    "search": "Search a dish…",
+    "inline": {
+      "title": "Recipe of «{name}»",
+      "hint": "What one portion sold uses. When the dish goes to the kitchen, it comes off the stock.",
+      "toInventory": "Go to stock",
+      "emptyTitle": "No recipe yet",
+      "emptyHint": "Add what this dish uses. If a raw material is missing, create it right here.",
+      "newIngredient": "New raw material",
+      "newIngredientTitle": "New raw material",
+      "newIngredientHint": "It goes into the stock and into this recipe.",
+      "namePlaceholder": "e.g. beef, tomatoes, beer",
+      "create": "Create and use",
+      "inStock": "In stock: {quantity}",
+      "perPortion": "Per portion",
+      "portions": "{count, plural, one {Enough for # portion} other {Enough for # portions}}",
+      "noPortions": "Not enough in stock",
+      "save": "Save recipe",
+      "variantTitle": "Variant «{name}»",
+      "variantHint": "Fill it in only if the variant uses different quantities.",
+      "variantEmpty": "Without its own recipe, the dish's recipe applies.",
+      "missingIngredient": "Choose a raw material on each line or remove the line."
+    }
   }
 }

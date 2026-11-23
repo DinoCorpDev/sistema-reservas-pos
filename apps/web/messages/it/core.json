@@ -69,7 +69,7 @@
     "devices": "Dispositivi & postazioni",
     "users": "Personale",
     "catalog": "Catalogo",
-    "products": "Prodotti",
+    "products": "Carta",
     "categories": "Categorie",
     "modifiers": "Opzioni",
     "tax": "IVA",
@@ -281,7 +281,7 @@
   "navSection": {
     "operation": "Operatività",
     "location": "Locale",
-    "menu": "Carta",
+    "menu": "Carta e magazzino",
     "control": "Clienti e controllo",
     "settings": "Impostazioni"
   }

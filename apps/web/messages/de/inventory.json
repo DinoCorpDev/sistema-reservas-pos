@@ -30,7 +30,8 @@
     "state": {
       "low": "Wird knapp",
       "ok": "Genug",
-      "inactive": "Inaktiv"
+      "inactive": "Inaktiv",
+      "out": "Leer"
     },
     "saved": "Rohware gespeichert",
     "deleteTitle": "«{name}» löschen?",
@@ -61,7 +62,8 @@
       "notePlaceholder": "Lieferant, Rechnung, Grund…",
       "save": "Erfassen",
       "recorded": "Bewegung erfasst",
-      "now": "Aktueller Bestand: {quantity}"
+      "now": "Aktueller Bestand: {quantity}",
+      "ingredient": "Rohware"
     },
     "history": {
       "title": "Verlauf von «{name}»",
@@ -80,19 +82,43 @@
       "note": "Notiz",
       "sold": "Verkäufe",
       "wasted": "Küchenverlust"
+    },
+    "steps": {
+      "title": "So funktioniert das Lager",
+      "one": "Rohwaren anlegen",
+      "oneText": "Was Sie einkaufen: Fleisch in kg, Bier in l, Brötchen in Stück.",
+      "two": "Rezept in jedem Gericht",
+      "twoText": "In der Speisekarte, Reiter «Rezept»: was eine Portion braucht.",
+      "three": "Jeder Verkauf zieht ab",
+      "threeText": "Geht ein Gericht an die Küche, sinkt der Bestand von selbst.",
+      "toMenu": "Zur Speisekarte"
+    },
+    "usedIn": "Verwendet in",
+    "usedInNone": "In keinem Rezept",
+    "summary": {
+      "total": "Rohwaren",
+      "low": "Wird knapp",
+      "out": "Leer"
+    },
+    "purchase": "Einkauf erfassen",
+    "usedInMore": "+{count}",
+    "tabs": {
+      "label": "Bereiche des Lagers",
+      "ingredients": "Rohwaren",
+      "recipes": "Rezepte"
     }
   },
   "recipes": {
     "title": "Rezepte",
-    "description": "Wie viel jedes Gericht von jeder Rohware braucht. Geht ein Gericht an die Küche, wird es vom Inventar abgezogen.",
-    "products": "Produkte",
-    "productsHint": "Eine Variante mit eigenem Rezept ersetzt das des Produkts; ohne Rezept gilt das des Produkts.",
+    "description": "Alle Rezepte auf einen Blick. Das Rezept eines Gerichts bearbeiten Sie am einfachsten in der Speisekarte, Reiter «Rezept»; die der Zusatzoptionen hier.",
+    "products": "Gerichte",
+    "productsHint": "Eine Variante mit eigenem Rezept ersetzt das des Gerichts; ohne Rezept gilt das des Gerichts.",
     "modifiers": "Optionen der Zusätze",
     "modifiersHint": "Kommen zum Rezept des Gerichts dazu, zum Beispiel «Extraportion Pommes».",
     "noRecipe": "Kein Rezept",
-    "usesProduct": "Wie das Produkt",
+    "usesProduct": "Wie das Gericht",
     "onlyMissing": "Nur ohne Rezept",
-    "missing": "{count, plural, one {# Produkt ohne Rezept} other {# Produkte ohne Rezept}}",
+    "missing": "{count, plural, one {# Gericht ohne Rezept} other {# Gerichte ohne Rezept}}",
     "edit": "Rezept bearbeiten",
     "dialogTitle": "Rezept von «{name}»",
     "dialogHint": "Mengen für eine verkaufte Einheit. Änderungen gelten ab jetzt: Bereits Verkauftes bleibt.",
@@ -103,8 +129,29 @@
     "chooseIngredient": "Wählen…",
     "noIngredients": "Erfassen Sie zuerst Rohwaren im Inventar.",
     "saved": "Rezept gespeichert",
-    "empty": "Der Katalog hat keine Produkte.",
+    "empty": "Die Speisekarte hat keine Gerichte.",
     "noModifiers": "Keine Optionen von Zusätzen.",
-    "search": "Produkt suchen…"
+    "search": "Gericht suchen…",
+    "inline": {
+      "title": "Rezept von «{name}»",
+      "hint": "Was eine verkaufte Portion braucht. Geht das Gericht an die Küche, wird es vom Lager abgezogen.",
+      "toInventory": "Zum Lager",
+      "emptyTitle": "Noch kein Rezept",
+      "emptyHint": "Fügen Sie hinzu, was dieses Gericht braucht. Fehlt eine Rohware, legen Sie sie gleich hier an.",
+      "newIngredient": "Neue Rohware",
+      "newIngredientTitle": "Neue Rohware",
+      "newIngredientHint": "Sie kommt ins Lager und gleich in dieses Rezept.",
+      "namePlaceholder": "z. B. Rindfleisch, Tomaten, Bier",
+      "create": "Anlegen und verwenden",
+      "inStock": "Auf Lager: {quantity}",
+      "perPortion": "Pro Portion",
+      "portions": "{count, plural, one {Reicht für # Portion} other {Reicht für # Portionen}}",
+      "noPortions": "Nicht genug auf Lager",
+      "save": "Rezept speichern",
+      "variantTitle": "Variante «{name}»",
+      "variantHint": "Nur ausfüllen, wenn die Variante andere Mengen braucht.",
+      "variantEmpty": "Ohne eigenes Rezept gilt das Rezept des Gerichts.",
+      "missingIngredient": "Wählen Sie in jeder Zeile eine Rohware oder entfernen Sie die Zeile."
+    }
   }
 }

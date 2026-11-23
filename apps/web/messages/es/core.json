@@ -69,7 +69,7 @@
     "devices": "Dispositivos y estaciones",
     "users": "Personal",
     "catalog": "Catálogo",
-    "products": "Productos",
+    "products": "Carta",
     "categories": "Categorías",
     "modifiers": "Modificadores",
     "tax": "IVA (MWST)",
@@ -281,7 +281,7 @@
   "navSection": {
     "operation": "Operación",
     "location": "Local",
-    "menu": "Carta",
+    "menu": "Carta e inventario",
     "control": "Clientes y control",
     "settings": "Ajustes"
   }

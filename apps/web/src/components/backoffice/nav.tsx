@@ -29,13 +29,9 @@ export function BackofficeNav({
   const allowed = new Set(permissions);
   const isActive = (href: string) => {
     if (href === '/backoffice') return pathname === href;
-    // Products live at /backoffice/catalog and /backoffice/catalog/products/[id].
+    // The menu lives at /backoffice/catalog and /backoffice/catalog/products/[id].
     if (href === '/backoffice/catalog') {
       return pathname === href || pathname.startsWith('/backoffice/catalog/products');
-    }
-    // Recipes live under the inventory but have their own entry.
-    if (href === '/backoffice/inventory') {
-      return pathname.startsWith(href) && !pathname.startsWith('/backoffice/inventory/recipes');
     }
     return pathname.startsWith(href);
   };

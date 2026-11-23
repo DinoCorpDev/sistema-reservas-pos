@@ -7,10 +7,10 @@
     "translationNameMissing": "Veuillez aussi traduire le nom."
   },
   "products": {
-    "title": "Produits",
-    "description": "Une seule carte de produits pour la caisse, le menu QR et le web. Les modifications s’appliquent immédiatement à tous les canaux.",
-    "new": "Nouveau produit",
-    "newHint": "Vous compléterez ensuite les variantes, les allergènes, les traductions et le reste dans le produit.",
+    "title": "Carte",
+    "description": "Tous les plats et boissons pour la caisse, le menu QR et le web. Chaque plat a sa recette, qui se déduit du stock.",
+    "new": "Nouveau plat",
+    "newHint": "Vous compléterez ensuite la recette, les variantes, les allergènes, les traductions et le reste dans le plat.",
     "created": "Produit créé",
     "needCategory": "Créez d’abord une catégorie.",
     "toCategories": "Vers les catégories",
@@ -27,16 +27,23 @@
     "searchPlaceholder": "Nom ou numéro d’article",
     "showInactive": "Afficher les inactifs",
     "noLocation": "Choisissez un établissement en haut pour marquer des produits comme épuisés («86»).",
-    "noResults": "Aucun produit trouvé.",
-    "empty": "Aucun produit pour l’instant. Créez le premier produit.",
+    "noResults": "Aucun plat trouvé.",
+    "empty": "La carte est encore vide. Créez le premier plat.",
     "soldOut": "Disponibilité",
     "soldOutBadge": "Épuisé",
     "inactiveHere": "Inactif dans l’établissement",
     "noResultsHint": "Modifiez le filtre ou la recherche.",
-    "emptyHint": "Créez le premier produit ; il apparaît aussitôt à la caisse, sur le menu QR et sur le web."
+    "emptyHint": "Créez le premier plat ; il apparaît aussitôt à la caisse, sur le menu QR et sur le web.",
+    "recipe": {
+      "column": "Recette",
+      "with": "Avec recette",
+      "without": "Sans recette",
+      "noStock": "Plus en stock",
+      "onlyWithout": "Seulement sans recette"
+    }
   },
   "productEditor": {
-    "back": "Retour aux produits",
+    "back": "Retour à la carte",
     "duplicate": "Dupliquer",
     "duplicated": "Copie créée. Elle est encore inactive.",
     "deleted": "Produit retiré",
@@ -54,7 +61,8 @@
       "allergens": "Allergènes & origine",
       "translations": "Traductions",
       "availability": "Disponibilité",
-      "stations": "Postes"
+      "stations": "Postes",
+      "recipe": "Recette"
     },
     "needsAttention": "Incomplet",
     "discard": "Abandonner",

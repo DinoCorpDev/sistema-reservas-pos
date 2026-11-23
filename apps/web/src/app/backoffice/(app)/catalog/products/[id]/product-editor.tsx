@@ -22,9 +22,11 @@ import {
   type EditorLocation,
   type EditorPermissions,
   type EditorTab,
+  type RecipeData,
 } from './editor-shared';
 import { ModifierGroupsTab } from './modifier-groups-tab';
 import { PricesTab } from './prices-tab';
+import { RecipeTab } from './recipe-tab';
 import { StationsTab } from './stations-tab';
 import { TranslationsTab } from './translations-tab';
 import { useMoney } from '@/components/money';
@@ -44,6 +46,7 @@ export function ProductEditor({
   locations,
   location,
   stations,
+  recipe,
   permissions,
 }: {
   product: catalog.ProductDto;
@@ -54,6 +57,7 @@ export function ProductEditor({
   locations: { id: string; name: string }[];
   location: EditorLocation | null;
   stations: people.KitchenStationDto[] | null;
+  recipe: RecipeData | null;
   permissions: EditorPermissions;
 }) {
   const money = useMoney();
@@ -153,7 +157,7 @@ export function ProductEditor({
 
       <Tabs value={tab} onValueChange={changeTab}>
         <TabsList aria-label={t('tabsLabel')}>
-          {EDITOR_TABS.map((value) => (
+          {EDITOR_TABS.filter((value) => value !== 'recipe' || recipe).map((value) => (
             <TabsTrigger key={value} value={value}>
               {t(`tabs.${value}`)}
               {value === 'allergens' && issues.length > 0 ? (
@@ -174,6 +178,11 @@ export function ProductEditor({
             onOpenTab={changeTab}
           />
         </TabsContent>
+        {recipe ? (
+          <TabsContent value="recipe" {...keepMounted}>
+            <RecipeTab productName={product.name} recipe={recipe} />
+          </TabsContent>
+        ) : null}
         <TabsContent value="prices" {...keepMounted}>
           <PricesTab
             product={product}

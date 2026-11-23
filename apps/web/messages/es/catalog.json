@@ -7,10 +7,10 @@
     "translationNameMissing": "Traduzca también el nombre."
   },
   "products": {
-    "title": "Productos",
-    "description": "Una sola carta de productos para la caja, el menú QR y la web. Los cambios aplican de inmediato en todos los canales.",
-    "new": "Nuevo producto",
-    "newHint": "Las variantes, los alérgenos, las traducciones y lo demás se completan después en el producto.",
+    "title": "Carta",
+    "description": "Todos los platos y bebidas para la caja, el menú QR y la web. Cada plato tiene su receta, que descuenta del inventario.",
+    "new": "Nuevo plato",
+    "newHint": "La receta, las variantes, los alérgenos, las traducciones y lo demás se completan después en el plato.",
     "created": "Producto creado",
     "needCategory": "Primero cree una categoría.",
     "toCategories": "Ir a categorías",
@@ -27,16 +27,23 @@
     "searchPlaceholder": "Nombre o código de artículo",
     "showInactive": "Mostrar inactivos",
     "noLocation": "Seleccione una sede arriba para marcar productos como agotados («86»).",
-    "noResults": "No se encontraron productos.",
-    "empty": "Todavía no hay productos. Cree el primer producto.",
+    "noResults": "No se encontraron platos.",
+    "empty": "La Carta aún está vacía. Cree el primer plato.",
     "soldOut": "Disponibilidad",
     "soldOutBadge": "Agotado",
     "inactiveHere": "Inactivo en esta sede",
     "noResultsHint": "Cambie el filtro o la búsqueda.",
-    "emptyHint": "Cree el primer producto; aparece al instante en la caja, el menú QR y la web."
+    "emptyHint": "Cree el primer plato; aparece al instante en la caja, el menú QR y la web.",
+    "recipe": {
+      "column": "Receta",
+      "with": "Con receta",
+      "without": "Sin receta",
+      "noStock": "Sin stock",
+      "onlyWithout": "Solo sin receta"
+    }
   },
   "productEditor": {
-    "back": "Volver a los productos",
+    "back": "Volver a la Carta",
     "duplicate": "Duplicar",
     "duplicated": "Copia creada. Todavía está inactiva.",
     "deleted": "Producto eliminado",
@@ -54,7 +61,8 @@
       "allergens": "Alérgenos y origen",
       "translations": "Traducciones",
       "availability": "Disponibilidad",
-      "stations": "Estaciones"
+      "stations": "Estaciones",
+      "recipe": "Receta"
     },
     "needsAttention": "Incompleto",
     "discard": "Descartar",

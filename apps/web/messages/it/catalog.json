@@ -7,10 +7,10 @@
     "translationNameMissing": "Traduca anche il nome."
   },
   "products": {
-    "title": "Prodotti",
-    "description": "Un’unica carta dei prodotti per cassa, menu QR e web. Le modifiche valgono subito su tutti i canali.",
-    "new": "Nuovo prodotto",
-    "newHint": "Varianti, allergeni, traduzioni e il resto li completerà poi nel prodotto.",
+    "title": "Carta",
+    "description": "Tutti i piatti e le bevande per cassa, menu QR e web. Ogni piatto ha la sua ricetta, che scala dal magazzino.",
+    "new": "Nuovo piatto",
+    "newHint": "Ricetta, varianti, allergeni, traduzioni e il resto li completerà poi nel piatto.",
     "created": "Prodotto creato",
     "needCategory": "Crei prima una categoria.",
     "toCategories": "Alle categorie",
@@ -27,16 +27,23 @@
     "searchPlaceholder": "Nome o numero articolo",
     "showInactive": "Mostra inattivi",
     "noLocation": "Selezioni una sede in alto per segnare i prodotti come esauriti («86»).",
-    "noResults": "Nessun prodotto trovato.",
-    "empty": "Ancora nessun prodotto. Crei il primo prodotto.",
+    "noResults": "Nessun piatto trovato.",
+    "empty": "La carta è ancora vuota. Create il primo piatto.",
     "soldOut": "Disponibilità",
     "soldOutBadge": "Esaurito",
     "inactiveHere": "Inattivo nella sede",
     "noResultsHint": "Modificate il filtro o la ricerca.",
-    "emptyHint": "Create il primo prodotto: compare subito in cassa, nel menu QR e sul web."
+    "emptyHint": "Create il primo piatto: compare subito in cassa, nel menu QR e sul web.",
+    "recipe": {
+      "column": "Ricetta",
+      "with": "Con ricetta",
+      "without": "Senza ricetta",
+      "noStock": "Esaurito in magazzino",
+      "onlyWithout": "Solo senza ricetta"
+    }
   },
   "productEditor": {
-    "back": "Torna ai prodotti",
+    "back": "Torna alla carta",
     "duplicate": "Duplica",
     "duplicated": "Copia creata. È ancora inattiva.",
     "deleted": "Prodotto rimosso",
@@ -54,7 +61,8 @@
       "allergens": "Allergeni & provenienza",
       "translations": "Traduzioni",
       "availability": "Disponibilità",
-      "stations": "Postazioni"
+      "stations": "Postazioni",
+      "recipe": "Ricetta"
     },
     "needsAttention": "Incompleto",
     "discard": "Scarta",

@@ -567,6 +567,12 @@ Juan lo pidió (20 nov 2026): saber cuánta materia prima queda, que cada plato 
 - **Sin conexión:** la caja vende igual que siempre; el descuento ocurre en la nube cuando llegan las operaciones. El hub y los dispositivos no cambian.
 - Permiso nuevo `inventory.manage` (administrador y gerente; la migración 0025 se lo da a los existentes). Eventos `inventory.movement_recorded` e `inventory.recipe_changed`.
 - **Para después:** costo por plato y margen (precio en las compras), avisos por correo o WhatsApp, «agotado» automático en la caja cuando una materia prima llega a 0, y nivel de alerta distinto por sede.
+- **La receta vive en el plato (2026-11-23):** «Productos» pasa a llamarse **Carta**, y la ficha de cada plato tiene la pestaña **Receta**:
+  - Ahí se crea una materia prima que falta, se ve el stock de cada una y cuántas porciones alcanzan.
+  - La lista de la Carta muestra «Con receta», «Sin receta» o «Sin stock», y tiene el filtro «Solo sin receta».
+  - Inventario explica los tres pasos y muestra «Se usa en» por materia prima, con «Registrar compra» para cualquiera de ellas.
+  - Recetas deja el menú lateral y queda como pestaña de Inventario, donde siguen las recetas de las opciones.
+  - Sin cambios en la API ni en la base: usa `listRecipes` y `replaceRecipe`.
 
 ## DEC-052 · La base también puede ser MariaDB
 
