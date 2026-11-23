@@ -61,6 +61,9 @@ const nextConfig: NextConfig = {
   transpilePackages: ['@pos/core', '@pos/db', '@pos/ui', '@pos/api'],
   serverExternalPackages: ['mysql2', '@node-rs/argon2'],
   outputFileTracingRoot: repoRoot,
+  // Texts are read at request time from messages/ (src/i18n/request.ts), a path the tracer cannot
+  // see: ship them with every server function (Vercel). The Docker image copies them itself.
+  outputFileTracingIncludes: { '/**': ['./messages/**/*.json'] },
   // ESLint runs once from the root (pnpm lint) and in CI.
   eslint: { ignoreDuringBuilds: true },
   poweredByHeader: false,
