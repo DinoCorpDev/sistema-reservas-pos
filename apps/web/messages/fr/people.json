@@ -58,7 +58,11 @@
     "unpairTitle": "Dissocier {name} ?",
     "unpairText": "L'appareil sur lequel {name} fonctionne maintenant est déconnecté aussitôt. Vous pouvez ensuite créer un nouveau code et appairer {name} sur un autre appareil. Les commandes et les reçus sont conservés.",
     "unpaired": "Appareil dissocié. Il peut être appairé de nouveau.",
-    "stationAtSignIn": "Choisir à la connexion"
+    "stationAtSignIn": "Choisir à la connexion",
+    "device": "Appareil",
+    "pairShort": "Coupler",
+    "emptyHint": "Créez une caisse, un terminal mobile ou un écran de cuisine et couplez-le avec un code.",
+    "assignment": "Cuisine et imprimante"
   },
   "stations": {
     "title": "Postes de cuisine",
@@ -176,7 +180,11 @@
     "activateText": "La personne peut de nouveau se connecter et travailler avec son PIN.",
     "activated": "Personne activée.",
     "cannotDeactivateSelf": "Vous ne pouvez pas désactiver votre propre compte.",
-    "lastAdmin": "L’organisation a besoin d’au moins une personne active avec le rôle Administrateur."
+    "lastAdmin": "L’organisation a besoin d’au moins une personne active avec le rôle Administrateur.",
+    "access": "Accès",
+    "countLine": "{count, plural, one {# personne} other {# personnes}} avec accès à la caisse ou au backoffice",
+    "emptyHint": "Créez la première personne : avec un PIN pour la caisse, avec un e-mail pour le backoffice.",
+    "pinOnly": "Caisse seulement (PIN)"
   },
   "roles": {
     "names": {

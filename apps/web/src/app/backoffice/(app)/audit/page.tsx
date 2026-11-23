@@ -20,7 +20,7 @@ export default async function AuditPage({
   if (!actor.permissions.has('audit.view')) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="audit" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );
@@ -37,7 +37,7 @@ export default async function AuditPage({
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="audit" title={t('title')} description={t('description')} />
       <AuditLog
         key={`${JSON.stringify(filters)}:${page.items[0]?.id ?? ''}`}
         filters={filters}

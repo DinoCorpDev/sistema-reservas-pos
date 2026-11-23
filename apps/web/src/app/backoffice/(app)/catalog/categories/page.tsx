@@ -24,7 +24,7 @@ export default async function CategoriesPage() {
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="categories" title={t('title')} description={t('description')} />
       <CategoriesManager
         categories={categories}
         productCounts={productCounts}

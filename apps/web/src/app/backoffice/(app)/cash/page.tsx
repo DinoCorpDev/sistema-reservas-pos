@@ -36,7 +36,7 @@ export default async function CashPage({
   if (!canClose && !canView) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="cash" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );
@@ -52,6 +52,7 @@ export default async function CashPage({
   return (
     <>
       <PageHeader
+        nav="cash"
         title={t('title')}
         description={t('description')}
         actions={

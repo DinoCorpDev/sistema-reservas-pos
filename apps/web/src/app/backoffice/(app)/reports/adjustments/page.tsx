@@ -1,6 +1,8 @@
 import { cash, reports } from '@pos/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
+import { EmptyState } from '@pos/ui/empty-state';
+import { InboxIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
@@ -85,6 +87,7 @@ export default async function AdjustmentsReportPage({
   return (
     <>
       <PageHeader
+        nav="reports"
         title={ta('title')}
         description={ta('description')}
         actions={<PrintButton label={t('print')} />}
@@ -120,7 +123,7 @@ export default async function AdjustmentsReportPage({
             </CardHeader>
             <CardContent>
               {report.byPerson.length === 0 ? (
-                <p className="text-sm text-muted-foreground">{t('empty')}</p>
+                <EmptyState compact icon={<InboxIcon />} title={t('empty')} />
               ) : (
                 <Table>
                   <TableHeader>
@@ -158,7 +161,7 @@ export default async function AdjustmentsReportPage({
             </CardHeader>
             <CardContent>
               {report.byReason.length === 0 ? (
-                <p className="text-sm text-muted-foreground">{t('empty')}</p>
+                <EmptyState compact icon={<InboxIcon />} title={t('empty')} />
               ) : (
                 <Table>
                   <TableHeader>
@@ -194,7 +197,7 @@ export default async function AdjustmentsReportPage({
           </CardHeader>
           <CardContent>
             {records.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t('empty')}</p>
+              <EmptyState compact icon={<InboxIcon />} title={t('empty')} />
             ) : (
               <Table>
                 <TableHeader>

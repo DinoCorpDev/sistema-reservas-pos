@@ -6,7 +6,29 @@
     "checkOpen": "Da fare",
     "activateHint": "L’esercizio può essere attivato non appena tutti i punti sono completati.",
     "activateNoPermission": "Solo le persone autorizzate a gestire la sede possono attivare l’esercizio.",
-    "progressLabel": "Avanzamento della configurazione"
+    "progressLabel": "Avanzamento della configurazione",
+    "greeting": "Ciao, {name}",
+    "subtitle": "Ecco come va il vostro ristorante oggi.",
+    "openPos": "Apri la cassa",
+    "quick": {
+      "title": "Accesso rapido",
+      "products": {
+        "title": "Prodotti",
+        "text": "Carta, prezzi ed esauriti"
+      },
+      "devices": {
+        "title": "Abbina dispositivi",
+        "text": "Casse, palmari e schermi di cucina"
+      },
+      "staff": {
+        "title": "Personale",
+        "text": "Accessi, PIN e ruoli"
+      },
+      "reports": {
+        "title": "Rapporti",
+        "text": "Vendite, IVA e mance"
+      }
+    }
   },
   "tax": {
     "title": "IVA",

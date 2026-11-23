@@ -19,7 +19,15 @@ import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { CornerDownRightIcon, LanguagesIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import {
+  CornerDownRightIcon,
+  FolderTreeIcon,
+  LanguagesIcon,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -164,7 +172,7 @@ export function CategoriesManager({
           ) : null}
         </CardHeader>
         {categories.length === 0 ? (
-          <p className="text-muted-foreground">{t('empty')}</p>
+          <EmptyState compact icon={<FolderTreeIcon />} title={t('empty')} />
         ) : (
           <Table>
             <TableHeader>

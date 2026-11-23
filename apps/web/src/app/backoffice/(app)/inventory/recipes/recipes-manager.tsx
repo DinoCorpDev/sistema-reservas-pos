@@ -19,7 +19,8 @@ import { Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { CornerDownRightIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import { BookOpenTextIcon, CornerDownRightIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import {
@@ -149,7 +150,7 @@ export function RecipesManager({
           </div>
         </CardHeader>
         {products.length === 0 ? (
-          <p className="text-muted-foreground">{t('empty')}</p>
+          <EmptyState compact icon={<BookOpenTextIcon />} title={t('empty')} />
         ) : (
           <Table>
             <TableHeader>

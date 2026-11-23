@@ -16,7 +16,7 @@ export default async function FloorPage() {
   ]);
   return (
     <>
-      <PageHeader title={t('title')} description={t('seasonal')} />
+      <PageHeader nav="floor" title={t('title')} description={t('seasonal')} />
       <FloorManager
         areas={areas}
         tables={tables}

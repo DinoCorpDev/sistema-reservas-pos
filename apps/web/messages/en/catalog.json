@@ -29,9 +29,11 @@
     "noLocation": "Choose a location at the top to mark products as sold out (“86”).",
     "noResults": "No products found.",
     "empty": "No products yet. Create the first product.",
-    "soldOut": "Sold out (86)",
+    "soldOut": "Availability",
     "soldOutBadge": "Sold out",
-    "inactiveHere": "Inactive at this location"
+    "inactiveHere": "Inactive at this location",
+    "noResultsHint": "Change the filter or the search.",
+    "emptyHint": "Create the first product; it shows up right away on the POS, the QR menu and the web."
   },
   "productEditor": {
     "back": "Back to products",
@@ -118,7 +120,7 @@
     "notOnQrWeb": "Not on QR/web"
   },
   "soldOut": {
-    "mark": "86",
+    "mark": "Mark sold out",
     "markLabel": "Mark {name} as sold out",
     "until": "Sold out until …",
     "untilTomorrow": "Tomorrow (business day starts at 04:00)",
@@ -126,7 +128,9 @@
     "markedToast": "{name} is sold out.",
     "restore": "Available again",
     "restoreLabel": "Make {name} available again",
-    "restoredToast": "{name} is available again."
+    "restoredToast": "{name} is available again.",
+    "stateAvailable": "Available",
+    "stateSoldOut": "Sold out"
   },
   "variants": {
     "title": "Variants",

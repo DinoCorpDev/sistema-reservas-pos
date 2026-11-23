@@ -13,12 +13,12 @@ export default async function LocationPage() {
   const t = await getTranslations('location');
   const list = await locations.listLocations(deps(), actor);
   const location = list.find((l) => l.id === actor.locationId) ?? list[0];
-  if (!location) return <PageHeader title={t('title')} />;
+  if (!location) return <PageHeader nav="location" title={t('title')} />;
   const canEdit = actor.permissions.has('location.manage');
 
   return (
     <>
-      <PageHeader title={t('title')} description={location.name} />
+      <PageHeader nav="location" title={t('title')} description={location.name} />
       <div className="grid gap-6">
         <LocationForm location={location} canEdit={canEdit} />
         <SettingsForm locationId={location.id} settings={location.settings} canEdit={canEdit} />

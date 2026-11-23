@@ -6,7 +6,29 @@
     "checkOpen": "Offen",
     "activateHint": "Der Betrieb lässt sich aktivieren, sobald alle Punkte erledigt sind.",
     "activateNoPermission": "Den Betrieb aktivieren können nur Personen mit der Berechtigung, den Standort zu verwalten.",
-    "progressLabel": "Fortschritt der Einrichtung"
+    "progressLabel": "Fortschritt der Einrichtung",
+    "greeting": "Hallo, {name}",
+    "subtitle": "So läuft Ihr Restaurant heute.",
+    "openPos": "Kasse öffnen",
+    "quick": {
+      "title": "Schnellzugriff",
+      "products": {
+        "title": "Produkte",
+        "text": "Karte, Preise und Ausverkauft"
+      },
+      "devices": {
+        "title": "Geräte koppeln",
+        "text": "Kassen, Handgeräte und Küchenbildschirme"
+      },
+      "staff": {
+        "title": "Mitarbeitende",
+        "text": "Zugänge, PIN und Rollen"
+      },
+      "reports": {
+        "title": "Berichte",
+        "text": "Umsatz, MWST und Trinkgeld"
+      }
+    }
   },
   "tax": {
     "title": "MWST",

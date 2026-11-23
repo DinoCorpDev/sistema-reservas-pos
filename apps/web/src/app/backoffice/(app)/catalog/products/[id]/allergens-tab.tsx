@@ -16,7 +16,8 @@ import { Input } from '@pos/ui/input';
 import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Checkbox } from '@pos/ui/switch';
-import { PlusIcon, Trash2Icon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import { PlusIcon, Trash2Icon, WheatIcon } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { AllergenGrid } from '@/components/backoffice/catalog/allergen-grid';
@@ -181,7 +182,7 @@ function OriginsCard({ product, permissions }: TabProps) {
             {product.requiresOrigin ? t('required') : t('notRequired')}
           </Alert>
           {rows.length === 0 ? (
-            <p className="text-muted-foreground">{t('empty')}</p>
+            <EmptyState compact icon={<WheatIcon />} title={t('empty')} />
           ) : (
             <ul className="grid gap-3">
               {rows.map((row, index) => {

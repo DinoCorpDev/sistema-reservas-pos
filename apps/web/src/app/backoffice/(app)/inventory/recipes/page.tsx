@@ -22,6 +22,7 @@ export default async function RecipesPage() {
   return (
     <>
       <PageHeader
+        nav="recipes"
         title={t('title')}
         description={t('description')}
         actions={

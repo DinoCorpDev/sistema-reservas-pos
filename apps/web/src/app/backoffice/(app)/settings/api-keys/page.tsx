@@ -17,7 +17,7 @@ export default async function ApiKeysPage() {
     const te = await getTranslations('errors');
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="apiKeys" title={t('title')} />
         <Alert variant="warning">{te('FORBIDDEN')}</Alert>
       </>
     );
@@ -25,7 +25,7 @@ export default async function ApiKeysPage() {
   const keys = await people.listApiKeys(deps(), actor);
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="apiKeys" title={t('title')} description={t('description')} />
       <ApiKeysManager keys={keys} />
     </>
   );

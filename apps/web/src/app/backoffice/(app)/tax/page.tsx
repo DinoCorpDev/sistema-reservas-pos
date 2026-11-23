@@ -22,7 +22,7 @@ export default async function TaxPage({
   });
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="tax" title={t('title')} description={t('description')} />
       <TaxManager
         overview={overview}
         today={todayInZurich()}

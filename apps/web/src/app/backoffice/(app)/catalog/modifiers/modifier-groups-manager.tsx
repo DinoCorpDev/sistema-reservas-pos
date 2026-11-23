@@ -17,7 +17,8 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import { ListPlusIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -77,7 +78,7 @@ export function ModifierGroupsManager({
           ) : null}
         </CardHeader>
         {groups.length === 0 ? (
-          <p className="text-muted-foreground">{t('empty')}</p>
+          <EmptyState compact icon={<ListPlusIcon />} title={t('empty')} />
         ) : (
           <Table>
             <TableHeader>

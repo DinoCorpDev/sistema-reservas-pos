@@ -1,6 +1,15 @@
 import { reports } from '@pos/api';
 import { Button } from '@pos/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@pos/ui/card';
+import type { Trend } from '@pos/ui/stat-card';
+import {
+  ArmchairIcon,
+  ArrowRightIcon,
+  ClockIcon,
+  CreditCardIcon,
+  ReceiptTextIcon,
+  WalletIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { currentActor, deps } from '@/server/actor';
@@ -28,22 +37,41 @@ export async function OwnerDashboard() {
       timeZone: 'UTC',
     });
 
+  // Today against the same weekday last week, as a percentage (only when last week sold).
+  const trend: Trend | undefined =
+    today.lastWeekSalesRappen > 0
+      ? (() => {
+          const change = Math.round(
+            ((today.salesRappen - today.lastWeekSalesRappen) / today.lastWeekSalesRappen) * 100,
+          );
+          return {
+            direction: change > 0 ? 'up' : change < 0 ? 'down' : 'flat',
+            label: `${change > 0 ? '+' : ''}${format.number(change)} %`,
+          };
+        })()
+      : undefined;
+
   return (
     <section className="mb-8 grid gap-4" aria-label={t('title')}>
       <AutoRefresh />
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h2 className="text-lg font-semibold">
-            {t('title')} · {date(today.businessDate)}
+        <div className="grid gap-0.5">
+          <p className="eyebrow">{t('title')}</p>
+          <h2 className="text-lg font-semibold first-letter:uppercase">
+            {date(today.businessDate)}
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span aria-hidden className="size-2 rounded-full bg-success ring-4 ring-success/15" />
             {t('refreshed', {
               time: format.dateTime(new Date(today.refreshedAt), { timeStyle: 'short' }),
             })}
           </p>
         </div>
         <Button asChild variant="outline">
-          <Link href="/backoffice/reports">{t('more')}</Link>
+          <Link href="/backoffice/reports">
+            {t('more')}
+            <ArrowRightIcon />
+          </Link>
         </Button>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -51,20 +79,23 @@ export async function OwnerDashboard() {
           label={t('sales')}
           value={chf(today.salesRappen)}
           testId="dashboard-sales"
+          icon={<WalletIcon />}
+          trend={trend}
           detail={
             <>
-              {t('payments', { count: today.paymentCount })}
-              <br />
+              {t('payments', { count: today.paymentCount })} ·{' '}
               {t('lastWeek', { amount: chf(today.lastWeekSalesRappen) })}
             </>
           }
         />
         <Stat
+          icon={<ReceiptTextIcon />}
           label={t('openOrders')}
           value={format.number(today.openOrders.count)}
           detail={t('openBalance', { amount: chf(today.openOrders.balanceRappen) })}
         />
         <Stat
+          icon={<ArmchairIcon />}
           label={t('tables')}
           value={format.number(today.tables.occupied)}
           detail={`${t('tablesOf', { total: today.tables.total })} · ${t('guests', {
@@ -72,6 +103,7 @@ export async function OwnerDashboard() {
           })}`}
         />
         <Stat
+          icon={<ClockIcon />}
           label={t('shifts')}
           value={format.number(today.openShifts)}
           detail={
@@ -89,20 +121,20 @@ export async function OwnerDashboard() {
       </div>
       {today.byMethod.length > 0 && (
         <Card>
-          <CardHeader>
+          <CardHeader icon={<CreditCardIcon />}>
             <CardTitle className="text-base">{t('byMethod')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
+            <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               {today.byMethod.map((line) => (
-                <div key={line.key} className="grid">
-                  <dt className="text-sm text-muted-foreground">{tr(`methods.${line.key}`)}</dt>
-                  <dd className="font-medium tabular-nums">{chf(line.salesRappen)}</dd>
+                <div key={line.key} className="grid gap-0.5 rounded-lg bg-surface-2 px-3 py-2.5">
+                  <dt className="eyebrow">{tr(`methods.${line.key}`)}</dt>
+                  <dd className="font-semibold tabular-nums">{chf(line.salesRappen)}</dd>
                 </div>
               ))}
-              <div className="grid">
-                <dt className="text-sm text-muted-foreground">{t('tips')}</dt>
-                <dd className="font-medium tabular-nums">{chf(today.tipsRappen)}</dd>
+              <div className="grid gap-0.5 rounded-lg bg-surface-2 px-3 py-2.5">
+                <dt className="eyebrow">{t('tips')}</dt>
+                <dd className="font-semibold tabular-nums">{chf(today.tipsRappen)}</dd>
               </div>
             </dl>
           </CardContent>

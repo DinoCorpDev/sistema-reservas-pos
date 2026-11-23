@@ -21,7 +21,7 @@ export default async function CustomersPage({
   if (!actor.permissions.has('customer.manage')) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="customers" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );
@@ -34,7 +34,7 @@ export default async function CustomersPage({
   });
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="customers" title={t('title')} description={t('description')} />
       <CustomerList key={search} customers={customers} search={search} limit={LIMIT} />
     </>
   );

@@ -12,7 +12,7 @@ export default async function ReportsLayout({ children }: { children: ReactNode 
   if (!actor.permissions.has('report.view')) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="reports" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );

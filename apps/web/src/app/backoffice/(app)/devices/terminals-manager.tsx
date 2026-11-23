@@ -2,18 +2,35 @@
 
 import type { people } from '@pos/api';
 import { CREATABLE_TERMINAL_TYPES } from '@pos/core';
+import { ActionGroup } from '@pos/ui/action-group';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@pos/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle, IconTile } from '@pos/ui/card';
 import { ConfirmButton } from '@pos/ui/confirm';
+import { EmptyState } from '@pos/ui/empty-state';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@pos/ui/dialog';
 import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { LinkIcon, PencilIcon, PlusIcon, PowerIcon, PowerOffIcon, UnlinkIcon } from 'lucide-react';
+import {
+  ChefHatIcon,
+  LinkIcon,
+  PrinterIcon,
+  type LucideIcon,
+  MonitorIcon,
+  MonitorSmartphoneIcon,
+  PencilIcon,
+  PlusIcon,
+  PowerIcon,
+  PowerOffIcon,
+  RouterIcon,
+  SmartphoneIcon,
+  TabletSmartphoneIcon,
+  UnlinkIcon,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useNow, useTranslations } from 'next-intl';
+import { useFormatter, useNow, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useDateTime } from '@/components/backoffice/people/use-date-time';
 import { useServerAction } from '@/components/backoffice/use-server-action';
@@ -21,6 +38,15 @@ import type { ActionResult } from '@/server/action';
 import * as actions from './actions';
 import { fromOption, NONE, selectable, toOption } from './options';
 import { type Pairing, PairingDialog } from './pairing-dialog';
+
+/** One icon per kind of device (DEC-053). */
+export const TERMINAL_ICONS: Record<string, LucideIcon> = {
+  pos: MonitorIcon,
+  handheld: TabletSmartphoneIcon,
+  kds: ChefHatIcon,
+  hub: RouterIcon,
+  phone: SmartphoneIcon,
+};
 
 type TerminalDraft = {
   id?: string;
@@ -54,6 +80,7 @@ export function TerminalsManager({
   const tc = useTranslations('common');
   const formatDate = useDateTime();
   const now = useNow({ updateInterval: 30_000 });
+  const format = useFormatter();
   const router = useRouter();
   const [draft, setDraft] = useState<TerminalDraft | null>(null);
   const [pairing, setPairing] = useState<Pairing | null>(null);
@@ -88,170 +115,221 @@ export function TerminalsManager({
   const pairingState = (terminal: people.TerminalDto) => {
     if (terminal.isPaired) {
       return (
-        <div className="grid gap-1">
-          <Badge variant="success">{t('paired')}</Badge>
-          <span className="text-xs text-muted-foreground">{formatDate(terminal.pairedAt)}</span>
-        </div>
+        <Badge variant="success" dot title={formatDate(terminal.pairedAt) ?? undefined}>
+          {t('paired')}
+        </Badge>
       );
     }
     const pending =
       terminal.pairingExpiresAt && new Date(terminal.pairingExpiresAt).getTime() > now.getTime();
     return pending ? (
-      <Badge variant="warning">
+      <Badge variant="warning" dot>
         {t('codePending', { time: formatDate(terminal.pairingExpiresAt, 'time') ?? '' })}
       </Badge>
     ) : (
-      <Badge variant="secondary">{t('notPaired')}</Badge>
+      <Badge variant="secondary" dot>
+        {t('notPaired')}
+      </Badge>
     );
   };
 
   return (
     <Card>
-      <CardHeader className="flex-row flex-wrap items-start justify-between gap-2">
-        <div className="grid gap-1">
-          <CardTitle>{t('title')}</CardTitle>
-          <CardDescription>{t('hint')}</CardDescription>
-        </div>
-        {canEdit ? (
-          <Button
-            onClick={() =>
-              setDraft({
-                name: '',
-                type: 'pos',
-                orderNumberPrefix: suggestPrefix(terminals),
-                kitchenStationId: NONE,
-                receiptPrinterId: NONE,
-              })
-            }
-          >
-            <PlusIcon /> {t('new')}
-          </Button>
-        ) : null}
+      <CardHeader
+        icon={<MonitorSmartphoneIcon />}
+        action={
+          canEdit ? (
+            <Button
+              onClick={() =>
+                setDraft({
+                  name: '',
+                  type: 'pos',
+                  orderNumberPrefix: suggestPrefix(terminals),
+                  kitchenStationId: NONE,
+                  receiptPrinterId: NONE,
+                })
+              }
+            >
+              <PlusIcon /> {t('new')}
+            </Button>
+          ) : null
+        }
+      >
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('hint')}</CardDescription>
       </CardHeader>
       {terminals.length === 0 ? (
-        <p className="text-muted-foreground">{t('empty')}</p>
+        <EmptyState
+          icon={<MonitorSmartphoneIcon />}
+          title={t('empty')}
+          description={t('emptyHint')}
+          compact
+        />
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{tc('name')}</TableHead>
-              <TableHead>{t('type')}</TableHead>
+              <TableHead>{t('device')}</TableHead>
               <TableHead>{t('prefix')}</TableHead>
-              <TableHead>{t('station')}</TableHead>
-              <TableHead>{t('receiptPrinter')}</TableHead>
+              <TableHead>{t('assignment')}</TableHead>
               <TableHead>{t('pairing')}</TableHead>
               <TableHead>{t('lastSeen')}</TableHead>
-              <TableHead>{tc('status')}</TableHead>
               {canEdit ? <TableHead className="text-right">{tc('actions')}</TableHead> : null}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {terminals.map((terminal) => (
-              <TableRow key={terminal.id} className={terminal.isActive ? undefined : 'opacity-60'}>
-                <TableCell className="font-medium">
-                  {terminal.name}
-                  {terminal.appVersion ? (
-                    <span className="block text-xs font-normal text-muted-foreground">
-                      v{terminal.appVersion}
-                    </span>
-                  ) : null}
-                </TableCell>
-                <TableCell>{t(`types.${terminal.type}`)}</TableCell>
-                <TableCell className="font-mono">{terminal.orderNumberPrefix}</TableCell>
-                <TableCell>
-                  {terminal.type === 'kds' && !terminal.kitchenStationId
-                    ? t('stationAtSignIn')
-                    : stationName(terminal.kitchenStationId)}
-                </TableCell>
-                <TableCell>{printerName(terminal.receiptPrinterId)}</TableCell>
-                <TableCell>{pairingState(terminal)}</TableCell>
-                <TableCell className="whitespace-nowrap">
-                  {formatDate(terminal.lastSeenAt) ?? t('never')}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={terminal.isActive ? 'success' : 'secondary'}>
-                    {terminal.isActive ? tc('active') : tc('inactive')}
-                  </Badge>
-                </TableCell>
-                {canEdit ? (
-                  <TableCell className="text-right whitespace-nowrap">
-                    {terminal.isActive && terminal.isPaired && terminal.type !== 'hub' ? (
-                      <ConfirmButton
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t('unpair')}
-                        disabled={unpair.pending}
-                        title={t('unpairTitle', { name: terminal.name })}
-                        description={t('unpairText')}
-                        confirmLabel={t('unpair')}
-                        cancelLabel={tc('cancel')}
-                        onConfirm={() => unpair.run(terminal.id)}
-                      >
-                        <UnlinkIcon />
-                      </ConfirmButton>
-                    ) : terminal.isActive ? (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t('pair')}
-                        title={t('pair')}
-                        disabled={pair.pending}
-                        onClick={() => void pair.run(terminal)}
-                      >
-                        <LinkIcon />
-                      </Button>
-                    ) : null}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={tc('edit')}
-                      title={tc('edit')}
-                      onClick={() =>
-                        setDraft({
-                          id: terminal.id,
-                          name: terminal.name,
-                          type: terminal.type,
-                          orderNumberPrefix: terminal.orderNumberPrefix,
-                          kitchenStationId: toOption(terminal.kitchenStationId),
-                          receiptPrinterId: toOption(terminal.receiptPrinterId),
-                        })
-                      }
-                    >
-                      <PencilIcon />
-                    </Button>
-                    {terminal.isActive ? (
-                      <ConfirmButton
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t('deactivate')}
-                        disabled={deactivate.pending}
-                        title={t('deactivateTitle', { name: terminal.name })}
-                        description={t('deactivateText')}
-                        confirmLabel={tc('deactivate')}
-                        cancelLabel={tc('cancel')}
-                        onConfirm={() => deactivate.run(terminal.id)}
-                      >
-                        <PowerOffIcon />
-                      </ConfirmButton>
-                    ) : (
-                      <ConfirmButton
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t('activate')}
-                        disabled={activate.pending}
-                        title={t('activateTitle', { name: terminal.name })}
-                        description={t('activateText')}
-                        confirmLabel={tc('activate')}
-                        cancelLabel={tc('cancel')}
-                        onConfirm={() => activate.run(terminal.id)}
-                      >
-                        <PowerIcon />
-                      </ConfirmButton>
-                    )}
+            {terminals.map((terminal) => {
+              const Icon = TERMINAL_ICONS[terminal.type] ?? MonitorIcon;
+              return (
+                <TableRow
+                  key={terminal.id}
+                  className={terminal.isActive ? undefined : 'opacity-60'}
+                >
+                  <TableCell>
+                    <div className="flex min-w-44 items-center gap-3">
+                      <IconTile tone={terminal.isActive ? 'brand' : 'muted'}>
+                        <Icon />
+                      </IconTile>
+                      <div className="min-w-0">
+                        <p className="flex flex-wrap items-center gap-2 font-medium">
+                          {terminal.name}
+                          {terminal.isActive ? null : (
+                            <Badge variant="secondary">{tc('inactive')}</Badge>
+                          )}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t(`types.${terminal.type}`)}
+                          {terminal.appVersion ? ` · v${terminal.appVersion}` : ''}
+                        </p>
+                      </div>
+                    </div>
                   </TableCell>
-                ) : null}
-              </TableRow>
-            ))}
+                  <TableCell>
+                    <span className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
+                      {terminal.orderNumberPrefix}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {/* Where its orders go and where it prints, one line each. */}
+                    <div className="grid min-w-36 gap-1">
+                      {terminal.kitchenStationId || terminal.type === 'kds' ? (
+                        <span className="flex items-center gap-1.5" title={t('station')}>
+                          <ChefHatIcon aria-hidden className="size-3.5 text-muted-foreground" />
+                          <span className="sr-only">{t('station')}: </span>
+                          {terminal.type === 'kds' && !terminal.kitchenStationId
+                            ? t('stationAtSignIn')
+                            : stationName(terminal.kitchenStationId)}
+                        </span>
+                      ) : null}
+                      {terminal.receiptPrinterId ? (
+                        <span className="flex items-center gap-1.5" title={t('receiptPrinter')}>
+                          <PrinterIcon aria-hidden className="size-3.5 text-muted-foreground" />
+                          <span className="sr-only">{t('receiptPrinter')}: </span>
+                          {printerName(terminal.receiptPrinterId)}
+                        </span>
+                      ) : null}
+                      {!terminal.kitchenStationId &&
+                      terminal.type !== 'kds' &&
+                      !terminal.receiptPrinterId ? (
+                        <span className="text-muted-foreground">—</span>
+                      ) : null}
+                    </div>
+                  </TableCell>
+                  <TableCell>{pairingState(terminal)}</TableCell>
+                  <TableCell
+                    className="text-sm whitespace-nowrap text-muted-foreground"
+                    title={formatDate(terminal.lastSeenAt) ?? undefined}
+                  >
+                    {terminal.lastSeenAt
+                      ? format.relativeTime(new Date(terminal.lastSeenAt), now)
+                      : t('never')}
+                  </TableCell>
+                  {canEdit ? (
+                    <TableCell className="text-right whitespace-nowrap">
+                      <div className="inline-flex items-center gap-2">
+                        {/* Pairing is the next step of an unpaired device; a hub can always get a new code. */}
+                        {terminal.isActive && (!terminal.isPaired || terminal.type === 'hub') ? (
+                          <Button
+                            variant="outline"
+                            className="text-brand-strong"
+                            aria-label={t('pair')}
+                            disabled={pair.pending}
+                            onClick={() => void pair.run(terminal)}
+                          >
+                            <LinkIcon /> {t('pairShort')}
+                          </Button>
+                        ) : null}
+                        <ActionGroup label={tc('actions')}>
+                          {terminal.isActive && terminal.isPaired && terminal.type !== 'hub' ? (
+                            <ConfirmButton
+                              variant="ghost"
+                              size="icon"
+                              aria-label={t('unpair')}
+                              disabled={unpair.pending}
+                              title={t('unpairTitle', { name: terminal.name })}
+                              description={t('unpairText')}
+                              confirmLabel={t('unpair')}
+                              cancelLabel={tc('cancel')}
+                              onConfirm={() => unpair.run(terminal.id)}
+                            >
+                              <UnlinkIcon />
+                            </ConfirmButton>
+                          ) : null}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={tc('edit')}
+                            title={tc('edit')}
+                            onClick={() =>
+                              setDraft({
+                                id: terminal.id,
+                                name: terminal.name,
+                                type: terminal.type,
+                                orderNumberPrefix: terminal.orderNumberPrefix,
+                                kitchenStationId: toOption(terminal.kitchenStationId),
+                                receiptPrinterId: toOption(terminal.receiptPrinterId),
+                              })
+                            }
+                          >
+                            <PencilIcon />
+                          </Button>
+                          {terminal.isActive ? (
+                            <ConfirmButton
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-destructive/10 hover:text-destructive"
+                              aria-label={t('deactivate')}
+                              disabled={deactivate.pending}
+                              title={t('deactivateTitle', { name: terminal.name })}
+                              description={t('deactivateText')}
+                              confirmLabel={tc('deactivate')}
+                              cancelLabel={tc('cancel')}
+                              onConfirm={() => deactivate.run(terminal.id)}
+                            >
+                              <PowerOffIcon />
+                            </ConfirmButton>
+                          ) : (
+                            <ConfirmButton
+                              variant="ghost"
+                              size="icon"
+                              aria-label={t('activate')}
+                              disabled={activate.pending}
+                              title={t('activateTitle', { name: terminal.name })}
+                              description={t('activateText')}
+                              confirmLabel={tc('activate')}
+                              cancelLabel={tc('cancel')}
+                              onConfirm={() => activate.run(terminal.id)}
+                            >
+                              <PowerIcon />
+                            </ConfirmButton>
+                          )}
+                        </ActionGroup>
+                      </div>
+                    </TableCell>
+                  ) : null}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       )}

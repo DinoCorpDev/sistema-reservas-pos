@@ -6,7 +6,29 @@
     "checkOpen": "À faire",
     "activateHint": "L’exploitation peut être activée dès que tous les points sont réglés.",
     "activateNoPermission": "Seules les personnes autorisées à gérer l’établissement peuvent activer l’exploitation.",
-    "progressLabel": "Avancement de la configuration"
+    "progressLabel": "Avancement de la configuration",
+    "greeting": "Bonjour, {name}",
+    "subtitle": "Voici comment se passe votre restaurant aujourd'hui.",
+    "openPos": "Ouvrir la caisse",
+    "quick": {
+      "title": "Accès rapides",
+      "products": {
+        "title": "Produits",
+        "text": "Carte, prix et ruptures"
+      },
+      "devices": {
+        "title": "Coupler des appareils",
+        "text": "Caisses, terminaux mobiles et écrans de cuisine"
+      },
+      "staff": {
+        "title": "Personnel",
+        "text": "Accès, PIN et rôles"
+      },
+      "reports": {
+        "title": "Rapports",
+        "text": "Chiffre d'affaires, TVA et pourboires"
+      }
+    }
   },
   "tax": {
     "title": "TVA",

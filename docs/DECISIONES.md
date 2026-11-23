@@ -581,6 +581,35 @@ Juan lo pidió (22 nov 2026): la demo en línea corre en Vercel con la base de u
 - El repositorio es público: una base accesible desde internet se siembra con `SEED_ADMIN_PASSWORD` y `SEED_SUPPORT_PASSWORD` propios, nunca con las contraseñas de desarrollo.
 - El hosting compartido permite 75 conexiones por usuario. Alcanza para la demo; el hosting del piloto sigue siendo la decisión abierta de abajo.
 
+## DEC-053 · Sistema visual del backoffice sobre la marca de Zitas
+
+Juan lo pidió (23 nov 2026): la interfaz se veía «a puro HTML». Quería que se viera profesional, con más diseño en los detalles, más íconos y que fuera fácil de entender. La marca de DEC-049 no cambia; cambia el oficio con que se aplica. Primera fase: base visual, marco del backoffice, login, Resumen, Productos, Personal y Dispositivos. La caja, la cocina y el resto del backoffice vienen después.
+
+- **Profundidad sin gris:** bordes de 1 px con alfa y sombras teñidas (`shadow-card`, `shadow-raised`, en `packages/ui/src/styles/globals.css`). El botón principal lleva un brillo teal (`--glow`). Las cabeceras de tablas y tarjetas usan `bg-surface-2`. El fondo de página tiene una luz teal muy suave arriba (`bg-atmosphere`).
+- **Tipografía de trabajo:** etiquetas de sección y cabeceras de tabla en versalitas con tracking (`eyebrow`); cifras con `tabular-nums`. El título de cada página sigue en Chakra Petch.
+- **Componentes nuevos de `@pos/ui`:**
+  - `StatCard` para los KPI, con ícono y tendencia;
+  - `EmptyState` para toda lista vacía: ícono, qué va ahí y el botón para crear el primero;
+  - `Avatar` con iniciales;
+  - `ActionGroup` para las acciones de una fila;
+  - `IconTile` e `iconTone` en `CardHeader`;
+  - `category-tone` para los colores de categoría.
+- **`PageHeader`** acepta `icon` (el mismo del menú) y `eyebrow` (la sección). El menú lateral se agrupa en cinco secciones con título.
+- **Colores de categoría sin migración:** ocho tonos suaves de la paleta de apoyo del brandbook. El tono sale de la posición de la categoría en la carta (o de su id), así que no hay columna nueva ni que elegir nada.
+- **«86» pasa a «Disponibilidad»:** la jerga de cocina no se entendía. La columna de Productos dice «Disponible / Agotado» con un punto de color y abre el mismo menú. La regla (RF-B09, RN-17) no cambia.
+- **Movimiento:** solo CSS, como máximo 200 ms, sin animaciones en bucle. El contenido entra una vez (`animate-enter`) y nada se mueve con `prefers-reduced-motion`. No se usan shaders ni scroll suave: el DINOLABS Vault los reserva para webs, no para paneles.
+- **Claro por defecto, con las dos opciones a la vista** (Juan, 23 nov 2026: «no sé si ese color oscuro funcione; deja las dos opciones»):
+  - Sin una elección guardada, la app es clara. Antes seguía al dispositivo.
+  - El backoffice y los logins tienen un selector visible de sol y luna (`ThemeToggle`). El modo «Automático» sigue en el menú de la caja y la cocina, y se guarda como cualquier otra elección.
+  - El menú lateral del backoffice es blanco en modo claro y Deep Intelligence en oscuro. Esto cambia DEC-049 solo en el backoffice: las barras de la caja y de la cocina y el panel de marca de los logins siguen oscuros.
+- **En todo el backoffice:**
+  - Cada página dice en qué sección está: `PageHeader` recibe `nav` y toma el ícono y la sección del menú (`components/backoffice/nav-items.ts`).
+  - Los avisos llevan el ícono de su tipo.
+  - Las listas vacías usan `EmptyState`.
+  - No hay `loading.tsx`: con él, Next precarga cada página del menú (unas 15 por vista), y eso multiplica las consultas y las conexiones a la base.
+  - Diálogos, menús y selects tienen esquinas más grandes, sombra teñida y una entrada corta.
+- **Lo que no cambia:** los colores de estado de mesas, ítems y pagos, el botón verde de cobrar, la franja de práctica y los objetivos de 44 px. Las acciones de fila siguen siendo botones con su nombre, así que los lectores de pantalla y las pruebas e2e las encuentran igual.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

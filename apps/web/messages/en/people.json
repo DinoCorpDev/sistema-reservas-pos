@@ -58,7 +58,11 @@
     "unpairTitle": "Unpair {name}?",
     "unpairText": "The device {name} runs on now is signed out at once. Then you can issue a new pairing code and pair {name} on another device. Orders and receipts are kept.",
     "unpaired": "Device unpaired. It can be paired again now.",
-    "stationAtSignIn": "Choose at sign-in"
+    "stationAtSignIn": "Choose at sign-in",
+    "device": "Device",
+    "pairShort": "Pair",
+    "emptyHint": "Add a register, a handheld or a kitchen screen and pair it with a code.",
+    "assignment": "Kitchen & printer"
   },
   "stations": {
     "title": "Kitchen stations",
@@ -176,7 +180,11 @@
     "activateText": "The person can sign in again and work with their PIN.",
     "activated": "Person activated.",
     "cannotDeactivateSelf": "You can’t deactivate yourself.",
-    "lastAdmin": "The organisation needs at least one active person with the Administrator role."
+    "lastAdmin": "The organisation needs at least one active person with the Administrator role.",
+    "access": "Access",
+    "countLine": "{count, plural, one {# person} other {# people}} with access to the POS or the backoffice",
+    "emptyHint": "Add the first person: with a PIN for the POS, with an email for the backoffice.",
+    "pinOnly": "POS only (PIN)"
   },
   "roles": {
     "names": {

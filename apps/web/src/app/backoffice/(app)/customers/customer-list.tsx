@@ -15,7 +15,8 @@ import {
 import { Input } from '@pos/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import { toast } from '@pos/ui/toaster';
-import { ChevronRightIcon, PlusIcon, SearchIcon, XIcon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import { ChevronRightIcon, ContactIcon, PlusIcon, SearchIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -115,7 +116,7 @@ export function CustomerList({
 
       {customers.length === 0 ? (
         <Card>
-          <p className="text-muted-foreground">{search ? t('noResults') : t('empty')}</p>
+          <EmptyState compact icon={<ContactIcon />} title={search ? t('noResults') : t('empty')} />
         </Card>
       ) : (
         <Table className="[&_td]:py-1.5">

@@ -15,7 +15,7 @@ export default async function SupportAccessPage() {
   if (!actor.permissions.has('support.grant_access')) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="supportAccess" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );
@@ -28,7 +28,7 @@ export default async function SupportAccessPage() {
   ]);
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="supportAccess" title={t('title')} description={t('description')} />
       <SupportAccess
         grants={grants}
         userNames={Object.fromEntries(users.map((user) => [user.id, user.displayName]))}

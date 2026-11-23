@@ -1,6 +1,8 @@
 import { cash, reports } from '@pos/api';
 import { Card, CardContent } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
+import { EmptyState } from '@pos/ui/empty-state';
+import { InboxIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
@@ -29,6 +31,7 @@ export default async function TipsReportPage({
   return (
     <>
       <PageHeader
+        nav="reports"
         title={tt('title')}
         description={tt('description')}
         actions={<PrintButton label={t('print')} />}
@@ -42,7 +45,7 @@ export default async function TipsReportPage({
       <Card>
         <CardContent className="pt-6">
           {report.byPerson.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('empty')}</p>
+            <EmptyState compact icon={<InboxIcon />} title={t('empty')} />
           ) : (
             <Table>
               <TableHeader>

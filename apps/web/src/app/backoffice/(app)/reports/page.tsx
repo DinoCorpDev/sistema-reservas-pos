@@ -111,6 +111,7 @@ export default async function SalesReportPage({
   return (
     <>
       <PageHeader
+        nav="reports"
         title={t('tabs.sales')}
         description={t('period.label', { from: day(period.from), to: day(period.to) })}
         actions={<PrintButton label={t('print')} />}

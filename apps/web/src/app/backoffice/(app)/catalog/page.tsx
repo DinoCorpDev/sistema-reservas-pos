@@ -57,6 +57,7 @@ export default async function ProductsPage({
   return (
     <>
       <PageHeader
+        nav="products"
         title={t('title')}
         description={t('description')}
         actions={

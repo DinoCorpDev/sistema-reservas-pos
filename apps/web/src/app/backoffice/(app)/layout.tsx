@@ -1,6 +1,7 @@
 import { locations, platform } from '@pos/api';
 import { asCurrency } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
+import { Avatar } from '@pos/ui/avatar';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
@@ -30,16 +31,26 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
     : 'active';
 
   return (
-    <div className="flex min-h-dvh">
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto bg-chrome p-4 text-chrome-foreground lg:flex print:hidden">
+    <div className="flex min-h-dvh bg-atmosphere">
+      {/* White in the light theme, Deep Intelligence in the dark one (DEC-053). */}
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-7 overflow-y-auto border-r bg-card px-3 py-5 text-foreground lg:flex dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground print:hidden">
         <Link href="/backoffice" className="px-3 text-lg font-semibold">
           <span className="sr-only">{t('app.name')}</span>
-          <ZitasLogo onDark />
+          <ZitasLogo className="dark:hidden" />
+          <ZitasLogo onDark className="hidden dark:inline-flex" />
         </Link>
-        <BackofficeNav permissions={permissions} tone="dark" />
-        <p className="mt-auto px-3 text-xs text-chrome-foreground/50">
-          v{process.env.NEXT_PUBLIC_APP_VERSION ?? 'dev'}
-        </p>
+        <BackofficeNav permissions={permissions} tone="sidebar" />
+        {/* Who is signed in, at the foot of the menu. */}
+        <div className="mt-auto flex items-center gap-3 rounded-xl border bg-surface-2 p-3 dark:border-white/8 dark:bg-white/[0.03]">
+          <Avatar name={session?.user?.name || '?'} colorKey={session?.user?.id} />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium">{session?.user?.name}</p>
+            <p className="truncate text-xs text-muted-foreground dark:text-chrome-foreground/50">
+              {session?.user?.email ?? t('app.name')} · v
+              {process.env.NEXT_PUBLIC_APP_VERSION ?? 'dev'}
+            </p>
+          </div>
+        </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar
@@ -64,7 +75,7 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
             </Link>
           </Alert>
         ) : null}
-        <main className="mx-auto w-full max-w-6xl flex-1 p-4 sm:p-6">
+        <main className="mx-auto w-full max-w-7xl flex-1 animate-enter p-4 sm:p-8">
           <MoneyProvider currency={currency}>{children}</MoneyProvider>
         </main>
       </div>

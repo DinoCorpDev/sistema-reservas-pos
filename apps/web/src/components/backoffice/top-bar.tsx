@@ -12,14 +12,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@pos/ui/dropdown-menu';
-import { LogOutIcon, MapPinIcon, MenuIcon, UserIcon } from 'lucide-react';
+import { Avatar } from '@pos/ui/avatar';
+import {
+  ChevronDownIcon,
+  LifeBuoyIcon,
+  LogOutIcon,
+  MapPinIcon,
+  MenuIcon,
+  UserIcon,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { leaveOrganization, logout, setUiLanguage, switchLocation } from '@/app/backoffice/actions';
 import { LanguagePicker } from '@/components/language-picker';
 import { BackofficeNav } from './nav';
-import { ThemeMenu } from '@/components/theme/theme-menu';
+import { ThemeToggle } from '@/components/theme/theme-menu';
+import { helpLanguageOf } from '@/help/manuals';
 
 export function TopBar({
   locations,
@@ -35,6 +44,7 @@ export function TopBar({
   isSupport: boolean;
 }) {
   const t = useTranslations('nav');
+  const locale = useLocale();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -42,15 +52,15 @@ export function TopBar({
 
   // A printed report (or one saved as PDF) carries the page only (RF-F03).
   return (
-    <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 border-b bg-background/95 px-4 backdrop-blur print:hidden">
+    <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center gap-3 border-b bg-background/80 px-4 backdrop-blur-md sm:px-6 print:hidden">
       <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="icon" className="lg:hidden" aria-label={t('overview')}>
+          <Button variant="ghost" size="icon" className="lg:hidden" aria-label={t('menu')}>
             <MenuIcon />
           </Button>
         </DialogTrigger>
         <DialogContent className="top-0 left-0 h-dvh max-h-dvh translate-x-0 translate-y-0 rounded-none sm:max-w-xs">
-          <DialogTitle>{t('overview')}</DialogTitle>
+          <DialogTitle>{t('menu')}</DialogTitle>
           <BackofficeNav permissions={permissions} onNavigate={() => setMenuOpen(false)} />
         </DialogContent>
       </Dialog>
@@ -61,9 +71,13 @@ export function TopBar({
             variant="outline"
             disabled={pending || locations.length < 2}
             aria-label={t('location_switch')}
+            className="rounded-full pr-3 pl-2 disabled:opacity-100"
           >
-            <MapPinIcon />
-            <span className="max-w-48 truncate">{current?.name ?? '—'}</span>
+            <span className="grid size-7 place-items-center rounded-full bg-brand-soft text-brand-strong [&_svg]:size-4">
+              <MapPinIcon />
+            </span>
+            <span className="max-w-48 truncate text-sm">{current?.name ?? '—'}</span>
+            {locations.length > 1 ? <ChevronDownIcon className="text-muted-foreground" /> : null}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
@@ -87,13 +101,19 @@ export function TopBar({
       </DropdownMenu>
 
       <div className="ml-auto flex items-center gap-2">
-        <ThemeMenu />
+        <Button variant="ghost" size="icon" asChild aria-label={t('help')}>
+          <a href={`/help/${helpLanguageOf(locale)}/owner`} target="_blank" rel="noopener">
+            <LifeBuoyIcon />
+          </a>
+        </Button>
+        <ThemeToggle />
         <LanguagePicker onChange={setUiLanguage} label={t('language')} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" aria-label={t('account')}>
-              <UserIcon />
-              <span className="hidden max-w-40 truncate sm:inline">{userName}</span>
+            <Button variant="ghost" aria-label={t('account')} className="gap-2.5 px-2">
+              <Avatar name={userName || '?'} size="sm" />
+              <span className="hidden max-w-40 truncate text-sm sm:inline">{userName}</span>
+              <ChevronDownIcon className="hidden text-muted-foreground sm:block" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

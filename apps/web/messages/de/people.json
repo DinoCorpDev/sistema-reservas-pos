@@ -58,7 +58,11 @@
     "unpairTitle": "{name} entkoppeln?",
     "unpairText": "Das Gerät, auf dem {name} jetzt läuft, wird sofort abgemeldet. Danach können Sie einen neuen Kopplungscode erzeugen und {name} auf einem anderen Gerät koppeln. Bestellungen und Belege bleiben erhalten.",
     "unpaired": "Gerät entkoppelt. Es kann jetzt neu gekoppelt werden.",
-    "stationAtSignIn": "Beim Anmelden wählen"
+    "stationAtSignIn": "Beim Anmelden wählen",
+    "device": "Gerät",
+    "pairShort": "Koppeln",
+    "emptyHint": "Legen Sie eine Kasse, ein Handgerät oder einen Küchenbildschirm an und koppeln Sie es mit einem Code.",
+    "assignment": "Küche & Drucker"
   },
   "stations": {
     "title": "Küchenstationen",
@@ -176,7 +180,11 @@
     "activateText": "Die Person kann sich wieder anmelden und mit ihrer PIN arbeiten.",
     "activated": "Person aktiviert.",
     "cannotDeactivateSelf": "Sie können sich nicht selbst deaktivieren.",
-    "lastAdmin": "Die Organisation braucht mindestens eine aktive Person mit der Rolle Administrator."
+    "lastAdmin": "Die Organisation braucht mindestens eine aktive Person mit der Rolle Administrator.",
+    "access": "Zugang",
+    "countLine": "{count, plural, one {# Person} other {# Personen}} mit Zugang zu Kasse oder Backoffice",
+    "emptyHint": "Legen Sie die erste Person an: mit PIN für die Kasse, mit E-Mail für das Backoffice.",
+    "pinOnly": "Nur Kasse (PIN)"
   },
   "roles": {
     "names": {

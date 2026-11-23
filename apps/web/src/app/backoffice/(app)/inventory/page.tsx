@@ -19,6 +19,7 @@ export default async function InventoryPage() {
   return (
     <>
       <PageHeader
+        nav="inventory"
         title={t('title')}
         description={t('description')}
         actions={

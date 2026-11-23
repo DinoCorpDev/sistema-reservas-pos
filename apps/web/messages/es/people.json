@@ -58,7 +58,11 @@
     "unpairTitle": "¿Desvincular {name}?",
     "unpairText": "El aparato donde funciona {name} ahora se cierra de inmediato. Después puede generar un código nuevo y vincular {name} en otro aparato. Las órdenes y los recibos se conservan.",
     "unpaired": "Dispositivo desvinculado. Ya se puede volver a vincular.",
-    "stationAtSignIn": "Elegir al iniciar sesión"
+    "stationAtSignIn": "Elegir al iniciar sesión",
+    "device": "Dispositivo",
+    "pairShort": "Vincular",
+    "emptyHint": "Cree una caja, un handheld o una pantalla de cocina y vincúlelo con un código.",
+    "assignment": "Cocina e impresora"
   },
   "stations": {
     "title": "Estaciones de cocina",
@@ -176,7 +180,11 @@
     "activateText": "La persona podrá volver a iniciar sesión y trabajar con su PIN.",
     "activated": "Persona activada.",
     "cannotDeactivateSelf": "No puede desactivar su propia cuenta.",
-    "lastAdmin": "La organización necesita al menos una persona activa con el rol Administrador."
+    "lastAdmin": "La organización necesita al menos una persona activa con el rol Administrador.",
+    "access": "Acceso",
+    "countLine": "{count, plural, one {# persona} other {# personas}} con acceso a la caja o al backoffice",
+    "emptyHint": "Cree la primera persona: con PIN para la caja, con correo para el backoffice.",
+    "pinOnly": "Solo caja (PIN)"
   },
   "roles": {
     "names": {

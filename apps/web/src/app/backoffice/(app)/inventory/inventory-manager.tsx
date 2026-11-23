@@ -20,9 +20,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import { cn } from '@pos/ui/utils';
+import { EmptyState } from '@pos/ui/empty-state';
 import {
   ClipboardCheckIcon,
   HistoryIcon,
+  PackageIcon,
   PencilIcon,
   PlusIcon,
   ShoppingCartIcon,
@@ -127,7 +129,7 @@ export function InventoryManager({
           </Button>
         </CardHeader>
         {ingredients.length === 0 ? (
-          <p className="text-muted-foreground">{t('empty')}</p>
+          <EmptyState compact icon={<PackageIcon />} title={t('empty')} />
         ) : (
           <Table>
             <TableHeader>

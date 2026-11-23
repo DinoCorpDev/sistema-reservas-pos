@@ -24,7 +24,7 @@ export default async function SyncConflictsPage({
   if (!actor.permissions.has('sync.resolve_conflicts')) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="syncConflicts" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );
@@ -32,7 +32,7 @@ export default async function SyncConflictsPage({
   if (!actor.locationId) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="syncConflicts" title={t('title')} />
         <Alert variant="warning">{t('noLocation')}</Alert>
       </>
     );
@@ -50,7 +50,7 @@ export default async function SyncConflictsPage({
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="syncConflicts" title={t('title')} description={t('description')} />
       <ConflictList
         rows={toConflictRows(conflicts, await currentCurrency())}
         includeResolved={includeResolved}

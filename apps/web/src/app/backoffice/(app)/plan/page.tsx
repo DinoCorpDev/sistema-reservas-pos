@@ -23,7 +23,7 @@ export default async function MyPlanPage() {
   if (!actor.permissions.has('location.manage')) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="plan" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );
@@ -46,7 +46,7 @@ export default async function MyPlanPage() {
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="plan" title={t('title')} description={t('description')} />
       {status !== 'active' && (
         <Alert variant={status === 'suspended' ? 'destructive' : 'warning'} className="mb-6">
           {t(`statusNotice.${status}`)}

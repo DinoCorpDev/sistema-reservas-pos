@@ -2,9 +2,12 @@
 
 import type { people } from '@pos/api';
 import { UI_LANGUAGES } from '@pos/core';
+import { ActionGroup } from '@pos/ui/action-group';
+import { Avatar } from '@pos/ui/avatar';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
-import { Card, CardHeader, CardTitle } from '@pos/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '@pos/ui/card';
+import { EmptyState } from '@pos/ui/empty-state';
 import { ConfirmButton } from '@pos/ui/confirm';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@pos/ui/dialog';
 import { Input } from '@pos/ui/input';
@@ -12,14 +15,23 @@ import { Field } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import {
+  BriefcaseIcon,
+  ChefHatIcon,
+  HandPlatterIcon,
   HashIcon,
+  KeyRoundIcon,
   LockKeyholeIcon,
+  type LucideIcon,
   PencilIcon,
   PlusIcon,
+  ShieldCheckIcon,
+  ShieldIcon,
   UserCheckIcon,
+  UsersIcon,
   UserXIcon,
+  WalletIcon,
 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useNow, useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { CheckOption } from '@/components/backoffice/people/check-option';
 import { useDateTime } from '@/components/backoffice/people/use-date-time';
@@ -29,6 +41,15 @@ import { PasswordForm, PinForm } from './credential-forms';
 import { useRoleLabel } from './use-role-label';
 
 type LocationOption = { id: string; name: string };
+
+/** One icon per role, the same everywhere the role shows (DEC-053). */
+const ROLE_ICONS: Record<string, LucideIcon> = {
+  admin: ShieldCheckIcon,
+  manager: BriefcaseIcon,
+  cashier: WalletIcon,
+  waiter: HandPlatterIcon,
+  kitchen: ChefHatIcon,
+};
 
 type UserDraft = {
   id?: string;
@@ -66,6 +87,8 @@ export function UsersManager({
   const t = useTranslations('users');
   const tc = useTranslations('common');
   const formatDate = useDateTime();
+  const format = useFormatter();
+  const now = useNow({ updateInterval: 60_000 });
   const roleLabel = useRoleLabel(roles);
   const [dialog, setDialog] = useState<OpenDialog>(null);
   const close = () => setDialog(null);
@@ -77,6 +100,8 @@ export function UsersManager({
     successMessage: t('activated'),
   });
 
+  // With a single location the column would repeat the same name on every row.
+  const showLocations = locations.length > 1;
   const locationNames = (ids: string[]) => {
     if (locations.length > 1 && locations.every((location) => ids.includes(location.id))) {
       return t('allLocations');
@@ -84,47 +109,58 @@ export function UsersManager({
     const names = locations.filter((location) => ids.includes(location.id)).map((l) => l.name);
     return names.length > 0 ? names.join(', ') : '—';
   };
-  const yesNo = (value: boolean) => (
-    <Badge variant={value ? 'success' : 'secondary'}>{value ? tc('yes') : tc('no')}</Badge>
+  /** PIN or 2FA: green when set, grey when not; the yes/no is read out for screen readers. */
+  const access = (value: boolean, Icon: LucideIcon, label: string) => (
+    <Badge
+      variant={value ? 'success' : 'secondary'}
+      title={`${label}: ${value ? tc('yes') : tc('no')}`}
+    >
+      <Icon aria-hidden />
+      {label}
+      <span className="sr-only">{value ? tc('yes') : tc('no')}</span>
+    </Badge>
   );
 
   return (
     <Card>
-      <CardHeader className="flex-row flex-wrap items-center justify-between gap-2">
+      <CardHeader
+        icon={<UsersIcon />}
+        action={
+          canEdit ? (
+            <Button
+              onClick={() =>
+                setDialog({
+                  kind: 'user',
+                  draft: {
+                    displayName: '',
+                    email: '',
+                    password: '',
+                    pin: '',
+                    uiLanguage: 'de',
+                    roles: [],
+                    locationIds: locations.length === 1 ? [locations[0]!.id] : [],
+                  },
+                })
+              }
+            >
+              <PlusIcon /> {t('new')}
+            </Button>
+          ) : null
+        }
+      >
         <CardTitle>{t('tabUsers')}</CardTitle>
-        {canEdit ? (
-          <Button
-            onClick={() =>
-              setDialog({
-                kind: 'user',
-                draft: {
-                  displayName: '',
-                  email: '',
-                  password: '',
-                  pin: '',
-                  uiLanguage: 'de',
-                  roles: [],
-                  locationIds: locations.length === 1 ? [locations[0]!.id] : [],
-                },
-              })
-            }
-          >
-            <PlusIcon /> {t('new')}
-          </Button>
-        ) : null}
+        <CardDescription>{t('countLine', { count: users.length })}</CardDescription>
       </CardHeader>
       {users.length === 0 ? (
-        <p className="text-muted-foreground">{t('empty')}</p>
+        <EmptyState icon={<UsersIcon />} title={t('empty')} description={t('emptyHint')} compact />
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>{t('name')}</TableHead>
-              <TableHead>{t('email')}</TableHead>
               <TableHead>{t('roles')}</TableHead>
-              <TableHead>{t('locations')}</TableHead>
-              <TableHead>{t('pinSet')}</TableHead>
-              <TableHead>{t('twoFactor')}</TableHead>
+              {showLocations ? <TableHead>{t('locations')}</TableHead> : null}
+              <TableHead>{t('access')}</TableHead>
               <TableHead>{tc('status')}</TableHead>
               <TableHead>{t('lastLogin')}</TableHead>
               {canEdit ? <TableHead className="text-right">{tc('actions')}</TableHead> : null}
@@ -133,108 +169,137 @@ export function UsersManager({
           <TableBody>
             {users.map((user) => (
               <TableRow key={user.id} className={user.isActive ? undefined : 'opacity-60'}>
-                <TableCell className="font-medium">
-                  <span className="inline-flex flex-wrap items-center gap-2">
-                    {user.displayName}
-                    {user.id === currentUserId ? <Badge variant="outline">{t('you')}</Badge> : null}
-                  </span>
-                </TableCell>
-                <TableCell className="break-all">{user.email ?? '—'}</TableCell>
                 <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {user.roles.map((key) => (
-                      <Badge key={key} variant="secondary">
-                        {roleLabel(key)}
-                      </Badge>
-                    ))}
+                  <div className="flex min-w-48 items-center gap-3">
+                    <Avatar name={user.displayName} colorKey={user.id} />
+                    <div className="min-w-0">
+                      <p className="flex flex-wrap items-center gap-2 font-medium">
+                        {user.displayName}
+                        {user.id === currentUserId ? (
+                          <Badge variant="info">{t('you')}</Badge>
+                        ) : null}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {user.email ?? t('pinOnly')}
+                      </p>
+                    </div>
                   </div>
                 </TableCell>
-                <TableCell>{locationNames(user.locationIds)}</TableCell>
-                <TableCell>{yesNo(user.hasPin)}</TableCell>
-                <TableCell>{yesNo(user.twoFactorEnabled)}</TableCell>
                 <TableCell>
-                  <Badge variant={user.isActive ? 'success' : 'secondary'}>
+                  <div className="flex flex-wrap gap-1">
+                    {user.roles.map((key) => {
+                      const Icon = ROLE_ICONS[key] ?? ShieldIcon;
+                      return (
+                        <Badge key={key} variant="outline">
+                          <Icon aria-hidden className="text-brand-strong" />
+                          {roleLabel(key)}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </TableCell>
+                {showLocations ? (
+                  <TableCell className="min-w-40 text-sm">
+                    {locationNames(user.locationIds)}
+                  </TableCell>
+                ) : null}
+                <TableCell>
+                  <div className="flex gap-1">
+                    {access(user.hasPin, KeyRoundIcon, t('pinSet'))}
+                    {access(user.twoFactorEnabled, ShieldCheckIcon, t('twoFactor'))}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={user.isActive ? 'success' : 'secondary'} dot>
                     {user.isActive ? tc('active') : tc('inactive')}
                   </Badge>
                 </TableCell>
-                <TableCell className="whitespace-nowrap">
-                  {formatDate(user.lastLoginAt) ?? t('never')}
+                <TableCell
+                  className="text-sm whitespace-nowrap text-muted-foreground"
+                  title={formatDate(user.lastLoginAt) ?? undefined}
+                >
+                  {user.lastLoginAt
+                    ? format.relativeTime(new Date(user.lastLoginAt), now)
+                    : t('never')}
                 </TableCell>
                 {canEdit ? (
                   <TableCell className="text-right whitespace-nowrap">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={tc('edit')}
-                      title={tc('edit')}
-                      onClick={() =>
-                        setDialog({
-                          kind: 'user',
-                          draft: {
-                            id: user.id,
-                            displayName: user.displayName,
-                            email: user.email ?? '',
-                            password: '',
-                            pin: '',
-                            uiLanguage: user.uiLanguage,
-                            roles: user.roles,
-                            // Only locations that still exist, or saving would fail with 404.
-                            locationIds: user.locationIds.filter((id) =>
-                              locations.some((location) => location.id === id),
-                            ),
-                          },
-                        })
-                      }
-                    >
-                      <PencilIcon />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t('setPin')}
-                      title={t('setPin')}
-                      onClick={() => setDialog({ kind: 'pin', user })}
-                    >
-                      <HashIcon />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t('setPassword')}
-                      title={t('setPassword')}
-                      onClick={() => setDialog({ kind: 'password', user })}
-                    >
-                      <LockKeyholeIcon />
-                    </Button>
-                    {user.isActive ? (
-                      <ConfirmButton
+                    <ActionGroup label={tc('actions')}>
+                      <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={t('deactivate')}
-                        disabled={deactivate.pending}
-                        title={t('deactivateTitle', { name: user.displayName })}
-                        description={t('deactivateText')}
-                        confirmLabel={tc('deactivate')}
-                        cancelLabel={tc('cancel')}
-                        onConfirm={() => deactivate.run(user.id)}
+                        aria-label={tc('edit')}
+                        title={tc('edit')}
+                        onClick={() =>
+                          setDialog({
+                            kind: 'user',
+                            draft: {
+                              id: user.id,
+                              displayName: user.displayName,
+                              email: user.email ?? '',
+                              password: '',
+                              pin: '',
+                              uiLanguage: user.uiLanguage,
+                              roles: user.roles,
+                              // Only locations that still exist, or saving would fail with 404.
+                              locationIds: user.locationIds.filter((id) =>
+                                locations.some((location) => location.id === id),
+                              ),
+                            },
+                          })
+                        }
                       >
-                        <UserXIcon />
-                      </ConfirmButton>
-                    ) : (
-                      <ConfirmButton
+                        <PencilIcon />
+                      </Button>
+                      <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={t('activate')}
-                        disabled={activate.pending}
-                        title={t('activateTitle', { name: user.displayName })}
-                        description={t('activateText')}
-                        confirmLabel={tc('activate')}
-                        cancelLabel={tc('cancel')}
-                        onConfirm={() => activate.run(user.id)}
+                        aria-label={t('setPin')}
+                        title={t('setPin')}
+                        onClick={() => setDialog({ kind: 'pin', user })}
                       >
-                        <UserCheckIcon />
-                      </ConfirmButton>
-                    )}
+                        <HashIcon />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t('setPassword')}
+                        title={t('setPassword')}
+                        onClick={() => setDialog({ kind: 'password', user })}
+                      >
+                        <LockKeyholeIcon />
+                      </Button>
+                      {user.isActive ? (
+                        <ConfirmButton
+                          variant="ghost"
+                          size="icon"
+                          className="hover:bg-destructive/10 hover:text-destructive"
+                          aria-label={t('deactivate')}
+                          disabled={deactivate.pending}
+                          title={t('deactivateTitle', { name: user.displayName })}
+                          description={t('deactivateText')}
+                          confirmLabel={tc('deactivate')}
+                          cancelLabel={tc('cancel')}
+                          onConfirm={() => deactivate.run(user.id)}
+                        >
+                          <UserXIcon />
+                        </ConfirmButton>
+                      ) : (
+                        <ConfirmButton
+                          variant="ghost"
+                          size="icon"
+                          aria-label={t('activate')}
+                          disabled={activate.pending}
+                          title={t('activateTitle', { name: user.displayName })}
+                          description={t('activateText')}
+                          confirmLabel={tc('activate')}
+                          cancelLabel={tc('cancel')}
+                          onConfirm={() => activate.run(user.id)}
+                        >
+                          <UserCheckIcon />
+                        </ConfirmButton>
+                      )}
+                    </ActionGroup>
                   </TableCell>
                 ) : null}
               </TableRow>

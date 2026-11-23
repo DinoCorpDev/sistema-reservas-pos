@@ -15,6 +15,7 @@ import { Textarea } from '@pos/ui/input';
 import { Field, Label } from '@pos/ui/label';
 import { Switch } from '@pos/ui/switch';
 import { cn } from '@pos/ui/utils';
+import { EmptyState } from '@pos/ui/empty-state';
 import { CheckIcon, CircleCheckIcon } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -106,7 +107,7 @@ export function ConflictList({
         {openCount === 0 ? (
           <Card className="flex-row items-center gap-3">
             <CircleCheckIcon className="size-5 shrink-0 text-success" aria-hidden />
-            <p>{t('empty')}</p>
+            <EmptyState compact icon={<CircleCheckIcon />} title={t('empty')} />
           </Card>
         ) : null}
         {rows.length > 0 ? (

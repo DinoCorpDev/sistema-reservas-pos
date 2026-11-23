@@ -14,11 +14,15 @@ export const metadata: Metadata = { title: 'Konto' };
 export default async function AccountPage() {
   const actor = await currentActor();
   const t = await getTranslations('account');
-  if (actor.kind !== 'user') return <PageHeader title={t('title')} />;
+  if (actor.kind !== 'user') return <PageHeader nav="account" title={t('title')} />;
   const me = await account.getOwnAccount(deps(), actor);
   return (
     <>
-      <PageHeader title={t('title')} description={`${me.displayName} · ${me.email ?? ''}`} />
+      <PageHeader
+        nav="account"
+        title={t('title')}
+        description={`${me.displayName} · ${me.email ?? ''}`}
+      />
       <div className="grid gap-6">
         <Card>
           <CardHeader>

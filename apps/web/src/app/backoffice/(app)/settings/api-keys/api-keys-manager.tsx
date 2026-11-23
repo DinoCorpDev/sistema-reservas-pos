@@ -11,7 +11,15 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import { toast } from '@pos/ui/toaster';
-import { BanIcon, CheckIcon, CopyIcon, PlusIcon, TriangleAlertIcon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import {
+  BanIcon,
+  CheckIcon,
+  CopyIcon,
+  KeyRoundIcon,
+  PlusIcon,
+  TriangleAlertIcon,
+} from 'lucide-react';
 import { useNow, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { CheckOption } from '@/components/backoffice/people/check-option';
@@ -66,7 +74,7 @@ export function ApiKeysManager({ keys }: { keys: people.ApiKeyDto[] }) {
         </Button>
       </CardHeader>
       {keys.length === 0 ? (
-        <p className="text-muted-foreground">{t('empty')}</p>
+        <EmptyState compact icon={<KeyRoundIcon />} title={t('empty')} />
       ) : (
         <Table>
           <TableHeader>
@@ -263,7 +271,7 @@ function CreatedKeyView({ created, onDone }: { created: CreatedKey; onDone: () =
       <DialogHeader>
         <DialogTitle>{t('keyTitle', { name: created.name })}</DialogTitle>
       </DialogHeader>
-      <Alert variant="warning">
+      <Alert icon={false} variant="warning">
         <AlertTitle className="flex items-center gap-2">
           <TriangleAlertIcon className="size-4 shrink-0" aria-hidden /> {t('keyWarningTitle')}
         </AlertTitle>

@@ -8,13 +8,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@pos/ui/dropdown-menu';
-import { BanIcon, CalendarClockIcon, InfinityIcon, RotateCcwIcon } from 'lucide-react';
+import { Badge } from '@pos/ui/badge';
+import { CalendarClockIcon, ChevronDownIcon, InfinityIcon, RotateCcwIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import { markSoldOut, restoreSoldOut } from './actions';
 
 /**
- * "86" at the current location (RF-B09, RN-17): the product stops being orderable on every channel
+ * Availability at the current location, shown as a state people read at a glance (DEC-053):
+ * "Available" opens the sold-out menu; "Sold out" offers to restore it. This is the kitchen's "86"
+ * at the current location (RF-B09, RN-17): the product stops being orderable on every channel
  * at once, until tomorrow (start of the next business day, 04:00) or until it is restored.
  */
 export function SoldOutButton({
@@ -41,14 +44,20 @@ export function SoldOutButton({
 
   if (soldOut) {
     return (
-      <Button
-        variant="outline"
-        disabled={disabled || pending}
-        onClick={() => void restore.run()}
-        aria-label={t('restoreLabel', { name: productName })}
-      >
-        <RotateCcwIcon /> {t('restore')}
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="destructive" dot>
+          {t('stateSoldOut')}
+        </Badge>
+        <Button
+          variant="ghost"
+          className="px-2.5 text-sm"
+          disabled={disabled || pending}
+          onClick={() => void restore.run()}
+          aria-label={t('restoreLabel', { name: productName })}
+        >
+          <RotateCcwIcon className="size-4!" /> {t('restore')}
+        </Button>
+      </div>
     );
   }
   return (
@@ -56,10 +65,13 @@ export function SoldOutButton({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
+          className="gap-2 rounded-full pr-2.5 pl-3 text-sm"
           disabled={disabled || pending}
           aria-label={t('markLabel', { name: productName })}
         >
-          <BanIcon /> {t('mark')}
+          <span aria-hidden className="size-2 rounded-full bg-success ring-4 ring-success/15" />
+          {t('stateAvailable')}
+          <ChevronDownIcon className="size-4! text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

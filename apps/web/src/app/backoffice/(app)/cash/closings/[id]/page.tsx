@@ -34,6 +34,7 @@ export default async function ClosingPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <PageHeader
+        nav="cash"
         title={t('detail.title', { number: closing.closingNumber, date: closing.businessDate })}
         description={t('detail.description', {
           name: closing.closedByName ?? '?',

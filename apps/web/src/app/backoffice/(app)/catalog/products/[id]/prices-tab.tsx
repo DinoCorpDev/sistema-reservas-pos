@@ -18,7 +18,15 @@ import { Input } from '@pos/ui/input';
 import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Checkbox, Switch } from '@pos/ui/switch';
-import { ArrowDownIcon, ArrowUpIcon, LanguagesIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  LanguagesIcon,
+  PlusIcon,
+  TagIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import {
@@ -132,7 +140,7 @@ function VariantsCard({ product, permissions }: TabProps) {
         </CardHeader>
         <CardContent>
           {rows.length === 0 ? (
-            <p className="text-muted-foreground">{t('empty')}</p>
+            <EmptyState compact icon={<TagIcon />} title={t('empty')} />
           ) : (
             <ul className="grid gap-3">
               {rows.map((row, index) => {
@@ -398,7 +406,7 @@ function ChannelPricesCard({
         </CardHeader>
         <CardContent>
           {rows.length === 0 ? (
-            <p className="text-muted-foreground">{t('empty')}</p>
+            <EmptyState compact icon={<TagIcon />} title={t('empty')} />
           ) : (
             <ul className="grid gap-3">
               {rows.map((row, index) => {

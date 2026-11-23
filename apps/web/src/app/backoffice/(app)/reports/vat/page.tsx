@@ -3,6 +3,8 @@ import { VAT_GRANULARITIES, type VatGranularity } from '@pos/core';
 import { Button } from '@pos/ui/button';
 import { Card, CardContent } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
+import { EmptyState } from '@pos/ui/empty-state';
+import { InboxIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getFormatter, getTranslations } from 'next-intl/server';
@@ -46,6 +48,7 @@ export default async function VatReportPage({
   return (
     <>
       <PageHeader
+        nav="reports"
         title={tv('title')}
         description={tv('description')}
         actions={
@@ -87,7 +90,7 @@ export default async function VatReportPage({
       <Card>
         <CardContent className="pt-6">
           {report.periods.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('empty')}</p>
+            <EmptyState compact icon={<InboxIcon />} title={t('empty')} />
           ) : (
             <Table>
               <TableHeader>

@@ -4,12 +4,14 @@ import type { catalog } from '@pos/api';
 import { Alert } from '@pos/ui/alert';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
+import { toneByIndex } from '@pos/ui/category-tone';
+import { EmptyState } from '@pos/ui/empty-state';
 import { Input } from '@pos/ui/input';
 import { Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { PencilIcon, SearchIcon } from 'lucide-react';
+import { PencilIcon, SearchIcon, SearchXIcon, UtensilsCrossedIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -50,6 +52,11 @@ export function ProductsList({
   const [search, setSearch] = useState(filters.search);
 
   const categoryById = new Map(categories.map((category) => [category.id, category]));
+  // Each category keeps its colour by its place in the menu (DEC-053).
+  const toneOf = (categoryId: string) => {
+    const index = categories.findIndex((category) => category.id === categoryId);
+    return index < 0 ? 'bg-muted text-muted-foreground' : toneByIndex(index);
+  };
   const listed = new Set(atLocation?.listed ?? []);
   const soldOut = new Set(atLocation?.soldOut ?? []);
   const filtered = filters.categoryId !== '' || filters.search !== '' || filters.includeInactive;
@@ -66,7 +73,7 @@ export function ProductsList({
 
   return (
     <div className="grid gap-4">
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="flex flex-wrap items-end gap-3 rounded-xl border bg-card p-4 shadow-card">
         <div className="grid w-full gap-2 sm:w-56">
           <Label htmlFor="filter-category">{t('category')}</Label>
           <Select
@@ -102,10 +109,11 @@ export function ProductsList({
               placeholder={t('searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              icon={<SearchIcon />}
             />
           </div>
-          <Button type="submit" variant="outline" size="icon" aria-label={tc('search')}>
-            <SearchIcon />
+          <Button type="submit" variant="secondary" aria-label={tc('search')}>
+            {tc('search')}
           </Button>
         </form>
         <div className="flex min-h-11 items-center gap-3">
@@ -122,9 +130,11 @@ export function ProductsList({
 
       <div aria-busy={pending} className={pending ? 'opacity-60 transition-opacity' : undefined}>
         {products.length === 0 ? (
-          <p className="rounded-xl border p-6 text-muted-foreground">
-            {filtered ? t('noResults') : t('empty')}
-          </p>
+          <EmptyState
+            icon={filtered ? <SearchXIcon /> : <UtensilsCrossedIcon />}
+            title={filtered ? t('noResults') : t('empty')}
+            description={filtered ? t('noResultsHint') : t('emptyHint')}
+          />
         ) : (
           <Table>
             <TableHeader>
@@ -149,40 +159,71 @@ export function ProductsList({
                 return (
                   <TableRow key={product.id}>
                     <TableCell>
-                      <Link
-                        href={`/backoffice/catalog/products/${product.id}`}
-                        className="font-medium hover:underline"
-                      >
-                        {product.name}
-                      </Link>
-                      {product.sku ? (
-                        <div className="font-mono text-xs text-muted-foreground">{product.sku}</div>
-                      ) : null}
+                      <div className="flex items-center gap-3">
+                        {product.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- any host, no optimizer
+                          <img
+                            src={product.imageUrl}
+                            alt=""
+                            className="size-10 shrink-0 rounded-lg border object-cover"
+                          />
+                        ) : (
+                          <span
+                            aria-hidden
+                            className={`grid size-10 shrink-0 place-items-center rounded-lg text-sm font-semibold ${toneOf(product.categoryId)}`}
+                          >
+                            {product.name.trim().charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                        <div className="min-w-0">
+                          <Link
+                            href={`/backoffice/catalog/products/${product.id}`}
+                            className="font-medium underline-offset-4 hover:text-brand-strong hover:underline"
+                          >
+                            {product.name}
+                          </Link>
+                          {product.sku ? (
+                            <div className="font-mono text-[11px] tracking-wide text-muted-foreground">
+                              {product.sku}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell>
-                      {category?.name ?? '—'}
+                      {category ? (
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${toneOf(product.categoryId)}`}
+                        >
+                          {category.name}
+                        </span>
+                      ) : (
+                        '—'
+                      )}
                       {category && !category.isActive ? (
                         <Badge variant="secondary" className="ml-2">
                           {tc('inactive')}
                         </Badge>
                       ) : null}
                     </TableCell>
-                    <TableCell className="text-right whitespace-nowrap tabular-nums">
+                    <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
                       {money.format(product.basePriceRappen)}
                     </TableCell>
                     <TableCell>
                       <div className="flex max-w-xs flex-wrap gap-1">
                         {product.isActive ? (
-                          <Badge variant="success">{tc('active')}</Badge>
+                          <Badge variant="success" dot>
+                            {tc('active')}
+                          </Badge>
                         ) : (
-                          <Badge variant="secondary">{tc('inactive')}</Badge>
+                          <Badge variant="secondary" dot>
+                            {tc('inactive')}
+                          </Badge>
                         )}
                         {inactiveHere ? (
                           <Badge variant="secondary">{t('inactiveHere')}</Badge>
                         ) : null}
-                        {isSoldOut ? (
-                          <Badge variant="destructive">{t('soldOutBadge')}</Badge>
-                        ) : null}
+
                         {product.publication.issues.map((issue) => (
                           <Badge key={issue} variant="warning">
                             {tp(`issues.${issue}`)}

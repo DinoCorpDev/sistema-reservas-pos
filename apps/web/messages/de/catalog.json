@@ -29,9 +29,11 @@
     "noLocation": "Wählen Sie oben einen Standort, um Produkte als ausverkauft («86») zu markieren.",
     "noResults": "Keine Produkte gefunden.",
     "empty": "Noch keine Produkte. Legen Sie das erste Produkt an.",
-    "soldOut": "Ausverkauft (86)",
+    "soldOut": "Verfügbarkeit",
     "soldOutBadge": "Ausverkauft",
-    "inactiveHere": "Am Standort inaktiv"
+    "inactiveHere": "Am Standort inaktiv",
+    "noResultsHint": "Ändern Sie den Filter oder die Suche.",
+    "emptyHint": "Legen Sie das erste Produkt an; es erscheint sofort an der Kasse, im QR-Menü und im Web."
   },
   "productEditor": {
     "back": "Zurück zu den Produkten",
@@ -118,7 +120,7 @@
     "notOnQrWeb": "Nicht auf QR/Web"
   },
   "soldOut": {
-    "mark": "86",
+    "mark": "Ausverkauft melden",
     "markLabel": "{name} als ausverkauft markieren",
     "until": "Ausverkauft bis …",
     "untilTomorrow": "Morgen (Betriebsbeginn 04:00)",
@@ -126,7 +128,9 @@
     "markedToast": "{name} ist ausverkauft.",
     "restore": "Wieder verfügbar",
     "restoreLabel": "{name} wieder verfügbar machen",
-    "restoredToast": "{name} ist wieder verfügbar."
+    "restoredToast": "{name} ist wieder verfügbar.",
+    "stateAvailable": "Verfügbar",
+    "stateSoldOut": "Ausverkauft"
   },
   "variants": {
     "title": "Varianten",

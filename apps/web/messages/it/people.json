@@ -58,7 +58,11 @@
     "unpairTitle": "Scollegare {name}?",
     "unpairText": "L'apparecchio su cui funziona ora {name} viene disconnesso subito. Poi potete creare un nuovo codice e abbinare {name} su un altro apparecchio. Ordini e ricevute restano salvati.",
     "unpaired": "Dispositivo scollegato. Ora può essere abbinato di nuovo.",
-    "stationAtSignIn": "Scegli all'accesso"
+    "stationAtSignIn": "Scegli all'accesso",
+    "device": "Dispositivo",
+    "pairShort": "Abbina",
+    "emptyHint": "Create una cassa, un palmare o uno schermo di cucina e abbinatelo con un codice.",
+    "assignment": "Cucina e stampante"
   },
   "stations": {
     "title": "Postazioni di cucina",
@@ -176,7 +180,11 @@
     "activateText": "La persona può di nuovo accedere e lavorare con il suo PIN.",
     "activated": "Persona attivata.",
     "cannotDeactivateSelf": "Non può disattivare il proprio account.",
-    "lastAdmin": "L’organizzazione ha bisogno di almeno una persona attiva con il ruolo Amministratore."
+    "lastAdmin": "L’organizzazione ha bisogno di almeno una persona attiva con il ruolo Amministratore.",
+    "access": "Accesso",
+    "countLine": "{count, plural, one {# persona} other {# persone}} con accesso alla cassa o al backoffice",
+    "emptyHint": "Create la prima persona: con PIN per la cassa, con e-mail per il backoffice.",
+    "pinOnly": "Solo cassa (PIN)"
   },
   "roles": {
     "names": {

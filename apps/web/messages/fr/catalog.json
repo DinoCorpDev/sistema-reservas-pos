@@ -29,9 +29,11 @@
     "noLocation": "Choisissez un établissement en haut pour marquer des produits comme épuisés («86»).",
     "noResults": "Aucun produit trouvé.",
     "empty": "Aucun produit pour l’instant. Créez le premier produit.",
-    "soldOut": "Épuisé (86)",
+    "soldOut": "Disponibilité",
     "soldOutBadge": "Épuisé",
-    "inactiveHere": "Inactif dans l’établissement"
+    "inactiveHere": "Inactif dans l’établissement",
+    "noResultsHint": "Modifiez le filtre ou la recherche.",
+    "emptyHint": "Créez le premier produit ; il apparaît aussitôt à la caisse, sur le menu QR et sur le web."
   },
   "productEditor": {
     "back": "Retour aux produits",
@@ -118,7 +120,7 @@
     "notOnQrWeb": "Pas sur QR/web"
   },
   "soldOut": {
-    "mark": "86",
+    "mark": "Signaler épuisé",
     "markLabel": "Marquer {name} comme épuisé",
     "until": "Épuisé jusqu’à …",
     "untilTomorrow": "Demain (début d’exploitation 04:00)",
@@ -126,7 +128,9 @@
     "markedToast": "{name} est épuisé.",
     "restore": "De nouveau disponible",
     "restoreLabel": "Rendre {name} de nouveau disponible",
-    "restoredToast": "{name} est de nouveau disponible."
+    "restoredToast": "{name} est de nouveau disponible.",
+    "stateAvailable": "Disponible",
+    "stateSoldOut": "Épuisé"
   },
   "variants": {
     "title": "Variantes",

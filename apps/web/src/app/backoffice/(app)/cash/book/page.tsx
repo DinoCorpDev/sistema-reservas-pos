@@ -40,6 +40,7 @@ export default async function CashBookPage({
   return (
     <>
       <PageHeader
+        nav="cash"
         title={tb('title', { date: day })}
         description={tb('description')}
         actions={

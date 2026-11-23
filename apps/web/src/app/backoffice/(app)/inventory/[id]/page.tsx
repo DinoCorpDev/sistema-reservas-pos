@@ -35,6 +35,7 @@ export default async function IngredientHistoryPage({
   return (
     <>
       <PageHeader
+        nav="inventory"
         title={t('history.title', { name: ingredient.name })}
         description={`${t('onHand')}: ${quantity(ingredient.onHand ?? 0)}`}
         actions={

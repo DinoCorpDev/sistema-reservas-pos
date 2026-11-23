@@ -91,6 +91,7 @@ export function ProductEditor({
         <ArrowLeftIcon className="size-4" /> {t('back')}
       </Link>
       <PageHeader
+        nav="products"
         title={product.name}
         description={[category?.name, money.format(product.basePriceRappen)]
           .filter(Boolean)

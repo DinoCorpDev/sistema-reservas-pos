@@ -13,7 +13,14 @@ import {
 } from '@pos/ui/card';
 import { Field } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
-import { ArrowDownIcon, ArrowUpIcon, ExternalLinkIcon, Trash2Icon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ExternalLinkIcon,
+  ListPlusIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { move } from '@/components/backoffice/catalog/catalog-data';
@@ -55,7 +62,7 @@ export function ModifierGroupsTab({
         </CardHeader>
         <CardContent>
           {ids.length === 0 ? (
-            <p className="text-muted-foreground">{t('empty')}</p>
+            <EmptyState compact icon={<ListPlusIcon />} title={t('empty')} />
           ) : (
             <ol className="grid gap-2">
               {ids.map((id, index) => {

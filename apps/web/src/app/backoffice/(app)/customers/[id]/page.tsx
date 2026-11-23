@@ -21,7 +21,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
   if (!actor.permissions.has('customer.manage')) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="customers" title={t('title')} />
         <Alert variant="warning">{t('noPermission')}</Alert>
       </>
     );
@@ -42,6 +42,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
         </Link>
       </Button>
       <PageHeader
+        nav="customers"
         title={title}
         description={`${t('createdAt')} ${formatDate(customer.createdAt)}`}
         actions={

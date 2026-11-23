@@ -15,7 +15,7 @@ export default async function ModifiersPage() {
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="modifiers" title={t('title')} description={t('description')} />
       <ModifierGroupsManager groups={groups} canEdit={actor.permissions.has('catalog.manage')} />
     </>
   );

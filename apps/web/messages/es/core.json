@@ -89,7 +89,8 @@
     "plan": "Mi plan",
     "help": "Ayuda",
     "inventory": "Inventario",
-    "recipes": "Recetas"
+    "recipes": "Recetas",
+    "menu": "Menú"
   },
   "auth": {
     "title": "Iniciar sesión",
@@ -106,7 +107,17 @@
     "supportTitle": "Soporte DINOLABS",
     "supportSubtitle": "Consola para el equipo de soporte",
     "supportLink": "Inicio de sesión para el soporte de DINOLABS",
-    "backofficeLink": "Ir al inicio de sesión para restaurantes"
+    "backofficeLink": "Ir al inicio de sesión para restaurantes",
+    "emailPlaceholder": "nombre@restaurante.ch",
+    "showInput": "Mostrar contraseña",
+    "hideInput": "Ocultar contraseña",
+    "brandEyebrow": "Zitas POS",
+    "brandTitle": "Mesa, pedido, cocina, pago y cierre.",
+    "brandText": "La caja para restaurantes en Suiza, en tablet, teléfono y pantalla de cocina.",
+    "featureOffline": "Funciona también sin internet",
+    "featureKitchen": "Pedidos en tiempo real en la cocina",
+    "featureTax": "MWST y recibos según la ley suiza",
+    "brandFooter": "Un producto de DINOLABS"
   },
   "account": {
     "title": "Mi cuenta",
@@ -158,7 +169,9 @@
       "product_publication": "Cada producto tiene alérgenos y, si es necesario, origen",
       "product_translations": "Cada producto tiene un nombre en otro idioma",
       "station_output": "Cada estación de cocina tiene una pantalla o una impresora"
-    }
+    },
+    "showList": "Ver la lista",
+    "hideList": "Ocultar la lista"
   },
   "location": {
     "title": "Sede",
@@ -264,5 +277,12 @@
     "help": "Manuales cortos para cada rol, para leer o imprimir.",
     "inventory": "Materia prima, stock y alertas de lo que se está acabando.",
     "recipes": "Cuánto gasta cada plato de cada materia prima."
+  },
+  "navSection": {
+    "operation": "Operación",
+    "location": "Local",
+    "menu": "Carta",
+    "control": "Clientes y control",
+    "settings": "Ajustes"
   }
 }

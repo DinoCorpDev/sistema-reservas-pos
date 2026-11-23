@@ -23,7 +23,7 @@ export default async function UsersPage({
     const te = await getTranslations('errors');
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="users" title={t('title')} />
         <Alert variant="warning">{te('FORBIDDEN')}</Alert>
       </>
     );
@@ -38,12 +38,14 @@ export default async function UsersPage({
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="users" title={t('title')} description={t('description')} />
       <Tabs defaultValue={tab === 'roles' ? 'roles' : 'users'}>
         <TabsList>
           <TabsTrigger value="users">
-            {t('tabUsers')}{' '}
-            <span className="text-xs text-muted-foreground tabular-nums">{users.length}</span>
+            {t('tabUsers')}
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground tabular-nums">
+              {users.length}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="roles">{t('tabRoles')}</TabsTrigger>
         </TabsList>

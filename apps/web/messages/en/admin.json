@@ -6,7 +6,29 @@
     "checkOpen": "Pending",
     "activateHint": "Operation can be activated once all items are done.",
     "activateNoPermission": "Only people with permission to manage the location can activate operation.",
-    "progressLabel": "Setup progress"
+    "progressLabel": "Setup progress",
+    "greeting": "Hello, {name}",
+    "subtitle": "Here is how your restaurant is doing today.",
+    "openPos": "Open the POS",
+    "quick": {
+      "title": "Quick access",
+      "products": {
+        "title": "Products",
+        "text": "Menu, prices and sold-out items"
+      },
+      "devices": {
+        "title": "Pair devices",
+        "text": "Registers, handhelds and kitchen screens"
+      },
+      "staff": {
+        "title": "Staff",
+        "text": "Access, PINs and roles"
+      },
+      "reports": {
+        "title": "Reports",
+        "text": "Sales, VAT and tips"
+      }
+    }
   },
   "tax": {
     "title": "VAT (MWST)",

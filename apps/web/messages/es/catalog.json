@@ -29,9 +29,11 @@
     "noLocation": "Seleccione una sede arriba para marcar productos como agotados («86»).",
     "noResults": "No se encontraron productos.",
     "empty": "Todavía no hay productos. Cree el primer producto.",
-    "soldOut": "Agotado (86)",
+    "soldOut": "Disponibilidad",
     "soldOutBadge": "Agotado",
-    "inactiveHere": "Inactivo en esta sede"
+    "inactiveHere": "Inactivo en esta sede",
+    "noResultsHint": "Cambie el filtro o la búsqueda.",
+    "emptyHint": "Cree el primer producto; aparece al instante en la caja, el menú QR y la web."
   },
   "productEditor": {
     "back": "Volver a los productos",
@@ -118,7 +120,7 @@
     "notOnQrWeb": "No está en QR/web"
   },
   "soldOut": {
-    "mark": "86",
+    "mark": "Marcar agotado",
     "markLabel": "Marcar {name} como agotado",
     "until": "Agotado hasta …",
     "untilTomorrow": "Mañana (la jornada empieza a las 04:00)",
@@ -126,7 +128,9 @@
     "markedToast": "{name} está agotado.",
     "restore": "Disponible de nuevo",
     "restoreLabel": "Marcar {name} como disponible de nuevo",
-    "restoredToast": "{name} vuelve a estar disponible."
+    "restoredToast": "{name} vuelve a estar disponible.",
+    "stateAvailable": "Disponible",
+    "stateSoldOut": "Agotado"
   },
   "variants": {
     "title": "Variantes",

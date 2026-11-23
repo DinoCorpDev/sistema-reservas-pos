@@ -28,7 +28,7 @@ export default async function DevicesPage({
   if (!actor.locationId) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader nav="devices" title={t('title')} />
         <Alert variant="warning">{t('noLocation')}</Alert>
       </>
     );
@@ -45,7 +45,7 @@ export default async function DevicesPage({
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader nav="devices" title={t('title')} description={t('description')} />
       {canEdit ? null : (
         <Alert variant="info" className="mb-4">
           {t('readOnly')}
@@ -96,5 +96,9 @@ export default async function DevicesPage({
 }
 
 function Count({ value }: { value: number }) {
-  return <span className="text-xs text-muted-foreground tabular-nums">{value}</span>;
+  return (
+    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground tabular-nums">
+      {value}
+    </span>
+  );
 }

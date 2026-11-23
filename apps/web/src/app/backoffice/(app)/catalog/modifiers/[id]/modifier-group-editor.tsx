@@ -87,6 +87,7 @@ export function ModifierGroupEditor({
         <ArrowLeftIcon className="size-4" /> {t('back')}
       </Link>
       <PageHeader
+        nav="modifiers"
         title={group.name}
         description={`${t('selection', { min: group.minSelect, max: group.maxSelect })} · ${
           group.minSelect > 0 ? t('required') : t('optional')

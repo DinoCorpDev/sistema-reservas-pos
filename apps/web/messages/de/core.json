@@ -89,7 +89,8 @@
     "plan": "Mein Plan",
     "help": "Hilfe",
     "inventory": "Inventar",
-    "recipes": "Rezepte"
+    "recipes": "Rezepte",
+    "menu": "Menü"
   },
   "auth": {
     "title": "Anmelden",
@@ -106,7 +107,17 @@
     "supportTitle": "DINOLABS Support",
     "supportSubtitle": "Konsole für das Support-Team",
     "supportLink": "Anmeldung für DINOLABS-Support",
-    "backofficeLink": "Zur Anmeldung für Restaurants"
+    "backofficeLink": "Zur Anmeldung für Restaurants",
+    "emailPlaceholder": "name@restaurant.ch",
+    "showInput": "Eingabe anzeigen",
+    "hideInput": "Eingabe verbergen",
+    "brandEyebrow": "Zitas POS",
+    "brandTitle": "Tisch, Bestellung, Küche, Bezahlung, Abschluss.",
+    "brandText": "Die Kasse für Restaurants in der Schweiz, auf Tablet, Telefon und Küchenbildschirm.",
+    "featureOffline": "Funktioniert auch ohne Internet",
+    "featureKitchen": "Bestellungen in Echtzeit in der Küche",
+    "featureTax": "MWST und Belege nach Schweizer Recht",
+    "brandFooter": "Ein Produkt von DINOLABS"
   },
   "account": {
     "title": "Mein Konto",
@@ -158,7 +169,9 @@
       "product_publication": "Jedes Produkt hat Allergene und, wenn nötig, Herkunft",
       "product_translations": "Jedes Produkt hat einen Namen in einer weiteren Sprache",
       "station_output": "Jede Küchenstation hat einen Küchenbildschirm oder einen Drucker"
-    }
+    },
+    "showList": "Liste anzeigen",
+    "hideList": "Liste ausblenden"
   },
   "location": {
     "title": "Standort",
@@ -264,5 +277,12 @@
     "help": "Kurzanleitungen für jede Rolle, zum Lesen oder Drucken.",
     "inventory": "Rohwaren, Bestand und Meldungen, was knapp wird.",
     "recipes": "Wie viel jedes Gericht von jeder Rohware braucht."
+  },
+  "navSection": {
+    "operation": "Tagesgeschäft",
+    "location": "Standort",
+    "menu": "Angebot",
+    "control": "Gäste & Kontrolle",
+    "settings": "Einstellungen"
   }
 }

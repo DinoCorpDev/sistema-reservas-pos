@@ -40,7 +40,7 @@ export default async function ExportPage({
 
   return (
     <>
-      <PageHeader title={te('title')} description={te('description')} />
+      <PageHeader nav="reports" title={te('title')} description={te('description')} />
       <PeriodFilter
         path="/backoffice/reports/export"
         period={period}

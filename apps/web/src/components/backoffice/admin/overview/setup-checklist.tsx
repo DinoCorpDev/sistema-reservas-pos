@@ -12,9 +12,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@pos/ui/card';
-import { ChevronRightIcon, CircleAlertIcon, CircleCheckIcon, ShieldCheckIcon } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  CircleAlertIcon,
+  CircleCheckIcon,
+  ListChecksIcon,
+  ShieldCheckIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
 import { formatDate } from '../format';
 import { activateOperation } from './actions';
@@ -50,67 +58,97 @@ export function SetupChecklist({
   const to = useTranslations('overview');
   const activate = useServerAction(activateOperation, { successMessage: t('activatedToast') });
   const percent = checklist.total === 0 ? 0 : Math.round((checklist.done / checklist.total) * 100);
+  // A finished checklist folds away; it opens on demand. Pending items come first.
+  const [expanded, setExpanded] = useState(!checklist.complete);
+  const checks = [...checklist.checks].sort((a, b) => Number(a.done) - Number(b.done));
 
   return (
-    <Card>
-      <CardHeader className="gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle>{t('title')}</CardTitle>
-          <span className="text-sm font-medium tabular-nums">
-            {t('progress', { done: checklist.done, total: checklist.total })}
-          </span>
-        </div>
+    <Card className={checklist.complete ? 'border-success/30' : undefined}>
+      <CardHeader
+        icon={checklist.complete ? <ShieldCheckIcon /> : <ListChecksIcon />}
+        iconTone={checklist.complete ? 'success' : 'brand'}
+        action={
+          <div className="flex items-center gap-3">
+            <ProgressRing
+              value={checklist.done}
+              total={checklist.total}
+              percent={percent}
+              complete={checklist.complete}
+              label={to('progressLabel')}
+            />
+          </div>
+        }
+      >
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>{t('subtitle')}</CardDescription>
-        <div
-          role="progressbar"
-          aria-label={to('progressLabel')}
-          aria-valuemin={0}
-          aria-valuemax={checklist.total}
-          aria-valuenow={checklist.done}
-          className="h-2.5 w-full overflow-hidden rounded-full bg-muted"
-        >
-          <div
-            className={checklist.complete ? 'h-full bg-success' : 'h-full bg-brand'}
-            style={{ width: `${percent}%` }}
-          />
-        </div>
+        <span className="text-sm font-medium tabular-nums">
+          {t('progress', { done: checklist.done, total: checklist.total })}
+        </span>
       </CardHeader>
 
-      <CardContent>
-        <ul className="grid gap-2">
-          {checklist.checks.map((check) => (
-            <li
-              key={check.key}
-              className="flex flex-wrap items-center gap-3 rounded-lg border px-3 py-2"
-            >
-              {check.done ? (
-                <CircleCheckIcon className="size-6 shrink-0 text-success" aria-hidden />
-              ) : (
-                <CircleAlertIcon className="size-6 shrink-0 text-warning" aria-hidden />
-              )}
-              <span className="sr-only">{check.done ? to('checkDone') : to('checkOpen')}</span>
-              <span
-                className={check.done ? 'min-w-0 flex-1 text-muted-foreground' : 'min-w-0 flex-1'}
+      {checklist.complete ? (
+        <Button
+          variant="ghost"
+          className="self-start text-sm text-muted-foreground"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((open) => !open)}
+        >
+          <ChevronDownIcon
+            className={expanded ? 'rotate-180 transition-transform' : 'transition-transform'}
+          />
+          {expanded ? t('hideList') : t('showList')}
+        </Button>
+      ) : null}
+
+      {expanded ? (
+        <CardContent>
+          <ul className="grid gap-2">
+            {checks.map((check) => (
+              <li
+                key={check.key}
+                className={
+                  check.done
+                    ? 'flex flex-wrap items-center gap-3 rounded-lg px-3 py-1.5'
+                    : 'flex flex-wrap items-center gap-3 rounded-lg border border-warning/40 bg-warning/5 px-3 py-2'
+                }
               >
-                {t(`items.${check.key}`)}
-              </span>
-              {!check.done && check.missing ? (
-                <Badge variant="warning">{t('missing', { count: check.missing })}</Badge>
-              ) : null}
-              <Button asChild variant={check.done ? 'ghost' : 'outline'}>
-                <Link href={FIX_PAGE[check.key] ?? '/backoffice'}>
-                  {t('goTo')}
-                  <ChevronRightIcon />
-                </Link>
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
+                {check.done ? (
+                  <CircleCheckIcon className="size-5 shrink-0 text-success" aria-hidden />
+                ) : (
+                  <CircleAlertIcon className="size-5 shrink-0 text-amber-600" aria-hidden />
+                )}
+                <span className="sr-only">{check.done ? to('checkDone') : to('checkOpen')}</span>
+                <span
+                  className={
+                    check.done
+                      ? 'min-w-0 flex-1 text-sm text-muted-foreground'
+                      : 'min-w-0 flex-1 font-medium'
+                  }
+                >
+                  {t(`items.${check.key}`)}
+                </span>
+                {!check.done && check.missing ? (
+                  <Badge variant="warning">{t('missing', { count: check.missing })}</Badge>
+                ) : null}
+                <Button
+                  asChild
+                  variant={check.done ? 'ghost' : 'outline'}
+                  className={check.done ? 'text-muted-foreground' : undefined}
+                >
+                  <Link href={FIX_PAGE[check.key] ?? '/backoffice'}>
+                    {t('goTo')}
+                    <ChevronRightIcon />
+                  </Link>
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      ) : null}
 
       <CardFooter className="justify-between">
         {checklist.operationActivatedAt ? (
-          <Alert variant="success" className="flex items-center gap-2">
+          <Alert icon={false} variant="success" className="flex items-center gap-2">
             <p className="flex items-center gap-2 font-medium">
               <ShieldCheckIcon className="size-5 text-success" aria-hidden />
               {t('activated', { date: formatDate(checklist.operationActivatedAt) })}
@@ -138,5 +176,49 @@ export function SetupChecklist({
         )}
       </CardFooter>
     </Card>
+  );
+}
+
+/** The setup progress as a ring: teal while open, green when everything is done. */
+function ProgressRing({
+  value,
+  total,
+  percent,
+  complete,
+  label,
+}: {
+  value: number;
+  total: number;
+  percent: number;
+  complete: boolean;
+  label: string;
+}) {
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+  return (
+    <div
+      role="progressbar"
+      aria-label={label}
+      aria-valuemin={0}
+      aria-valuemax={total}
+      aria-valuenow={value}
+      className="relative grid size-12 place-items-center"
+    >
+      <svg viewBox="0 0 44 44" className="size-12 -rotate-90" aria-hidden>
+        <circle cx="22" cy="22" r={radius} fill="none" strokeWidth="4" className="stroke-muted" />
+        <circle
+          cx="22"
+          cy="22"
+          r={radius}
+          fill="none"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - percent / 100)}
+          className={complete ? 'stroke-success' : 'stroke-brand'}
+        />
+      </svg>
+      <span className="absolute text-[11px] font-semibold tabular-nums">{percent}%</span>
+    </div>
   );
 }

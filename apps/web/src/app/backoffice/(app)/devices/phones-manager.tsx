@@ -3,8 +3,10 @@
 import type { people } from '@pos/api';
 import { Badge } from '@pos/ui/badge';
 import { Button } from '@pos/ui/button';
+import { Avatar } from '@pos/ui/avatar';
 import { Card, CardDescription, CardHeader, CardTitle } from '@pos/ui/card';
 import { ConfirmButton } from '@pos/ui/confirm';
+import { EmptyState } from '@pos/ui/empty-state';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
 import { PowerIcon, PowerOffIcon, SmartphoneIcon, UnplugIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -59,11 +61,15 @@ export function PhonesManager({
   startOfToday.setHours(0, 0, 0, 0);
   const pairingState = (phone: people.TerminalDto) => {
     if (!phone.isPaired || !phone.pairedAt)
-      return <Badge variant="secondary">{tt('notPaired')}</Badge>;
+      return (
+        <Badge variant="secondary" dot>
+          {tt('notPaired')}
+        </Badge>
+      );
     const stale = new Date(phone.pairedAt) < startOfToday;
     return (
       <div className="grid gap-1">
-        <Badge variant={stale ? 'warning' : 'success'}>
+        <Badge variant={stale ? 'warning' : 'success'} dot>
           {t('pairedSince', { date: formatDate(phone.pairedAt) ?? '' })}
         </Badge>
         {stale ? <span className="text-xs text-muted-foreground">{t('stale')}</span> : null}
@@ -73,19 +79,21 @@ export function PhonesManager({
 
   return (
     <Card className="mt-6">
-      <CardHeader className="flex-row flex-wrap items-start justify-between gap-2">
-        <div className="grid gap-1">
-          <CardTitle>{t('title')}</CardTitle>
-          <CardDescription>{t('hint')}</CardDescription>
-        </div>
-        {canEdit ? (
-          <Button onClick={() => void issue.run()} disabled={issue.pending}>
-            <SmartphoneIcon /> {t('issue')}
-          </Button>
-        ) : null}
+      <CardHeader
+        icon={<SmartphoneIcon />}
+        action={
+          canEdit ? (
+            <Button variant="outline" onClick={() => void issue.run()} disabled={issue.pending}>
+              <SmartphoneIcon /> {t('issue')}
+            </Button>
+          ) : null
+        }
+      >
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('hint')}</CardDescription>
       </CardHeader>
       {phones.length === 0 ? (
-        <p className="text-muted-foreground">{t('empty')}</p>
+        <EmptyState icon={<SmartphoneIcon />} title={t('empty')} compact />
       ) : (
         <Table>
           <TableHeader>
@@ -107,21 +115,28 @@ export function PhonesManager({
                   className={phone.isActive ? undefined : 'opacity-60'}
                   data-testid="phone-row"
                 >
-                  <TableCell className="font-medium">
-                    {name}
-                    {phone.appVersion ? (
-                      <span className="block text-xs font-normal text-muted-foreground">
-                        v{phone.appVersion}
-                      </span>
-                    ) : null}
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Avatar name={name} colorKey={phone.userId ?? phone.id} />
+                      <div className="min-w-0">
+                        <p className="font-medium">{name}</p>
+                        {phone.appVersion ? (
+                          <p className="text-xs text-muted-foreground">v{phone.appVersion}</p>
+                        ) : null}
+                      </div>
+                    </div>
                   </TableCell>
-                  <TableCell className="font-mono">{phone.orderNumberPrefix}</TableCell>
+                  <TableCell>
+                    <span className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
+                      {phone.orderNumberPrefix}
+                    </span>
+                  </TableCell>
                   <TableCell>{pairingState(phone)}</TableCell>
                   <TableCell className="whitespace-nowrap">
                     {formatDate(phone.lastSeenAt) ?? tt('never')}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={phone.isActive ? 'success' : 'secondary'}>
+                    <Badge variant={phone.isActive ? 'success' : 'secondary'} dot>
                       {phone.isActive ? tc('active') : tc('inactive')}
                     </Badge>
                   </TableCell>

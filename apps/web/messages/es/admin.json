@@ -6,7 +6,29 @@
     "checkOpen": "Pendiente",
     "activateHint": "La operación se puede activar cuando todos los puntos estén completados.",
     "activateNoPermission": "Solo las personas con permiso para gestionar la sede pueden activar la operación.",
-    "progressLabel": "Progreso de la configuración"
+    "progressLabel": "Progreso de la configuración",
+    "greeting": "Hola, {name}",
+    "subtitle": "Así va su restaurante hoy.",
+    "openPos": "Abrir caja",
+    "quick": {
+      "title": "Accesos rápidos",
+      "products": {
+        "title": "Productos",
+        "text": "Carta, precios y agotados"
+      },
+      "devices": {
+        "title": "Vincular dispositivos",
+        "text": "Cajas, handhelds y pantallas de cocina"
+      },
+      "staff": {
+        "title": "Personal",
+        "text": "Accesos, PIN y roles"
+      },
+      "reports": {
+        "title": "Reportes",
+        "text": "Ventas, MWST y propinas"
+      }
+    }
   },
   "tax": {
     "title": "IVA (MWST)",

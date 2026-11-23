@@ -2,6 +2,8 @@ import { cash, reports } from '@pos/api';
 import type { DurationStats } from '@pos/core';
 import { Card, CardContent, CardHeader, CardTitle } from '@pos/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
+import { EmptyState } from '@pos/ui/empty-state';
+import { InboxIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
@@ -62,6 +64,7 @@ export default async function TimesReportPage({
   return (
     <>
       <PageHeader
+        nav="reports"
         title={tt('title')}
         description={tt('description')}
         actions={<PrintButton label={t('print')} />}
@@ -79,7 +82,7 @@ export default async function TimesReportPage({
           </CardHeader>
           <CardContent className="grid gap-6">
             {!report.kitchen.overall ? (
-              <p className="text-sm text-muted-foreground">{t('empty')}</p>
+              <EmptyState compact icon={<InboxIcon />} title={t('empty')} />
             ) : (
               <>
                 <Table>
@@ -119,7 +122,7 @@ export default async function TimesReportPage({
           </CardHeader>
           <CardContent>
             {!report.tables.overall ? (
-              <p className="text-sm text-muted-foreground">{t('empty')}</p>
+              <EmptyState compact icon={<InboxIcon />} title={t('empty')} />
             ) : (
               <Table>
                 {head(tt('table'), tt('guests'))}

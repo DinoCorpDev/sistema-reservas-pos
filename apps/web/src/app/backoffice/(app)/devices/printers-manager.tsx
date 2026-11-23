@@ -13,6 +13,7 @@ import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
+import { EmptyState } from '@pos/ui/empty-state';
 import { InfoIcon, PencilIcon, PlusIcon, PrinterIcon, Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -91,12 +92,12 @@ export function PrintersManager({
           </Button>
         ) : null}
       </CardHeader>
-      <Alert variant="info" className="flex items-center gap-2">
+      <Alert icon={false} variant="info" className="flex items-center gap-2">
         <InfoIcon className="size-4 shrink-0" aria-hidden />
         <span>{t('hubNote')}</span>
       </Alert>
       {printers.length === 0 ? (
-        <p className="text-muted-foreground">{t('empty')}</p>
+        <EmptyState compact icon={<PrinterIcon />} title={t('empty')} />
       ) : (
         <Table>
           <TableHeader>

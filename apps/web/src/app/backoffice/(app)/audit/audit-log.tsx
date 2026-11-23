@@ -8,12 +8,14 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
+import { EmptyState } from '@pos/ui/empty-state';
 import {
   ChevronDownIcon,
   ChevronUpIcon,
   DownloadIcon,
   FilterIcon,
   RotateCcwIcon,
+  ScrollTextIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -271,7 +273,7 @@ export function AuditLog({
       </Card>
 
       {items.length === 0 ? (
-        <p className="text-muted-foreground">{t('empty')}</p>
+        <EmptyState compact icon={<ScrollTextIcon />} title={t('empty')} />
       ) : (
         <div className="grid gap-3">
           <Table>

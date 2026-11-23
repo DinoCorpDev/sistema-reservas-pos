@@ -12,7 +12,8 @@ import { Field, Label } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { EmptyState } from '@pos/ui/empty-state';
+import { ChefHatIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
@@ -99,7 +100,7 @@ export function StationsManager({
         ) : null}
       </CardHeader>
       {stations.length === 0 ? (
-        <p className="text-muted-foreground">{t('empty')}</p>
+        <EmptyState compact icon={<ChefHatIcon />} title={t('empty')} />
       ) : (
         <Table>
           <TableHeader>
