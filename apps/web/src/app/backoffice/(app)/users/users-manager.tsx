@@ -215,6 +215,7 @@ export function UsersManager({
                   </Badge>
                 </TableCell>
                 <TableCell
+                  suppressHydrationWarning
                   className="text-sm whitespace-nowrap text-muted-foreground"
                   title={formatDate(user.lastLoginAt) ?? undefined}
                 >

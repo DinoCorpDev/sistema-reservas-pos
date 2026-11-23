@@ -237,6 +237,7 @@ export function TerminalsManager({
                   </TableCell>
                   <TableCell>{pairingState(terminal)}</TableCell>
                   <TableCell
+                    suppressHydrationWarning
                     className="text-sm whitespace-nowrap text-muted-foreground"
                     title={formatDate(terminal.lastSeenAt) ?? undefined}
                   >
@@ -267,7 +268,7 @@ export function TerminalsManager({
                               aria-label={t('unpair')}
                               disabled={unpair.pending}
                               title={t('unpairTitle', { name: terminal.name })}
-                              description={t('unpairText')}
+                              description={t('unpairText', { name: terminal.name })}
                               confirmLabel={t('unpair')}
                               cancelLabel={tc('cancel')}
                               onConfirm={() => unpair.run(terminal.id)}
