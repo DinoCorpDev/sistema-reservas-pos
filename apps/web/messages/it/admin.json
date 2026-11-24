@@ -236,7 +236,8 @@
       "phone_pairing_code": "Codice per telefoni di servizio",
       "time_entry": "Orario",
       "staff_invite": "Invito",
-      "staff_registration": "Ingresso"
+      "staff_registration": "Ingresso",
+      "area": "Zona"
     },
     "allTerminals": "Tutti i dispositivi",
     "exportCsv": "Esporta CSV",
@@ -350,6 +351,9 @@
       "clocked_in": "Entrata timbrata",
       "clocked_out": "Uscita timbrata",
       "time_corrected": "Orario corretto"
+    },
+    "floor": {
+      "layout_saved": "Pianta dei tavoli salvata"
     }
   },
   "supportAccess": {

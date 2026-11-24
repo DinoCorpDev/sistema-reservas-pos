@@ -236,7 +236,8 @@
       "phone_pairing_code": "Code für Service-Telefone",
       "time_entry": "Arbeitszeit",
       "staff_invite": "Einladung",
-      "staff_registration": "Beitritt"
+      "staff_registration": "Beitritt",
+      "area": "Bereich"
     },
     "allTerminals": "Alle Geräte",
     "exportCsv": "CSV exportieren",
@@ -350,6 +351,9 @@
       "clocked_in": "Eingestempelt",
       "clocked_out": "Ausgestempelt",
       "time_corrected": "Arbeitszeit korrigiert"
+    },
+    "floor": {
+      "layout_saved": "Tischplan gespeichert"
     }
   },
   "supportAccess": {

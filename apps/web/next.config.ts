@@ -67,6 +67,8 @@ const nextConfig: NextConfig = {
   // ESLint runs once from the root (pnpm lint) and in CI.
   eslint: { ignoreDuringBuilds: true },
   poweredByHeader: false,
+  // A floor photo travels to its Server Action as base64 (DEC-056): ~0.5 MB, room for more.
+  experimental: { serverActions: { bodySizeLimit: '4mb' } },
   turbopack: { resolveAlias: { 'next-intl/config': intlRequestConfig } },
   webpack(config: { resolve: { alias: Record<string, string> } }) {
     config.resolve.alias['next-intl/config'] = resolve(process.cwd(), intlRequestConfig);

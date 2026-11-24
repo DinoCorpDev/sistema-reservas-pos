@@ -236,7 +236,8 @@
       "phone_pairing_code": "Code for service phones",
       "time_entry": "Working time",
       "staff_invite": "Invitation",
-      "staff_registration": "Joining"
+      "staff_registration": "Joining",
+      "area": "Area"
     },
     "allTerminals": "All devices",
     "exportCsv": "Export CSV",
@@ -350,6 +351,9 @@
       "clocked_in": "Clocked in",
       "clocked_out": "Clocked out",
       "time_corrected": "Working time corrected"
+    },
+    "floor": {
+      "layout_saved": "Floor plan saved"
     }
   },
   "supportAccess": {

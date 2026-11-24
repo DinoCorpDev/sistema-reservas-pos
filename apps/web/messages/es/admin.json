@@ -236,7 +236,8 @@
       "phone_pairing_code": "Código para teléfonos de meseros",
       "time_entry": "Horario",
       "staff_invite": "Invitación",
-      "staff_registration": "Ingreso"
+      "staff_registration": "Ingreso",
+      "area": "Zona"
     },
     "allTerminals": "Todos los dispositivos",
     "exportCsv": "Exportar CSV",
@@ -350,6 +351,9 @@
       "clocked_in": "Entrada marcada",
       "clocked_out": "Salida marcada",
       "time_corrected": "Horario corregido"
+    },
+    "floor": {
+      "layout_saved": "Plano de mesas guardado"
     }
   },
   "supportAccess": {

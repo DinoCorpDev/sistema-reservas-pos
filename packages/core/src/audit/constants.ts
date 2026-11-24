@@ -34,6 +34,7 @@ export const AUDIT_ACTIONS = [
   'subscription.changed',
   'location.updated',
   'location.settings_changed',
+  'floor.layout_saved',
   'operation.activated',
   'user.created',
   // joining from one's own phone (DEC-055)

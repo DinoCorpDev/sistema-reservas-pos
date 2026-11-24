@@ -7,6 +7,10 @@ import {
   locationFieldProblems,
   type LocationSettings,
   parseLocationSettings,
+  type FloorPhotoInput,
+  type PlannedTable,
+  planFromPhoto,
+  type SaveFloorLayoutInput,
   type UpdateLocationInput,
   type updateAreaSchema,
   type updateTableSchema,
@@ -18,6 +22,7 @@ import { type Actor, assertPermission, requireLocationId } from '../actor';
 import { ApiError, notFound } from '../errors';
 import { changedFields, definedOnly, iso, type ServiceDeps } from './shared';
 import { assertGrowth } from './platform/plans';
+import { claudeFloorReader, type FloorPhotoReader } from './ai/floor-photo';
 
 // ── Locations (RF-A02) ──────────────────────────────────────────────────────
 
@@ -337,3 +342,135 @@ export async function deleteTable(deps: ServiceDeps, actor: Actor, id: string): 
     .set({ deletedAt: new Date(), isActive: false })
     .where(inLocation(s.diningTables, actor, eq(s.diningTables.id, id)));
 }
+
+// ── Floor plan of an area (DEC-056) ─────────────────────────────────────────
+
+/**
+ * Saves the plan of an area as the editor shows it, in one transaction: existing tables move or
+ * change, new ones are created with their QR code; a table left out keeps its place (removing
+ * one stays an explicit action). The input is already checked by `saveFloorLayoutSchema`: in the
+ * grid, no overlaps, unique labels. A label another table of the location already has is a 409.
+ */
+export async function saveFloorLayout(
+  deps: ServiceDeps,
+  actor: Actor,
+  areaId: string,
+  input: SaveFloorLayoutInput,
+): Promise<{ created: number; updated: number }> {
+  assertPermission(actor, 'location.manage');
+  await loadArea(deps, actor, areaId);
+  // Every table of the location, removed ones too: labels are unique across all of them.
+  const all = await deps.db
+    .select({
+      id: s.diningTables.id,
+      areaId: s.diningTables.areaId,
+      label: s.diningTables.label,
+      deletedAt: s.diningTables.deletedAt,
+    })
+    .from(s.diningTables)
+    .where(inLocation(s.diningTables, actor));
+  const inArea = new Set(
+    all.filter((t) => t.areaId === areaId && t.deletedAt === null).map((t) => t.id),
+  );
+  // Tables in the plan take their labels from it (unique there); the others keep theirs.
+  const planned = new Set(input.tables.flatMap((t) => (t.id ? [t.id] : [])));
+  const kept = all.filter((other) => !planned.has(other.id));
+  for (const table of input.tables) {
+    if (table.id !== null && !inArea.has(table.id)) throw notFound('Table');
+    const clash = kept.find((other) => other.label.toLowerCase() === table.label.toLowerCase());
+    if (clash) {
+      throw new ApiError(
+        'CONFLICT',
+        `Another table of this location is already called ${table.label}`,
+        {
+          field: 'label',
+          reason: 'label_taken',
+          label: table.label,
+        },
+      );
+    }
+  }
+  const now = new Date();
+  const position = (t: SaveFloorLayoutInput['tables'][number]) => ({
+    label: t.label,
+    capacity: t.capacity,
+    shape: t.shape,
+    posX: t.posX,
+    posY: t.posY,
+    width: t.width,
+    height: t.height,
+  });
+  const existing = input.tables.filter((t) => t.id !== null);
+  const fresh = input.tables.filter((t) => t.id === null);
+  await runCommand(deps.db, actor, async (tx, recorder) => {
+    // Labels first move out of the way, so two tables can swap names in one save.
+    for (const table of existing) {
+      await tx
+        .update(s.diningTables)
+        .set({ label: `~${table.id!.slice(-14)}`, updatedAt: now })
+        .where(inLocation(s.diningTables, actor, eq(s.diningTables.id, table.id!)));
+    }
+    for (const table of existing) {
+      await tx
+        .update(s.diningTables)
+        .set({ ...position(table), updatedAt: now })
+        .where(inLocation(s.diningTables, actor, eq(s.diningTables.id, table.id!)));
+    }
+    if (fresh.length > 0) {
+      await tx.insert(s.diningTables).values(
+        fresh.map((table) =>
+          ownedByLocation(actor, {
+            ...position(table),
+            areaId,
+            qrCode: newQrCode(),
+            qrMode: null,
+          }),
+        ),
+      );
+    }
+    recorder.audit({
+      action: 'floor.layout_saved',
+      entityType: 'area',
+      entityId: areaId,
+      after: { tables: input.tables.length, created: fresh.length, updated: existing.length },
+    });
+  });
+  return { created: fresh.length, updated: existing.length };
+}
+
+/**
+ * The AI reads a photo or sketch of the area and proposes its plan (DEC-056): tables on the
+ * grid, numbered after the labels the location already uses elsewhere. Nothing is saved here:
+ * the editor shows the proposal over the photo and the person saves it (PA-07). `reader` is
+ * the AI; tests pass their own.
+ */
+export async function readFloorPhoto(
+  deps: ServiceDeps,
+  actor: Actor,
+  areaId: string,
+  photo: FloorPhotoInput,
+  reader: FloorPhotoReader | null = claudeFloorReader(),
+): Promise<{ tables: PlannedTable[]; notes: string | null }> {
+  assertPermission(actor, 'location.manage');
+  const area = await loadArea(deps, actor, areaId);
+  if (!reader) {
+    throw new ApiError('RULE_VIOLATION', 'Reading photos needs an AI key (ANTHROPIC_API_KEY)', {
+      reason: 'ai_not_configured',
+    });
+  }
+  const all = await deps.db
+    .select({
+      areaId: s.diningTables.areaId,
+      label: s.diningTables.label,
+      deletedAt: s.diningTables.deletedAt,
+    })
+    .from(s.diningTables)
+    .where(inLocation(s.diningTables, actor));
+  const here = all.filter((t) => t.areaId === areaId && t.deletedAt === null).map((t) => t.label);
+  const elsewhere = new Set(all.filter((t) => !here.includes(t.label)).map((t) => t.label));
+  const reading = await reader(photo, { areaName: area.name, knownLabels: here });
+  return { tables: planFromPhoto(reading, { takenLabels: elsewhere }), notes: reading.notes };
+}
+
+/** Whether this installation can read photos at all (the key is set), for the editor. */
+export const canReadFloorPhotos = (): boolean => Boolean(process.env.ANTHROPIC_API_KEY);

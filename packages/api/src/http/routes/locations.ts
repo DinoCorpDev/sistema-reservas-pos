@@ -8,6 +8,9 @@ import {
   updateAreaSchema,
   updateLocationSchema,
   updateTableSchema,
+  floorPhotoSchema,
+  saveFloorLayoutSchema,
+  TABLE_SHAPES,
 } from '@pos/core';
 import * as service from '../../services/locations';
 import { actorOf, type ApiApp } from '../env';
@@ -204,6 +207,82 @@ export function registerLocationRoutes(app: ApiApp) {
     async (c) =>
       c.json(
         await service.updateArea(
+          { db: c.get('db') },
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
+        200,
+      ),
+  );
+
+  const PlannedTableSchema = z
+    .object({
+      label: z.string(),
+      shape: z.string().openapi({ enum: [...TABLE_SHAPES] }),
+      capacity: z.number().int(),
+      posX: z.number().int(),
+      posY: z.number().int(),
+      width: z.number().int(),
+      height: z.number().int(),
+    })
+    .openapi('PlannedTable');
+
+  app.openapi(
+    createRoute({
+      method: 'put',
+      path: '/areas/{id}/layout',
+      tags: areaTags,
+      security,
+      summary: 'Save the floor plan of an area: tables on a grid of 16 × 16 (DEC-056)',
+      description:
+        'Existing tables (with `id`) move or change; new ones are created with their QR code. ' +
+        'A table left out keeps its place. 409 `label_taken` when another table of the location ' +
+        'already has a label.',
+      request: { params: UuidParam, body: jsonBody(saveFloorLayoutSchema) },
+      responses: {
+        200: jsonResponse(
+          z.object({ created: z.number().int(), updated: z.number().int() }),
+          'Saved',
+        ),
+        ...ERROR_RESPONSES,
+      },
+    }),
+    async (c) =>
+      c.json(
+        await service.saveFloorLayout(
+          { db: c.get('db') },
+          actorOf(c),
+          c.req.valid('param').id,
+          c.req.valid('json'),
+        ),
+        200,
+      ),
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/areas/{id}/floor-photo',
+      tags: areaTags,
+      security,
+      summary: 'Propose the plan of an area from a photo or sketch, read by the AI (DEC-056)',
+      description:
+        'Nothing is saved: the proposal goes back to the person, who adjusts and saves it with ' +
+        '`PUT /areas/{id}/layout`. The photo is not stored. 422 `ai_not_configured` without an ' +
+        'AI key, `ai_refused` or `ai_unreadable` when the photo could not be used.',
+      request: { params: UuidParam, body: jsonBody(floorPhotoSchema) },
+      responses: {
+        200: jsonResponse(
+          z.object({ tables: z.array(PlannedTableSchema), notes: z.string().nullable() }),
+          'Proposal',
+        ),
+        ...ERROR_RESPONSES,
+      },
+    }),
+    async (c) =>
+      c.json(
+        await service.readFloorPhoto(
           { db: c.get('db') },
           actorOf(c),
           c.req.valid('param').id,

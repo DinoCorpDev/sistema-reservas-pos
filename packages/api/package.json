@@ -20,6 +20,7 @@
     "demo:colombia": "tsx src/scripts/demo-colombia.ts && tsx src/scripts/import-menu.ts ../../scripts/menus/cafe-bogota.json --org=cafe-demo-bogota && tsx src/scripts/demo-colombia.ts --activate"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "catalog:",
     "@hono/zod-openapi": "^1.6.3",
     "@pos/core": "workspace:*",
     "@pos/db": "workspace:*",

@@ -236,7 +236,8 @@
       "phone_pairing_code": "Code pour téléphones de service",
       "time_entry": "Temps de travail",
       "staff_invite": "Invitation",
-      "staff_registration": "Arrivée"
+      "staff_registration": "Arrivée",
+      "area": "Zone"
     },
     "allTerminals": "Tous les appareils",
     "exportCsv": "Exporter en CSV",
@@ -350,6 +351,9 @@
       "clocked_in": "Arrivée pointée",
       "clocked_out": "Départ pointé",
       "time_corrected": "Temps de travail corrigé"
+    },
+    "floor": {
+      "layout_saved": "Plan de salle enregistré"
     }
   },
   "supportAccess": {

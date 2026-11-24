@@ -660,6 +660,32 @@ Pedido de Juan (23 nov 2026): registrar a un mesero nuevo tiene que ser muy fác
 - **De paso:** el marco de las pantallas de acceso (`AuthShell`) ya no se desborda a lo ancho en un teléfono (también `/login`).
 - **Para después:** invitar con otro rol (cocina, caja), aviso al gerente cuando alguien espera y un contador en el menú.
 
+## DEC-056 · Plano de mesas: editor y propuesta desde una foto con IA
+
+Pedido de Juan (23 nov 2026): que las mesas queden en la caja tal cual están en el local, subiendo una foto (_Podría_, mejora de RF-A03 y RF-C01).
+
+- **Editor del plano** («Plano de mesas» en cada zona de Zonas y mesas):
+  - Es la misma cuadrícula que dibuja la caja: como mucho 16 × 16 celdas, y una mesa ocupa de 1 a 4 por lado.
+  - Las mesas se arrastran con el dedo o el ratón, o se mueven con las flechas (con Mayús cambian de tamaño). Se puede agregar una mesa y cambiarle nombre, plazas y forma.
+  - Las mesas superpuestas, fuera de la cuadrícula o con el nombre repetido salen en rojo y no dejan guardar.
+  - Si las mesas de una zona nunca tuvieron lugar (todas en 0,0), se ponen en orden para empezar.
+- **Guardar** (`saveFloorLayout`, `PUT /areas/{id}/layout`) va en una transacción, con la auditoría `floor.layout_saved`:
+  - Las mesas existentes se mueven y las nuevas se crean con su QR.
+  - Dos mesas pueden intercambiar nombres en un mismo guardado. Un nombre que ya usa otra zona es un 409 `label_taken`.
+  - Una mesa que no viene en el plano se queda donde estaba: borrar sigue siendo una acción aparte.
+  - La caja recibe el plano con la configuración (`configVersion`), como cualquier cambio de mesas.
+- **Desde una foto** (`readFloorPhoto`, `POST /areas/{id}/floor-photo`):
+  - El navegador reduce la foto a 1568 px en JPEG y la manda una vez a Claude (`claude-opus-5-5`, salida estructurada con JSON Schema, esfuerzo alto).
+  - Activa el respaldo del servidor ante un rechazo (`fallbacks: "default"`, beta `server-side-fallback-2026-07-01`), como pide la guía del modelo.
+  - Claude devuelve cajas en porcentaje de la imagen, la forma, el número escrito y las sillas.
+  - `planFromPhoto()` de `@pos/core` lo pasa a la cuadrícula: la mesa típica ocupa una celda, se ajusta a 16 × 16, separa las que se tocan y numera las que no tienen nombre o repiten uno de otra zona. Es pura y tiene tests.
+  - **La IA solo propone (PA-07).** La propuesta se abre en el editor junto a la foto, y nada se guarda hasta «Crear estas mesas».
+  - Una mesa que la IA nombra igual que una existente de la zona es esa mesa, y se mueve. Las existentes que la foto no muestra se conservan, con borde punteado.
+- **Datos fuera de Suiza (excepción consciente a RNF-13):** la foto viaja a Anthropic para leerla y **no se guarda** ni en la nube del POS ni en el dispositivo. Muestra el local, no datos de personas.
+- **Clave:** `ANTHROPIC_API_KEY` en el servidor (Vercel). Sin ella, el botón de la foto aparece desactivado con la explicación, y el editor funciona igual. Costo estimado: unos céntimos por foto.
+- **Pruebas:** la llamada a Claude se reemplaza en los tests (`floor.int.test.ts`); nunca se llama a la IA real.
+- **Para después:** la foto de fondo alineada con la cuadrícula, girar el plano y paredes o barras dibujadas.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

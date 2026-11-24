@@ -11,7 +11,8 @@ import { Field } from '@pos/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pos/ui/select';
 import { Switch } from '@pos/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@pos/ui/table';
-import { PencilIcon, PlusIcon, QrCodeIcon, Trash2Icon } from 'lucide-react';
+import { MapIcon, PencilIcon, PlusIcon, QrCodeIcon, Trash2Icon } from 'lucide-react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
@@ -112,7 +113,17 @@ export function FloorManager({
             <TableBody>
               {areas.map((area) => (
                 <TableRow key={area.id}>
-                  <TableCell className="font-medium">{area.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {area.name}
+                      {/* The plan of the area: drag the tables or start from a photo (DEC-056). */}
+                      <Button asChild variant="outline" className="ml-auto">
+                        <Link href={`/backoffice/floor/${area.id}`}>
+                          <MapIcon /> {t('plan.open')}
+                        </Link>
+                      </Button>
+                    </div>
+                  </TableCell>
                   <TableCell>{tq(area.qrMode as 'view')}</TableCell>
                   <TableCell>{tables.filter((tb) => tb.areaId === area.id).length}</TableCell>
                   <TableCell>

@@ -4,6 +4,7 @@ packages:
 
 # Shared versions: a single place to pin the stack (use "catalog:" in each package.json).
 catalog:
+  '@anthropic-ai/sdk': ^1.13.0
   '@types/node': ^24.19.1
   '@types/react': ^19.2.18
   '@types/react-dom': ^19.2.7
