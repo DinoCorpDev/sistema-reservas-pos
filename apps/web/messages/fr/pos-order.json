@@ -92,7 +92,13 @@
       "sinceSent": "{minutes, plural, one {# minute} other {# minutes}} depuis le dernier envoi",
       "chooseDescription": "Plusieurs commandes sont ouvertes à cette table et sont payées séparément.",
       "newOrder": "Nouvelle commande",
-      "allergy": "Allergie à la table"
+      "allergy": "Allergie à la table",
+      "view": "Vue de la salle",
+      "map": "Salle avec les tables",
+      "views": {
+        "3d": "3D",
+        "plan": "Plan"
+      }
     },
     "openTable": {
       "title": "Ouvrir la table {label}",

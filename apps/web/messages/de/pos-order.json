@@ -92,7 +92,13 @@
       "sinceSent": "{minutes, plural, one {# Minute} other {# Minuten}} seit dem letzten Senden",
       "chooseDescription": "An diesem Tisch sind mehrere Bestellungen offen, die getrennt bezahlt werden.",
       "newOrder": "Neue Bestellung",
-      "allergy": "Allergie am Tisch"
+      "allergy": "Allergie am Tisch",
+      "view": "Ansicht des Raums",
+      "map": "Raum mit den Tischen",
+      "views": {
+        "3d": "3D",
+        "plan": "Plan"
+      }
     },
     "openTable": {
       "title": "Tisch {label} öffnen",

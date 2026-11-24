@@ -16,10 +16,12 @@ import { Input } from '@pos/ui/input';
 import { Field } from '@pos/ui/label';
 import { cn } from '@pos/ui/utils';
 import {
+  BoxIcon,
   CameraIcon,
   CircleIcon,
   MinusIcon,
   MousePointerClickIcon,
+  PencilRulerIcon,
   PlusIcon,
   SaveIcon,
   SparklesIcon,
@@ -28,8 +30,17 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { type KeyboardEvent, type PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  type PointerEvent,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
+import { FloorRoom, RoomTable, roomCell } from '@/components/floor/floor-room';
 import * as actions from '../actions';
 
 type Shape = 'rect' | 'round';
@@ -141,6 +152,19 @@ export function FloorEditor({
   const [reading, setReading] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+  // The room as the POS will show it, in 3D; editing happens on the plan (DEC-057).
+  const [preview, setPreview] = useState(false);
+  const [canvasWidth, setCanvasWidth] = useState(0);
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    setCanvasWidth(canvas.clientWidth);
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) setCanvasWidth(entry.contentRect.width);
+    });
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
   const fileRef = useRef<HTMLInputElement>(null);
   const drag = useRef<{
     key: string;
@@ -204,6 +228,12 @@ export function FloorEditor({
     setDirty(true);
   };
   const extent = gridOf(tables);
+  // The grid the POS draws (`planLayout`): as wide as the tables reach (at least 4), as deep as
+  // they reach, without the editor's spare rows.
+  const tillGrid = {
+    cols: extent.cols,
+    rows: Math.max(1, ...tables.map((table) => table.posY + table.height)),
+  };
 
   const addTable = () => {
     let spot = findFreeSpot(tables, { width: 1, height: 1 }, grid.cols, grid.rows);
@@ -433,12 +463,17 @@ export function FloorEditor({
             <PlusIcon />
           </Button>
         </div>
+        <Button
+          variant="outline"
+          className="ml-auto"
+          aria-pressed={preview}
+          data-testid="floor-preview-toggle"
+          onClick={() => setPreview((value) => !value)}
+        >
+          {preview ? <PencilRulerIcon /> : <BoxIcon />} {preview ? t('editPlan') : t('view3d')}
+        </Button>
         {canEdit ? (
-          <Button
-            className="ml-auto"
-            onClick={submit}
-            disabled={!dirty || problems.size > 0 || save.pending}
-          >
+          <Button onClick={submit} disabled={!dirty || problems.size > 0 || save.pending}>
             <SaveIcon /> {photo ? t('saveProposal') : t('save')}
           </Button>
         ) : null}
@@ -458,14 +493,16 @@ export function FloorEditor({
       {problems.size > 0 ? <Alert variant="warning">{t('problems')}</Alert> : null}
       {save.fieldErrors.label ? <Alert variant="destructive">{t('labelTaken')}</Alert> : null}
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
         {/* The grid, the same proportions as on the POS */}
         <div className="min-w-0">
           <div
             ref={canvasRef}
+            hidden={preview}
             data-testid="floor-canvas"
-            className="relative mx-auto rounded-xl border bg-surface-2"
+            className="relative mx-auto rounded-[1.25rem] border-4 border-[#ddcfb6] bg-[#efe6d6] dark:border-[#3a3229] dark:bg-[#24201b]"
             style={{
+              ['--cell' as string]: `${canvasWidth / grid.cols}px`,
               aspectRatio: `${grid.cols} / ${grid.rows}`,
               width: `min(100%, calc(70vh * ${grid.cols} / ${grid.rows}))`,
               backgroundImage:
@@ -488,7 +525,7 @@ export function FloorEditor({
                   data-testid={`plan-table-${table.label}`}
                   aria-label={t('tableAria', { label: table.label, seats: table.capacity })}
                   aria-pressed={isSelected}
-                  className="absolute touch-none p-1 outline-none select-none"
+                  className="group absolute touch-none outline-none select-none"
                   style={{
                     left: `${(table.posX / grid.cols) * 100}%`,
                     top: `${(table.posY / grid.rows) * 100}%`,
@@ -503,26 +540,66 @@ export function FloorEditor({
                   onKeyDown={(event) => onKeyDown(event, table)}
                   onFocus={() => setSelectedKey(table.key)}
                 >
-                  <span
-                    className={cn(
-                      'flex size-full flex-col items-center justify-center overflow-hidden rounded-xl border-2 bg-card shadow-card transition-colors',
-                      table.shape === 'round' && 'rounded-full',
+                  <RoomTable
+                    shape={table.shape}
+                    width={table.width}
+                    height={table.height}
+                    seats={table.capacity}
+                    selected={isSelected}
+                    topClassName={cn(
+                      '@container border-border bg-card text-foreground',
                       table.id === null && 'border-brand/60',
                       table.notInPhoto && 'border-dashed',
-                      isSelected && 'border-brand ring-3 ring-brand/30',
                       bad && 'border-destructive bg-destructive/10',
                     )}
                   >
-                    <span className="truncate px-1 text-sm font-semibold">{table.label}</span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
+                    <span className="truncate px-0.5 text-[clamp(10px,calc(var(--cell)*0.24),16px)] leading-tight font-semibold">
+                      {table.label}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground tabular-nums @max-[3.25rem]:hidden">
                       {t('seatsShort', { count: table.capacity })}
                     </span>
-                  </span>
+                  </RoomTable>
                 </button>
               );
             })}
           </div>
-          <p className="mt-2 text-center text-xs text-muted-foreground">{t('keyboardHint')}</p>
+          {preview ? (
+            <div data-testid="floor-3d-preview">
+              <FloorRoom cols={tillGrid.cols} rows={tillGrid.rows} view="3d" label={t('preview')}>
+                {tables.map((table) => (
+                  <button
+                    key={table.key}
+                    type="button"
+                    className="group outline-none"
+                    style={roomCell(table, tillGrid.cols, tillGrid.rows)}
+                    aria-label={t('tableAria', { label: table.label, seats: table.capacity })}
+                    aria-pressed={table.key === selectedKey}
+                    onClick={() => setSelectedKey(table.key)}
+                  >
+                    <RoomTable
+                      shape={table.shape}
+                      width={table.width}
+                      height={table.height}
+                      seats={table.capacity}
+                      selected={table.key === selectedKey}
+                      topClassName={cn(
+                        'border-border bg-card text-foreground',
+                        problems.has(table.key) && 'border-destructive bg-destructive/10',
+                      )}
+                    >
+                      <span className="truncate px-0.5 text-[clamp(10px,calc(var(--cell)*0.24),16px)] leading-tight font-semibold">
+                        {table.label}
+                      </span>
+                    </RoomTable>
+                  </button>
+                ))}
+              </FloorRoom>
+            </div>
+          ) : null}
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            {preview ? t('previewHint') : t('keyboardHint')}
+          </p>
         </div>
 
         {/* The selected table, and the photo to compare */}

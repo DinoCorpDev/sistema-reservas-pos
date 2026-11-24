@@ -303,7 +303,11 @@
         "ai_failed": "Die KI ist gerade nicht erreichbar. Versuchen Sie es in einer Minute noch einmal.",
         "error": "Das hat nicht geklappt. Versuchen Sie es noch einmal.",
         "file": "Dieses Bild lässt sich nicht öffnen. Versuchen Sie es mit einem JPG oder PNG."
-      }
+      },
+      "view3d": "In 3D ansehen",
+      "editPlan": "Plan bearbeiten",
+      "preview": "Der Raum, wie ihn die Kasse zeigt",
+      "previewHint": "So sieht die Kasse den Raum. Zum Verschieben zurück zu «Plan bearbeiten»."
     }
   },
   "qrModes": {

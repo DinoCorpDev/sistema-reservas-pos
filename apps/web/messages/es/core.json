@@ -303,7 +303,11 @@
         "ai_failed": "La IA no responde ahora. Inténtalo de nuevo en un minuto.",
         "error": "No funcionó. Inténtalo de nuevo.",
         "file": "Esta imagen no se puede abrir. Prueba con un JPG o PNG."
-      }
+      },
+      "view3d": "Ver en 3D",
+      "editPlan": "Editar plano",
+      "preview": "La sala como la muestra la caja",
+      "previewHint": "Así ve la caja la sala. Para mover mesas, vuelve a «Editar plano»."
     }
   },
   "qrModes": {

@@ -686,6 +686,29 @@ Pedido de Juan (23 nov 2026): que las mesas queden en la caja tal cual están en
 - **Pruebas:** la llamada a Claude se reemplaza en los tests (`floor.int.test.ts`); nunca se llama a la IA real.
 - **Para después:** la foto de fondo alineada con la cuadrícula, girar el plano y paredes o barras dibujadas.
 
+## DEC-057 · La sala en 3D y el encabezado de la caja en una fila
+
+Juan (24 nov 2026) pidió dos cosas: que la vista de las mesas deje de verse rara (eran tarjetas sueltas sobre una cuadrícula vacía) y algo más interesante, en 3D. También que el encabezado de la caja no se aprieta en una tablet.
+
+- **La sala como una sala** (`components/floor/floor-room.tsx`, compartida por la caja y el editor):
+  - piso de madera con borde;
+  - cada mesa con su sombra, su canto, su tapa y las sillas alrededor según sus plazas;
+  - en la tapa: el número, el ícono del estado, los comensales y los minutos.
+- **3D o plano.** Por defecto, el piso se inclina 38° en perspectiva. «Plano» la muestra desde arriba, con la misma información.
+  - Cada caja recuerda su elección (`localStorage`).
+  - Es CSS 3D puro, sin WebGL ni librerías: funciona en tablets modestas y sin internet.
+- **Lo que no cambia:**
+  - los colores e íconos de estado de las mesas;
+  - el botón de cada mesa, con su nombre accesible, `data-testid` y `data-state`;
+  - los objetivos táctiles grandes.
+  - Una mesa con la comida lista pulsa suavemente (no pulsa con «reducir movimiento»).
+  - Si la zona no tiene plano, sigue la cuadrícula de tarjetas.
+- **Editor del plano:** sus mesas tienen la misma forma y las mismas sillas, sobre el mismo piso. «Ver en 3D» muestra la sala exactamente como la verá la caja.
+- **Encabezado de la caja y la cocina:**
+  - El avatar abre el menú de la persona: el turno (empezar o terminar, con su hora), el idioma, el tema y el manual. Un punto verde marca que la persona está en turno.
+  - «Bloquear» queda a la vista.
+  - Desde 1024 px, navegación y acciones van en una fila. El nombre del local y los textos de conexión solo aparecen en pantallas anchas, y «pendientes» solo cuando hay algo pendiente.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

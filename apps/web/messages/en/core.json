@@ -303,7 +303,11 @@
         "ai_failed": "The AI is not reachable now. Try again in a minute.",
         "error": "That did not work. Try again.",
         "file": "This image cannot be opened. Try a JPG or PNG."
-      }
+      },
+      "view3d": "View in 3D",
+      "editPlan": "Edit plan",
+      "preview": "The room as the POS shows it",
+      "previewHint": "This is how the POS shows the room. To move tables, go back to «Edit plan»."
     }
   },
   "qrModes": {

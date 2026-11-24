@@ -303,7 +303,11 @@
         "ai_failed": "L'IA ora non risponde. Riprovate tra un minuto.",
         "error": "Non ha funzionato. Riprovate.",
         "file": "Questa immagine non si apre. Provate con un JPG o PNG."
-      }
+      },
+      "view3d": "Vedi in 3D",
+      "editPlan": "Modifica pianta",
+      "preview": "La sala come la mostra la cassa",
+      "previewHint": "Così la cassa vede la sala. Per spostare i tavoli, tornate a «Modifica pianta»."
     }
   },
   "qrModes": {

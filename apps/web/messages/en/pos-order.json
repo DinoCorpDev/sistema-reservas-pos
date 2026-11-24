@@ -92,7 +92,13 @@
       "sinceSent": "{minutes, plural, one {# minute} other {# minutes}} since last sent",
       "chooseDescription": "Several orders are open at this table and are paid separately.",
       "newOrder": "New order",
-      "allergy": "Allergy at the table"
+      "allergy": "Allergy at the table",
+      "view": "Room view",
+      "map": "Room with the tables",
+      "views": {
+        "3d": "3D",
+        "plan": "Plan"
+      }
     },
     "openTable": {
       "title": "Open table {label}",

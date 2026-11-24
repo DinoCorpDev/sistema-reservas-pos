@@ -92,7 +92,13 @@
       "sinceSent": "{minutes, plural, one {# minuto} other {# minutos}} desde el último envío",
       "chooseDescription": "En esta mesa hay varios pedidos abiertos que se pagan por separado.",
       "newOrder": "Nuevo pedido",
-      "allergy": "Alergia en la mesa"
+      "allergy": "Alergia en la mesa",
+      "view": "Vista de la sala",
+      "map": "Sala con las mesas",
+      "views": {
+        "3d": "3D",
+        "plan": "Plano"
+      }
     },
     "openTable": {
       "title": "Abrir mesa {label}",

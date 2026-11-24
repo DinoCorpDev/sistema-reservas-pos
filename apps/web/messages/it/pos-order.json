@@ -92,7 +92,13 @@
       "sinceSent": "{minutes, plural, one {# minuto} other {# minuti}} dall’ultimo invio",
       "chooseDescription": "A questo tavolo sono aperti più ordini, che vengono pagati separatamente.",
       "newOrder": "Nuovo ordine",
-      "allergy": "Allergia al tavolo"
+      "allergy": "Allergia al tavolo",
+      "view": "Vista della sala",
+      "map": "Sala con i tavoli",
+      "views": {
+        "3d": "3D",
+        "plan": "Pianta"
+      }
     },
     "openTable": {
       "title": "Apri tavolo {label}",

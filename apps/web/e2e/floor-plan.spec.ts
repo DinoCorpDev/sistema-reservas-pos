@@ -51,10 +51,14 @@ test('the owner draws the floor plan and the till shows it the same way', async 
     });
     await unlockPos(till, '3000');
     await till.getByRole('tab', { name: 'Terrasse' }).click();
+    // The room (DEC-057): T1 two rows down and two cells wide, the new table in the room too.
     const placed = till.getByTestId('table-T1');
-    await expect(placed).toHaveCSS('grid-row-start', '3');
-    await expect(placed).toHaveCSS('grid-column-end', 'span 2');
+    await expect(placed).toHaveAttribute('data-pos', '0,2');
+    await expect(placed).toHaveAttribute('data-size', '2x1');
     await expect(till.getByTestId('table-9')).toBeVisible();
+    // A tap on the table in 3D opens it.
+    await placed.click();
+    await expect(till.getByRole('heading', { name: 'Tisch T1 öffnen' })).toBeVisible();
   } finally {
     await officeContext.close();
     await tillContext.close();

@@ -303,7 +303,11 @@
         "ai_failed": "L'IA ne répond pas pour l'instant. Réessayez dans une minute.",
         "error": "Cela n'a pas marché. Réessayez.",
         "file": "Cette image ne s'ouvre pas. Essayez un JPG ou un PNG."
-      }
+      },
+      "view3d": "Voir en 3D",
+      "editPlan": "Modifier le plan",
+      "preview": "La salle telle que la caisse la montre",
+      "previewHint": "Voici la salle vue par la caisse. Pour déplacer des tables, revenez à «Modifier le plan»."
     }
   },
   "qrModes": {

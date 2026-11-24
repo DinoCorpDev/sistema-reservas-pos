@@ -14,9 +14,17 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pos/ui/tabs';
 import { cn } from '@pos/ui/utils';
 import { EmptyState } from '@pos/ui/empty-state';
-import { Armchair, Clock, Link2, Plus, ShieldAlert, Users } from 'lucide-react';
+import { Armchair, Box, Clock, Link2, Plus, ShieldAlert, SquareDashed, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { type CSSProperties, useId, useMemo, useState } from 'react';
+import { type CSSProperties, useEffect, useId, useMemo, useState } from 'react';
+import {
+  FloorRoom,
+  RoomTable,
+  type RoomView,
+  roomCell,
+  saveRoomView,
+  storedRoomView,
+} from '@/components/floor/floor-room';
 import { getPos, usePos } from '@/device/store';
 import { usePosUi } from '../ui-store';
 import { byLabel, minutesSince } from './order/format';
@@ -48,6 +56,9 @@ export function FloorView() {
   const [areaId, setAreaId] = useState(lastAreaId);
   const [opening, setOpening] = useState<FloorTable | null>(null);
   const [choosing, setChoosing] = useState<{ table: FloorTable; orderIds: string[] } | null>(null);
+  // 3D or from above, chosen on this device (DEC-057).
+  const [roomView, setRoomView] = useState<RoomView>('3d');
+  useEffect(() => setRoomView(storedRoomView()), []);
 
   const floor = useFoldMemo((fold) => {
     const views = tableViews(fold);
@@ -149,6 +160,36 @@ export function FloorView() {
               );
             })}
           </TabsList>
+          <div
+            role="radiogroup"
+            aria-label={t('view')}
+            className="inline-flex items-center gap-0.5 rounded-full border bg-card p-0.5 shadow-xs md:order-last"
+          >
+            {(['3d', 'plan'] as const).map((option) => {
+              const Icon = option === '3d' ? Box : SquareDashed;
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  role="radio"
+                  aria-checked={roomView === option}
+                  data-testid={`room-view-${option}`}
+                  onClick={() => {
+                    setRoomView(option);
+                    saveRoomView(option);
+                  }}
+                  className={cn(
+                    'inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 text-sm font-medium transition-colors',
+                    roomView === option
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  <Icon className="size-4" aria-hidden /> {t(`views.${option}`)}
+                </button>
+              );
+            })}
+          </div>
           <ul className="flex flex-wrap gap-1.5 text-xs" aria-label={t('legend')}>
             {LEGEND_STATES.map((state) => (
               <li
@@ -173,6 +214,7 @@ export function FloorView() {
               allergy={floor.allergy}
               tableById={tableById}
               now={now}
+              roomView={roomView}
               onSelect={select}
             />
           </TabsContent>
@@ -226,6 +268,7 @@ function AreaMap({
   allergy,
   tableById,
   now,
+  roomView,
   onSelect,
 }: {
   tables: FloorTable[];
@@ -234,11 +277,43 @@ function AreaMap({
   allergy: Set<string>;
   tableById: Map<string, FloorTable>;
   now: number;
+  roomView: RoomView;
   onSelect: (table: FloorTable) => void;
 }) {
   const [ref, width] = useElementWidth<HTMLDivElement>();
+  const t = useTranslations('posOrder.floor');
   const layout = useMemo(() => planLayout(tables), [tables]);
   const positioned = layout !== null && width / layout.cols >= MIN_CELL_PX;
+  if (positioned) {
+    // The area has a plan: the room as it is, in 3D or seen from above (DEC-057).
+    return (
+      <div ref={ref}>
+        <FloorRoom cols={layout.cols} rows={layout.rows} view={roomView} label={t('map')}>
+          {tables.map((table) => {
+            const view = views.get(table.id);
+            const joinedTo = view?.joinedToTableId
+              ? tableById.get(view.joinedToTableId)
+              : undefined;
+            return (
+              <RoomTableButton
+                key={table.id}
+                table={table}
+                cols={layout.cols}
+                rows={layout.rows}
+                state={view?.state ?? 'free'}
+                orderCount={joinedTo ? 0 : (view?.orderIds.length ?? 0)}
+                guests={joinedTo ? 0 : (guests.get(table.id) ?? 0)}
+                allergy={!joinedTo && allergy.has(table.id)}
+                minutes={minutesSince(view?.lastSentAt ?? null, now)}
+                joinedToLabel={joinedTo?.label ?? null}
+                onSelect={() => onSelect(table)}
+              />
+            );
+          })}
+        </FloorRoom>
+      </div>
+    );
+  }
   return (
     <div
       ref={ref}
@@ -379,6 +454,104 @@ function TableTile({
           </span>
         )}
       </span>
+    </button>
+  );
+}
+
+/**
+ * A table of the room (DEC-057): the same button, name and state as the tiles, drawn as a table
+ * with its chairs; the top shows the number, the state icon, the guests and the minutes.
+ */
+function RoomTableButton({
+  table,
+  cols,
+  rows,
+  state,
+  orderCount,
+  guests,
+  allergy,
+  minutes,
+  joinedToLabel,
+  onSelect,
+}: {
+  table: FloorTable;
+  cols: number;
+  rows: number;
+  state: TableState;
+  orderCount: number;
+  guests: number;
+  allergy: boolean;
+  minutes: number | null;
+  joinedToLabel: string | null;
+  onSelect: () => void;
+}) {
+  const t = useTranslations('posOrder.floor');
+  const ts = useTranslations('posOrder.tableState');
+  const tc = useTranslations('posOrder.common');
+  const detailsId = useId();
+  const StateIcon = joinedToLabel ? Link2 : TABLE_STATE_ICONS[state];
+  return (
+    <button
+      type="button"
+      data-testid={`table-${table.label}`}
+      data-state={state}
+      data-pos={`${table.posX},${table.posY}`}
+      data-size={`${table.width}x${table.height}`}
+      aria-label={t('table', { label: table.label })}
+      aria-describedby={detailsId}
+      onClick={onSelect}
+      style={roomCell(table, cols, rows)}
+      className="group cursor-pointer outline-none select-none active:scale-[0.98]"
+    >
+      <RoomTable
+        shape={table.shape === 'round' ? 'round' : 'rect'}
+        width={table.width}
+        height={table.height}
+        seats={table.capacity}
+        topClassName={cn('@container gap-0.5 p-1', TABLE_STATE_STYLES[state])}
+        pulse={state === 'ready'}
+      >
+        <span className="flex items-center gap-1">
+          <span className="font-brand text-[clamp(1.05rem,calc(var(--cell)*0.2),1.9rem)] leading-none font-semibold">
+            {table.label}
+          </span>
+          {orderCount > 1 ? (
+            <span className="rounded-full bg-black/10 px-1.5 text-[11px] font-semibold dark:bg-white/15">
+              ×{orderCount}
+            </span>
+          ) : null}
+        </span>
+        <span id={detailsId} className="flex flex-wrap items-center justify-center gap-1">
+          <span className="sr-only">
+            {joinedToLabel ? t('joinedTo', { label: joinedToLabel }) : ts(state)}
+          </span>
+          {allergy ? (
+            <span
+              className="grid size-5 place-items-center rounded-full bg-destructive text-white"
+              data-testid="table-allergy"
+            >
+              <ShieldAlert className="size-3" aria-hidden />
+              <span className="sr-only">{t('allergy')}</span>
+            </span>
+          ) : (
+            <StateIcon className="size-3.5 opacity-80 @max-[2.75rem]:hidden" aria-hidden />
+          )}
+          {guests > 0 ? (
+            <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold @max-[4.25rem]:hidden">
+              <Users className="size-3" aria-hidden />
+              <span className="sr-only">{tc('guests', { count: guests })}</span>
+              <span aria-hidden>{guests}</span>
+            </span>
+          ) : null}
+          {minutes !== null ? (
+            <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold tabular-nums @max-[4.25rem]:hidden">
+              <Clock className="size-3" aria-hidden />
+              <span className="sr-only">{t('sinceSent', { minutes })}</span>
+              <span aria-hidden>{tc('minutes', { minutes })}</span>
+            </span>
+          ) : null}
+        </span>
+      </RoomTable>
     </button>
   );
 }
