@@ -710,6 +710,29 @@ Al probar la primera versión pidió además: solo mesas cuadradas, más juntas 
   - «Bloquear» queda a la vista.
   - Desde 1024 px, navegación y acciones van en una fila. El nombre del local y los textos de conexión solo aparecen en pantallas anchas, y «pendientes» solo cuando hay algo pendiente.
 
+## DEC-058 · La marca del restaurante en sus pantallas
+
+Juan (24 nov 2026) pasó el brandbook de Lalín Tapas y pidió adaptar el sistema a su estilo. Eligió que lo cambie **el sistema del restaurante**: su backoffice, su caja y sus pantallas de cocina, no el resto de Zitas.
+
+- **Configurable sin código (PA-11), no un tema por cliente:** cada organización puede tener su marca en `organizations.appearance` (JSON; `null` = Zitas). Lalín es la primera que la usa (`scripts/brands/lalin-tapas`, `brand:apply`).
+- **Qué guarda** (`@pos/core/organization/appearance.ts`):
+  - **Cuatro colores:** principal (botones, lo seleccionado), acento (textos destacados), oscuro (barras y tema oscuro) y fondo.
+  - **Una pareja de letras:** `zitas` (Chakra Petch + Inter) o `editorial` (Cormorant Garamond + Manrope).
+  - **El logo:** una versión para fondo claro y otra para fondo oscuro, como data URL de imagen de hasta 150 KB. No hay almacenamiento de archivos todavía (DEC-045); el logo viaja con la configuración, así que también funciona sin internet.
+- **Contraste calculado, no confiado:** `appearanceTokens()` deriva todos los tokens del tema (claro y oscuro) a partir de los cuatro colores con el contraste WCAG:
+  - el texto del botón es negro o blanco, según cuál se lea mejor;
+  - el acento usado como texto se oscurece (o se aclara) hasta 4,5:1;
+  - el fondo del tema oscuro sale del color oscuro.
+- **Seguro por construcción:** solo entran colores hex y una lista cerrada de letras, así que el CSS que se arma no puede llevar otra cosa. El logo solo se muestra en `<img>`.
+- **Dónde se aplica:**
+  - **Backoffice:** el diseño general pinta un `<style>` con la marca y pone el logo en la barra lateral, con «Zitas POS» discreto debajo.
+  - **Caja y cocina:** la marca llega con el bootstrap. Se guarda en `localStorage` y se aplica antes del primer pintado, así no aparece primero el teal.
+  - **Siempre Zitas:** login, vinculación, soporte y portada.
+- **Tokens que seguían el teal a mano** (`--glow`, `--chrome-accent`, `--atmosphere`, `--elevation-raised`) ahora se mezclan desde `--brand`. Las letras pasan por `--font-display` y `--font-ui`. Zitas se ve igual que antes.
+- **Página «Marca»** (Configuración, permiso `location.manage`): colores, letras y logo con vista previa en claro y oscuro, y «Volver a Zitas».
+  - La auditoría `organization.appearance_changed` guarda colores y letras, y del logo solo su hash y tamaño.
+  - Las cajas se refrescan solas porque cambia la versión de configuración.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

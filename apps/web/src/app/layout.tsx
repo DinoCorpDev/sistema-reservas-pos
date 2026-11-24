@@ -1,6 +1,6 @@
 import { Toaster } from '@pos/ui/toaster';
 import type { Metadata, Viewport } from 'next';
-import { Chakra_Petch, Inter } from 'next/font/google';
+import { Chakra_Petch, Cormorant_Garamond, Inter, Manrope } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
@@ -15,6 +15,21 @@ const chakra = Chakra_Petch({
   weight: ['500', '600', '700'],
   variable: '--font-chakra',
   display: 'swap',
+});
+// A restaurant's brand may use the editorial pair (DEC-058). Not preloaded: the files are fetched
+// only where a brand uses them, and they are in the build, so they work offline too.
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-cormorant',
+  display: 'swap',
+  preload: false,
+});
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -38,7 +53,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${chakra.variable}`}
+      className={`${inter.variable} ${chakra.variable} ${cormorant.variable} ${manrope.variable}`}
       suppressHydrationWarning
     >
       <head>

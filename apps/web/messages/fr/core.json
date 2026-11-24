@@ -91,7 +91,8 @@
     "inventory": "Inventaire",
     "recipes": "Recettes",
     "menu": "Menu",
-    "time": "Temps de travail"
+    "time": "Temps de travail",
+    "brand": "Marque"
   },
   "auth": {
     "title": "Connexion",
@@ -338,7 +339,8 @@
     "help": "Guides courts pour chaque rôle, à lire ou à imprimer.",
     "inventory": "Matières premières, stock et alertes de ce qui manque bientôt.",
     "recipes": "Combien chaque plat utilise de chaque matière première.",
-    "time": "Qui a pointé quand, heures par personne et export pour les salaires."
+    "time": "Qui a pointé quand, heures par personne et export pour les salaires.",
+    "brand": "Couleurs, typographie et logo du restaurant."
   },
   "navSection": {
     "operation": "Exploitation",
@@ -346,5 +348,47 @@
     "menu": "Carte et stock",
     "control": "Clients et contrôle",
     "settings": "Paramètres"
+  },
+  "brand": {
+    "title": "Marque",
+    "description": "Les couleurs, la typographie et le logo de votre restaurant dans le backoffice, à la caisse et en cuisine.",
+    "colors": "Couleurs",
+    "ownColors": "Couleurs propres au restaurant",
+    "ownColorsHint": "Sans elles, tout reste aux couleurs de Zitas.",
+    "primary": "Principale",
+    "primaryHint": "Boutons et éléments sélectionnés.",
+    "accent": "Accent",
+    "accentHint": "Textes mis en avant et liens.",
+    "chrome": "Foncée",
+    "chromeHint": "Barres et thème sombre.",
+    "background": "Fond",
+    "backgroundHint": "Le fond des pages.",
+    "fonts": "Typographie",
+    "fonts_zitas": "Zitas (Chakra Petch et Inter)",
+    "fonts_editorial": "Éditoriale (Cormorant Garamond et Manrope)",
+    "logo": "Logo",
+    "logoHint": "PNG, WebP, JPG ou SVG, réduit à 600 px. Pour les fonds sombres, une version claire.",
+    "logoLight": "Pour fond clair",
+    "logoDark": "Pour fond sombre",
+    "upload": "Téléverser le logo",
+    "remove": "Retirer",
+    "noLogo": "Aucun logo",
+    "logoTooBig": "Le logo est trop lourd : 150 Ko au maximum.",
+    "logoUnreadable": "Impossible de lire l’image.",
+    "preview": "Aperçu",
+    "previewLight": "Clair",
+    "previewDark": "Sombre",
+    "sampleSection": "Carte et inventaire",
+    "sampleTitle": "Carte",
+    "sampleSave": "Enregistrer",
+    "sampleCancel": "Annuler",
+    "sampleActive": "Actif",
+    "sampleTable": "Table",
+    "reset": "Revenir à Zitas",
+    "save": "Enregistrer la marque",
+    "saved": "Marque enregistrée. Les caisses la reprennent en moins d’une minute.",
+    "warnBackground": "Le fond est sombre : choisissez un ton clair pour le thème clair.",
+    "warnChrome": "La couleur foncée est claire : barres et thème sombre manqueront de contraste.",
+    "noPermission": "Seule la personne qui gère l’établissement peut modifier la marque."
   }
 }

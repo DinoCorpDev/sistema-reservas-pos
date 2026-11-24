@@ -1,5 +1,5 @@
-import { locations, platform } from '@pos/api';
-import { asCurrency } from '@pos/core';
+import { appearance, locations, platform } from '@pos/api';
+import { appearanceCss, asCurrency } from '@pos/core';
 import { Alert } from '@pos/ui/alert';
 import { Avatar } from '@pos/ui/avatar';
 import Link from 'next/link';
@@ -11,7 +11,8 @@ import { BackofficeNav } from '@/components/backoffice/nav';
 import { MoneyProvider } from '@/components/money';
 import { TopBar } from '@/components/backoffice/top-bar';
 import { currentActor, deps } from '@/server/actor';
-import { ZitasLogo } from '@/components/brand/zitas-logo';
+import { BrandLogo, hasBrandLogo } from '@/components/brand/brand-logo';
+import { ZitasLogo, ZitasMark } from '@/components/brand/zitas-logo';
 
 /** Backoffice shell (RF-F21): navigation by permission, location switch, language and account. */
 export default async function BackofficeAppLayout({ children }: { children: ReactNode }) {
@@ -19,11 +20,15 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
   if (session?.user?.mustChangePassword) redirect('/backoffice/password');
   const actor = await currentActor();
   const t = await getTranslations();
-  const allLocations = await locations.listLocations(deps(), actor);
+  const [allLocations, brand] = await Promise.all([
+    locations.listLocations(deps(), actor),
+    appearance.getAppearance(deps(), actor),
+  ]);
+  // The restaurant's own colours and fonts (DEC-058), for the dialogs too: on the whole page.
+  const brandCss = appearanceCss(brand);
   // Amounts on screen in the current location's currency (DEC-047).
-  const currency = asCurrency(
-    allLocations.find((location) => location.id === actor.locationId)?.currency,
-  );
+  const current = allLocations.find((location) => location.id === actor.locationId);
+  const currency = asCurrency(current?.currency);
   const permissions = [...actor.permissions];
   // A late payment or a suspended subscription, for whoever manages the location (DEC-045).
   const subscription = actor.permissions.has('location.manage')
@@ -32,13 +37,26 @@ export default async function BackofficeAppLayout({ children }: { children: Reac
 
   return (
     <div className="flex min-h-dvh bg-atmosphere">
+      {/* Built only from validated hex colours and a closed list of fonts (DEC-058). */}
+      {brandCss ? <style dangerouslySetInnerHTML={{ __html: brandCss }} /> : null}
       {/* White in the light theme, Deep Intelligence in the dark one (DEC-053). */}
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-7 overflow-y-auto border-r bg-card px-3 py-5 text-foreground lg:flex dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground print:hidden">
-        <Link href="/backoffice" className="px-3 text-lg font-semibold">
-          <span className="sr-only">{t('app.name')}</span>
-          <ZitasLogo className="dark:hidden" />
-          <ZitasLogo onDark className="hidden dark:inline-flex" />
-        </Link>
+        {hasBrandLogo(brand.logo) ? (
+          // The restaurant's logo, and Zitas discreetly under it (DEC-058).
+          <Link href="/backoffice" className="grid gap-2 px-3">
+            <BrandLogo logo={brand.logo} name={current?.name ?? t('app.name')} className="h-16" />
+            <span className="inline-flex items-center gap-1.5 text-[0.7rem] text-muted-foreground dark:text-chrome-foreground/50">
+              <ZitasMark className="size-3.5" />
+              {t('app.name')}
+            </span>
+          </Link>
+        ) : (
+          <Link href="/backoffice" className="px-3 text-lg font-semibold">
+            <span className="sr-only">{t('app.name')}</span>
+            <ZitasLogo className="dark:hidden" />
+            <ZitasLogo onDark className="hidden dark:inline-flex" />
+          </Link>
+        )}
         <BackofficeNav permissions={permissions} tone="sidebar" />
         {/* Who is signed in, at the foot of the menu. */}
         <div className="mt-auto flex items-center gap-3 rounded-xl border bg-surface-2 p-3 dark:border-white/8 dark:bg-white/[0.03]">

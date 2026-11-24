@@ -91,7 +91,8 @@
     "inventory": "Inventario",
     "recipes": "Ricette",
     "menu": "Menu",
-    "time": "Orari"
+    "time": "Orari",
+    "brand": "Marchio"
   },
   "auth": {
     "title": "Accesso",
@@ -338,7 +339,8 @@
     "help": "Guide brevi per ogni ruolo, da leggere o stampare.",
     "inventory": "Materie prime, scorte e avvisi di ciò che sta finendo.",
     "recipes": "Quanto usa ogni piatto di ogni materia prima.",
-    "time": "Chi ha timbrato e quando, ore per persona ed export per gli stipendi."
+    "time": "Chi ha timbrato e quando, ore per persona ed export per gli stipendi.",
+    "brand": "Colori, caratteri e logo del ristorante."
   },
   "navSection": {
     "operation": "Operatività",
@@ -346,5 +348,47 @@
     "menu": "Carta e magazzino",
     "control": "Clienti e controllo",
     "settings": "Impostazioni"
+  },
+  "brand": {
+    "title": "Marchio",
+    "description": "I colori, i caratteri e il logo del vostro ristorante nel backoffice, alla cassa e in cucina.",
+    "colors": "Colori",
+    "ownColors": "Colori propri del ristorante",
+    "ownColorsHint": "Senza, tutto resta con i colori di Zitas.",
+    "primary": "Principale",
+    "primaryHint": "Pulsanti ed elementi selezionati.",
+    "accent": "Accento",
+    "accentHint": "Testi in evidenza e link.",
+    "chrome": "Scuro",
+    "chromeHint": "Barre e tema scuro.",
+    "background": "Sfondo",
+    "backgroundHint": "Lo sfondo delle pagine.",
+    "fonts": "Caratteri",
+    "fonts_zitas": "Zitas (Chakra Petch e Inter)",
+    "fonts_editorial": "Editoriale (Cormorant Garamond e Manrope)",
+    "logo": "Logo",
+    "logoHint": "PNG, WebP, JPG o SVG, ridotto a 600 px. Per gli sfondi scuri, una versione chiara.",
+    "logoLight": "Per sfondo chiaro",
+    "logoDark": "Per sfondo scuro",
+    "upload": "Carica logo",
+    "remove": "Rimuovi",
+    "noLogo": "Nessun logo",
+    "logoTooBig": "Il logo è troppo pesante: al massimo 150 KB.",
+    "logoUnreadable": "Impossibile leggere l’immagine.",
+    "preview": "Anteprima",
+    "previewLight": "Chiaro",
+    "previewDark": "Scuro",
+    "sampleSection": "Menù e inventario",
+    "sampleTitle": "Menù",
+    "sampleSave": "Salva",
+    "sampleCancel": "Annulla",
+    "sampleActive": "Attivo",
+    "sampleTable": "Tavolo",
+    "reset": "Torna a Zitas",
+    "save": "Salva il marchio",
+    "saved": "Marchio salvato. Le casse lo applicano in meno di un minuto.",
+    "warnBackground": "Lo sfondo è scuro: scegliete un tono chiaro per il tema chiaro.",
+    "warnChrome": "Il colore scuro è chiaro: barre e tema scuro avranno poco contrasto.",
+    "noPermission": "Solo chi gestisce la sede può cambiare il marchio."
   }
 }

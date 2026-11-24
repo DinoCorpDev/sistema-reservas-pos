@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import {
+  appearanceSchema,
   CONTENT_LANGUAGES,
   createAreaSchema,
   createTableSchema,
@@ -12,6 +13,7 @@ import {
   saveFloorLayoutSchema,
   TABLE_SHAPES,
 } from '@pos/core';
+import * as appearance from '../../services/appearance';
 import * as service from '../../services/locations';
 import { actorOf, type ApiApp } from '../env';
 import {
@@ -161,6 +163,39 @@ export function registerLocationRoutes(app: ApiApp) {
           c.req.valid('param').id,
           c.req.valid('json'),
         ),
+        200,
+      ),
+  );
+
+  // The restaurant's own look (DEC-058): colours, fonts and logo of the whole organization.
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/organization/appearance',
+      tags,
+      security,
+      summary: 'The restaurant’s brand on its screens (DEC-058)',
+      description: 'Colours, font pair and logo; `colors: null` and no logo = the Zitas look.',
+      responses: { 200: jsonResponse(appearanceSchema, 'Current brand'), ...ERROR_RESPONSES },
+    }),
+    async (c) => c.json(await appearance.getAppearance({ db: c.get('db') }, actorOf(c)), 200),
+  );
+
+  app.openapi(
+    createRoute({
+      method: 'put',
+      path: '/organization/appearance',
+      tags,
+      security,
+      summary: 'Replace the restaurant’s brand (DEC-058)',
+      description:
+        'Hex colours, `zitas` or `editorial` fonts, logos as image data URLs of up to 150 KB. Audited without the images; devices pick it up with the next configuration check.',
+      request: { body: jsonBody(appearanceSchema) },
+      responses: { 200: jsonResponse(appearanceSchema, 'Saved brand'), ...ERROR_RESPONSES },
+    }),
+    async (c) =>
+      c.json(
+        await appearance.updateAppearance({ db: c.get('db') }, actorOf(c), c.req.valid('json')),
         200,
       ),
   );

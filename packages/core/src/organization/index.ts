@@ -5,6 +5,7 @@
 export * from './constants';
 export * from './permissions';
 export * from './settings';
+export * from './appearance';
 export * from './uid';
 export * from './authorization';
 export * from './setup-checklist';

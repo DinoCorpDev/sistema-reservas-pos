@@ -1,5 +1,6 @@
 import {
   businessDate,
+  parseAppearance,
   type CatalogSnapshot,
   type ConsumptionType,
   type ContentLanguage,
@@ -44,6 +45,7 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
       id: s.organizations.id,
       name: s.organizations.name,
       isTraining: s.organizations.isTraining,
+      appearance: s.organizations.appearance,
     })
     .from(s.organizations)
     .where(eq(s.organizations.id, actor.organizationId));
@@ -185,6 +187,8 @@ export async function getBootstrap(deps: ServiceDeps, actor: Actor) {
       name: organization?.name ?? '',
       /** Practice copy (RF-F22): an orange band on every screen and receipts marked not valid. */
       isTraining: organization?.isTraining ?? false,
+      /** The restaurant's colours, fonts and logo on the till and the kitchen screen (DEC-058). */
+      appearance: parseAppearance(organization?.appearance),
     },
     /** A late payment shows a notice; suspended adds nothing new (DEC-045). */
     subscriptionStatus: await subscriptionStatusOf(db, actor.organizationId),

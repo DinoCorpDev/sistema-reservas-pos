@@ -12,7 +12,9 @@ import { ErrorDialog } from './error-dialog';
 import { LanguageMenu } from './language-menu';
 import { NumPad } from './num-pad';
 import { StatusIndicator } from './status-indicator';
+import { BrandLogo, hasBrandLogo } from '@/components/brand/brand-logo';
 import { ZitasLogo } from '@/components/brand/zitas-logo';
+import { useDeviceLogo } from '../appearance';
 
 const MAX_PIN = 6;
 
@@ -23,6 +25,7 @@ const MAX_PIN = 6;
 export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
   const t = useTranslations('pos.pin');
   const location = usePos((state) => state.bootstrap?.location.name);
+  const logo = useDeviceLogo();
   const device = usePos((state) => state.device);
   // A waiter's own phone says whose it is: it keeps no other waiter's PIN (DEC-036).
   const terminal = isPhone(device)
@@ -66,7 +69,11 @@ export function PinScreen({ heading }: { heading?: ReactNode } = {}) {
       {/* One card in the middle of the screen (DEC-053). */}
       <div className="my-auto flex w-full max-w-sm flex-col gap-5 rounded-3xl border bg-card p-6 shadow-raised">
         <div className="flex flex-col items-center gap-1 text-center">
-          <ZitasLogo size="sm" className="mb-3" />
+          {hasBrandLogo(logo) ? (
+            <BrandLogo logo={logo} name={location ?? ''} className="mb-3 h-16" />
+          ) : (
+            <ZitasLogo size="sm" className="mb-3" />
+          )}
           <p className="text-lg font-semibold">{location}</p>
           <p className="text-sm text-muted-foreground">{terminal}</p>
           <StatusIndicator className="mt-2" />

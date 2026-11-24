@@ -91,7 +91,8 @@
     "inventory": "Inventory",
     "recipes": "Recipes",
     "menu": "Menu",
-    "time": "Working time"
+    "time": "Working time",
+    "brand": "Brand"
   },
   "auth": {
     "title": "Sign in",
@@ -338,7 +339,8 @@
     "help": "Short guides for every role, to read or print.",
     "inventory": "Raw materials, stock and alerts for what is running low.",
     "recipes": "How much of each raw material every dish uses.",
-    "time": "Who clocked in and out, hours per person and the export for payroll."
+    "time": "Who clocked in and out, hours per person and the export for payroll.",
+    "brand": "The restaurant's colours, fonts and logo."
   },
   "navSection": {
     "operation": "Operations",
@@ -346,5 +348,47 @@
     "menu": "Menu & stock",
     "control": "Guests & control",
     "settings": "Settings"
+  },
+  "brand": {
+    "title": "Brand",
+    "description": "Your restaurant's colours, fonts and logo in the backoffice, at the till and in the kitchen.",
+    "colors": "Colours",
+    "ownColors": "The restaurant's own colours",
+    "ownColorsHint": "Without them, everything keeps the Zitas colours.",
+    "primary": "Primary",
+    "primaryHint": "Buttons and what is selected.",
+    "accent": "Accent",
+    "accentHint": "Highlighted text and links.",
+    "chrome": "Dark",
+    "chromeHint": "Bars and the dark theme.",
+    "background": "Background",
+    "backgroundHint": "The page background.",
+    "fonts": "Fonts",
+    "fonts_zitas": "Zitas (Chakra Petch and Inter)",
+    "fonts_editorial": "Editorial (Cormorant Garamond and Manrope)",
+    "logo": "Logo",
+    "logoHint": "PNG, WebP, JPG or SVG, scaled down to 600 px. For dark surfaces, a light version.",
+    "logoLight": "For light surfaces",
+    "logoDark": "For dark surfaces",
+    "upload": "Upload logo",
+    "remove": "Remove",
+    "noLogo": "No logo",
+    "logoTooBig": "The logo is too large: 150 KB at most.",
+    "logoUnreadable": "The image could not be read.",
+    "preview": "Preview",
+    "previewLight": "Light",
+    "previewDark": "Dark",
+    "sampleSection": "Menu & inventory",
+    "sampleTitle": "Menu",
+    "sampleSave": "Save",
+    "sampleCancel": "Cancel",
+    "sampleActive": "Active",
+    "sampleTable": "Table",
+    "reset": "Back to Zitas",
+    "save": "Save brand",
+    "saved": "Brand saved. The tills pick it up in less than a minute.",
+    "warnBackground": "The background is dark: choose a light tone for the light theme.",
+    "warnChrome": "The dark colour is light: bars and the dark theme would lack contrast.",
+    "noPermission": "Only whoever manages the location can change the brand."
   }
 }

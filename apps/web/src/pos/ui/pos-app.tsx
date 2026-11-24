@@ -3,6 +3,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { configureDevice } from '@/device/app';
+import { useDeviceAppearance } from '@/device/appearance';
 import { bootDevice } from '@/device/boot';
 import { asDeviceLanguage, chosenLanguage, deviceMessages, type Messages } from '@/device/i18n';
 import { usePos } from '@/device/store';
@@ -30,6 +31,9 @@ export function PosApp() {
     user?.uiLanguage ?? lockLanguage ?? bootstrap?.location.defaultLanguage ?? chosenLanguage(),
   );
   const [messages, setMessages] = useState<{ language: string; messages: Messages } | null>(null);
+
+  // The restaurant's colours, fonts and logo (DEC-058), from the stored configuration.
+  useDeviceAppearance();
 
   useEffect(() => {
     configureDevice('pos');

@@ -23,7 +23,9 @@ import {
 } from '../actions';
 import { useNow, useStationBoard } from '../board';
 import { type TicketActions, TicketCard } from './ticket-card';
+import { BrandLogo, hasBrandLogo } from '@/components/brand/brand-logo';
 import { ZitasMark } from '@/components/brand/zitas-logo';
+import { useDeviceLogo } from '@/device/appearance';
 
 /**
  * The kitchen display of one station (RF-C20…RF-C28): the open tickets oldest first, a notice
@@ -38,6 +40,7 @@ export function KdsShell() {
   const tables = usePos((state) => state.bootstrap?.tables);
   const users = usePos((state) => state.bootstrap?.users);
   const stations = usePos((state) => state.bootstrap?.stations);
+  const logo = useDeviceLogo();
   const printers = usePos((state) => state.printers);
   const [acknowledged, setAcknowledged] = useState<Set<string>>(() => new Set());
   // Voids older than this screen are struck on the tickets, without a new notice.
@@ -120,7 +123,11 @@ export function KdsShell() {
       <TrainingBand />
       {/* White in light, Deep Intelligence in dark (DEC-053); the station is the title. */}
       <header className="flex flex-wrap items-center gap-3 border-b bg-card px-4 py-2.5 text-foreground dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground">
-        <ZitasMark className="size-7" />
+        {hasBrandLogo(logo) ? (
+          <BrandLogo logo={logo} name={station.name} className="h-8 max-w-28" />
+        ) : (
+          <ZitasMark className="size-7" />
+        )}
         <span className="flex items-center gap-2">
           <span className="grid size-9 place-items-center rounded-lg bg-brand-soft text-brand-strong dark:bg-white/10 dark:text-brand">
             <ChefHat className="size-5" aria-hidden />

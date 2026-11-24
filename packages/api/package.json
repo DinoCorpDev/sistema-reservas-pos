@@ -15,6 +15,7 @@
     "menu:import": "tsx src/scripts/import-menu.ts",
     "recipes:import": "tsx src/scripts/import-recipes.ts",
     "lalin:setup": "tsx src/scripts/setup-lalin.ts",
+    "brand:apply": "tsx src/scripts/apply-brand.ts",
     "archive:loop": "tsx src/scripts/archive.ts loop",
     "archive:month": "tsx src/scripts/archive.ts month",
     "monitor": "tsx src/scripts/monitor.ts",

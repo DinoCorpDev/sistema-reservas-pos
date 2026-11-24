@@ -1,4 +1,4 @@
-import type { LocationSettings } from '@pos/core';
+import type { Appearance, LocationSettings } from '@pos/core';
 import {
   type AnyMySqlColumn,
   boolean,
@@ -47,6 +47,8 @@ export const organizations = mysqlTable(
      * it to unlock offline (RF-A06). Hex, 32 bytes.
      */
     pinKey: char('pin_key', { length: 64 }),
+    /** The restaurant's own colours, fonts and logo (DEC-058); null = Zitas. */
+    appearance: json('appearance').$type<Appearance>(),
     ...timestamps(),
   },
   (t) => [uniqueIndex('uq_organizations_slug').on(t.slug)],

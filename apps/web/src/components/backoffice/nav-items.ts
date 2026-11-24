@@ -12,6 +12,7 @@ import {
   LifeBuoyIcon,
   ListPlusIcon,
   PackageIcon,
+  PaletteIcon,
   MonitorSmartphoneIcon,
   PercentIcon,
   ScrollTextIcon,
@@ -111,6 +112,12 @@ export const SECTIONS: { key: string; items: NavItem[] }[] = [
         key: 'apiKeys',
         icon: KeyRoundIcon,
         permission: 'user.manage',
+      },
+      {
+        href: '/backoffice/settings/brand',
+        key: 'brand',
+        icon: PaletteIcon,
+        permission: 'location.manage',
       },
       {
         href: '/backoffice/plan',

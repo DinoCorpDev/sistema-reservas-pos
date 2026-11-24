@@ -9,7 +9,14 @@ export type Theme = (typeof THEMES)[number];
 
 export const THEME_KEY = 'zitas-theme';
 
-export const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('${THEME_KEY}')||'light';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
+/** The restaurant's brand stylesheet kept by a till or a kitchen screen (DEC-058). */
+export const APPEARANCE_KEY = 'zitas-appearance';
+
+/**
+ * Before the first paint: the theme everywhere, and on /pos and /kds the brand the device keeps
+ * (the backoffice paints its own from the server; login and pairing are always Zitas).
+ */
+export const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('${THEME_KEY}')||'light';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);if(/^\\/(pos|kds)(\\/|$)/.test(location.pathname)){var c=localStorage.getItem('${APPEARANCE_KEY}');if(c){var s=document.createElement('style');s.id='brand-appearance';s.textContent=c;document.head.appendChild(s);}}}catch(e){}})();`;
 
 export const DEFAULT_THEME: Theme = 'light';
 

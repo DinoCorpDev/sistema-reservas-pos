@@ -1,0 +1,14 @@
+{
+  "source": "Lalín Tapas Brandbook v2.0 (paleta principal, tipografías y logo principal)",
+  "colors": {
+    "primary": "#C8A76A",
+    "accent": "#BD5A2E",
+    "chrome": "#0A0A0A",
+    "background": "#F5EFE6"
+  },
+  "fonts": "editorial",
+  "logo": {
+    "light": "logo-light.webp",
+    "dark": "logo-dark.webp"
+  }
+}

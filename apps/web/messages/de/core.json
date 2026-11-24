@@ -91,7 +91,8 @@
     "inventory": "Inventar",
     "recipes": "Rezepte",
     "menu": "Menü",
-    "time": "Arbeitszeit"
+    "time": "Arbeitszeit",
+    "brand": "Marke"
   },
   "auth": {
     "title": "Anmelden",
@@ -338,7 +339,8 @@
     "help": "Kurzanleitungen für jede Rolle, zum Lesen oder Drucken.",
     "inventory": "Rohwaren, Bestand und Meldungen, was knapp wird.",
     "recipes": "Wie viel jedes Gericht von jeder Rohware braucht.",
-    "time": "Wer wann ein- und ausgestempelt hat, Stunden pro Person und Export für die Lohnabrechnung."
+    "time": "Wer wann ein- und ausgestempelt hat, Stunden pro Person und Export für die Lohnabrechnung.",
+    "brand": "Farben, Schrift und Logo des Restaurants."
   },
   "navSection": {
     "operation": "Tagesgeschäft",
@@ -346,5 +348,47 @@
     "menu": "Speisekarte & Lager",
     "control": "Gäste & Kontrolle",
     "settings": "Einstellungen"
+  },
+  "brand": {
+    "title": "Marke",
+    "description": "Farben, Schrift und Logo Ihres Restaurants im Backoffice, an der Kasse und in der Küche.",
+    "colors": "Farben",
+    "ownColors": "Eigene Farben des Restaurants",
+    "ownColorsHint": "Ohne sie bleibt alles in den Farben von Zitas.",
+    "primary": "Hauptfarbe",
+    "primaryHint": "Schaltflächen und Ausgewähltes.",
+    "accent": "Akzent",
+    "accentHint": "Hervorgehobene Texte und Links.",
+    "chrome": "Dunkel",
+    "chromeHint": "Leisten und dunkles Design.",
+    "background": "Hintergrund",
+    "backgroundHint": "Hintergrund der Seiten.",
+    "fonts": "Schrift",
+    "fonts_zitas": "Zitas (Chakra Petch und Inter)",
+    "fonts_editorial": "Editorial (Cormorant Garamond und Manrope)",
+    "logo": "Logo",
+    "logoHint": "PNG, WebP, JPG oder SVG, wird auf 600 px verkleinert. Für dunkle Flächen eine helle Version.",
+    "logoLight": "Für helle Flächen",
+    "logoDark": "Für dunkle Flächen",
+    "upload": "Logo hochladen",
+    "remove": "Entfernen",
+    "noLogo": "Kein Logo",
+    "logoTooBig": "Das Logo ist zu gross: höchstens 150 KB.",
+    "logoUnreadable": "Das Bild konnte nicht gelesen werden.",
+    "preview": "Vorschau",
+    "previewLight": "Hell",
+    "previewDark": "Dunkel",
+    "sampleSection": "Speisekarte & Inventar",
+    "sampleTitle": "Speisekarte",
+    "sampleSave": "Speichern",
+    "sampleCancel": "Abbrechen",
+    "sampleActive": "Aktiv",
+    "sampleTable": "Tisch",
+    "reset": "Zurück zu Zitas",
+    "save": "Marke speichern",
+    "saved": "Marke gespeichert. Die Kassen übernehmen sie in weniger als einer Minute.",
+    "warnBackground": "Der Hintergrund ist dunkel: Wählen Sie für das helle Design einen hellen Ton.",
+    "warnChrome": "Die dunkle Farbe ist hell: Leisten und dunkles Design hätten zu wenig Kontrast.",
+    "noPermission": "Nur wer den Standort verwaltet, kann die Marke ändern."
   }
 }

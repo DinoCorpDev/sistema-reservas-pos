@@ -16,6 +16,12 @@
 :root {
   color-scheme: light;
   --radius: 0.75rem;
+  /*
+   * Typefaces through two variables, so a restaurant's brand can swap them at runtime (DEC-058):
+   * the app's font loader defines --font-inter, --font-chakra and the brand faces.
+   */
+  --font-ui: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-chakra), var(--font-inter), ui-sans-serif, sans-serif;
   --background: #f1f7f8;
   --foreground: #0b0f19;
   --card: #ffffff;
@@ -42,17 +48,18 @@
   /* The dark chrome: sidebar and top bars. */
   --chrome: #0b0f19;
   --chrome-foreground: #f6f8fa;
-  --chrome-accent: rgb(32 184 189 / 18%);
+  --chrome-accent: color-mix(in srgb, var(--brand) 18%, transparent);
   /*
    * Depth (DEC-053): 1 px borders with alpha and shadows tinted with the brand, never flat grey.
    * surface-2 is the band of table and card headers; glow is the light of the primary button.
    */
   --surface-2: #f6fafb;
-  --glow: rgb(32 184 189 / 38%);
+  --glow: color-mix(in srgb, var(--brand) 38%, transparent);
   --elevation-card: 0 1px 2px rgb(11 15 25 / 4%), 0 6px 20px -12px rgb(11 15 25 / 14%);
-  --elevation-raised: 0 2px 4px rgb(11 15 25 / 5%), 0 18px 36px -18px rgb(14 127 131 / 32%);
+  --elevation-raised:
+    0 2px 4px rgb(11 15 25 / 5%), 0 18px 36px -18px color-mix(in srgb, var(--brand-strong) 32%, transparent);
   --atmosphere:
-    radial-gradient(1100px 420px at 78% -12%, rgb(32 184 189 / 12%), transparent 70%),
+    radial-gradient(1100px 420px at 78% -12%, color-mix(in srgb, var(--brand) 12%, transparent), transparent 70%),
     var(--background);
   /* Category tones (support palette of the brandbook): a soft background and a readable text. */
   --cat-1-bg: #d9f2f3;
@@ -97,13 +104,14 @@
   --brand-soft: #16343a;
   --chrome: #070a12;
   --chrome-foreground: #f6f8fa;
-  --chrome-accent: rgb(32 184 189 / 22%);
+  --chrome-accent: color-mix(in srgb, var(--brand) 22%, transparent);
   --surface-2: #171f2f;
-  --glow: rgb(32 184 189 / 45%);
+  --glow: color-mix(in srgb, var(--brand) 45%, transparent);
   --elevation-card: inset 0 1px 0 rgb(255 255 255 / 4%), 0 10px 28px -18px rgb(0 0 0 / 70%);
-  --elevation-raised: inset 0 1px 0 rgb(255 255 255 / 6%), 0 20px 44px -22px rgb(32 184 189 / 34%);
+  --elevation-raised:
+    inset 0 1px 0 rgb(255 255 255 / 6%), 0 20px 44px -22px color-mix(in srgb, var(--brand) 34%, transparent);
   --atmosphere:
-    radial-gradient(1100px 460px at 78% -12%, rgb(32 184 189 / 14%), transparent 70%),
+    radial-gradient(1100px 460px at 78% -12%, color-mix(in srgb, var(--brand) 14%, transparent), transparent 70%),
     var(--background);
   --cat-1-bg: rgb(32 184 189 / 16%);
   --cat-1-fg: #6fd9dc;
@@ -153,9 +161,9 @@
   --color-glow: var(--glow);
   --shadow-card: var(--elevation-card);
   --shadow-raised: var(--elevation-raised);
-  /* Inter for the interface, Chakra Petch for the brand (set by the app's font loader). */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-brand: var(--font-chakra), var(--font-inter), ui-sans-serif, sans-serif;
+  /* Inter for the interface, Chakra Petch for titles, unless the restaurant's brand says otherwise. */
+  --font-sans: var(--font-ui);
+  --font-brand: var(--font-display);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

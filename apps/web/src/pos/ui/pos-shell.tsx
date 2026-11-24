@@ -29,7 +29,9 @@ import { SendConfirmDialog } from './send-confirm-dialog';
 import { TableNotices } from './table-notices';
 import { UnpairButton } from './unpair-button';
 import { UnsentDialog } from './unsent-dialog';
+import { BrandLogo, hasBrandLogo } from '@/components/brand/brand-logo';
 import { ZitasMark } from '@/components/brand/zitas-logo';
+import { useDeviceLogo } from '@/device/appearance';
 
 /** Permissions that open the cash screen: running a shift, moving cash or closing the day. */
 const CASH_PERMISSIONS = ['shift.open', 'shift.close', 'cash.movement', 'day.close'] as const;
@@ -41,6 +43,7 @@ export function PosShell() {
   const navigate = usePosUi((state) => state.navigate);
   const user = usePos((state) => state.user);
   const location = usePos((state) => state.bootstrap?.location.name);
+  const logo = useDeviceLogo();
   // The cashier POS pairs waiters' phones; a waiter's phone signs out of its shift (DEC-036).
   const terminalType = usePos((state) => state.bootstrap?.terminal.type);
   // The hub's printers and the connection decide what the header offers (DEC-031).
@@ -98,7 +101,11 @@ export function PosShell() {
       <SubscriptionNotice />
       <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 text-foreground max-md:min-h-14 md:static md:flex-wrap md:gap-x-2.5 md:gap-y-2 md:px-4 lg:flex-nowrap dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground">
         <span className="mr-1 hidden min-w-0 shrink-0 items-center gap-2.5 font-semibold md:inline-flex xl:shrink">
-          <ZitasMark className="size-7 shrink-0" />
+          {hasBrandLogo(logo) ? (
+            <BrandLogo logo={logo} name={location ?? ''} className="h-8 max-w-28 shrink-0" />
+          ) : (
+            <ZitasMark className="size-7 shrink-0" />
+          )}
           {/* The location name only where there is room: tablets keep the bar to one row. */}
           <span className="truncate max-xl:sr-only">{location}</span>
         </span>

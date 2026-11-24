@@ -23,6 +23,7 @@ export type {
 } from './services/sync';
 // Use cases, shared by the REST API and the backoffice Server Actions.
 export * as account from './services/account';
+export * as appearance from './services/appearance';
 export * as locations from './services/locations';
 export * as people from './services/people';
 export * as catalog from './services/catalog';
