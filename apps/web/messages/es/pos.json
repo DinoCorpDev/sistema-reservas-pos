@@ -157,6 +157,11 @@
       "ended": "Salida marcada · {worked}",
       "cancel": "Cancelar",
       "close": "Cerrar"
+    },
+    "person": {
+      "open": "Menú de {name}",
+      "notClockedIn": "Sin turno marcado",
+      "language": "Idioma"
     }
   }
 }

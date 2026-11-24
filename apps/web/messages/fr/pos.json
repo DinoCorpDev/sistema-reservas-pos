@@ -157,6 +157,11 @@
       "ended": "Départ pointé · {worked}",
       "cancel": "Annuler",
       "close": "Fermer"
+    },
+    "person": {
+      "open": "Menu de {name}",
+      "notClockedIn": "Pas encore pointé",
+      "language": "Langue"
     }
   }
 }

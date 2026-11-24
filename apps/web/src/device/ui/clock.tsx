@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from '@pos/ui/dialog';
 import { toast } from '@pos/ui/toaster';
-import { cn } from '@pos/ui/utils';
 import { LogOut, TimerIcon } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
@@ -20,7 +19,7 @@ import { usePos } from '../store';
 import { clockIn, clockOut, openEntryOf } from '../time';
 
 /** The open entry of the person on the terminal, kept current with every operation. */
-function useOpenEntry() {
+export function useOpenEntry() {
   const user = usePos((state) => state.user);
   const fold = usePos((state) => state.fold);
   const version = usePos((state) => state.foldVersion);
@@ -83,25 +82,17 @@ export function ClockInBar() {
   );
 }
 
-/** "On shift since 09:02" under the person's name, while they are clocked in. */
-export function ClockedInSince({ className }: { className?: string }) {
+/** Confirms the end of the working time, shows the hours, clocks out and locks (DEC-054). */
+export function ClockOutDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const t = useTranslations('pos.clock');
   const format = useFormatter();
   const entry = useOpenEntry();
-  if (!entry?.clockInAt) return null;
-  return (
-    <span className={cn('text-xs text-muted-foreground', className)} data-testid="clocked-in">
-      {t('since', { time: format.dateTime(new Date(entry.clockInAt), { timeStyle: 'short' }) })}
-    </span>
-  );
-}
-
-/** Ends the working time and locks the terminal, after a confirmation that shows the hours. */
-export function ClockOutButton({ className }: { className?: string }) {
-  const t = useTranslations('pos.clock');
-  const format = useFormatter();
-  const entry = useOpenEntry();
-  const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   if (!entry?.clockInAt) return null;
   const since = format.dateTime(new Date(entry.clockInAt), { timeStyle: 'short' });
@@ -113,7 +104,7 @@ export function ClockOutButton({ className }: { className?: string }) {
     setPending(true);
     try {
       await clockOut();
-      setOpen(false);
+      onOpenChange(false);
       toast.success(t('ended', { worked }));
       lockTerminal();
     } finally {
@@ -122,26 +113,21 @@ export function ClockOutButton({ className }: { className?: string }) {
   };
 
   return (
-    <>
-      <Button variant="outline" className={cn('gap-2', className)} onClick={() => setOpen(true)}>
-        <LogOut /> <span className="max-md:sr-only">{t('end')}</span>
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent closeLabel={t('close')}>
-          <DialogHeader>
-            <DialogTitle>{t('endTitle')}</DialogTitle>
-            <DialogDescription>{t('endText', { since, worked })}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              {t('cancel')}
-            </Button>
-            <Button onClick={() => void finish()} disabled={pending}>
-              <LogOut /> {t('endConfirm')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent closeLabel={t('close')}>
+        <DialogHeader>
+          <DialogTitle>{t('endTitle')}</DialogTitle>
+          <DialogDescription>{t('endText', { since, worked })}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t('cancel')}
+          </Button>
+          <Button onClick={() => void finish()} disabled={pending}>
+            <LogOut /> {t('endConfirm')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

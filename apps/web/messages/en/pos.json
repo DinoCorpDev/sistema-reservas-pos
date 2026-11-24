@@ -157,6 +157,11 @@
       "ended": "Clocked out · {worked}",
       "cancel": "Cancel",
       "close": "Close"
+    },
+    "person": {
+      "open": "{name}'s menu",
+      "notClockedIn": "Not clocked in",
+      "language": "Language"
     }
   }
 }

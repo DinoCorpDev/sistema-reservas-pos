@@ -157,6 +157,11 @@
       "ended": "Uscita timbrata · {worked}",
       "cancel": "Annulla",
       "close": "Chiudi"
+    },
+    "person": {
+      "open": "Menu di {name}",
+      "notClockedIn": "Turno non timbrato",
+      "language": "Lingua"
     }
   }
 }

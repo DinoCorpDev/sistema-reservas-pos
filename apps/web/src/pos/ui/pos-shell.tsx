@@ -1,8 +1,6 @@
 'use client';
 
 import { readyToServe, type ServiceGroup } from '@pos/core';
-import { ActionGroup } from '@pos/ui/action-group';
-import { Avatar } from '@pos/ui/avatar';
 import { Button } from '@pos/ui/button';
 import { toast } from '@pos/ui/toaster';
 import { cn } from '@pos/ui/utils';
@@ -10,9 +8,8 @@ import { Archive, Beer, LayoutGrid, ListOrdered, Lock, ShoppingBag, Wallet } fro
 import { useTranslations } from 'next-intl';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
-import { ClockedInSince, ClockInBar, ClockOutButton } from '@/device/ui/clock';
-import { HelpLink } from '@/device/ui/help-link';
-import { LanguageMenu } from '@/device/ui/language-menu';
+import { ClockInBar } from '@/device/ui/clock';
+import { PersonMenu } from '@/device/ui/person-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import { TrainingBand } from '@/device/ui/training-band';
 import { hasCashDrawer, hubReceiptPrinter, openDrawer } from '../actions';
@@ -33,7 +30,6 @@ import { TableNotices } from './table-notices';
 import { UnpairButton } from './unpair-button';
 import { UnsentDialog } from './unsent-dialog';
 import { ZitasMark } from '@/components/brand/zitas-logo';
-import { ThemeMenu } from '@/components/theme/theme-menu';
 
 /** Permissions that open the cash screen: running a shift, moving cash or closing the day. */
 const CASH_PERMISSIONS = ['shift.open', 'shift.close', 'cash.movement', 'day.close'] as const;
@@ -79,7 +75,7 @@ export function PosShell() {
     cn(
       'relative gap-2',
       'max-md:h-16 max-md:flex-col max-md:gap-0.5 max-md:rounded-none max-md:px-1 max-md:text-xs',
-      'md:rounded-full md:px-4 md:text-sm md:text-muted-foreground md:hover:bg-card md:hover:text-foreground',
+      'md:rounded-full md:px-3 md:text-sm md:text-muted-foreground md:hover:bg-card md:hover:text-foreground xl:px-4',
       'dark:md:text-chrome-foreground/75 dark:md:hover:bg-white/10 dark:md:hover:text-chrome-foreground',
       active &&
         'md:bg-primary md:text-primary-foreground md:shadow-[0_0_0_1px_var(--glow),0_8px_20px_-10px_var(--glow)] md:hover:bg-primary/90 md:hover:text-primary-foreground dark:md:text-primary-foreground dark:md:hover:bg-primary/90 dark:md:hover:text-primary-foreground max-md:text-brand-strong',
@@ -100,14 +96,15 @@ export function PosShell() {
     <div className="flex min-h-dvh flex-col">
       <TrainingBand />
       <SubscriptionNotice />
-      <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 text-foreground max-md:min-h-14 md:static md:flex-wrap md:gap-x-3 md:gap-y-2 md:px-4 2xl:flex-nowrap dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground">
-        <span className="mr-1 hidden min-w-0 items-center gap-2.5 font-semibold md:inline-flex">
+      <header className="sticky top-0 z-20 flex items-center gap-2 border-b bg-card px-3 py-2 text-foreground max-md:min-h-14 md:static md:flex-wrap md:gap-x-2.5 md:gap-y-2 md:px-4 lg:flex-nowrap dark:border-white/5 dark:bg-chrome dark:text-chrome-foreground">
+        <span className="mr-1 hidden min-w-0 shrink-0 items-center gap-2.5 font-semibold md:inline-flex xl:shrink">
           <ZitasMark className="size-7 shrink-0" />
-          <span className="truncate">{location}</span>
+          {/* The location name only where there is room: tablets keep the bar to one row. */}
+          <span className="truncate max-xl:sr-only">{location}</span>
         </span>
         <nav
           className={cn(
-            'flex flex-wrap gap-1 md:order-last md:w-fit md:flex-nowrap md:overflow-x-auto md:rounded-full md:border md:bg-muted/60 md:p-1 2xl:order-none dark:md:border-white/10 dark:md:bg-white/5',
+            'flex flex-wrap gap-1 md:order-last md:w-fit md:flex-nowrap md:overflow-x-auto md:rounded-full md:border md:bg-muted/60 md:p-1 lg:order-none dark:md:border-white/10 dark:md:bg-white/5',
             'max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-30 max-md:grid max-md:gap-0 max-md:border-t max-md:bg-card max-md:pb-[env(safe-area-inset-bottom)] max-md:text-foreground max-md:shadow-[0_-1px_8px_rgb(0_0_0/0.06)]',
             canCash ? 'max-md:grid-cols-5' : 'max-md:grid-cols-4',
             inOrder && 'max-md:hidden',
@@ -158,31 +155,28 @@ export function PosShell() {
         </nav>
         <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:ml-auto md:flex-none md:gap-2.5 dark:[&>[data-slot=button]]:border-white/15 dark:[&>[data-slot=button]]:bg-white/5 dark:[&>[data-slot=button]]:text-chrome-foreground dark:[&>[data-slot=button]:hover]:bg-white/15 dark:[&>[data-slot=button]:hover]:text-chrome-foreground">
           {drawer && (
-            <Button variant="outline" className="gap-2" onClick={() => void drawerOpen()}>
-              <Archive /> <span className="max-md:sr-only">{t('drawer')}</span>
+            <Button
+              variant="outline"
+              className="gap-2 max-xl:size-11 max-xl:px-0"
+              onClick={() => void drawerOpen()}
+              title={t('drawer')}
+            >
+              <Archive /> <span className="max-xl:sr-only">{t('drawer')}</span>
             </Button>
           )}
           {terminalType === 'pos' && <PhonePairingButton />}
           <StatusIndicator className="max-md:mr-auto" />
-          {/* Who is serving: avatar and name, the name alone is the test hook. */}
-          <span className="flex min-w-0 items-center gap-2">
-            {user ? <Avatar name={user.displayName} colorKey={user.id} size="sm" /> : null}
-            <span className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-sm font-medium" data-testid="pos-user">
-                {user?.displayName}
-              </span>
-              <ClockedInSince className="max-md:hidden" />
-            </span>
-          </span>
-          <ClockOutButton />
-          <ActionGroup className="dark:divide-white/10 dark:border-white/10 dark:bg-white/5 dark:[&_[data-slot=button]]:text-chrome-foreground/80">
-            <ThemeMenu />
-            <LanguageMenu />
-            <HelpLink role={canCash ? 'manager' : 'waiter'} />
-            <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
-              <Lock />
-            </Button>
-          </ActionGroup>
+          {/* Who is serving: their menu holds the shift, theme, language and the manual. */}
+          <PersonMenu helpRole={canCash ? 'manager' : 'waiter'} nameTestId="pos-user" />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={lockTerminal}
+            aria-label={t('lock')}
+            title={t('lock')}
+          >
+            <Lock />
+          </Button>
           {terminalType === 'phone' && <SignOutButton />}
           {terminalType === 'pos' && <UnpairButton />}
         </div>

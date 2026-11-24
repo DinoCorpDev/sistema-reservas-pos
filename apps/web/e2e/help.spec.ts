@@ -10,6 +10,8 @@ test('the till opens the manual of its role, in German and in Spanish', async ({
   await pairPos(page, 'K1');
   await unlockPos(page, '4001');
 
+  // The manual is in the person's menu (the avatar), with the shift, theme and language.
+  await page.getByTestId('person-menu').click();
   const [manual] = await Promise.all([
     page.waitForEvent('popup'),
     page.getByTestId('help-link').click(),

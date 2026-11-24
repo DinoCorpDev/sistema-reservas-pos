@@ -2,8 +2,6 @@
 
 import type { KitchenTicketView } from '@pos/core';
 import { Button } from '@pos/ui/button';
-import { ActionGroup } from '@pos/ui/action-group';
-import { Avatar } from '@pos/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pos/ui/tabs';
 import { toast } from '@pos/ui/toaster';
 import { ChefHat, Clock3, Lock } from 'lucide-react';
@@ -11,9 +9,8 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
-import { HelpLink } from '@/device/ui/help-link';
-import { ClockedInSince, ClockInBar, ClockOutButton } from '@/device/ui/clock';
-import { LanguageMenu } from '@/device/ui/language-menu';
+import { ClockInBar } from '@/device/ui/clock';
+import { PersonMenu } from '@/device/ui/person-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import { TrainingBand } from '@/device/ui/training-band';
 import {
@@ -27,7 +24,6 @@ import {
 import { useNow, useStationBoard } from '../board';
 import { type TicketActions, TicketCard } from './ticket-card';
 import { ZitasMark } from '@/components/brand/zitas-logo';
-import { ThemeMenu } from '@/components/theme/theme-menu';
 
 /**
  * The kitchen display of one station (RF-C20…RF-C28): the open tickets oldest first, a notice
@@ -39,7 +35,6 @@ export function KdsShell() {
   const format = useFormatter();
   const now = useNow();
   const { station, board, labels } = useStationBoard(now);
-  const user = usePos((state) => state.user);
   const tables = usePos((state) => state.bootstrap?.tables);
   const users = usePos((state) => state.bootstrap?.users);
   const stations = usePos((state) => state.bootstrap?.stations);
@@ -148,24 +143,16 @@ export function KdsShell() {
         </span>
         <div className="ml-auto flex items-center gap-3">
           <StatusIndicator />
-          <span className="flex items-center gap-2">
-            {user ? <Avatar name={user.displayName} colorKey={user.id} size="sm" /> : null}
-            <span className="flex flex-col leading-tight">
-              <span className="text-sm font-medium" data-testid="kds-user">
-                {user?.displayName}
-              </span>
-              <ClockedInSince />
-            </span>
-          </span>
-          <ClockOutButton />
-          <ActionGroup className="dark:divide-white/10 dark:border-white/10 dark:bg-white/5 dark:[&_[data-slot=button]]:text-chrome-foreground/80">
-            <ThemeMenu />
-            <LanguageMenu />
-            <HelpLink role="kitchen" />
-            <Button variant="outline" size="icon" onClick={lockTerminal} aria-label={t('lock')}>
-              <Lock />
-            </Button>
-          </ActionGroup>
+          <PersonMenu helpRole="kitchen" nameTestId="kds-user" />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={lockTerminal}
+            aria-label={t('lock')}
+            title={t('lock')}
+          >
+            <Lock />
+          </Button>
         </div>
       </header>
       <ClockInBar />

@@ -29,23 +29,27 @@ export function StatusIndicator({ className }: { className?: string }) {
         )}
         data-testid="sync-level"
         data-level={sync.level}
+        title={t(sync.level)}
       >
         <Icon className="size-4" aria-hidden />
-        <span className="max-sm:sr-only">{t(sync.level)}</span>
+        {/* On a tablet the colour and the icon say it; the word comes on wide screens. */}
+        <span className="max-xl:sr-only">{t(sync.level)}</span>
       </span>
       <span
         className={cn(
-          'inline-flex items-center gap-1 tabular-nums',
-          sync.pending > 0 ? 'text-amber-800' : 'text-muted-foreground max-sm:hidden',
+          'inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-medium tabular-nums',
+          // Nothing waiting is the normal case: it is said to screen readers, not shown.
+          sync.pending > 0 ? 'bg-amber-100 text-amber-900' : 'sr-only',
         )}
         data-testid="sync-pending"
         data-pending={sync.pending}
+        title={t('pending', { count: sync.pending })}
       >
-        <CloudUpload className="size-4 sm:hidden" aria-hidden />
-        <span className="sm:hidden" aria-hidden>
+        <CloudUpload className="size-4" aria-hidden />
+        <span className="xl:hidden" aria-hidden>
           {sync.pending}
         </span>
-        <span className="max-sm:sr-only">{t('pending', { count: sync.pending })}</span>
+        <span className="max-xl:sr-only">{t('pending', { count: sync.pending })}</span>
       </span>
       {sync.rejected > 0 && (
         <span className="text-destructive">{t('rejected', { count: sync.rejected })}</span>

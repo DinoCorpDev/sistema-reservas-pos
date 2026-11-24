@@ -14,7 +14,7 @@ import { asDeviceLanguage, DEVICE_LANGUAGES } from '../i18n';
 import { chooseLanguage } from '../language';
 
 /** Each language in its own words, so anyone finds theirs whatever the screen shows now. */
-const NATIVE_NAMES: Record<(typeof DEVICE_LANGUAGES)[number], string> = {
+export const NATIVE_NAMES: Record<(typeof DEVICE_LANGUAGES)[number], string> = {
   de: 'Deutsch',
   fr: 'Français',
   it: 'Italiano',

@@ -5,7 +5,8 @@ import { unlockPos } from './pos-helpers';
 
 /**
  * Working time (RF-A09, DEC-054): after the PIN the till offers to clock in without blocking the
- * screen; "Ausstempeln" ends the shift and locks; the manager sees both in "Arbeitszeit".
+ * screen; "Ausstempeln" in the person's menu ends the shift and locks; the manager sees both in
+ * "Arbeitszeit".
  */
 
 /** The row of Lea's entry in the timesheet, read again until the cloud has the operation. */
@@ -40,7 +41,11 @@ test('a waiter clocks in after the PIN and out at the end; the manager sees the 
     await expect(till.getByTestId('table-1')).toBeEnabled();
     await bar.getByRole('button', { name: 'Einstempeln' }).click();
     await expect(bar).toBeHidden();
+    // A green dot on the avatar; the menu says since when.
+    await expect(till.getByTestId('clocked-in-dot')).toBeVisible();
+    await till.getByTestId('person-menu').click();
     await expect(till.getByTestId('clocked-in')).toContainText('Eingestempelt seit');
+    await till.keyboard.press('Escape');
 
     // The manager sees Lea working.
     const office = await officeContext.newPage();
@@ -52,8 +57,9 @@ test('a waiter clocks in after the PIN and out at the end; the manager sees the 
     await expect(office).toHaveURL(/\/backoffice/);
     await expectLeaStatus(office, 'Arbeitet');
 
-    // End of the shift: confirmed, clocked out and locked.
-    await till.getByRole('button', { name: 'Ausstempeln' }).click();
+    // End of the shift, from the person's menu: confirmed, clocked out and locked.
+    await till.getByTestId('person-menu').click();
+    await till.getByRole('menuitem', { name: 'Ausstempeln' }).click();
     const confirm = till.getByRole('dialog', { name: 'Arbeitszeit beenden?' });
     await confirm.getByRole('button', { name: 'Ausstempeln und sperren' }).click();
     await expect(till.getByRole('heading', { name: 'PIN eingeben' })).toBeVisible();
@@ -64,7 +70,7 @@ test('a waiter clocks in after the PIN and out at the end; the manager sees the 
     await expect(bar).toBeVisible();
     await bar.getByRole('button', { name: 'Nur kurz nachsehen' }).click();
     await expect(bar).toBeHidden();
-    await expect(till.getByRole('button', { name: 'Ausstempeln' })).toHaveCount(0);
+    await expect(till.getByTestId('clocked-in-dot')).toHaveCount(0);
   } finally {
     await tillContext.close();
     await officeContext.close();

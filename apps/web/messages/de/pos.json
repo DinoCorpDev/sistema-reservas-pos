@@ -157,6 +157,11 @@
       "ended": "Ausgestempelt · {worked}",
       "cancel": "Abbrechen",
       "close": "Schliessen"
+    },
+    "person": {
+      "open": "Menü von {name}",
+      "notClockedIn": "Nicht eingestempelt",
+      "language": "Sprache"
     }
   }
 }

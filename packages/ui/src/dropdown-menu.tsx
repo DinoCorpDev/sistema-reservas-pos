@@ -1,6 +1,7 @@
 'use client';
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { ChevronRightIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { cn } from './utils';
 
@@ -8,6 +9,7 @@ export const DropdownMenu = DropdownMenuPrimitive.Root;
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 export const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+export const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 
 export function DropdownMenuContent({
   className,
@@ -73,5 +75,39 @@ export function DropdownMenuSeparator({
       className={cn('-mx-1 my-1 h-px bg-border', className)}
       {...props}
     />
+  );
+}
+
+/** A row that opens a second menu beside it (language, theme…). */
+export function DropdownMenuSubTrigger({
+  className,
+  children,
+  ...props
+}: ComponentProps<typeof DropdownMenuPrimitive.SubTrigger>) {
+  return (
+    <DropdownMenuPrimitive.SubTrigger
+      className={cn(itemClass, 'data-[state=open]:bg-accent', className)}
+      {...props}
+    >
+      <span className="flex min-w-0 flex-1 items-center gap-2.5">{children}</span>
+      <ChevronRightIcon aria-hidden />
+    </DropdownMenuPrimitive.SubTrigger>
+  );
+}
+
+export function DropdownMenuSubContent({
+  className,
+  ...props
+}: ComponentProps<typeof DropdownMenuPrimitive.SubContent>) {
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.SubContent
+        className={cn(
+          'z-50 min-w-[11rem] animate-enter overflow-hidden rounded-xl border bg-card p-1.5 text-card-foreground shadow-raised',
+          className,
+        )}
+        {...props}
+      />
+    </DropdownMenuPrimitive.Portal>
   );
 }
