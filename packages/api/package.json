@@ -13,6 +13,8 @@
     "test": "vitest run --passWithNoTests --exclude \"**/*.int.test.ts\"",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "menu:import": "tsx src/scripts/import-menu.ts",
+    "recipes:import": "tsx src/scripts/import-recipes.ts",
+    "lalin:setup": "tsx src/scripts/setup-lalin.ts",
     "archive:loop": "tsx src/scripts/archive.ts loop",
     "archive:month": "tsx src/scripts/archive.ts month",
     "monitor": "tsx src/scripts/monitor.ts",

@@ -1,0 +1,2489 @@
+{
+  "source": "Lalín Tapas — recetas de base (estimaciones por porción, para ajustar en la ficha de cada plato)",
+  "ingredients": [
+    {
+      "key": "pan",
+      "name": "Pan de barra",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "tomate",
+      "name": "Tomate",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "aceite",
+      "name": "Aceite de oliva",
+      "unit": "ml",
+      "threshold": 3000
+    },
+    {
+      "key": "aceite_freir",
+      "name": "Aceite para freír",
+      "unit": "ml",
+      "threshold": 5000
+    },
+    {
+      "key": "ajo",
+      "name": "Ajo",
+      "unit": "g",
+      "threshold": 300
+    },
+    {
+      "key": "cebolla",
+      "name": "Cebolla",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "pimiento_rojo",
+      "name": "Pimiento rojo",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "verduras",
+      "name": "Verduras variadas",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "limon",
+      "name": "Limón",
+      "unit": "unit",
+      "threshold": 20
+    },
+    {
+      "key": "perejil",
+      "name": "Perejil",
+      "unit": "g",
+      "threshold": 100
+    },
+    {
+      "key": "pimenton",
+      "name": "Pimentón",
+      "unit": "g",
+      "threshold": 200
+    },
+    {
+      "key": "harina",
+      "name": "Harina",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "huevos",
+      "name": "Huevos",
+      "unit": "unit",
+      "threshold": 60
+    },
+    {
+      "key": "patatas",
+      "name": "Patatas",
+      "unit": "g",
+      "threshold": 10000
+    },
+    {
+      "key": "patatas_congeladas",
+      "name": "Patatas fritas congeladas",
+      "unit": "g",
+      "threshold": 5000
+    },
+    {
+      "key": "jamon_serrano",
+      "name": "Jamón serrano",
+      "unit": "g",
+      "threshold": 1000
+    },
+    {
+      "key": "jamon_iberico",
+      "name": "Jamón ibérico",
+      "unit": "g",
+      "threshold": 1000
+    },
+    {
+      "key": "lomo_iberico",
+      "name": "Lomo ibérico",
+      "unit": "g",
+      "threshold": 1000
+    },
+    {
+      "key": "chorizo_iberico",
+      "name": "Chorizo ibérico (embutido)",
+      "unit": "g",
+      "threshold": 500
+    },
+    {
+      "key": "salchichon",
+      "name": "Salchichón ibérico",
+      "unit": "g",
+      "threshold": 500
+    },
+    {
+      "key": "chorizo",
+      "name": "Chorizo para cocinar",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "manchego",
+      "name": "Queso manchego",
+      "unit": "g",
+      "threshold": 1000
+    },
+    {
+      "key": "manchego_viejo",
+      "name": "Queso manchego viejo",
+      "unit": "g",
+      "threshold": 500
+    },
+    {
+      "key": "idiazabal",
+      "name": "Queso Idiazábal",
+      "unit": "g",
+      "threshold": 500
+    },
+    {
+      "key": "mahon",
+      "name": "Queso Mahón",
+      "unit": "g",
+      "threshold": 500
+    },
+    {
+      "key": "croquetas",
+      "name": "Croquetas de jamón ibérico",
+      "unit": "unit",
+      "threshold": 60
+    },
+    {
+      "key": "vino_cocina",
+      "name": "Vino tinto para cocinar",
+      "unit": "ml",
+      "threshold": 2000
+    },
+    {
+      "key": "alitas",
+      "name": "Alitas de pollo",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "carne_picada",
+      "name": "Carne picada mixta",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "salsa_tomate",
+      "name": "Salsa de tomate",
+      "unit": "ml",
+      "threshold": 3000
+    },
+    {
+      "key": "padron",
+      "name": "Pimientos de Padrón",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "gambas",
+      "name": "Gambas peladas",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "gulas",
+      "name": "Gulas",
+      "unit": "g",
+      "threshold": 1000
+    },
+    {
+      "key": "almejas",
+      "name": "Almejas",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "mejillones",
+      "name": "Mejillones",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "calamar",
+      "name": "Calamar (anillas)",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "chipirones",
+      "name": "Chipirones",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "sepia",
+      "name": "Sepia",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "pulpo",
+      "name": "Pulpo cocido",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "pescado_blanco",
+      "name": "Pescado blanco",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "langostinos",
+      "name": "Langostinos",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "bogavante",
+      "name": "Bogavante",
+      "unit": "unit",
+      "threshold": 4
+    },
+    {
+      "key": "lubina",
+      "name": "Lubina (filete)",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "arroz",
+      "name": "Arroz bomba",
+      "unit": "g",
+      "threshold": 10000
+    },
+    {
+      "key": "fumet",
+      "name": "Fumet de pescado",
+      "unit": "ml",
+      "threshold": 10000
+    },
+    {
+      "key": "caldo_pollo",
+      "name": "Caldo de pollo",
+      "unit": "ml",
+      "threshold": 5000
+    },
+    {
+      "key": "tinta",
+      "name": "Tinta de calamar",
+      "unit": "g",
+      "threshold": 200
+    },
+    {
+      "key": "fideos",
+      "name": "Fideos para fideuà",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "pasta",
+      "name": "Pasta",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "entrecote",
+      "name": "Entrecôte de ternera",
+      "unit": "g",
+      "threshold": 5000
+    },
+    {
+      "key": "pollo_paella",
+      "name": "Pollo troceado",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "pato",
+      "name": "Magret de pato",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "foie",
+      "name": "Foie gras",
+      "unit": "g",
+      "threshold": 500
+    },
+    {
+      "key": "costillas",
+      "name": "Costillas de cerdo",
+      "unit": "g",
+      "threshold": 5000
+    },
+    {
+      "key": "salsa_bbq",
+      "name": "Salsa BBQ con miel",
+      "unit": "ml",
+      "threshold": 2000
+    },
+    {
+      "key": "pechuga",
+      "name": "Pechuga de pollo",
+      "unit": "g",
+      "threshold": 3000
+    },
+    {
+      "key": "boletus",
+      "name": "Boletus",
+      "unit": "g",
+      "threshold": 500
+    },
+    {
+      "key": "nuggets",
+      "name": "Nuggets de pollo",
+      "unit": "unit",
+      "threshold": 60
+    },
+    {
+      "key": "tiras_pescado",
+      "name": "Tiras de pescado empanadas",
+      "unit": "unit",
+      "threshold": 60
+    },
+    {
+      "key": "alioli",
+      "name": "Alioli casero",
+      "unit": "ml",
+      "threshold": 2000
+    },
+    {
+      "key": "brava",
+      "name": "Salsa brava",
+      "unit": "ml",
+      "threshold": 2000
+    },
+    {
+      "key": "tartara",
+      "name": "Salsa tártara",
+      "unit": "ml",
+      "threshold": 1000
+    },
+    {
+      "key": "ketchup",
+      "name": "Ketchup",
+      "unit": "ml",
+      "threshold": 1000
+    },
+    {
+      "key": "mayonesa",
+      "name": "Mayonesa",
+      "unit": "ml",
+      "threshold": 1000
+    },
+    {
+      "key": "flan",
+      "name": "Flan casero",
+      "unit": "unit",
+      "threshold": 10
+    },
+    {
+      "key": "crema_catalana",
+      "name": "Crema catalana",
+      "unit": "unit",
+      "threshold": 10
+    },
+    {
+      "key": "tarta_helada",
+      "name": "Tarta helada (porción)",
+      "unit": "unit",
+      "threshold": 10
+    },
+    {
+      "key": "coeur_fondant",
+      "name": "Coeur fondant",
+      "unit": "unit",
+      "threshold": 10
+    },
+    {
+      "key": "tarta_santiago",
+      "name": "Tarta de Santiago (porción)",
+      "unit": "unit",
+      "threshold": 10
+    },
+    {
+      "key": "helado_vainilla",
+      "name": "Helado de vainilla",
+      "unit": "ml",
+      "threshold": 3000
+    },
+    {
+      "key": "nata",
+      "name": "Nata para montar",
+      "unit": "ml",
+      "threshold": 2000
+    },
+    {
+      "key": "salsa_chocolate",
+      "name": "Salsa de chocolate",
+      "unit": "ml",
+      "threshold": 1000
+    },
+    {
+      "key": "zumo_naranja",
+      "name": "Zumo de naranja 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "zumo_pina",
+      "name": "Zumo de piña 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "coca_cola",
+      "name": "Coca-Cola 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "coca_cola_zero",
+      "name": "Coca-Cola Zero 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "mineral_5dl",
+      "name": "Agua mineral 50 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "mineral_1l",
+      "name": "Agua mineral 1 l",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "tonica",
+      "name": "Schweppes Tonic 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "bitter_lemon",
+      "name": "Schweppes Bitter Lemon 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "red_bull",
+      "name": "Red Bull 25 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "san_bitter",
+      "name": "San Bitter 10 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "aquarius_naranja",
+      "name": "Aquarius Naranja 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "fanta_naranja",
+      "name": "Fanta Naranja 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "capri_sun",
+      "name": "Capri Sun",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "smirnoff_ice",
+      "name": "Smirnoff Ice 27.5 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "eg_sin",
+      "name": "Estrella Galicia Sin Alcohol 25 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "eg_quinto",
+      "name": "Estrella Galicia Quinto 25 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "red_vintage",
+      "name": "1906 Red Vintage 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "eg1906_tercio",
+      "name": "1906 Estrella Galicia Tercio 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "heineken",
+      "name": "Heineken 25 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "corona",
+      "name": "Corona 35.5 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "gaseosa",
+      "name": "Gaseosa / soda 33 cl",
+      "unit": "unit",
+      "threshold": 24
+    },
+    {
+      "key": "barril_eg",
+      "name": "Estrella Galicia de barril",
+      "unit": "ml",
+      "threshold": 20000
+    },
+    {
+      "key": "barril_1906",
+      "name": "1906 de barril",
+      "unit": "ml",
+      "threshold": 20000
+    },
+    {
+      "key": "sirup",
+      "name": "Sirope",
+      "unit": "ml",
+      "threshold": 1000
+    },
+    {
+      "key": "hacienda_monasterio",
+      "name": "Vino · Hacienda Monasterio",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "mauro",
+      "name": "Vino · Mauro",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "costalara",
+      "name": "Vino · Pagos de Anguix Costalara",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "riscal_xr",
+      "name": "Vino · Marqués de Riscal Reserva XR",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "portia_gala",
+      "name": "Vino · Portia Gala Reserva",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "ocho_dos_dos",
+      "name": "Vino · Pagos de Anguix Ocho Dos Dos",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "ramon_bilbao",
+      "name": "Vino · Ramón Bilbao Edición Limitada",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "portia_roble",
+      "name": "Vino · Portia Roble",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "valdouro",
+      "name": "Vino · Valdouro",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "mar_de_frades",
+      "name": "Vino · Mar de Frades",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "entremundos",
+      "name": "Vino · Entremundos",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "organistrum",
+      "name": "Vino · Organistrum",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "terras_gauda",
+      "name": "Vino · Terras Gauda",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "fortius",
+      "name": "Vino · Fortius",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "montico",
+      "name": "Vino · Finca Montico Gran Rueda",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "vina_abad",
+      "name": "Vino · Viña Abad",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "juve_camps",
+      "name": "Vino · Juvé & Camps Reserva de la Familia Brut",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "faustino_cava",
+      "name": "Vino · Faustino Cava Reserva Brut",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "cava_casa",
+      "name": "Cava de la casa",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "vino_sangria",
+      "name": "Vino tinto para sangría",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "vino_blanco_sangria",
+      "name": "Vino blanco para sangría",
+      "unit": "ml",
+      "threshold": 1500
+    },
+    {
+      "key": "gin",
+      "name": "Ginebra",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "ron_blanco",
+      "name": "Ron blanco",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "ron_leyenda",
+      "name": "Ron Leyenda",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "ron_brugal",
+      "name": "Ron Brugal",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "ron_barcelo",
+      "name": "Ron Barceló",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "vodka",
+      "name": "Vodka",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "tequila",
+      "name": "Tequila",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "whisky_red",
+      "name": "Johnnie Walker Red Label",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "whisky_black",
+      "name": "Johnnie Walker Black Label",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "chivas",
+      "name": "Chivas Regal 12",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "chivas18",
+      "name": "Chivas Regal 18",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "brandy",
+      "name": "Brandy Carlos I",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "conac",
+      "name": "Coñac Gran Duque de Alba",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "baileys",
+      "name": "Baileys",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "licor43",
+      "name": "Licor 43",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "amaretto",
+      "name": "Amaretto",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "licor_cafe",
+      "name": "Licor de café",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "triple_sec",
+      "name": "Triple sec",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "blue_curacao",
+      "name": "Blue Curaçao",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "campari",
+      "name": "Campari",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "aperol",
+      "name": "Aperol",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "limoncello",
+      "name": "Limoncello",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "martini_rojo",
+      "name": "Martini Rojo",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "jager",
+      "name": "Jägermeister",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "anis",
+      "name": "Anís",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "crema_orujo",
+      "name": "Crema de orujo",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "licor_hierbas",
+      "name": "Licor de hierbas",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "cachaca",
+      "name": "Cachaça",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "mora",
+      "name": "Licor de mora",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "granadina",
+      "name": "Granadina",
+      "unit": "ml",
+      "threshold": 700
+    },
+    {
+      "key": "zumo_naranja_natural",
+      "name": "Zumo de naranja natural",
+      "unit": "ml",
+      "threshold": 2000
+    },
+    {
+      "key": "zumo_pina_brick",
+      "name": "Zumo de piña (brick)",
+      "unit": "ml",
+      "threshold": 2000
+    },
+    {
+      "key": "zumo_limon",
+      "name": "Zumo de limón",
+      "unit": "ml",
+      "threshold": 1000
+    },
+    {
+      "key": "azucar",
+      "name": "Azúcar",
+      "unit": "g",
+      "threshold": 1000
+    },
+    {
+      "key": "menta",
+      "name": "Hierbabuena",
+      "unit": "g",
+      "threshold": 100
+    },
+    {
+      "key": "lima",
+      "name": "Lima",
+      "unit": "unit",
+      "threshold": 20
+    },
+    {
+      "key": "fruta_sangria",
+      "name": "Fruta para sangría",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "cafe_grano",
+      "name": "Café en grano",
+      "unit": "g",
+      "threshold": 2000
+    },
+    {
+      "key": "leche",
+      "name": "Leche",
+      "unit": "ml",
+      "threshold": 5000
+    },
+    {
+      "key": "leche_condensada",
+      "name": "Leche condensada",
+      "unit": "ml",
+      "threshold": 500
+    },
+    {
+      "key": "cacao",
+      "name": "Cacao en polvo",
+      "unit": "g",
+      "threshold": 300
+    }
+  ],
+  "recipes": [
+    {
+      "sku": "TAPAS-ZUM-TEILEN-TAPAS-VARIADAS",
+      "lines": {
+        "croquetas": 4,
+        "jamon_serrano": 40,
+        "manchego": 40,
+        "chorizo": 60,
+        "patatas": 150,
+        "brava": 40,
+        "pan": 80,
+        "aceite": 15
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-ZUM-TEILEN-FRITURA-ANDALUZA",
+      "lines": {
+        "calamar": 150,
+        "pescado_blanco": 150,
+        "chipirones": 100,
+        "gambas": 80,
+        "harina": 80,
+        "aceite_freir": 60,
+        "limon": 1,
+        "alioli": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-ZUM-TEILEN-ENTREMES-IBERICOS",
+      "lines": {},
+      "variants": {
+        "Klein": {
+          "jamon_iberico": 50,
+          "lomo_iberico": 40,
+          "chorizo_iberico": 40,
+          "salchichon": 40,
+          "pan": 80
+        },
+        "Gross": {
+          "jamon_iberico": 80,
+          "lomo_iberico": 60,
+          "chorizo_iberico": 60,
+          "salchichon": 60,
+          "pan": 120
+        }
+      }
+    },
+    {
+      "sku": "TAPAS-ZUM-TEILEN-BANDEJA-DE-QUESOS",
+      "lines": {},
+      "variants": {
+        "Klein": {
+          "manchego": 50,
+          "idiazabal": 50,
+          "mahon": 50,
+          "pan": 80
+        },
+        "Gross": {
+          "manchego": 80,
+          "idiazabal": 80,
+          "mahon": 80,
+          "pan": 120
+        }
+      }
+    },
+    {
+      "sku": "TAPAS-ZUM-TEILEN-BROTKORB",
+      "lines": {
+        "pan": 120
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-PAN-TUMACA",
+      "lines": {},
+      "variants": {
+        "Klassisch": {
+          "pan": 120,
+          "tomate": 80,
+          "aceite": 15,
+          "ajo": 3
+        },
+        "Mit Serrano-Schinken": {
+          "pan": 120,
+          "tomate": 80,
+          "aceite": 15,
+          "ajo": 3,
+          "jamon_serrano": 40
+        }
+      }
+    },
+    {
+      "sku": "TAPAS-PATATAS-BRAVAS",
+      "lines": {
+        "patatas": 250,
+        "brava": 60,
+        "aceite_freir": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-PATATAS-FRITAS",
+      "lines": {
+        "patatas_congeladas": 200,
+        "aceite_freir": 30,
+        "mayonesa": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-TORTILLA-DE-PATATA-MINI",
+      "lines": {
+        "patatas": 150,
+        "huevos": 2,
+        "cebolla": 30,
+        "aceite": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-CROQUETAS-DE-JAMON-IBERICO",
+      "lines": {
+        "croquetas": 6,
+        "aceite_freir": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-CHORIZOS-AL-VINO-TINTO",
+      "lines": {
+        "chorizo": 150,
+        "vino_cocina": 80,
+        "pan": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-ALITAS-DE-POLLO-A-LA-ESPANOLA",
+      "lines": {
+        "alitas": 300,
+        "pimenton": 3,
+        "aceite": 20,
+        "ajo": 5
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-ALBONDIGAS-EN-SALSA-ESPANOLA",
+      "lines": {
+        "carne_picada": 180,
+        "salsa_tomate": 120,
+        "cebolla": 30,
+        "huevos": 1,
+        "pan": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-PIMIENTOS-DE-PADRON",
+      "lines": {
+        "padron": 150,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-TEMPURA-DE-VERDURA",
+      "lines": {
+        "verduras": 200,
+        "harina": 60,
+        "aceite_freir": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-GAMBAS-AL-AJILLO",
+      "lines": {
+        "gambas": 150,
+        "ajo": 10,
+        "aceite": 60,
+        "pan": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-GAMBAS-CON-GULAS",
+      "lines": {
+        "gambas": 100,
+        "gulas": 80,
+        "ajo": 10,
+        "aceite": 50
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-ALMEJAS-EN-SALSA-MARINERA",
+      "lines": {
+        "almejas": 250,
+        "salsa_tomate": 60,
+        "ajo": 5,
+        "perejil": 3
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-MEJILLONES-EN-SALSA-MARINERA",
+      "lines": {
+        "mejillones": 350,
+        "salsa_tomate": 80,
+        "ajo": 5
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-CALAMARES-A-LA-ANDALUZA",
+      "lines": {
+        "calamar": 180,
+        "harina": 50,
+        "aceite_freir": 40,
+        "limon": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-CHIPIRONES-A-LA-PLANCHA",
+      "lines": {
+        "chipirones": 180,
+        "ajo": 5,
+        "aceite": 20,
+        "perejil": 3
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-SEPIA-LALIN",
+      "lines": {
+        "sepia": 180,
+        "alioli": 40,
+        "aceite": 15
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TAPAS-PULPO-A-LA-GALLEGA",
+      "lines": {},
+      "variants": {
+        "Klein": {
+          "pulpo": 150,
+          "patatas": 100,
+          "pimenton": 2,
+          "aceite": 20
+        },
+        "Gross": {
+          "pulpo": 250,
+          "patatas": 150,
+          "pimenton": 3,
+          "aceite": 30
+        }
+      }
+    },
+    {
+      "sku": "SAUCEN-ALI-OLI",
+      "lines": {
+        "alioli": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SAUCEN-SALSA-TARTARA",
+      "lines": {
+        "tartara": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SAUCEN-SALSA-BRAVA",
+      "lines": {
+        "brava": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SAUCEN-KETCHUP",
+      "lines": {
+        "ketchup": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SAUCEN-MAYONESA",
+      "lines": {
+        "mayonesa": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-PAELLA-DE-MARISCO",
+      "lines": {
+        "arroz": 100,
+        "fumet": 300,
+        "gambas": 60,
+        "mejillones": 100,
+        "calamar": 60,
+        "tomate": 40,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-PAELLA-VEGETARIANA",
+      "lines": {
+        "arroz": 100,
+        "caldo_pollo": 300,
+        "verduras": 200,
+        "tomate": 40,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-ARROZ-DE-ENTRECOTE",
+      "lines": {
+        "arroz": 100,
+        "caldo_pollo": 300,
+        "entrecote": 150,
+        "pimiento_rojo": 40,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-ARROZ-SENYORET",
+      "lines": {
+        "arroz": 100,
+        "fumet": 300,
+        "gambas": 80,
+        "calamar": 60,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-PAELLA-MIXTA",
+      "lines": {
+        "arroz": 100,
+        "caldo_pollo": 150,
+        "fumet": 150,
+        "pollo_paella": 100,
+        "gambas": 50,
+        "mejillones": 80,
+        "calamar": 40,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-ARROZ-NEGRO",
+      "lines": {
+        "arroz": 100,
+        "fumet": 300,
+        "calamar": 100,
+        "tinta": 4,
+        "alioli": 30,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-ARROZ-DE-BOGAVANTE",
+      "lines": {
+        "arroz": 100,
+        "fumet": 300,
+        "bogavante": 1,
+        "tomate": 40,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-ARROZ-CON-PATO-Y-FOIE",
+      "lines": {
+        "arroz": 100,
+        "caldo_pollo": 300,
+        "pato": 120,
+        "foie": 30,
+        "aceite": 15
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-FIDEUA-DE-MARISCOS",
+      "lines": {
+        "fideos": 100,
+        "fumet": 250,
+        "gambas": 60,
+        "mejillones": 80,
+        "calamar": 60,
+        "alioli": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "PAELLAS-REISGERICHTE-FIDEUA-NEGRA-SENYORET",
+      "lines": {
+        "fideos": 100,
+        "fumet": 250,
+        "gambas": 80,
+        "calamar": 60,
+        "tinta": 4,
+        "alioli": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TEIGWAREN-PASTA-MADRILENA",
+      "lines": {
+        "pasta": 120,
+        "salsa_tomate": 120,
+        "chorizo": 80,
+        "pimenton": 2
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TEIGWAREN-PASTA-IBERICA",
+      "lines": {
+        "pasta": 120,
+        "lomo_iberico": 80,
+        "jamon_iberico": 30,
+        "pimiento_rojo": 60,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "TEIGWAREN-PASTA-A-LA-MARINERA",
+      "lines": {
+        "pasta": 120,
+        "almejas": 150,
+        "gambas": 80,
+        "salsa_tomate": 80,
+        "ajo": 5
+      },
+      "variants": {}
+    },
+    {
+      "sku": "MEER-CAZUELA-DE-PESCADO-Y-MARISCOS",
+      "lines": {
+        "pescado_blanco": 150,
+        "gambas": 80,
+        "mejillones": 150,
+        "calamar": 80,
+        "salsa_tomate": 150,
+        "fumet": 150
+      },
+      "variants": {}
+    },
+    {
+      "sku": "MEER-LANGOSTINOS-A-LA-PLANCHA",
+      "lines": {
+        "langostinos": 300,
+        "aceite": 20,
+        "limon": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "MEER-PARRILLADA-DE-PESCADO-Y-MARISCOS",
+      "lines": {
+        "pescado_blanco": 200,
+        "langostinos": 150,
+        "calamar": 100,
+        "mejillones": 150,
+        "verduras": 150,
+        "limon": 1,
+        "aceite": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "MEER-LUBINA-A-LA-VIZCAINA",
+      "lines": {
+        "lubina": 250,
+        "patatas": 150,
+        "pimiento_rojo": 60,
+        "cebolla": 40,
+        "aceite": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "FLEISCHGERICHTE-ENTRECOTE-280-300-G",
+      "lines": {
+        "entrecote": 300,
+        "verduras": 150,
+        "patatas": 200,
+        "aceite": 15
+      },
+      "variants": {}
+    },
+    {
+      "sku": "FLEISCHGERICHTE-COSTILLITAS-HONEY-BBQ",
+      "lines": {
+        "costillas": 450,
+        "salsa_bbq": 60,
+        "patatas_congeladas": 150,
+        "aceite_freir": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "FLEISCHGERICHTE-FLAMINGUITO-DE-POLLO-MANCHEGO-Y-JAMON-SERRANO",
+      "lines": {
+        "pechuga": 220,
+        "manchego": 40,
+        "jamon_serrano": 40,
+        "harina": 30,
+        "huevos": 1,
+        "pan": 40,
+        "patatas_congeladas": 150,
+        "aceite_freir": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "FLEISCHGERICHTE-FLAMINGUITO-DE-POLLO-MANCHEGO-VIEJO-JAMON-IBERIC",
+      "lines": {
+        "pechuga": 220,
+        "manchego_viejo": 40,
+        "jamon_iberico": 40,
+        "boletus": 30,
+        "harina": 30,
+        "huevos": 1,
+        "pan": 40,
+        "patatas_congeladas": 150,
+        "aceite_freir": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "FLEISCHGERICHTE-HUEVOS-ROTOS-CON-JAMON-SERRANO",
+      "lines": {
+        "patatas": 250,
+        "huevos": 2,
+        "jamon_serrano": 60,
+        "aceite_freir": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KINDERMENU-NUGGETS-Y-PATATAS-FRITAS",
+      "lines": {
+        "nuggets": 6,
+        "patatas_congeladas": 150,
+        "aceite_freir": 30,
+        "ketchup": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KINDERMENU-TORTILLA-FRANCESA-Y-PATATAS-FRITAS",
+      "lines": {
+        "huevos": 2,
+        "patatas_congeladas": 150,
+        "aceite_freir": 30,
+        "aceite": 10
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KINDERMENU-TIRAS-DE-PESCADO-Y-PATATAS-FRITAS",
+      "lines": {
+        "tiras_pescado": 4,
+        "patatas_congeladas": 150,
+        "aceite_freir": 30,
+        "tartara": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DESSERTS-FLAN-CASERO",
+      "lines": {
+        "flan": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DESSERTS-CREMA-CATALANA",
+      "lines": {
+        "crema_catalana": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DESSERTS-TARTA-HELADA",
+      "lines": {
+        "tarta_helada": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DESSERTS-COEUR-FONDANT",
+      "lines": {
+        "coeur_fondant": 1,
+        "helado_vainilla": 60
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DESSERTS-TARTA-DE-SANTIAGO",
+      "lines": {
+        "tarta_santiago": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DESSERTS-COUPE-DANEMARK",
+      "lines": {
+        "helado_vainilla": 180,
+        "nata": 40,
+        "salsa_chocolate": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-ZUMO-DE-NARANJA",
+      "lines": {
+        "zumo_naranja": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-ZUMO-DE-PINA",
+      "lines": {
+        "zumo_pina": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-COCA-COLA",
+      "lines": {
+        "coca_cola": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-COCA-COLA-ZERO",
+      "lines": {
+        "coca_cola_zero": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-MINERALWASSER",
+      "lines": {
+        "mineral_5dl": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-SCHWEPPES-TONIC",
+      "lines": {
+        "tonica": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-SCHWEPPES-BITTER-LEMON",
+      "lines": {
+        "bitter_lemon": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-RED-BULL",
+      "lines": {
+        "red_bull": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-SAN-BITTER",
+      "lines": {
+        "san_bitter": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-SIRUP",
+      "lines": {
+        "sirup": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-CAPRI-SUN",
+      "lines": {
+        "capri_sun": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-AGUA-MINERAL",
+      "lines": {
+        "mineral_1l": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-AQUARIUS-NARANJA-LIMON",
+      "lines": {
+        "aquarius_naranja": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ALKOHOLFREIE-GETRANKE-FANTA-NARANJA-LIMON",
+      "lines": {
+        "fanta_naranja": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "BIERE-ESTRELLA-GALICIA-SIN-ALCOHOL",
+      "lines": {
+        "eg_sin": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "BIERE-ESTRELLA-GALICIA-QUINTO",
+      "lines": {
+        "eg_quinto": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "BIERE-ESTRELLA-GALICIA-CANA",
+      "lines": {},
+      "variants": {
+        "Stange": {
+          "barril_eg": 330
+        },
+        "Gross": {
+          "barril_eg": 500
+        }
+      }
+    },
+    {
+      "sku": "BIERE-1906-RED-VINTAGE",
+      "lines": {
+        "red_vintage": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "BIERE-1906-ESTRELLA-GALICIA-CANA",
+      "lines": {},
+      "variants": {
+        "Stange": {
+          "barril_1906": 330
+        },
+        "Gross": {
+          "barril_1906": 500
+        }
+      }
+    },
+    {
+      "sku": "BIERE-1906-ESTRELLA-GALICIA-TERCIO",
+      "lines": {
+        "eg1906_tercio": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "BIERE-HEINEKEN",
+      "lines": {
+        "heineken": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "BIERE-CORONA",
+      "lines": {
+        "corona": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-CAVA",
+      "lines": {
+        "cava_casa": 100
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-TINTO-DE-VERANO",
+      "lines": {
+        "vino_sangria": 150,
+        "gaseosa": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-LIMONCELLO-SPRITZ",
+      "lines": {
+        "limoncello": 40,
+        "cava_casa": 90
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-APEROL-SPRITZ",
+      "lines": {
+        "aperol": 60,
+        "cava_casa": 90
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-CAMPARI-SPRITZ",
+      "lines": {
+        "campari": 60,
+        "cava_casa": 90
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-OCEAN-SPRITZ",
+      "lines": {
+        "blue_curacao": 40,
+        "cava_casa": 90,
+        "tonica": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-CALIMOCHO",
+      "lines": {
+        "vino_sangria": 150,
+        "coca_cola": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-SMIRNOFF-ICE",
+      "lines": {
+        "smirnoff_ice": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-MOJITO",
+      "lines": {
+        "ron_blanco": 50,
+        "lima": 1,
+        "menta": 5,
+        "azucar": 15,
+        "gaseosa": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-MARTINI-ROJO-O-BLANCO",
+      "lines": {
+        "martini_rojo": 60
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-MARTINI-ROJO-BLANCO-CON-GIN",
+      "lines": {
+        "martini_rojo": 40,
+        "gin": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "APERITIFS-MARTINI-ROJO-BLANCO-CON-CERVEZA",
+      "lines": {
+        "martini_rojo": 40,
+        "barril_eg": 200
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-SANGRIA",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "vino_sangria": 150,
+          "gaseosa": 1,
+          "brandy": 10,
+          "fruta_sangria": 40
+        },
+        "Krug": {
+          "vino_sangria": 750,
+          "gaseosa": 2,
+          "brandy": 40,
+          "fruta_sangria": 150
+        }
+      }
+    },
+    {
+      "sku": "COCKTAILS-SANGRIA-BLANCA",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "vino_blanco_sangria": 150,
+          "gaseosa": 1,
+          "triple_sec": 10,
+          "fruta_sangria": 40
+        },
+        "Krug": {
+          "vino_blanco_sangria": 750,
+          "gaseosa": 2,
+          "triple_sec": 40,
+          "fruta_sangria": 150
+        }
+      }
+    },
+    {
+      "sku": "COCKTAILS-SANGRIA-DE-CAVA",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "cava_casa": 150,
+          "triple_sec": 10,
+          "fruta_sangria": 40
+        },
+        "Krug": {
+          "cava_casa": 750,
+          "triple_sec": 40,
+          "fruta_sangria": 150
+        }
+      }
+    },
+    {
+      "sku": "COCKTAILS-AGUA-DE-VALENCIA",
+      "lines": {
+        "cava_casa": 100,
+        "zumo_naranja_natural": 100,
+        "vodka": 20,
+        "gin": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-GIN-TONIC",
+      "lines": {
+        "gin": 50,
+        "tonica": 1,
+        "limon": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-AMERICANO",
+      "lines": {
+        "campari": 30,
+        "martini_rojo": 30,
+        "gaseosa": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-AMARETTO-SOUR",
+      "lines": {
+        "amaretto": 50,
+        "zumo_limon": 30,
+        "azucar": 10
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-CAIPIRINA",
+      "lines": {
+        "cachaca": 50,
+        "lima": 1,
+        "azucar": 15
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-ESPRESSO-MARTINI",
+      "lines": {
+        "vodka": 40,
+        "licor_cafe": 20,
+        "cafe_grano": 8
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-CUBATA-WHISKY-COLA",
+      "lines": {
+        "whisky_red": 50,
+        "coca_cola": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-CUBATA-RON-COLA",
+      "lines": {
+        "ron_brugal": 50,
+        "coca_cola": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-CARIBBEAN-SUNSET",
+      "lines": {
+        "ron_blanco": 40,
+        "zumo_pina_brick": 80,
+        "zumo_naranja_natural": 40,
+        "granadina": 10
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-LONG-ISLAND-ICED-TEA",
+      "lines": {
+        "vodka": 15,
+        "gin": 15,
+        "ron_blanco": 15,
+        "tequila": 15,
+        "triple_sec": 15,
+        "zumo_limon": 20,
+        "coca_cola": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-BLUE-LAGOON-ISLAND",
+      "lines": {
+        "vodka": 40,
+        "blue_curacao": 20,
+        "zumo_limon": 20,
+        "gaseosa": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-SKINNY-BITCH",
+      "lines": {
+        "vodka": 50,
+        "zumo_limon": 20,
+        "gaseosa": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-SOUR-43",
+      "lines": {
+        "licor43": 50,
+        "zumo_limon": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-CARAJILLO-43",
+      "lines": {
+        "licor43": 40,
+        "cafe_grano": 8
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-GOD-FATHER",
+      "lines": {
+        "whisky_red": 40,
+        "amaretto": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-VODKA-TONIC",
+      "lines": {
+        "vodka": 50,
+        "tonica": 1
+      },
+      "variants": {}
+    },
+    {
+      "sku": "COCKTAILS-BRAMULE",
+      "lines": {
+        "gin": 40,
+        "mora": 20,
+        "zumo_limon": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-BAILEYS",
+      "lines": {
+        "baileys": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-BRANDY-CARLOS-I",
+      "lines": {
+        "brandy": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-RON-LEYENDA",
+      "lines": {
+        "ron_leyenda": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-CHIVAS",
+      "lines": {
+        "chivas": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-CHIVAS-18-ANOS",
+      "lines": {
+        "chivas18": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-CONAC-GRAN-DUQUE-DE-ALBA",
+      "lines": {
+        "conac": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-RON-BRUGAL",
+      "lines": {
+        "ron_brugal": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-RON-BARCELO",
+      "lines": {
+        "ron_barcelo": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-JOHNNIE-WALKER-BLACK-LABEL",
+      "lines": {
+        "whisky_black": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SPIRITUOSEN-JOHNNIE-WALKER-RED-LABEL",
+      "lines": {
+        "whisky_red": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DIGESTIFS-LICOR-DE-HIERBAS",
+      "lines": {
+        "licor_hierbas": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DIGESTIFS-LICOR-DE-CAFE",
+      "lines": {
+        "licor_cafe": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DIGESTIFS-ANIS",
+      "lines": {
+        "anis": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "DIGESTIFS-CREMA-DE-ORUJO",
+      "lines": {
+        "crema_orujo": 40
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-LICOR-DE-CAFE",
+      "lines": {
+        "licor_cafe": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-TEQUILA",
+      "lines": {
+        "tequila": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-CREMA-DE-ORUJO",
+      "lines": {
+        "crema_orujo": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-BLACK-SOUR-KISS",
+      "lines": {
+        "vodka": 10,
+        "mora": 10
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-LICOR-DE-HIERBAS",
+      "lines": {
+        "licor_hierbas": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-BALAS-DE-PLATA",
+      "lines": {
+        "vodka": 10,
+        "licor43": 10
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-LICOR-43",
+      "lines": {
+        "licor43": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-BLUE-KAMIKAZE",
+      "lines": {
+        "vodka": 10,
+        "blue_curacao": 5,
+        "zumo_limon": 5
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-TEQUILA-SUNRISE-SHOT",
+      "lines": {
+        "tequila": 15,
+        "granadina": 5
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-LIMONCELLO",
+      "lines": {
+        "limoncello": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-JAGERMEISTER",
+      "lines": {
+        "jager": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "SHOTS-ANIS",
+      "lines": {
+        "anis": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-CAFE-BOMBON",
+      "lines": {
+        "cafe_grano": 8,
+        "leche_condensada": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-CAFE-DE-LA-CASA",
+      "lines": {
+        "cafe_grano": 8,
+        "leche": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-ESPRESSO",
+      "lines": {
+        "cafe_grano": 8
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-DOBLE-ESPRESSO",
+      "lines": {
+        "cafe_grano": 16
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-CAFE-CON-LECHE",
+      "lines": {
+        "cafe_grano": 8,
+        "leche": 150
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-CAPPUCCINO",
+      "lines": {
+        "cafe_grano": 8,
+        "leche": 120
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-MOCHA",
+      "lines": {
+        "cafe_grano": 8,
+        "leche": 120,
+        "cacao": 10
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-ESPRESSO-MACCHIATO",
+      "lines": {
+        "cafe_grano": 8,
+        "leche": 20
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-LATTE-MACCHIATO",
+      "lines": {
+        "cafe_grano": 8,
+        "leche": 200
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-CARAJILLO-NORMAL",
+      "lines": {
+        "cafe_grano": 8,
+        "brandy": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-CARAJILLO-CARLOS-I",
+      "lines": {
+        "cafe_grano": 8,
+        "brandy": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "KAFFEE-CARAJILLO-SPECIAL-RUM",
+      "lines": {
+        "cafe_grano": 8,
+        "ron_barcelo": 30
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ROTWEIN-HACIENDA-MONASTERIO",
+      "lines": {
+        "hacienda_monasterio": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ROTWEIN-MAURO",
+      "lines": {},
+      "variants": {
+        "Flasche": {
+          "mauro": 750
+        },
+        "Magnum": {
+          "mauro": 1500
+        }
+      }
+    },
+    {
+      "sku": "ROTWEIN-PAGOS-DE-ANGUIX-COSTALARA",
+      "lines": {
+        "costalara": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ROTWEIN-MARQUES-DE-RISCAL-RESERVA-XR",
+      "lines": {
+        "riscal_xr": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ROTWEIN-PORTIA-GALA-RESERVA",
+      "lines": {
+        "portia_gala": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ROTWEIN-PAGOS-DE-ANGUIX-OCHO-DOS-DOS",
+      "lines": {
+        "ocho_dos_dos": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ROTWEIN-RAMON-BILBAO-EDICION-LIMITADA",
+      "lines": {
+        "ramon_bilbao": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "ROTWEIN-PORTIA-ROBLE",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "portia_roble": 100
+        },
+        "Flasche": {
+          "portia_roble": 750
+        }
+      }
+    },
+    {
+      "sku": "ROTWEIN-VALDOURO",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "valdouro": 100
+        },
+        "Flasche": {
+          "valdouro": 750
+        }
+      }
+    },
+    {
+      "sku": "WEISSWEIN-MAR-DE-FRADES",
+      "lines": {
+        "mar_de_frades": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "WEISSWEIN-ENTREMUNDOS",
+      "lines": {
+        "entremundos": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "WEISSWEIN-ORGANISTRUM",
+      "lines": {
+        "organistrum": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "WEISSWEIN-TERRAS-GAUDA",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "terras_gauda": 100
+        },
+        "Flasche": {
+          "terras_gauda": 750
+        }
+      }
+    },
+    {
+      "sku": "WEISSWEIN-FORTIUS",
+      "lines": {
+        "fortius": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "WEISSWEIN-FINCA-MONTICO-GRAN-RUEDA",
+      "lines": {
+        "montico": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "WEISSWEIN-VINA-ABAD",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "vina_abad": 100
+        },
+        "Flasche": {
+          "vina_abad": 750
+        }
+      }
+    },
+    {
+      "sku": "CAVA-JUVE-CAMPS-RESERVA-DE-LA-FAMILIA-BRUT",
+      "lines": {
+        "juve_camps": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "CAVA-FAUSTINO-CAVA-RESERVA-BRUT",
+      "lines": {
+        "faustino_cava": 750
+      },
+      "variants": {}
+    },
+    {
+      "sku": "CAVA-CAVA-DE-LA-CASA",
+      "lines": {},
+      "variants": {
+        "Glas": {
+          "cava_casa": 100
+        }
+      }
+    }
+  ]
+}

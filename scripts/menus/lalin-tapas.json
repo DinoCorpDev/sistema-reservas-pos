@@ -1,6 +1,6 @@
 {
   "source": "https://www.lalintapas.ch/carta (Speisen, Getränke, Weine)",
-  "retrievedAt": "2026-10-13",
+  "retrievedAt": "2026-11-24",
   "stations": {
     "kitchen": "Küche",
     "bar": "Bar",
@@ -1982,12 +1982,12 @@
           ]
         },
         {
-          "sku": "ROTWEIN-MATARROMERA-CRIANZA",
-          "name": "Matarromera Crianza",
-          "description": "Tempranillo · Ribera del Duero.",
+          "sku": "ROTWEIN-PAGOS-DE-ANGUIX-COSTALARA",
+          "name": "Pagos de Anguix Costalara",
+          "description": "Tinta Fina · Ribera del Duero.",
           "en": {
-            "name": "Matarromera Crianza",
-            "description": "Tempranillo · Ribera del Duero."
+            "name": "Pagos de Anguix Costalara",
+            "description": "Tinta Fina · Ribera del Duero."
           },
           "priceChf": "54.00",
           "taxCategory": "alcoholic_beverage"
@@ -2012,6 +2012,17 @@
             "description": "Tempranillo · Ribera del Duero."
           },
           "priceChf": "52.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
+          "sku": "ROTWEIN-PAGOS-DE-ANGUIX-OCHO-DOS-DOS",
+          "name": "Pagos de Anguix Ocho Dos Dos",
+          "description": "Tempranillo · Ribera del Duero.",
+          "en": {
+            "name": "Pagos de Anguix Ocho Dos Dos",
+            "description": "Tempranillo · Ribera del Duero."
+          },
+          "priceChf": "49.00",
           "taxCategory": "alcoholic_beverage"
         },
         {
@@ -2103,6 +2114,17 @@
           "taxCategory": "alcoholic_beverage"
         },
         {
+          "sku": "WEISSWEIN-ORGANISTRUM",
+          "name": "Organistrum",
+          "description": "Albariño · Rías Baixas.",
+          "en": {
+            "name": "Organistrum",
+            "description": "Albariño · Rías Baixas."
+          },
+          "priceChf": "43.00",
+          "taxCategory": "alcoholic_beverage"
+        },
+        {
           "sku": "WEISSWEIN-TERRAS-GAUDA",
           "name": "Terras Gauda",
           "description": "Albariño, Loureiro & Caiño Blanco · Rías Baixas.",
@@ -2124,6 +2146,17 @@
               "priceChf": "40.00"
             }
           ]
+        },
+        {
+          "sku": "WEISSWEIN-FORTIUS",
+          "name": "Fortius",
+          "description": "Chardonnay · Navarra.",
+          "en": {
+            "name": "Fortius",
+            "description": "Chardonnay · Navarra."
+          },
+          "priceChf": "40.00",
+          "taxCategory": "alcoholic_beverage"
         },
         {
           "sku": "WEISSWEIN-FINCA-MONTICO-GRAN-RUEDA",
