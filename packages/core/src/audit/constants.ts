@@ -36,6 +36,11 @@ export const AUDIT_ACTIONS = [
   'location.settings_changed',
   'operation.activated',
   'user.created',
+  // joining from one's own phone (DEC-055)
+  'user.invite_issued',
+  'user.registration_submitted',
+  'user.registration_approved',
+  'user.registration_rejected',
   'user.changed',
   'role.permissions_changed',
   'user.pin_changed',

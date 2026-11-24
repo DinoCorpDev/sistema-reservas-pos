@@ -234,7 +234,9 @@
       "terminal": "Gerät",
       "user": "Person",
       "phone_pairing_code": "Code für Service-Telefone",
-      "time_entry": "Arbeitszeit"
+      "time_entry": "Arbeitszeit",
+      "staff_invite": "Einladung",
+      "staff_registration": "Beitritt"
     },
     "allTerminals": "Alle Geräte",
     "exportCsv": "CSV exportieren",
@@ -291,7 +293,11 @@
       "pin_changed": "PIN geändert",
       "password_changed": "Passwort geändert",
       "two_factor_enabled": "Zwei-Faktor-Anmeldung aktiviert",
-      "two_factor_disabled": "Zwei-Faktor-Anmeldung deaktiviert"
+      "two_factor_disabled": "Zwei-Faktor-Anmeldung deaktiviert",
+      "invite_issued": "Einladung für Kellner erstellt",
+      "registration_submitted": "Mit QR-Code beigetreten",
+      "registration_approved": "Beitritt freigegeben",
+      "registration_rejected": "Beitritt abgelehnt"
     },
     "role": {
       "permissions_changed": "Berechtigungen einer Rolle geändert"

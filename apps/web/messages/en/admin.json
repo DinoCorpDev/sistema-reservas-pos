@@ -234,7 +234,9 @@
       "terminal": "Device",
       "user": "Person",
       "phone_pairing_code": "Code for service phones",
-      "time_entry": "Working time"
+      "time_entry": "Working time",
+      "staff_invite": "Invitation",
+      "staff_registration": "Joining"
     },
     "allTerminals": "All devices",
     "exportCsv": "Export CSV",
@@ -291,7 +293,11 @@
       "pin_changed": "PIN changed",
       "password_changed": "Password changed",
       "two_factor_enabled": "Two-factor sign-in enabled",
-      "two_factor_disabled": "Two-factor sign-in disabled"
+      "two_factor_disabled": "Two-factor sign-in disabled",
+      "invite_issued": "Waiter invitation created",
+      "registration_submitted": "Joined with the QR code",
+      "registration_approved": "Joining approved",
+      "registration_rejected": "Joining rejected"
     },
     "role": {
       "permissions_changed": "Role permissions changed"

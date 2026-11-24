@@ -89,3 +89,25 @@ export async function setRolePermissions(id: string, input: unknown) {
     return done(await explainConflict(work, { rule: t('adminLocked') }));
   });
 }
+
+// ── New waiters from their own phone (DEC-055) ──────────────────────────────
+
+/** A code for the QR that new waiters scan; shown once. */
+export async function issueStaffInvite() {
+  return runAction(async () => people.issueStaffInvite(deps(), await currentActor()));
+}
+
+/** Lets the person in: a waiter with the PIN they chose. */
+export async function approveRegistration(id: string) {
+  return runAction(async () => {
+    const { fields } = await userMessages();
+    const work = people.approveStaffRegistration(deps(), await currentActor(), id);
+    return done(await explainConflict(work, { fields }));
+  });
+}
+
+export async function rejectRegistration(id: string) {
+  return runAction(async () =>
+    done(await people.rejectStaffRegistration(deps(), await currentActor(), id)),
+  );
+}

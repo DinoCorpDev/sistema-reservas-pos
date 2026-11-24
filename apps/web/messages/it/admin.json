@@ -234,7 +234,9 @@
       "terminal": "Dispositivo",
       "user": "Persona",
       "phone_pairing_code": "Codice per telefoni di servizio",
-      "time_entry": "Orario"
+      "time_entry": "Orario",
+      "staff_invite": "Invito",
+      "staff_registration": "Ingresso"
     },
     "allTerminals": "Tutti i dispositivi",
     "exportCsv": "Esporta CSV",
@@ -291,7 +293,11 @@
       "pin_changed": "PIN modificato",
       "password_changed": "Password modificata",
       "two_factor_enabled": "Accesso a due fattori attivato",
-      "two_factor_disabled": "Accesso a due fattori disattivato"
+      "two_factor_disabled": "Accesso a due fattori disattivato",
+      "invite_issued": "Invito per camerieri creato",
+      "registration_submitted": "Unito con il QR",
+      "registration_approved": "Ingresso approvato",
+      "registration_rejected": "Ingresso rifiutato"
     },
     "role": {
       "permissions_changed": "Autorizzazioni di un ruolo modificate"

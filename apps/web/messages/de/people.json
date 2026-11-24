@@ -184,7 +184,25 @@
     "access": "Zugang",
     "countLine": "{count, plural, one {# Person} other {# Personen}} mit Zugang zu Kasse oder Backoffice",
     "emptyHint": "Legen Sie die erste Person an: mit PIN für die Kasse, mit E-Mail für das Backoffice.",
-    "pinOnly": "Nur Kasse (PIN)"
+    "pinOnly": "Nur Kasse (PIN)",
+    "join": {
+      "invite": "Kellner einladen",
+      "title": "Neue Kellner einladen",
+      "hint": "Die neue Person scannt den QR-Code mit ihrem Telefon und gibt Name, PIN und Sprache ein. Danach geben Sie sie hier frei.",
+      "qrLabel": "Link zum Beitreten",
+      "orCode": "Oder unter /join diesen Code eingeben:",
+      "valid": "Gültig bis {time}, für bis zu {count} Personen.",
+      "copy": "Link kopieren",
+      "copied": "Link kopiert",
+      "close": "Schliessen",
+      "pendingTitle": "Warten auf Freigabe",
+      "pendingHint": "Sie sind mit dem QR-Code beigetreten. Erst nach der Freigabe öffnet ihre PIN die Kasse.",
+      "joined": "Beigetreten {when} · {language}",
+      "approve": "Freigeben",
+      "reject": "Ablehnen",
+      "approved": "Freigegeben: Die PIN öffnet jetzt die Kasse",
+      "rejected": "Abgelehnt"
+    }
   },
   "roles": {
     "names": {
@@ -414,6 +432,33 @@
       "saved": "Stempelung korrigiert",
       "cancel": "Abbrechen",
       "close": "Schliessen"
+    }
+  },
+  "join": {
+    "title": "Willkommen im Team",
+    "subtitle": "Name, PIN und Sprache: Ihre Führungsperson gibt Sie danach frei.",
+    "home": "Zur Startseite",
+    "code": "Einladungscode",
+    "codeHint": "Steht unter dem QR-Code im Backoffice.",
+    "name": "Ihr Name",
+    "nameHint": "So sieht ihn das Team an der Kasse.",
+    "pin": "PIN",
+    "pinRepeat": "PIN wiederholen",
+    "pinHint": "4 bis 6 Ziffern. Damit öffnen Sie die Kasse; teilen Sie sie mit niemandem.",
+    "language": "Sprache an der Kasse",
+    "submit": "Beitreten",
+    "sending": "Wird gesendet…",
+    "done": {
+      "title": "Fertig, {name}!",
+      "text": "Ihre Führungsperson muss Sie noch freigeben. Danach öffnen Sie die Kasse von {location} mit Ihrer PIN."
+    },
+    "errors": {
+      "pinLength": "Die PIN hat 4 bis 6 Ziffern.",
+      "pinMismatch": "Die beiden PINs stimmen nicht überein.",
+      "pinTaken": "Diese PIN ist schon vergeben. Wählen Sie eine andere.",
+      "invalid_code": "Dieser Code gilt nicht mehr. Bitten Sie um einen neuen QR-Code.",
+      "invalid": "Prüfen Sie Name und PIN.",
+      "error": "Das hat nicht geklappt. Versuchen Sie es noch einmal."
     }
   }
 }

@@ -17,6 +17,7 @@ import {
   pinLookup,
   runCommand,
   schema as s,
+  type TenantContext,
   type Transaction,
 } from '@pos/db';
 import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
@@ -67,7 +68,11 @@ async function assertLocations(deps: ServiceDeps, actor: Actor, ids: readonly st
   return unique;
 }
 
-async function roleIdsByKey(deps: ServiceDeps, actor: Actor, keys: readonly RoleKey[]) {
+export async function roleIdsByKey(
+  deps: ServiceDeps,
+  actor: TenantContext,
+  keys: readonly RoleKey[],
+) {
   const unique = [...new Set(keys)];
   const rows = await deps.db
     .select({ id: s.roles.id, key: s.roles.key })
@@ -78,7 +83,10 @@ async function roleIdsByKey(deps: ServiceDeps, actor: Actor, keys: readonly Role
 }
 
 /** The organization's PIN key (DEC-015), created on first use. */
-async function ensurePinKey(deps: ServiceDeps, actor: Actor): Promise<string> {
+export async function ensurePinKey(
+  deps: ServiceDeps,
+  actor: Pick<TenantContext, 'organizationId'>,
+): Promise<string> {
   const read = async () => {
     const [org] = await deps.db
       .select({ pinKey: s.organizations.pinKey })
@@ -98,7 +106,7 @@ async function ensurePinKey(deps: ServiceDeps, actor: Actor): Promise<string> {
 }
 
 /** Maps the unique indexes of `users` to a 409 that names the field, never the other user. */
-function userConflict(error: unknown): never {
+export function userConflict(error: unknown): never {
   if (isDuplicateKey(error)) {
     const text = [error, (error as { cause?: unknown }).cause]
       .map((e) => (e as { message?: string } | undefined)?.message ?? '')

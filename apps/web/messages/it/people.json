@@ -184,7 +184,25 @@
     "access": "Accesso",
     "countLine": "{count, plural, one {# persona} other {# persone}} con accesso alla cassa o al backoffice",
     "emptyHint": "Create la prima persona: con PIN per la cassa, con e-mail per il backoffice.",
-    "pinOnly": "Solo cassa (PIN)"
+    "pinOnly": "Solo cassa (PIN)",
+    "join": {
+      "invite": "Invita cameriere",
+      "title": "Invitare nuovi camerieri",
+      "hint": "La persona scansiona il QR con il telefono e inserisce nome, PIN e lingua. Poi la approvate qui.",
+      "qrLabel": "Link per unirsi",
+      "orCode": "Oppure su /join, questo codice:",
+      "valid": "Valido fino alle {time}, per al massimo {count} persone.",
+      "copy": "Copia link",
+      "copied": "Link copiato",
+      "close": "Chiudi",
+      "pendingTitle": "In attesa di approvazione",
+      "pendingHint": "Si sono uniti con il QR. Il loro PIN apre la cassa solo dopo l'approvazione.",
+      "joined": "Unito {when} · {language}",
+      "approve": "Approva",
+      "reject": "Rifiuta",
+      "approved": "Approvato: il PIN ora apre la cassa",
+      "rejected": "Rifiutato"
+    }
   },
   "roles": {
     "names": {
@@ -414,6 +432,33 @@
       "saved": "Turno corretto",
       "cancel": "Annulla",
       "close": "Chiudi"
+    }
+  },
+  "join": {
+    "title": "Benvenuti nel team",
+    "subtitle": "Nome, PIN e lingua: poi il responsabile vi approva.",
+    "home": "Alla pagina iniziale",
+    "code": "Codice d'invito",
+    "codeHint": "Si trova sotto il QR nel backoffice.",
+    "name": "Il vostro nome",
+    "nameHint": "Così vi vedrà il team in cassa.",
+    "pin": "PIN",
+    "pinRepeat": "Ripetete il PIN",
+    "pinHint": "Da 4 a 6 cifre. Apre la cassa; non ditelo a nessuno.",
+    "language": "Lingua in cassa",
+    "submit": "Unisciti",
+    "sending": "Invio…",
+    "done": {
+      "title": "Fatto, {name}!",
+      "text": "Il responsabile deve ancora approvarvi. Poi aprite la cassa di {location} con il vostro PIN."
+    },
+    "errors": {
+      "pinLength": "Il PIN ha da 4 a 6 cifre.",
+      "pinMismatch": "I due PIN non coincidono.",
+      "pinTaken": "Questo PIN è già in uso. Sceglietene un altro.",
+      "invalid_code": "Questo codice non vale più. Chiedete un nuovo QR.",
+      "invalid": "Controllate nome e PIN.",
+      "error": "Non ha funzionato. Riprovate."
     }
   }
 }

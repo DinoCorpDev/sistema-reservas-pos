@@ -10,3 +10,4 @@ export * from './authorization';
 export * from './setup-checklist';
 export * from './commands';
 export * from './time-entries';
+export * from './registration';

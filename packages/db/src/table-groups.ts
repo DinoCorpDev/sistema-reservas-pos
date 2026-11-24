@@ -23,6 +23,8 @@ export const TABLE_GROUPS = {
     s.diningTables,
     s.terminals,
     s.phonePairingCodes,
+    s.staffInvites,
+    s.staffRegistrations,
     s.kitchenStations,
     s.printers,
   ],

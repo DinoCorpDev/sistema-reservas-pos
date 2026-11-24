@@ -1,5 +1,14 @@
-import { boolean, char, int, mysqlTable, uniqueIndex, varchar } from 'drizzle-orm/mysql-core';
-import { organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
+import {
+  boolean,
+  char,
+  index,
+  int,
+  mysqlTable,
+  smallint,
+  uniqueIndex,
+  varchar,
+} from 'drizzle-orm/mysql-core';
+import { locationId, organizationId, primaryId, timestamps, utcDatetime, uuid } from '../columns';
 import { locations, organizations } from './organization';
 
 /**
@@ -102,4 +111,56 @@ export const rolePermissions = mysqlTable(
     ...timestamps(),
   },
   (t) => [uniqueIndex('uq_role_permissions').on(t.roleId, t.permission)],
+);
+
+/**
+ * A code to join the team from one's own phone (DEC-055), shown as a QR by a manager: an hour,
+ * up to ten people, and it dies after five rejected attempts. Only its hash is stored.
+ */
+export const staffInvites = mysqlTable(
+  'staff_invites',
+  {
+    id: primaryId(),
+    organizationId: organizationId().references(() => organizations.id),
+    locationId: locationId().references(() => locations.id),
+    /** SHA-256 of the normalized code. */
+    codeHash: char('code_hash', { length: 64 }).notNull(),
+    /** The role the people who join get (a waiter). */
+    roleKey: varchar('role_key', { length: 32 }).notNull().default('waiter'),
+    expiresAt: utcDatetime('expires_at').notNull(),
+    maxUses: smallint('max_uses').notNull().default(10),
+    uses: smallint('uses').notNull().default(0),
+    failedAttempts: smallint('failed_attempts').notNull().default(0),
+    createdByUserId: uuid('created_by_user_id'),
+    ...timestamps(),
+  },
+  (t) => [uniqueIndex('uq_staff_invites_code').on(t.codeHash)],
+);
+
+/**
+ * Someone who joined with an invitation and waits for the manager (DEC-055). The PIN is kept
+ * only as its hash and its lookup, ready to become a user on approval; nothing opens before.
+ */
+export const staffRegistrations = mysqlTable(
+  'staff_registrations',
+  {
+    id: primaryId(),
+    organizationId: organizationId().references(() => organizations.id),
+    locationId: locationId().references(() => locations.id),
+    inviteId: uuid('invite_id')
+      .notNull()
+      .references(() => staffInvites.id),
+    displayName: varchar('display_name', { length: 100 }).notNull(),
+    uiLanguage: char('ui_language', { length: 2 }).notNull().default('de'),
+    pinHash: varchar('pin_hash', { length: 255 }).notNull(),
+    pinLookup: char('pin_lookup', { length: 64 }).notNull(),
+    /** `pending`, `approved` or `rejected` (REGISTRATION_STATUSES). */
+    status: varchar('status', { length: 16 }).notNull().default('pending'),
+    decidedByUserId: uuid('decided_by_user_id'),
+    decidedAt: utcDatetime('decided_at'),
+    /** The user created on approval. */
+    userId: uuid('user_id').references(() => users.id),
+    ...timestamps(),
+  },
+  (t) => [index('idx_staff_registrations_status').on(t.locationId, t.status)],
 );

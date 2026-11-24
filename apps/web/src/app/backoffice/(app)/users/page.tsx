@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { PageHeader } from '@/components/backoffice/page-header';
 import { currentActor, deps } from '@/server/actor';
+import { InviteWaiterButton, PendingRegistrations } from './join-requests';
 import { RolesManager } from './roles-manager';
 import { UsersManager } from './users-manager';
 
@@ -28,17 +29,25 @@ export default async function UsersPage({
       </>
     );
   }
-  const [users, roles, allLocations] = await Promise.all([
+  const [users, roles, allLocations, pending] = await Promise.all([
     people.listUsers(deps(), actor),
     people.listRoles(deps(), actor),
     locations.listLocations(deps(), actor),
+    // New waiters who joined from their phone (DEC-055); they join a location.
+    actor.locationId ? people.listStaffRegistrations(deps(), actor) : Promise.resolve([]),
   ]);
   const { tab } = await searchParams;
   const canEdit = actor.permissions.has('user.manage');
 
   return (
     <>
-      <PageHeader nav="users" title={t('title')} description={t('description')} />
+      <PageHeader
+        nav="users"
+        title={t('title')}
+        description={t('description')}
+        actions={actor.locationId ? <InviteWaiterButton /> : null}
+      />
+      <PendingRegistrations registrations={pending} />
       <Tabs defaultValue={tab === 'roles' ? 'roles' : 'users'}>
         <TabsList>
           <TabsTrigger value="users">

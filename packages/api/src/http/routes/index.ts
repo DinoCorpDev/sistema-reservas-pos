@@ -6,6 +6,7 @@ import { registerInventoryRoutes } from './inventory';
 import { registerLocationRoutes } from './locations';
 import { registerPeopleRoutes } from './people';
 import { registerPosRoutes } from './pos';
+import { registerRegistrationRoutes } from './registrations';
 import { registerReportRoutes } from './reports';
 import { registerSyncRoutes } from './sync';
 import { registerSystemRoutes } from './system';
@@ -17,6 +18,7 @@ export function registerRoutes(app: ApiApp) {
   registerLocationRoutes(app);
   registerPeopleRoutes(app);
   registerTimeRoutes(app);
+  registerRegistrationRoutes(app);
   registerCatalogRoutes(app);
   registerInventoryRoutes(app);
   registerAdminRoutes(app);

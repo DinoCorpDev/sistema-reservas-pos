@@ -234,7 +234,9 @@
       "terminal": "Appareil",
       "user": "Personne",
       "phone_pairing_code": "Code pour téléphones de service",
-      "time_entry": "Temps de travail"
+      "time_entry": "Temps de travail",
+      "staff_invite": "Invitation",
+      "staff_registration": "Arrivée"
     },
     "allTerminals": "Tous les appareils",
     "exportCsv": "Exporter en CSV",
@@ -291,7 +293,11 @@
       "pin_changed": "PIN modifié",
       "password_changed": "Mot de passe modifié",
       "two_factor_enabled": "Connexion à deux facteurs activée",
-      "two_factor_disabled": "Connexion à deux facteurs désactivée"
+      "two_factor_disabled": "Connexion à deux facteurs désactivée",
+      "invite_issued": "Invitation de serveurs créée",
+      "registration_submitted": "A rejoint avec le QR",
+      "registration_approved": "Arrivée validée",
+      "registration_rejected": "Arrivée refusée"
     },
     "role": {
       "permissions_changed": "Autorisations d’un rôle modifiées"

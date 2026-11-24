@@ -28,7 +28,7 @@ export function LanguagePicker({
         })
       }
     >
-      <SelectTrigger aria-label={label} className="w-40">
+      <SelectTrigger aria-label={label} className="w-36 sm:w-40">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

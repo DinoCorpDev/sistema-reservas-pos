@@ -234,7 +234,9 @@
       "terminal": "Dispositivo",
       "user": "Persona",
       "phone_pairing_code": "Código para teléfonos de meseros",
-      "time_entry": "Horario"
+      "time_entry": "Horario",
+      "staff_invite": "Invitación",
+      "staff_registration": "Ingreso"
     },
     "allTerminals": "Todos los dispositivos",
     "exportCsv": "Exportar CSV",
@@ -291,7 +293,11 @@
       "pin_changed": "PIN cambiado",
       "password_changed": "Contraseña cambiada",
       "two_factor_enabled": "Inicio de sesión en dos pasos activado",
-      "two_factor_disabled": "Inicio de sesión en dos pasos desactivado"
+      "two_factor_disabled": "Inicio de sesión en dos pasos desactivado",
+      "invite_issued": "Invitación para meseros creada",
+      "registration_submitted": "Se unió con el QR",
+      "registration_approved": "Ingreso aprobado",
+      "registration_rejected": "Ingreso rechazado"
     },
     "role": {
       "permissions_changed": "Permisos de un rol cambiados"

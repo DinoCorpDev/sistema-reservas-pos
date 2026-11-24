@@ -34,7 +34,7 @@ export async function AuthShell({
     { icon: ReceiptTextIcon, text: t('auth.featureTax') },
   ];
   return (
-    <main className="grid min-h-dvh bg-background lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
+    <main className="grid min-h-dvh grid-cols-1 bg-background lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
       <section className="relative hidden overflow-hidden bg-chrome p-12 text-chrome-foreground lg:flex lg:flex-col lg:justify-between">
         {/* Atmosphere: teal light from two corners, the brand's large dot, a little grain. */}
         <div
@@ -81,7 +81,7 @@ export async function AuthShell({
       </section>
 
       <section className="flex min-h-dvh flex-col bg-atmosphere p-6 sm:p-10">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="lg:invisible">
             <span className="sr-only">{t('app.name')}</span>
             <ZitasLogo />

@@ -642,6 +642,24 @@ RF-A09 (_Podría_, post-piloto) se adelanta a pedido de Juan (23 nov 2026): sabe
 - **API:** `GET /api/v1/time-entries?from&to` y `PUT /api/v1/time-entries/{id}`.
 - **Para después:** pausas, horas planificadas contra trabajadas, cálculo L-GAV (horas extra, vacaciones) y entrada manual de un turno sin fichaje.
 
+## DEC-055 · Alta de mesero por QR, aprobada por el gerente
+
+Pedido de Juan (23 nov 2026): registrar a un mesero nuevo tiene que ser muy fácil. Eligió el QR en el teléfono del mesero, con aprobación del gerente (_Podría_, mejora de RF-A04).
+
+- **Invitar.** En Personal, «Invitar mesero» muestra un QR con un código de 8 caracteres (como el de los teléfonos, DEC-036).
+  - Vale 60 minutos y sirve para hasta 10 personas: un equipo nuevo se une de una vez.
+  - Solo se guarda el hash del código. Hace falta `user.manage` y que el plan admita más personas (DEC-045).
+- **Unirse** (`/join?code=…`, pública, sin sesión): nombre, PIN dos veces e idioma.
+  - El PIN se guarda desde el principio solo como hash y `pin_lookup` (DEC-015).
+  - Un PIN que ya tiene alguien de la organización, o alguien que espera aprobación, se rechaza con «elige otro» y cuenta como intento fallido. A los cinco, el código muere: así nadie averigua PINs probando.
+- **Aprobar o rechazar.** En Personal, la tarjeta «Pendientes de aprobar».
+  - Aprobar crea el usuario con el rol del código (mesero), la sede del código y el PIN elegido, con la auditoría `user.created` (`source: registration`).
+  - Rechazar no borra nada. Antes de la aprobación, el PIN no abre nada.
+- **Datos:** `staff_invites` y `staff_registrations` (configuración de la sede; migración 0028). Auditoría `user.invite_issued`, `user.registration_submitted`, `user.registration_approved` y `user.registration_rejected`.
+- **API:** `POST /staff-invites`, `POST /staff-registrations` (anónima), `GET /staff-registrations` y `POST /staff-registrations/{id}/approve|reject`.
+- **De paso:** el marco de las pantallas de acceso (`AuthShell`) ya no se desborda a lo ancho en un teléfono (también `/login`).
+- **Para después:** invitar con otro rol (cocina, caja), aviso al gerente cuando alguien espera y un contador en el menú.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

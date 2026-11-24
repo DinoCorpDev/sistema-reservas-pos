@@ -184,7 +184,25 @@
     "access": "Accès",
     "countLine": "{count, plural, one {# personne} other {# personnes}} avec accès à la caisse ou au backoffice",
     "emptyHint": "Créez la première personne : avec un PIN pour la caisse, avec un e-mail pour le backoffice.",
-    "pinOnly": "Caisse seulement (PIN)"
+    "pinOnly": "Caisse seulement (PIN)",
+    "join": {
+      "invite": "Inviter un serveur",
+      "title": "Inviter de nouveaux serveurs",
+      "hint": "La personne scanne le QR avec son téléphone et saisit son nom, son PIN et sa langue. Vous la validez ensuite ici.",
+      "qrLabel": "Lien pour rejoindre",
+      "orCode": "Ou sur /join, ce code :",
+      "valid": "Valable jusqu'à {time}, pour {count} personnes au plus.",
+      "copy": "Copier le lien",
+      "copied": "Lien copié",
+      "close": "Fermer",
+      "pendingTitle": "En attente de validation",
+      "pendingHint": "Ils ont rejoint avec le QR. Leur PIN n'ouvre la caisse qu'après votre validation.",
+      "joined": "A rejoint {when} · {language}",
+      "approve": "Valider",
+      "reject": "Refuser",
+      "approved": "Validé : son PIN ouvre maintenant la caisse",
+      "rejected": "Refusé"
+    }
   },
   "roles": {
     "names": {
@@ -414,6 +432,33 @@
       "saved": "Pointage corrigé",
       "cancel": "Annuler",
       "close": "Fermer"
+    }
+  },
+  "join": {
+    "title": "Bienvenue dans l'équipe",
+    "subtitle": "Nom, PIN et langue : votre responsable vous valide ensuite.",
+    "home": "Vers l'accueil",
+    "code": "Code d'invitation",
+    "codeHint": "Il figure sous le QR dans le backoffice.",
+    "name": "Votre nom",
+    "nameHint": "C'est ainsi que l'équipe vous verra à la caisse.",
+    "pin": "PIN",
+    "pinRepeat": "Répétez le PIN",
+    "pinHint": "4 à 6 chiffres. Il ouvre la caisse ; ne le partagez avec personne.",
+    "language": "Langue à la caisse",
+    "submit": "Rejoindre",
+    "sending": "Envoi…",
+    "done": {
+      "title": "C'est fait, {name} !",
+      "text": "Votre responsable doit encore vous valider. Ensuite, vous ouvrez la caisse de {location} avec votre PIN."
+    },
+    "errors": {
+      "pinLength": "Le PIN compte 4 à 6 chiffres.",
+      "pinMismatch": "Les deux PIN ne correspondent pas.",
+      "pinTaken": "Ce PIN est déjà pris. Choisissez-en un autre.",
+      "invalid_code": "Ce code n'est plus valable. Demandez un nouveau QR.",
+      "invalid": "Vérifiez le nom et le PIN.",
+      "error": "Cela n'a pas marché. Réessayez."
     }
   }
 }

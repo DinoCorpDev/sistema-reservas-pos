@@ -184,7 +184,25 @@
     "access": "Access",
     "countLine": "{count, plural, one {# person} other {# people}} with access to the POS or the backoffice",
     "emptyHint": "Add the first person: with a PIN for the POS, with an email for the backoffice.",
-    "pinOnly": "POS only (PIN)"
+    "pinOnly": "POS only (PIN)",
+    "join": {
+      "invite": "Invite a waiter",
+      "title": "Invite new waiters",
+      "hint": "The person scans the QR code with their phone and enters name, PIN and language. Then you approve them here.",
+      "qrLabel": "Link to join",
+      "orCode": "Or on /join, this code:",
+      "valid": "Valid until {time}, for up to {count} people.",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "close": "Close",
+      "pendingTitle": "Waiting for approval",
+      "pendingHint": "They joined with the QR code. Their PIN opens the POS only after you approve them.",
+      "joined": "Joined {when} · {language}",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "Approved: their PIN now opens the POS",
+      "rejected": "Rejected"
+    }
   },
   "roles": {
     "names": {
@@ -414,6 +432,33 @@
       "saved": "Shift corrected",
       "cancel": "Cancel",
       "close": "Close"
+    }
+  },
+  "join": {
+    "title": "Welcome to the team",
+    "subtitle": "Name, PIN and language: your manager approves you afterwards.",
+    "home": "Go to the start page",
+    "code": "Invitation code",
+    "codeHint": "It is under the QR code in the backoffice.",
+    "name": "Your name",
+    "nameHint": "This is how the team sees you on the POS.",
+    "pin": "PIN",
+    "pinRepeat": "Repeat the PIN",
+    "pinHint": "4 to 6 digits. It opens the POS; do not share it.",
+    "language": "Language on the POS",
+    "submit": "Join",
+    "sending": "Sending…",
+    "done": {
+      "title": "Done, {name}!",
+      "text": "Your manager still has to approve you. Then you open the POS of {location} with your PIN."
+    },
+    "errors": {
+      "pinLength": "The PIN has 4 to 6 digits.",
+      "pinMismatch": "The two PINs do not match.",
+      "pinTaken": "That PIN is taken. Choose another one.",
+      "invalid_code": "This code is no longer valid. Ask for a new QR code.",
+      "invalid": "Check the name and the PIN.",
+      "error": "That did not work. Try again."
     }
   }
 }
