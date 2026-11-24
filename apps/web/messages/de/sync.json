@@ -81,6 +81,10 @@
       },
       "cash": {
         "movement": "Kassenbewegung"
+      },
+      "staff": {
+        "clock_in": "Eingestempelt",
+        "clock_out": "Ausgestempelt"
       }
     },
     "unknownCode": {

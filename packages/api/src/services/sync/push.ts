@@ -28,6 +28,7 @@ import type { ServiceDeps } from '../shared';
 import { type ProjectionResult, writeProjection } from './projection';
 import { projectStock } from '../inventory/projection';
 import { refoldShifts } from './shifts';
+import { projectTimeEntries } from './time-entries';
 import {
   existingOperations,
   insertOperations,
@@ -209,6 +210,8 @@ export async function pushOperations(
       );
       // The shifts refold last: what it says about money in a shift is the final word.
       const shiftOutcome = await refoldShifts(tx, scope, freshOps, settings, recorder);
+      // The working time of the staff (DEC-054): rows by entry, never a conflict.
+      await projectTimeEntries(tx, scope, freshOps, recorder);
       for (const f of fresh) {
         const conflicts = shiftOutcome.get(f.op.id) ?? outcome.get(f.op.id) ?? f.conflicts;
         results[f.index] = { ...results[f.index]!, status: statusOf(conflicts), conflicts };

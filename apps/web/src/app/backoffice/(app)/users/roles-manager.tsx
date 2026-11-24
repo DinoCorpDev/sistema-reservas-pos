@@ -59,6 +59,7 @@ const GROUPS: { key: string; permissions: readonly Permission[] }[] = [
     permissions: [
       'location.manage',
       'user.manage',
+      'time.manage',
       'report.view',
       'audit.view',
       'sync.resolve_conflicts',

@@ -142,6 +142,21 @@
     },
     "help": {
       "open": "Ouvrir l’aide"
+    },
+    "clock": {
+      "question": "Commencer votre service ?",
+      "hint": "Pointez votre arrivée pour que vos heures comptent.",
+      "start": "Pointer l'arrivée",
+      "later": "Juste un coup d'œil",
+      "started": "Arrivée pointée à {time}",
+      "since": "En service depuis {time}",
+      "end": "Terminer mon service",
+      "endTitle": "Terminer votre service ?",
+      "endText": "En service depuis {since} · {worked}. L'appareil sera ensuite verrouillé.",
+      "endConfirm": "Terminer et verrouiller",
+      "ended": "Départ pointé · {worked}",
+      "cancel": "Annuler",
+      "close": "Fermer"
     }
   }
 }

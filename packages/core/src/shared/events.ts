@@ -27,6 +27,8 @@ export const EVENT_TYPES = [
   'shift.closed',
   'cash.movement_recorded',
   'day.closed',
+  'staff.clocked_in',
+  'staff.clocked_out',
   'reservation.created',
   'reservation.confirmed',
   'reservation.seated',

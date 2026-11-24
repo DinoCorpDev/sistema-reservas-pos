@@ -705,4 +705,56 @@ describe('reopen and late arrivals (RF-C14, docs/SYNC.md §5)', () => {
     );
     expect(state.audits.map((a) => a.action)).toEqual(['terminal.pin_failed', 'terminal.unlocked']);
   });
+
+  describe('working time (DEC-054)', () => {
+    it('opens an entry at clock in and closes it at clock out, with the device times', () => {
+      const d = new Device(TERMINAL.H1, USER.waiter);
+      const entryId = freshId();
+      const clockIn = d.op('staff.clock_in', null, { timeEntryId: entryId });
+      const clockOut = d.wait(8 * 3_600_000).op('staff.clock_out', null, { timeEntryId: entryId });
+      const state = foldOperations([clockIn, clockOut], CONTEXT);
+      expect(state.timeEntries.get(entryId)).toEqual({
+        id: entryId,
+        userId: USER.waiter,
+        clockInAt: clockIn.deviceAt,
+        clockOutAt: clockOut.deviceAt,
+        clockInTerminalId: TERMINAL.H1,
+        clockOutTerminalId: TERMINAL.H1,
+      });
+      expect(state.conflicts).toEqual([]);
+      expect(state.audits.map((a) => a.action)).toEqual(['staff.clocked_in', 'staff.clocked_out']);
+    });
+
+    it('keeps an exit folded without its entry, and never makes it a conflict', () => {
+      const d = new Device(TERMINAL.H1, USER.waiter);
+      const entryId = freshId();
+      const clockOut = d.op('staff.clock_out', null, { timeEntryId: entryId });
+      const state = foldOperations([clockOut], CONTEXT);
+      expect(state.timeEntries.get(entryId)).toMatchObject({
+        clockInAt: null,
+        clockOutAt: clockOut.deviceAt,
+      });
+      expect(state.conflicts).toEqual([]);
+      expect(state.outcomes.get(clockOut.id)).toBe('applied');
+    });
+
+    it('counts the first exit only', () => {
+      const d = new Device(TERMINAL.H1, USER.waiter);
+      const entryId = freshId();
+      const ops = [
+        d.op('staff.clock_in', null, { timeEntryId: entryId }),
+        d.wait(60_000).op('staff.clock_out', null, { timeEntryId: entryId }),
+        d.wait(60_000).op('staff.clock_out', null, { timeEntryId: entryId }),
+      ];
+      const state = foldOperations(ops, CONTEXT);
+      expect(state.timeEntries.get(entryId)?.clockOutAt).toBe(ops[1]!.deviceAt);
+    });
+
+    it('needs no permission: a kitchen user clocks in too', () => {
+      const d = new Device(TERMINAL.H1, USER.cook);
+      const op = d.op('staff.clock_in', null, { timeEntryId: freshId() });
+      const state = foldOperations([op], CONTEXT);
+      expect(state.conflicts).toEqual([]);
+    });
+  });
 });

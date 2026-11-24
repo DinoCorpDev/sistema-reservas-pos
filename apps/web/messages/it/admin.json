@@ -233,7 +233,8 @@
       "tax_rule": "Regola fiscale",
       "terminal": "Dispositivo",
       "user": "Persona",
-      "phone_pairing_code": "Codice per telefoni di servizio"
+      "phone_pairing_code": "Codice per telefoni di servizio",
+      "time_entry": "Orario"
     },
     "allTerminals": "Tutti i dispositivi",
     "exportCsv": "Esporta CSV",
@@ -338,6 +339,11 @@
       "ingredient_deleted": "Materia prima eliminata",
       "movement_recorded": "Movimento di scorte",
       "recipe_changed": "Ricetta modificata"
+    },
+    "staff": {
+      "clocked_in": "Entrata timbrata",
+      "clocked_out": "Uscita timbrata",
+      "time_corrected": "Orario corretto"
     }
   },
   "supportAccess": {

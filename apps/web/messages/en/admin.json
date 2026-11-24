@@ -233,7 +233,8 @@
       "tax_rule": "Tax rule",
       "terminal": "Device",
       "user": "Person",
-      "phone_pairing_code": "Code for service phones"
+      "phone_pairing_code": "Code for service phones",
+      "time_entry": "Working time"
     },
     "allTerminals": "All devices",
     "exportCsv": "Export CSV",
@@ -338,6 +339,11 @@
       "ingredient_deleted": "Raw material deleted",
       "movement_recorded": "Stock movement",
       "recipe_changed": "Recipe changed"
+    },
+    "staff": {
+      "clocked_in": "Clocked in",
+      "clocked_out": "Clocked out",
+      "time_corrected": "Working time corrected"
     }
   },
   "supportAccess": {

@@ -7,3 +7,4 @@ export * from './people/phones';
 export * from './people/terminal-auth';
 export * from './people/users';
 export * from './people/api-keys';
+export * from './people/time';

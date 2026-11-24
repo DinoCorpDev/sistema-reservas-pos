@@ -12,6 +12,7 @@ import { useMemo, useRef, useState } from 'react';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
 import { HelpLink } from '@/device/ui/help-link';
+import { ClockedInSince, ClockInBar, ClockOutButton } from '@/device/ui/clock';
 import { LanguageMenu } from '@/device/ui/language-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
 import { TrainingBand } from '@/device/ui/training-band';
@@ -149,10 +150,14 @@ export function KdsShell() {
           <StatusIndicator />
           <span className="flex items-center gap-2">
             {user ? <Avatar name={user.displayName} colorKey={user.id} size="sm" /> : null}
-            <span className="text-sm font-medium" data-testid="kds-user">
-              {user?.displayName}
+            <span className="flex flex-col leading-tight">
+              <span className="text-sm font-medium" data-testid="kds-user">
+                {user?.displayName}
+              </span>
+              <ClockedInSince />
             </span>
           </span>
+          <ClockOutButton />
           <ActionGroup className="dark:divide-white/10 dark:border-white/10 dark:bg-white/5 dark:[&_[data-slot=button]]:text-chrome-foreground/80">
             <ThemeMenu />
             <LanguageMenu />
@@ -163,6 +168,7 @@ export function KdsShell() {
           </ActionGroup>
         </div>
       </header>
+      <ClockInBar />
       {printerHealth && !printerHealth.ok && (
         <div className="bg-destructive/10 px-4 py-2 text-sm text-destructive" role="alert">
           {t('printerDown', { printer: station.printer!.name, error: printerHealth.error ?? '' })}

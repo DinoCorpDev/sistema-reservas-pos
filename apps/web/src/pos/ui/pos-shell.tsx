@@ -10,6 +10,7 @@ import { Archive, Beer, LayoutGrid, ListOrdered, Lock, ShoppingBag, Wallet } fro
 import { useTranslations } from 'next-intl';
 import { lockTerminal } from '@/device/pin';
 import { usePos } from '@/device/store';
+import { ClockedInSince, ClockInBar, ClockOutButton } from '@/device/ui/clock';
 import { HelpLink } from '@/device/ui/help-link';
 import { LanguageMenu } from '@/device/ui/language-menu';
 import { StatusIndicator } from '@/device/ui/status-indicator';
@@ -166,10 +167,14 @@ export function PosShell() {
           {/* Who is serving: avatar and name, the name alone is the test hook. */}
           <span className="flex min-w-0 items-center gap-2">
             {user ? <Avatar name={user.displayName} colorKey={user.id} size="sm" /> : null}
-            <span className="truncate text-sm font-medium" data-testid="pos-user">
-              {user?.displayName}
+            <span className="flex min-w-0 flex-col leading-tight">
+              <span className="truncate text-sm font-medium" data-testid="pos-user">
+                {user?.displayName}
+              </span>
+              <ClockedInSince className="max-md:hidden" />
             </span>
           </span>
+          <ClockOutButton />
           <ActionGroup className="dark:divide-white/10 dark:border-white/10 dark:bg-white/5 dark:[&_[data-slot=button]]:text-chrome-foreground/80">
             <ThemeMenu />
             <LanguageMenu />
@@ -182,6 +187,7 @@ export function PosShell() {
           {terminalType === 'pos' && <UnpairButton />}
         </div>
       </header>
+      <ClockInBar />
       {printer?.health && !printer.health.ok && (
         <div className="bg-destructive/10 px-4 py-2 text-sm text-destructive" role="alert">
           {t('printerDown', { printer: printer.name, error: printer.health.error ?? '' })}

@@ -168,8 +168,11 @@ function discountBase(state: FoldState, orderId: string, itemId: string | null):
 /** What RN-15 / RF-A05 checks for this operation, from the state BEFORE it is applied. */
 function sensitiveActionOf(state: FoldState, op: Operation): SensitiveAction | null {
   switch (op.type) {
+    // PIN events, and the working time that anyone who unlocked records for themself (DEC-054).
     case 'terminal.unlocked':
     case 'terminal.pin_failed':
+    case 'staff.clock_in':
+    case 'staff.clock_out':
       return null;
     case 'drawer.open':
       return { kind: 'open_drawer' };
@@ -1165,6 +1168,48 @@ function applyOperation(state: FoldState, op: Operation, context: FoldContext): 
         attempt: op.payload.attempt,
       });
       break;
+
+    case 'staff.clock_in': {
+      // Never a conflict (DEC-054): the cloud may fold a clock operation without its pair.
+      const id = op.payload.timeEntryId;
+      const entry = state.timeEntries.get(id);
+      if (!entry) {
+        state.timeEntries.set(id, {
+          id,
+          userId: op.userId,
+          clockInAt: op.deviceAt,
+          clockOutAt: null,
+          clockInTerminalId: op.terminalId,
+          clockOutTerminalId: null,
+        });
+      } else if (entry.clockInAt === null) {
+        entry.clockInAt = op.deviceAt;
+        entry.clockInTerminalId = op.terminalId;
+      }
+      audit('staff.clocked_in', 'time_entry', id, null, { userId: op.userId });
+      break;
+    }
+
+    case 'staff.clock_out': {
+      const id = op.payload.timeEntryId;
+      const entry = state.timeEntries.get(id);
+      if (!entry) {
+        state.timeEntries.set(id, {
+          id,
+          userId: op.userId,
+          clockInAt: null,
+          clockOutAt: op.deviceAt,
+          clockInTerminalId: null,
+          clockOutTerminalId: op.terminalId,
+        });
+      } else if (entry.clockOutAt === null) {
+        // The first exit counts; a repeated one changes nothing.
+        entry.clockOutAt = op.deviceAt;
+        entry.clockOutTerminalId = op.terminalId;
+      }
+      audit('staff.clocked_out', 'time_entry', id, null, { userId: op.userId });
+      break;
+    }
 
     case 'drawer.open':
       audit('cash.drawer_opened', 'terminal', op.terminalId, null, null, op.payload.reason);

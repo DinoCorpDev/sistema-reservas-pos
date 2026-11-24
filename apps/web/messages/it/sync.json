@@ -81,6 +81,10 @@
       },
       "cash": {
         "movement": "Movimento di cassa"
+      },
+      "staff": {
+        "clock_in": "Entrata timbrata",
+        "clock_out": "Uscita timbrata"
       }
     },
     "unknownCode": {

@@ -233,7 +233,8 @@
       "tax_rule": "Regla de impuesto",
       "terminal": "Dispositivo",
       "user": "Persona",
-      "phone_pairing_code": "Código para teléfonos de meseros"
+      "phone_pairing_code": "Código para teléfonos de meseros",
+      "time_entry": "Horario"
     },
     "allTerminals": "Todos los dispositivos",
     "exportCsv": "Exportar CSV",
@@ -338,6 +339,11 @@
       "ingredient_deleted": "Materia prima eliminada",
       "movement_recorded": "Movimiento de stock",
       "recipe_changed": "Receta cambiada"
+    },
+    "staff": {
+      "clocked_in": "Entrada marcada",
+      "clocked_out": "Salida marcada",
+      "time_corrected": "Horario corregido"
     }
   },
   "supportAccess": {

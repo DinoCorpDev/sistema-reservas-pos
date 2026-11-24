@@ -142,6 +142,21 @@
     },
     "help": {
       "open": "Open help"
+    },
+    "clock": {
+      "question": "Start your shift?",
+      "hint": "Clock in so your hours count.",
+      "start": "Clock in",
+      "later": "Just a quick look",
+      "started": "Clocked in at {time}",
+      "since": "On shift since {time}",
+      "end": "End my shift",
+      "endTitle": "End your shift?",
+      "endText": "On shift since {since} · {worked}. The device locks afterwards.",
+      "endConfirm": "Clock out and lock",
+      "ended": "Clocked out · {worked}",
+      "cancel": "Cancel",
+      "close": "Close"
     }
   }
 }

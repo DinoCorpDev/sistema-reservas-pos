@@ -144,6 +144,16 @@ export async function prune(now = Date.now()): Promise<number> {
       .map((shift) => shift.id),
   );
   const inKeptShift = (shiftId: string | null) => shiftId !== null && !oldShifts.has(shiftId);
+  // Working time (DEC-054): an entry leaves once its last time is older than the same hours; an
+  // exit forgotten that long ago is no longer "open" either (MAX_OPEN_HOURS).
+  const oldEntries = new Set(
+    [...fold.timeEntries.values()]
+      .filter((entry) => {
+        const last = entry.clockOutAt ?? entry.clockInAt;
+        return last !== null && Date.parse(last) < limit;
+      })
+      .map((entry) => entry.id),
+  );
   const finished = new Set(
     [...fold.orders.values()]
       .filter((order) => {
@@ -157,11 +167,14 @@ export async function prune(now = Date.now()): Promise<number> {
       )
       .map((order) => order.id),
   );
-  if (finished.size === 0 && oldShifts.size === 0) return 0;
+  if (finished.size === 0 && oldShifts.size === 0 && oldEntries.size === 0) return 0;
   const rows = await deviceDb().ops.toArray();
   const removable = rows.filter((row) => {
     if (row.cloudAcked !== 1) return false;
     if (isShiftOperation(row.op.type)) return oldShifts.has(operationShiftId(row.op) ?? '');
+    if (row.op.type === 'staff.clock_in' || row.op.type === 'staff.clock_out') {
+      return oldEntries.has(row.op.payload.timeEntryId);
+    }
     const orders = operationOrderIds(row.op);
     return orders.length > 0 && orders.every((id) => finished.has(id));
   });

@@ -142,6 +142,21 @@
     },
     "help": {
       "open": "Apri la guida"
+    },
+    "clock": {
+      "question": "Iniziare il turno?",
+      "hint": "Timbrate l'entrata perché le ore contino.",
+      "start": "Inizia turno",
+      "later": "Solo un'occhiata",
+      "started": "Entrata timbrata alle {time}",
+      "since": "In turno dalle {time}",
+      "end": "Termina il mio turno",
+      "endTitle": "Terminare il turno?",
+      "endText": "In turno dalle {since} · {worked}. Poi il dispositivo si blocca.",
+      "endConfirm": "Termina e blocca",
+      "ended": "Uscita timbrata · {worked}",
+      "cancel": "Annulla",
+      "close": "Chiudi"
     }
   }
 }

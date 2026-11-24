@@ -81,6 +81,10 @@
       },
       "cash": {
         "movement": "Mouvement de caisse"
+      },
+      "staff": {
+        "clock_in": "Arrivée pointée",
+        "clock_out": "Départ pointé"
       }
     },
     "unknownCode": {

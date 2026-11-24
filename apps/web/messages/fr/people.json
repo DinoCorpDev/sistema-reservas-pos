@@ -283,6 +283,9 @@
     },
     "inventory": {
       "manage": "Gérer l'inventaire et les recettes"
+    },
+    "time": {
+      "manage": "Voir et corriger le temps de travail"
     }
   },
   "apiKeys": {
@@ -350,5 +353,67 @@
     "activateTitle": "Activer le téléphone de {name} ?",
     "activateText": "La personne peut de nouveau coupler son téléphone avec un code et son PIN.",
     "activated": "Téléphone activé"
+  },
+  "time": {
+    "title": "Temps de travail",
+    "description": "L'équipe pointe son arrivée à la caisse (après le PIN) et son départ («Terminer mon service»). Ici, vous voyez les heures, complétez les oublis et exportez pour les salaires.",
+    "noPermission": "Vous n'avez pas l'autorisation de voir le temps de travail.",
+    "noLocation": "Choisissez un établissement en haut pour voir le temps de travail.",
+    "export": "Exporter en CSV",
+    "empty": "Aucun pointage sur cette période",
+    "emptyHint": "Après le PIN, la caisse demande «Commencer votre service ?». Qui pointe apparaît ici.",
+    "corrected": "Corrigé",
+    "summary": {
+      "total": "Heures au total",
+      "people": "{count, plural, one {# personne} other {# personnes}}",
+      "working": "En service maintenant",
+      "workingHint": "Arrivées sans départ pour l'instant",
+      "incomplete": "À compléter",
+      "incompleteHint": "Sans départ ou sans arrivée"
+    },
+    "people": {
+      "title": "Par personne",
+      "hint": "Seuls les services avec arrivée et départ comptent.",
+      "entries": "Services",
+      "incomplete": "À compléter",
+      "toComplete": "{count, plural, one {# à compléter} other {# à compléter}}"
+    },
+    "entries": {
+      "title": "Arrivées et départs",
+      "hint": "La journée de travail commence comme la journée d'exploitation : un service après minuit reste sur son jour."
+    },
+    "columns": {
+      "person": "Personne",
+      "day": "Jour",
+      "in": "Arrivée",
+      "out": "Départ",
+      "hours": "Heures",
+      "minutes": "Minutes",
+      "status": "Statut",
+      "corrected": "Corrigé",
+      "note": "Note",
+      "actions": "Actions",
+      "yes": "oui"
+    },
+    "status": {
+      "open": "En service",
+      "closed": "Terminé",
+      "missing_out": "Départ manquant",
+      "missing_in": "Arrivée manquante"
+    },
+    "correct": {
+      "action": "Corriger",
+      "title": "Corriger le pointage de {name}",
+      "hint": "La modification est inscrite au journal avec le motif, la personne et l'heure.",
+      "outHint": "Laissez vide si la personne travaille encore.",
+      "outError": "Le départ doit suivre l'arrivée, au plus 24 heures après.",
+      "invalid": "Indiquez la date et l'heure.",
+      "note": "Motif",
+      "notePlaceholder": "p. ex. départ non pointé",
+      "save": "Enregistrer la correction",
+      "saved": "Pointage corrigé",
+      "cancel": "Annuler",
+      "close": "Fermer"
+    }
   }
 }

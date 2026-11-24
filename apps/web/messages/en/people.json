@@ -283,6 +283,9 @@
     },
     "inventory": {
       "manage": "Manage inventory and recipes"
+    },
+    "time": {
+      "manage": "See and correct the staff's working time"
     }
   },
   "apiKeys": {
@@ -350,5 +353,67 @@
     "activateTitle": "Activate {name}’s phone?",
     "activateText": "The person can pair their phone again with a code and their PIN.",
     "activated": "Phone activated"
+  },
+  "time": {
+    "title": "Working time",
+    "description": "The team clocks in on the POS (after the PIN) and out («End my shift»). Here you see the hours, complete what was forgotten and export for payroll.",
+    "noPermission": "You are not allowed to see the working time.",
+    "noLocation": "Choose a location at the top to see the working time.",
+    "export": "Export CSV",
+    "empty": "No clock-ins in this period",
+    "emptyHint": "After the PIN, the POS asks «Start your shift?». Whoever clocks in shows up here.",
+    "corrected": "Corrected",
+    "summary": {
+      "total": "Total hours",
+      "people": "{count, plural, one {# person} other {# people}}",
+      "working": "On shift now",
+      "workingHint": "Clocked in, not out yet",
+      "incomplete": "To complete",
+      "incompleteHint": "No clock-out or no clock-in"
+    },
+    "people": {
+      "title": "Per person",
+      "hint": "Only shifts with a clock-in and a clock-out count.",
+      "entries": "Shifts",
+      "incomplete": "To complete",
+      "toComplete": "{count, plural, one {# to complete} other {# to complete}}"
+    },
+    "entries": {
+      "title": "Clock-ins and clock-outs",
+      "hint": "A working day starts like the business day: a shift past midnight stays on its day."
+    },
+    "columns": {
+      "person": "Person",
+      "day": "Day",
+      "in": "In",
+      "out": "Out",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "status": "Status",
+      "corrected": "Corrected",
+      "note": "Note",
+      "actions": "Actions",
+      "yes": "yes"
+    },
+    "status": {
+      "open": "Working",
+      "closed": "Complete",
+      "missing_out": "Clock-out missing",
+      "missing_in": "Clock-in missing"
+    },
+    "correct": {
+      "action": "Correct",
+      "title": "Correct the shift of {name}",
+      "hint": "The change goes to the audit log with the reason, who made it and when.",
+      "outHint": "Leave empty if the person is still working.",
+      "outError": "The clock-out must come after the clock-in, at most 24 hours later.",
+      "invalid": "Enter a date and a time.",
+      "note": "Reason",
+      "notePlaceholder": "e.g. forgot to clock out",
+      "save": "Save correction",
+      "saved": "Shift corrected",
+      "cancel": "Cancel",
+      "close": "Close"
+    }
   }
 }

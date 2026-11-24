@@ -283,6 +283,9 @@
     },
     "inventory": {
       "manage": "Gestionar inventario y recetas"
+    },
+    "time": {
+      "manage": "Ver y corregir el horario del personal"
     }
   },
   "apiKeys": {
@@ -350,5 +353,67 @@
     "activateTitle": "¿Activar el teléfono de {name}?",
     "activateText": "El mesero podrá volver a vincular su teléfono con un código y su PIN.",
     "activated": "Teléfono activado"
+  },
+  "time": {
+    "title": "Horario",
+    "description": "El equipo marca su entrada en la caja (después del PIN) y su salida («Terminar mi turno»). Aquí ve las horas, completa lo olvidado y exporta para la nómina.",
+    "noPermission": "No tiene permiso para ver el horario.",
+    "noLocation": "Elija arriba una sede para ver el horario.",
+    "export": "Exportar CSV",
+    "empty": "No hay marcas en este período",
+    "emptyHint": "Después del PIN, la caja pregunta «¿Empiezas tu turno?». Quien marca su entrada aparece aquí.",
+    "corrected": "Corregida",
+    "summary": {
+      "total": "Horas en total",
+      "people": "{count, plural, one {# persona} other {# personas}}",
+      "working": "En turno ahora",
+      "workingHint": "Entradas sin salida todavía",
+      "incomplete": "Por completar",
+      "incompleteHint": "Sin salida o sin entrada"
+    },
+    "people": {
+      "title": "Por persona",
+      "hint": "Solo cuentan los turnos con entrada y salida.",
+      "entries": "Turnos",
+      "incomplete": "Por completar",
+      "toComplete": "{count, plural, one {# por completar} other {# por completar}}"
+    },
+    "entries": {
+      "title": "Entradas y salidas",
+      "hint": "El día de trabajo empieza como el día de negocio: un turno que pasa la medianoche queda en su día."
+    },
+    "columns": {
+      "person": "Persona",
+      "day": "Día",
+      "in": "Entrada",
+      "out": "Salida",
+      "hours": "Horas",
+      "minutes": "Minutos",
+      "status": "Estado",
+      "corrected": "Corregida",
+      "note": "Nota",
+      "actions": "Acciones",
+      "yes": "sí"
+    },
+    "status": {
+      "open": "Trabajando",
+      "closed": "Completo",
+      "missing_out": "Falta la salida",
+      "missing_in": "Falta la entrada"
+    },
+    "correct": {
+      "action": "Corregir",
+      "title": "Corregir el turno de {name}",
+      "hint": "El cambio queda en el journal con el motivo, quién lo hizo y cuándo.",
+      "outHint": "Déjela vacía si la persona sigue trabajando.",
+      "outError": "La salida debe ser después de la entrada, como mucho 24 horas más tarde.",
+      "invalid": "Indique fecha y hora.",
+      "note": "Motivo",
+      "notePlaceholder": "p. ej. olvidó marcar la salida",
+      "save": "Guardar corrección",
+      "saved": "Turno corregido",
+      "cancel": "Cancelar",
+      "close": "Cerrar"
+    }
   }
 }

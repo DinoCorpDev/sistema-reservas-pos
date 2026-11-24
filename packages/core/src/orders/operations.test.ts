@@ -158,6 +158,8 @@ function sampleOperations(): Operation[] {
     d.op('order.void', id, { reason: 'other', reasonText: 'Test' }),
     d.op('terminal.unlocked', null, {}),
     d.op('terminal.pin_failed', null, { attempt: 2 }, { userId: null }),
+    d.op('staff.clock_in', null, { timeEntryId: TIME_ENTRY }),
+    d.op('staff.clock_out', null, { timeEntryId: TIME_ENTRY }),
     d.openShift(SHIFT, 20000, { openingCount: { '10000': 2 } }),
     d.movement(SHIFT, 'expense', -1250, 'Blumen'),
     d.closeShift(SHIFT, 18750),
@@ -165,6 +167,7 @@ function sampleOperations(): Operation[] {
 }
 
 const SHIFT = freshId();
+const TIME_ENTRY = freshId();
 
 const withoutField = (op: object, field: string) => {
   const copy: Record<string, unknown> = { ...op };
@@ -518,7 +521,9 @@ describe('operationOrderIds and relatedOrderId (docs/SYNC.md §4)', () => {
   it('terminal operations touch no order', () => {
     const unlocked = d.op('terminal.unlocked', null, {});
     const failed = d.op('terminal.pin_failed', null, { attempt: 1 }, { userId: null });
-    for (const op of [unlocked, failed]) {
+    const clockIn = d.op('staff.clock_in', null, { timeEntryId: freshId() });
+    const clockOut = d.op('staff.clock_out', null, { timeEntryId: freshId() });
+    for (const op of [unlocked, failed, clockIn, clockOut]) {
       expect(operationOrderIds(op)).toEqual([]);
       expect(relatedOrderId(op)).toBeNull();
     }

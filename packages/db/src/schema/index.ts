@@ -15,3 +15,4 @@ export * from './receipts';
 export * from './reservations';
 export * from './tax';
 export * from './users';
+export * from './time';

@@ -16,6 +16,7 @@ import {
   PercentIcon,
   ScrollTextIcon,
   StoreIcon,
+  TimerIcon,
   type LucideIcon,
   UserCogIcon,
   UsersIcon,
@@ -46,6 +47,7 @@ export const SECTIONS: { key: string; items: NavItem[] }[] = [
         icon: ChartColumnIcon,
         permission: 'report.view',
       },
+      { href: '/backoffice/time', key: 'time', icon: TimerIcon, permission: 'time.manage' },
     ],
   },
   {

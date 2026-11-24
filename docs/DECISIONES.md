@@ -624,6 +624,24 @@ Juan lo pidió (23 nov 2026): la interfaz se veía «a puro HTML». Quería que 
   - **Modo oscuro:** los colores de estado tienen variantes `dark:` y son los mismos tonos de siempre.
 - **Lo que no cambia:** los colores de estado de mesas, ítems y pagos, el botón verde de cobrar, la franja de práctica y los objetivos de 44 px. Las acciones de fila siguen siendo botones con su nombre, así que los lectores de pantalla y las pruebas e2e las encuentran igual.
 
+## DEC-054 · Fichaje de entrada y salida del personal
+
+RF-A09 (_Podría_, post-piloto) se adelanta a pedido de Juan (23 nov 2026): saber cuánto trabaja cada persona.
+
+- **Entrada con el PIN, salida con un botón.** Después del PIN, una barra pregunta «¿Empiezas tu turno?» con [Empezar turno] y [Solo una consulta]. No es un diálogo modal: no tapa la sala y se puede trabajar sin contestar. «Terminar mi turno» en la barra superior pide confirmación, marca la salida y bloquea. Igual en la cocina (KDS). No pregunta en una caja de práctica.
+- **Son operaciones de sincronización** (`staff.clock_in`, `staff.clock_out`, versión 4), así que funcionan sin conexión (PA-03). La persona y la hora salen del sobre; el id de la entrada se crea en el dispositivo.
+  - El dispositivo sabe quién tiene la entrada abierta por su pliegue (`FoldState.timeEntries`), también la de otro dispositivo de la sede.
+  - Una entrada abierta más de 16 horas cuenta como salida olvidada (`MAX_OPEN_HOURS`): no se toma como trabajo y la caja vuelve a preguntar.
+  - El dispositivo borra estas operaciones a las 36 horas, como las demás (`prune`).
+- **Nube.** `time_entries` (operacional) se llena por `timeEntryId`. El orden no importa, una operación repetida no cambia nada y nunca hay conflicto. Auditoría `staff.clocked_in` / `staff.clocked_out` y eventos con el mismo nombre (catálogo de eventos: 40).
+- **Backoffice «Arbeitszeit / Horario»** (permiso nuevo `time.manage`, administrador y gerente; migración 0027):
+  - Por período: horas por persona, cada entrada con su estado (trabajando, completa, falta la salida, falta la entrada) y lo que hay que completar.
+  - El día de trabajo es el día de negocio (DEC-022): un turno que pasa la medianoche queda en su día.
+  - **Corregir** cambia las horas con un motivo obligatorio, guarda quién y cuándo y audita el antes y el después (`staff.time_corrected`). Desde entonces, una operación tardía del dispositivo ya no la cambia. No se borra nada.
+  - Exportación CSV para la nómina (horas con dos decimales).
+- **API:** `GET /api/v1/time-entries?from&to` y `PUT /api/v1/time-entries/{id}`.
+- **Para después:** pausas, horas planificadas contra trabajadas, cálculo L-GAV (horas extra, vacaciones) y entrada manual de un turno sin fichaje.
+
 ## Decisiones abiertas (sección 20), por cerrar antes de la fase indicada
 
 | Decisión                                                                               | Antes de | Quién decide |

@@ -142,6 +142,21 @@
     },
     "help": {
       "open": "Hilfe öffnen"
+    },
+    "clock": {
+      "question": "Arbeitszeit starten?",
+      "hint": "Stempeln Sie ein, damit Ihre Stunden zählen.",
+      "start": "Einstempeln",
+      "later": "Nur kurz nachsehen",
+      "started": "Eingestempelt um {time}",
+      "since": "Eingestempelt seit {time}",
+      "end": "Ausstempeln",
+      "endTitle": "Arbeitszeit beenden?",
+      "endText": "Eingestempelt seit {since} · {worked}. Danach wird das Gerät gesperrt.",
+      "endConfirm": "Ausstempeln und sperren",
+      "ended": "Ausgestempelt · {worked}",
+      "cancel": "Abbrechen",
+      "close": "Schliessen"
     }
   }
 }

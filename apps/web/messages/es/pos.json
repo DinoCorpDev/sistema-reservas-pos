@@ -142,6 +142,21 @@
     },
     "help": {
       "open": "Abrir la ayuda"
+    },
+    "clock": {
+      "question": "¿Empiezas tu turno?",
+      "hint": "Marca tu entrada para que cuenten tus horas.",
+      "start": "Empezar turno",
+      "later": "Solo una consulta",
+      "started": "Entrada marcada a las {time}",
+      "since": "En turno desde las {time}",
+      "end": "Terminar mi turno",
+      "endTitle": "¿Terminar tu turno?",
+      "endText": "En turno desde las {since} · {worked}. Después se bloquea el equipo.",
+      "endConfirm": "Terminar y bloquear",
+      "ended": "Salida marcada · {worked}",
+      "cancel": "Cancelar",
+      "close": "Cerrar"
     }
   }
 }

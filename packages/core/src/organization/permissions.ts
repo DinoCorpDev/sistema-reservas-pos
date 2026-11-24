@@ -43,6 +43,8 @@ export const PERMISSIONS = [
   // administration
   'location.manage',
   'user.manage',
+  /** See and correct the staff's working hours (RF-A09, DEC-054). */
+  'time.manage',
   'report.view',
   'audit.view',
   'sync.resolve_conflicts',

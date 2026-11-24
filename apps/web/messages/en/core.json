@@ -90,7 +90,8 @@
     "help": "Help",
     "inventory": "Inventory",
     "recipes": "Recipes",
-    "menu": "Menu"
+    "menu": "Menu",
+    "time": "Working time"
   },
   "auth": {
     "title": "Sign in",
@@ -276,7 +277,8 @@
     "plan": "Your restaurant’s plan, add-ons, usage and monthly price.",
     "help": "Short guides for every role, to read or print.",
     "inventory": "Raw materials, stock and alerts for what is running low.",
-    "recipes": "How much of each raw material every dish uses."
+    "recipes": "How much of each raw material every dish uses.",
+    "time": "Who clocked in and out, hours per person and the export for payroll."
   },
   "navSection": {
     "operation": "Operations",

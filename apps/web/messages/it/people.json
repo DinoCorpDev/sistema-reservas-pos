@@ -283,6 +283,9 @@
     },
     "inventory": {
       "manage": "Gestire inventario e ricette"
+    },
+    "time": {
+      "manage": "Vedere e correggere gli orari del personale"
     }
   },
   "apiKeys": {
@@ -350,5 +353,67 @@
     "activateTitle": "Attivare il telefono di {name}?",
     "activateText": "La persona può di nuovo abbinare il telefono con un codice e il suo PIN.",
     "activated": "Telefono attivato"
+  },
+  "time": {
+    "title": "Orari",
+    "description": "Il team timbra l'entrata in cassa (dopo il PIN) e l'uscita («Termina il mio turno»). Qui vede le ore, completa le dimenticanze ed esporta per gli stipendi.",
+    "noPermission": "Non ha l'autorizzazione per vedere gli orari.",
+    "noLocation": "Scelga in alto una sede per vedere gli orari.",
+    "export": "Esporta CSV",
+    "empty": "Nessuna timbratura in questo periodo",
+    "emptyHint": "Dopo il PIN, la cassa chiede «Iniziare il turno?». Chi timbra compare qui.",
+    "corrected": "Corretta",
+    "summary": {
+      "total": "Ore totali",
+      "people": "{count, plural, one {# persona} other {# persone}}",
+      "working": "In turno ora",
+      "workingHint": "Entrate senza ancora uscita",
+      "incomplete": "Da completare",
+      "incompleteHint": "Senza uscita o senza entrata"
+    },
+    "people": {
+      "title": "Per persona",
+      "hint": "Contano solo i turni con entrata e uscita.",
+      "entries": "Turni",
+      "incomplete": "Da completare",
+      "toComplete": "{count, plural, one {# da completare} other {# da completare}}"
+    },
+    "entries": {
+      "title": "Entrate e uscite",
+      "hint": "La giornata di lavoro inizia come la giornata d'esercizio: un turno oltre la mezzanotte resta sul suo giorno."
+    },
+    "columns": {
+      "person": "Persona",
+      "day": "Giorno",
+      "in": "Entrata",
+      "out": "Uscita",
+      "hours": "Ore",
+      "minutes": "Minuti",
+      "status": "Stato",
+      "corrected": "Corretta",
+      "note": "Nota",
+      "actions": "Azioni",
+      "yes": "sì"
+    },
+    "status": {
+      "open": "Al lavoro",
+      "closed": "Completo",
+      "missing_out": "Manca l'uscita",
+      "missing_in": "Manca l'entrata"
+    },
+    "correct": {
+      "action": "Correggi",
+      "title": "Correggere il turno di {name}",
+      "hint": "La modifica resta nel giornale con il motivo, chi l'ha fatta e quando.",
+      "outHint": "Lasciare vuoto se la persona lavora ancora.",
+      "outError": "L'uscita deve seguire l'entrata, al massimo 24 ore dopo.",
+      "invalid": "Indichi data e ora.",
+      "note": "Motivo",
+      "notePlaceholder": "p. es. dimenticato di timbrare l'uscita",
+      "save": "Salva correzione",
+      "saved": "Turno corretto",
+      "cancel": "Annulla",
+      "close": "Chiudi"
+    }
   }
 }

@@ -24,8 +24,9 @@ import { DISCOUNT_KINDS, MAX_COURSE, MIN_COURSE, VOID_REASONS } from './constant
  * printing and cash drawer operations exist.
  * Version 3 (Phase 4, DEC-038): shifts and cash movements; payments and refunds name their shift
  * and business day, and a refund carries its cash rounding. Older operations are still accepted.
+ * Version 4 (DEC-054): the staff clock in and out (`staff.clock_in`, `staff.clock_out`).
  */
-export const OPERATION_SCHEMA_VERSION = 3;
+export const OPERATION_SCHEMA_VERSION = 4;
 
 const id = z.uuid();
 const isoDate = z.iso.date();
@@ -385,6 +386,23 @@ export const operationSchema = z.discriminatedUnion('type', [
   z.object({
     ...envelope,
     orderId: z.null().default(null),
+    /**
+     * The person on the terminal starts their working time (RF-A09, DEC-054). Who and when come
+     * from the envelope (`userId`, `deviceAt`); the entry id is made on the device.
+     */
+    type: z.literal('staff.clock_in'),
+    payload: z.object({ timeEntryId: id }),
+  }),
+  z.object({
+    ...envelope,
+    orderId: z.null().default(null),
+    /** Ends the working time started by `staff.clock_in` with the same entry (DEC-054). */
+    type: z.literal('staff.clock_out'),
+    payload: z.object({ timeEntryId: id }),
+  }),
+  z.object({
+    ...envelope,
+    orderId: z.null().default(null),
     /** Opens the cash drawer without a sale (RF-D18): permission or a manager's approval. */
     type: z.literal('drawer.open'),
     payload: z.object({ reason: optionalText(200).default(null) }),
@@ -498,6 +516,10 @@ const SHIFT_OPERATION_TYPES = new Set<OperationType>([
   'shift.close',
 ]);
 
+/** The clock of the staff: working time, not money (DEC-054). */
+export const isTimeOperation = (type: string): boolean =>
+  type === 'staff.clock_in' || type === 'staff.clock_out';
+
 /** Operations about a shift itself (not the payments that go into it). */
 export const isShiftOperation = (type: string): boolean =>
   SHIFT_OPERATION_TYPES.has(type as OperationType);
@@ -537,6 +559,8 @@ export function operationOrderIds(op: Operation): string[] {
   switch (op.type) {
     case 'terminal.unlocked':
     case 'terminal.pin_failed':
+    case 'staff.clock_in':
+    case 'staff.clock_out':
     case 'drawer.open':
     case 'shift.open':
     case 'cash.movement':

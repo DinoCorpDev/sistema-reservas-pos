@@ -90,7 +90,8 @@
     "help": "Hilfe",
     "inventory": "Inventar",
     "recipes": "Rezepte",
-    "menu": "Menü"
+    "menu": "Menü",
+    "time": "Arbeitszeit"
   },
   "auth": {
     "title": "Anmelden",
@@ -276,7 +277,8 @@
     "plan": "Plan, Add-ons, Nutzung und Monatspreis Ihres Restaurants.",
     "help": "Kurzanleitungen für jede Rolle, zum Lesen oder Drucken.",
     "inventory": "Rohwaren, Bestand und Meldungen, was knapp wird.",
-    "recipes": "Wie viel jedes Gericht von jeder Rohware braucht."
+    "recipes": "Wie viel jedes Gericht von jeder Rohware braucht.",
+    "time": "Wer wann ein- und ausgestempelt hat, Stunden pro Person und Export für die Lohnabrechnung."
   },
   "navSection": {
     "operation": "Tagesgeschäft",

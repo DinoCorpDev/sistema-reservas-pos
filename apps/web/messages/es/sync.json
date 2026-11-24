@@ -81,6 +81,10 @@
       },
       "cash": {
         "movement": "Movimiento de caja"
+      },
+      "staff": {
+        "clock_in": "Entrada marcada",
+        "clock_out": "Salida marcada"
       }
     },
     "unknownCode": {

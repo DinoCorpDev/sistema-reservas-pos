@@ -57,6 +57,7 @@ Cada acción del POS genera una **operación inmutable**. Nunca se edita ni se b
 | `order.reopen`                              | Reabre una orden cerrada, con permiso de gerente y motivo (RF-C14).                                                                                                 |
 | `order.void`                                | Anula una orden sin pagos (RN-12: una orden sin ítems válidos ni pagos se anula, no se cierra).                                                                     |
 | `terminal.unlocked` / `terminal.pin_failed` | Desbloqueos e intentos fallidos de PIN en la terminal: solo dejan auditoría.                                                                                        |
+| `staff.clock_in` / `staff.clock_out`        | Entrada y salida de la persona que desbloqueó (RF-A09, DEC-054). Sin orden ni conflicto: la nube llena `time_entries` por `timeEntryId`.                            |
 | `kitchen.start` / `kitchen.ready`           | La estación empieza o termina ítems de un ticket (RF-C22, DEC-029). El estado es por ítem **y por estación**.                                                       |
 | `kitchen.recall`                            | Devuelve al tablero ítems que estaban listos (RF-C28).                                                                                                              |
 | `kitchen.reprint`                           | Reimprime un ticket en su estación (RF-C26). Un ticket es `(items.send, estación)`.                                                                                 |
@@ -67,6 +68,8 @@ Cada acción del POS genera una **operación inmutable**. Nunca se edita ni se b
 | `shift.close`                               | Cierra el turno con el conteo por denominación, el esperado y el informe congelados; una diferencia exige comentario (RF-D14, RF-D15).                              |
 
 **Versión 3 (Fase 4, DEC-038).** Existen las tres operaciones de turno, sin orden. `payment.record` y `refund.record` traen `shiftId` y `businessDate` (el del turno), y `refund.record` trae `roundingRappen` (devolución en efectivo redondeada a 0,05). Las operaciones guardadas de la versión 2 no los tienen y se leen como `null` y `0`. El hub **guarda y reenvía** una operación de una versión más nueva que la suya en vez de rechazarla: un dispositivo actualizado antes que el hub no pierde nada.
+
+**Versión 4 (DEC-054).** Existen `staff.clock_in` y `staff.clock_out` (`{ timeEntryId }`; la persona y la hora salen del sobre). Nunca generan conflictos: la nube puede plegar una salida sin su entrada. Un hub de la versión 3 las guarda y reenvía como operaciones más nuevas.
 
 **Versión 2 (Fase 3).** `items.send` trae `tickets: [{ ticketId, stationId, language }]`: una entrada por estación activa que recibe ítems, con el ID y el idioma de cocina congelados (RF-C21, RF-C25). Una operación de versión 1 (sin `tickets`) va a todas las estaciones del ítem, con tickets sin ID. `receipt.reprint` trae `hubPrint`: el hub imprime la copia solo si el POS lo pidió.
 

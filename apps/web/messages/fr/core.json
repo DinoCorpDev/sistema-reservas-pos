@@ -90,7 +90,8 @@
     "help": "Aide",
     "inventory": "Inventaire",
     "recipes": "Recettes",
-    "menu": "Menu"
+    "menu": "Menu",
+    "time": "Temps de travail"
   },
   "auth": {
     "title": "Connexion",
@@ -276,7 +277,8 @@
     "plan": "Formule, options, utilisation et prix mensuel de votre restaurant.",
     "help": "Guides courts pour chaque rôle, à lire ou à imprimer.",
     "inventory": "Matières premières, stock et alertes de ce qui manque bientôt.",
-    "recipes": "Combien chaque plat utilise de chaque matière première."
+    "recipes": "Combien chaque plat utilise de chaque matière première.",
+    "time": "Qui a pointé quand, heures par personne et export pour les salaires."
   },
   "navSection": {
     "operation": "Exploitation",

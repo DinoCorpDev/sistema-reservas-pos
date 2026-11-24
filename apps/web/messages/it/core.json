@@ -90,7 +90,8 @@
     "help": "Guida",
     "inventory": "Inventario",
     "recipes": "Ricette",
-    "menu": "Menu"
+    "menu": "Menu",
+    "time": "Orari"
   },
   "auth": {
     "title": "Accesso",
@@ -276,7 +277,8 @@
     "plan": "Piano, add-on, uso e prezzo mensile del vostro ristorante.",
     "help": "Guide brevi per ogni ruolo, da leggere o stampare.",
     "inventory": "Materie prime, scorte e avvisi di ciò che sta finendo.",
-    "recipes": "Quanto usa ogni piatto di ogni materia prima."
+    "recipes": "Quanto usa ogni piatto di ogni materia prima.",
+    "time": "Chi ha timbrato e quando, ore per persona ed export per gli stipendi."
   },
   "navSection": {
     "operation": "Operatività",

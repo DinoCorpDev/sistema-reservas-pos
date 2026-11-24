@@ -48,6 +48,10 @@ export const AUDIT_ACTIONS = [
   'terminal.paired',
   'terminal.unlocked',
   'terminal.pin_failed',
+  // working time (DEC-054)
+  'staff.clocked_in',
+  'staff.clocked_out',
+  'staff.time_corrected',
   'terminal.unpaired',
   // waiters' own phones (DEC-036)
   'terminal.phone_code_issued',

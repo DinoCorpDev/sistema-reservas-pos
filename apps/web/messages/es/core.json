@@ -90,7 +90,8 @@
     "help": "Ayuda",
     "inventory": "Inventario",
     "recipes": "Recetas",
-    "menu": "Menú"
+    "menu": "Menú",
+    "time": "Horario"
   },
   "auth": {
     "title": "Iniciar sesión",
@@ -276,7 +277,8 @@
     "plan": "Plan, add-ons, uso y precio mensual de su restaurante.",
     "help": "Manuales cortos para cada rol, para leer o imprimir.",
     "inventory": "Materia prima, stock y alertas de lo que se está acabando.",
-    "recipes": "Cuánto gasta cada plato de cada materia prima."
+    "recipes": "Cuánto gasta cada plato de cada materia prima.",
+    "time": "Quién marcó entrada y salida, horas por persona y exportación para la nómina."
   },
   "navSection": {
     "operation": "Operación",

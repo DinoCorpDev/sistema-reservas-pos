@@ -233,7 +233,8 @@
       "tax_rule": "Steuerregel",
       "terminal": "Gerät",
       "user": "Person",
-      "phone_pairing_code": "Code für Service-Telefone"
+      "phone_pairing_code": "Code für Service-Telefone",
+      "time_entry": "Arbeitszeit"
     },
     "allTerminals": "Alle Geräte",
     "exportCsv": "CSV exportieren",
@@ -338,6 +339,11 @@
       "ingredient_deleted": "Rohware gelöscht",
       "movement_recorded": "Lagerbewegung",
       "recipe_changed": "Rezept geändert"
+    },
+    "staff": {
+      "clocked_in": "Eingestempelt",
+      "clocked_out": "Ausgestempelt",
+      "time_corrected": "Arbeitszeit korrigiert"
     }
   },
   "supportAccess": {

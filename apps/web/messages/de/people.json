@@ -283,6 +283,9 @@
     },
     "inventory": {
       "manage": "Inventar und Rezepte verwalten"
+    },
+    "time": {
+      "manage": "Arbeitszeiten sehen und korrigieren"
     }
   },
   "apiKeys": {
@@ -350,5 +353,67 @@
     "activateTitle": "Telefon von {name} aktivieren?",
     "activateText": "Die Servicekraft kann ihr Telefon wieder mit einem Code und ihrem PIN koppeln.",
     "activated": "Telefon aktiviert"
+  },
+  "time": {
+    "title": "Arbeitszeit",
+    "description": "Das Team stempelt an der Kasse ein (nach der PIN) und aus («Ausstempeln»). Hier sehen Sie die Stunden, ergänzen Vergessenes und exportieren für die Lohnabrechnung.",
+    "noPermission": "Sie haben keine Berechtigung für die Arbeitszeiten.",
+    "noLocation": "Wählen Sie oben einen Standort, um die Arbeitszeiten zu sehen.",
+    "export": "CSV exportieren",
+    "empty": "Keine Stempelungen in diesem Zeitraum",
+    "emptyHint": "Nach der PIN fragt die Kasse «Arbeitszeit starten?». Wer einstempelt, erscheint hier.",
+    "corrected": "Korrigiert",
+    "summary": {
+      "total": "Stunden total",
+      "people": "{count, plural, one {# Person} other {# Personen}}",
+      "working": "Jetzt eingestempelt",
+      "workingHint": "Offene Stempelungen",
+      "incomplete": "Zu ergänzen",
+      "incompleteHint": "Ohne Aus- oder Einstempeln"
+    },
+    "people": {
+      "title": "Pro Person",
+      "hint": "Nur abgeschlossene Stempelungen zählen.",
+      "entries": "Einsätze",
+      "incomplete": "Zu ergänzen",
+      "toComplete": "{count, plural, one {# zu ergänzen} other {# zu ergänzen}}"
+    },
+    "entries": {
+      "title": "Ein- und Ausstempeln",
+      "hint": "Ein Arbeitstag beginnt wie der Geschäftstag: ein Einsatz nach Mitternacht bleibt auf seinem Tag."
+    },
+    "columns": {
+      "person": "Person",
+      "day": "Tag",
+      "in": "Ein",
+      "out": "Aus",
+      "hours": "Stunden",
+      "minutes": "Minuten",
+      "status": "Status",
+      "corrected": "Korrigiert",
+      "note": "Notiz",
+      "actions": "Aktionen",
+      "yes": "ja"
+    },
+    "status": {
+      "open": "Arbeitet",
+      "closed": "Abgeschlossen",
+      "missing_out": "Ausstempeln fehlt",
+      "missing_in": "Einstempeln fehlt"
+    },
+    "correct": {
+      "action": "Korrigieren",
+      "title": "Stempelung von {name} korrigieren",
+      "hint": "Die Änderung wird mit Grund, Person und Zeit im Journal festgehalten.",
+      "outHint": "Leer lassen, wenn die Person noch arbeitet.",
+      "outError": "Das Ausstempeln muss nach dem Einstempeln liegen, höchstens 24 Stunden später.",
+      "invalid": "Geben Sie Datum und Uhrzeit an.",
+      "note": "Grund",
+      "notePlaceholder": "z. B. Ausstempeln vergessen",
+      "save": "Korrektur speichern",
+      "saved": "Stempelung korrigiert",
+      "cancel": "Abbrechen",
+      "close": "Schliessen"
+    }
   }
 }

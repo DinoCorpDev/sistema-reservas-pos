@@ -13,7 +13,8 @@ describe('EVENT_TYPES (section 16)', () => {
   });
 
   it('covers every event listed in the requirements document', () => {
-    expect(EVENT_TYPES).toHaveLength(38);
+    // 36 from the document, plus inventory (DEC-051) and working time (DEC-054).
+    expect(EVENT_TYPES).toHaveLength(40);
     for (const type of [
       'order.created',
       'order.split',
@@ -24,6 +25,8 @@ describe('EVENT_TYPES (section 16)', () => {
       'tax.rule_changed',
       'sync.conflict_detected',
       'device.online',
+      'staff.clocked_in',
+      'staff.clocked_out',
     ]) {
       expect(isEventType(type)).toBe(true);
     }

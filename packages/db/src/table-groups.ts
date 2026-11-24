@@ -77,6 +77,7 @@ export const TABLE_GROUPS = {
     s.cashMovements,
     s.paymentReconciliations,
     s.stockConsumptions,
+    s.timeEntries,
   ],
   /** Insert-only; MySQL triggers reject UPDATE and DELETE (RN-10). */
   appendOnly: [s.auditEvents, s.receipts, s.dailyClosings, s.stockMovements],

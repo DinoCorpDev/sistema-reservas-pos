@@ -277,6 +277,17 @@ export interface KitchenTicketState {
   reprintCount: number;
 }
 
+/** Working time of one person (DEC-054), from `staff.clock_in` and `staff.clock_out`. */
+export interface TimeEntryState {
+  id: string;
+  userId: string;
+  /** Null when the exit was folded without its entry. */
+  clockInAt: string | null;
+  clockOutAt: string | null;
+  clockInTerminalId: string | null;
+  clockOutTerminalId: string | null;
+}
+
 export interface ConflictRecord {
   opId: string;
   code: ConflictCode;
@@ -326,6 +337,8 @@ export interface FoldState {
   paymentsByShift: OrderIndex;
   refundsByShift: OrderIndex;
   movementsByShift: OrderIndex;
+  /** Working time of the staff by entry id (DEC-054). */
+  timeEntries: Map<string, TimeEntryState>;
   /** Ids of the operations folded so far, with their outcome. */
   outcomes: Map<string, OperationOutcome>;
   conflicts: ConflictRecord[];
@@ -354,6 +367,7 @@ export function createFoldState(): FoldState {
     paymentsByShift: new Map(),
     refundsByShift: new Map(),
     movementsByShift: new Map(),
+    timeEntries: new Map(),
     outcomes: new Map(),
     conflicts: [],
     audits: [],
