@@ -295,7 +295,7 @@
       "heightMore": "Deeper",
       "removeNew": "Take off the plan",
       "removeHint": "A saved table is deleted in the table list.",
-      "selectHint": "Pick a table to change its name, seats, shape and size.",
+      "selectHint": "Pick a table to change its name, seats and size.",
       "photoErrors": {
         "ai_not_configured": "The photo needs an AI key (ANTHROPIC_API_KEY).",
         "ai_refused": "The AI would not read this photo. Try another one.",

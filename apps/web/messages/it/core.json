@@ -295,7 +295,7 @@
       "heightMore": "Più profondo",
       "removeNew": "Togli dalla pianta",
       "removeHint": "Un tavolo già salvato si elimina nella lista dei tavoli.",
-      "selectHint": "Scegliete un tavolo per cambiarne nome, posti, forma e dimensione.",
+      "selectHint": "Scegliete un tavolo per cambiarne nome, posti e dimensione.",
       "photoErrors": {
         "ai_not_configured": "Per la foto serve una chiave IA (ANTHROPIC_API_KEY).",
         "ai_refused": "L'IA non ha voluto leggere questa foto. Provate con un'altra.",

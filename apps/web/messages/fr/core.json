@@ -295,7 +295,7 @@
       "heightMore": "Plus profonde",
       "removeNew": "Retirer du plan",
       "removeHint": "Une table enregistrée se supprime dans la liste des tables.",
-      "selectHint": "Choisissez une table pour changer son nom, ses places, sa forme et sa taille.",
+      "selectHint": "Choisissez une table pour changer son nom, ses places et sa taille.",
       "photoErrors": {
         "ai_not_configured": "La photo demande une clé d'IA (ANTHROPIC_API_KEY).",
         "ai_refused": "L'IA n'a pas voulu lire cette photo. Essayez-en une autre.",

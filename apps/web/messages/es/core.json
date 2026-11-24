@@ -295,7 +295,7 @@
       "heightMore": "Más fondo",
       "removeNew": "Quitar del plano",
       "removeHint": "Una mesa ya guardada se borra en la lista de mesas.",
-      "selectHint": "Elige una mesa para cambiar su nombre, plazas, forma y tamaño.",
+      "selectHint": "Elige una mesa para cambiar su nombre, plazas y tamaño.",
       "photoErrors": {
         "ai_not_configured": "Para la foto hace falta una clave de IA (ANTHROPIC_API_KEY).",
         "ai_refused": "La IA no quiso leer esta foto. Prueba con otra.",

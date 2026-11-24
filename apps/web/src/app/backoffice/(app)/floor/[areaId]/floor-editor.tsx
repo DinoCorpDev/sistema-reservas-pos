@@ -18,14 +18,12 @@ import { cn } from '@pos/ui/utils';
 import {
   BoxIcon,
   CameraIcon,
-  CircleIcon,
   MinusIcon,
   MousePointerClickIcon,
   PencilRulerIcon,
   PlusIcon,
   SaveIcon,
   SparklesIcon,
-  SquareIcon,
   Trash2Icon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -40,7 +38,7 @@ import {
   useState,
 } from 'react';
 import { useServerAction } from '@/components/backoffice/use-server-action';
-import { FloorRoom, RoomTable, roomCell } from '@/components/floor/floor-room';
+import { FloorRoom, RoomTable, roomTracks, useElementWidth } from '@/components/floor/floor-room';
 import * as actions from '../actions';
 
 type Shape = 'rect' | 'round';
@@ -230,10 +228,12 @@ export function FloorEditor({
   const extent = gridOf(tables);
   // The grid the POS draws (`planLayout`): as wide as the tables reach (at least 4), as deep as
   // they reach, without the editor's spare rows.
+  const [previewRef, previewWidth] = useElementWidth<HTMLDivElement>();
   const tillGrid = {
     cols: extent.cols,
     rows: Math.max(1, ...tables.map((table) => table.posY + table.height)),
   };
+  const tillTracks = roomTracks(tables, tillGrid.cols, tillGrid.rows);
 
   const addTable = () => {
     let spot = findFreeSpot(tables, { width: 1, height: 1 }, grid.cols, grid.rows);
@@ -495,7 +495,7 @@ export function FloorEditor({
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
         {/* The grid, the same proportions as on the POS */}
-        <div className="min-w-0">
+        <div className="min-w-0" ref={previewRef}>
           <div
             ref={canvasRef}
             hidden={preview}
@@ -541,7 +541,6 @@ export function FloorEditor({
                   onFocus={() => setSelectedKey(table.key)}
                 >
                   <RoomTable
-                    shape={table.shape}
                     width={table.width}
                     height={table.height}
                     seats={table.capacity}
@@ -566,19 +565,24 @@ export function FloorEditor({
           </div>
           {preview ? (
             <div data-testid="floor-3d-preview">
-              <FloorRoom cols={tillGrid.cols} rows={tillGrid.rows} view="3d" label={t('preview')}>
+              <FloorRoom
+                unitsX={tillTracks.unitsX}
+                unitsY={tillTracks.unitsY}
+                width={previewWidth}
+                view="3d"
+                label={t('preview')}
+              >
                 {tables.map((table) => (
                   <button
                     key={table.key}
                     type="button"
                     className="group outline-none"
-                    style={roomCell(table, tillGrid.cols, tillGrid.rows)}
+                    style={tillTracks.place(table)}
                     aria-label={t('tableAria', { label: table.label, seats: table.capacity })}
                     aria-pressed={table.key === selectedKey}
                     onClick={() => setSelectedKey(table.key)}
                   >
                     <RoomTable
-                      shape={table.shape}
                       width={table.width}
                       height={table.height}
                       seats={table.capacity}
@@ -648,20 +652,6 @@ export function FloorEditor({
                     }
                   />
                 </Field>
-                <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={t('shape')}>
-                  {(['rect', 'round'] as const).map((shape) => (
-                    <Button
-                      key={shape}
-                      role="radio"
-                      aria-checked={selected.shape === shape}
-                      variant={selected.shape === shape ? 'default' : 'outline'}
-                      disabled={!canEdit}
-                      onClick={() => update(selected.key, () => ({ shape }))}
-                    >
-                      {shape === 'rect' ? <SquareIcon /> : <CircleIcon />} {t(`shapes.${shape}`)}
-                    </Button>
-                  ))}
-                </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   {(['width', 'height'] as const).map((side) => {
                     const room =

@@ -688,22 +688,23 @@ Pedido de Juan (23 nov 2026): que las mesas queden en la caja tal cual están en
 
 ## DEC-057 · La sala en 3D y el encabezado de la caja en una fila
 
-Juan (24 nov 2026) pidió dos cosas: que la vista de las mesas deje de verse rara (eran tarjetas sueltas sobre una cuadrícula vacía) y algo más interesante, en 3D. También que el encabezado de la caja no se aprieta en una tablet.
+Juan (24 nov 2026) pidió dos cosas: que la vista de las mesas deje de verse rara (eran tarjetas sueltas sobre una cuadrícula vacía) y algo más interesante, en 3D. También que el encabezado de la caja no se apriete en una tablet.
+
+Al probar la primera versión pidió además: solo mesas cuadradas, más juntas y muy liviana, porque también corre en celular.
 
 - **La sala como una sala** (`components/floor/floor-room.tsx`, compartida por la caja y el editor):
   - piso de madera con borde;
-  - cada mesa con su sombra, su canto, su tapa y las sillas alrededor según sus plazas;
+  - mesas **cuadradas** (la forma redonda del dato ya no se dibuja), cada una con su canto, su sombra y las sillas alrededor según sus plazas;
   - en la tapa: el número, el ícono del estado, los comensales y los minutos.
-- **3D o plano.** Por defecto, el piso se inclina 38° en perspectiva. «Plano» la muestra desde arriba, con la misma información.
-  - Cada caja recuerda su elección (`localStorage`).
-  - Es CSS 3D puro, sin WebGL ni librerías: funciona en tablets modestas y sin internet.
+- **Liviana:** se inclina **un solo plano**, el piso, y todo lo que hay encima es 2D plano: no hay una capa 3D por mesa. El canto y la sombra son `box-shadow`. La mesa con la comida lista solo hace un parpadeo de opacidad, que se apaga con «reducir movimiento».
+- **Más juntas:** una fila o columna vacía del plano se dibuja como un pasillo de 0,35 celdas (`roomTracks()`). Las mesas guardan su disposición, pero sin huecos grandes.
+- **3D o plano:** 32° en tablet y 26° en celular; «Plano» la muestra desde arriba. Cada dispositivo recuerda su elección (`localStorage`).
+- **Celular:** la sala también se muestra cuando la celda mide al menos 40 px (cada mesa es un botón de al menos 44 px). Las sillas se ocultan por debajo de 46 px y la leyenda va en una fila que se desliza.
 - **Lo que no cambia:**
   - los colores e íconos de estado de las mesas;
   - el botón de cada mesa, con su nombre accesible, `data-testid` y `data-state`;
-  - los objetivos táctiles grandes.
-  - Una mesa con la comida lista pulsa suavemente (no pulsa con «reducir movimiento»).
-  - Si la zona no tiene plano, sigue la cuadrícula de tarjetas.
-- **Editor del plano:** sus mesas tienen la misma forma y las mismas sillas, sobre el mismo piso. «Ver en 3D» muestra la sala exactamente como la verá la caja.
+  - si la sala no cabe, la cuadrícula de tarjetas.
+- **Editor del plano:** las mismas mesas cuadradas y sillas, sobre el mismo piso. «Ver en 3D» muestra la sala exactamente como la verá la caja.
 - **Encabezado de la caja y la cocina:**
   - El avatar abre el menú de la persona: el turno (empezar o terminar, con su hora), el idioma, el tema y el manual. Un punto verde marca que la persona está en turno.
   - «Bloquear» queda a la vista.

@@ -21,7 +21,8 @@ import {
   FloorRoom,
   RoomTable,
   type RoomView,
-  roomCell,
+  roomCellSize,
+  roomTracks,
   saveRoomView,
   storedRoomView,
 } from '@/components/floor/floor-room';
@@ -34,8 +35,9 @@ import { LEGEND_STATES, TABLE_STATE_ICONS, TABLE_STATE_STYLES } from './order/st
 
 type FloorTable = BootstrapDto['tables'][number];
 
-/** The map scales to the container; below this cell width it becomes a plain grid. */
-const MIN_CELL_PX = 76;
+/** The room scales to the container; below this cell width (a crowded room on a phone) it
+ * becomes the list of tiles. */
+const MIN_ROOM_CELL_PX = 40;
 const MAX_GRID = 16;
 
 /** Area of the floor shown last on this terminal, kept while the POS runs. */
@@ -190,11 +192,15 @@ export function FloorView() {
               );
             })}
           </div>
-          <ul className="flex flex-wrap gap-1.5 text-xs" aria-label={t('legend')}>
+          {/* One row on a phone, scrolled sideways; wrapped from sm up. */}
+          <ul
+            className="-mx-3 flex gap-1.5 overflow-x-auto px-3 text-xs [scrollbar-width:none] max-sm:w-[calc(100%+1.5rem)] sm:mx-0 sm:flex-wrap sm:px-0"
+            aria-label={t('legend')}
+          >
             {LEGEND_STATES.map((state) => (
               <li
                 key={state}
-                className="flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 font-medium"
+                className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 font-medium"
               >
                 <span
                   className={cn('size-3 rounded-full border-2', TABLE_STATE_STYLES[state])}
@@ -283,12 +289,25 @@ function AreaMap({
   const [ref, width] = useElementWidth<HTMLDivElement>();
   const t = useTranslations('posOrder.floor');
   const layout = useMemo(() => planLayout(tables), [tables]);
-  const positioned = layout !== null && width / layout.cols >= MIN_CELL_PX;
-  if (positioned) {
-    // The area has a plan: the room as it is, in 3D or seen from above (DEC-057).
-    return (
-      <div ref={ref}>
-        <FloorRoom cols={layout.cols} rows={layout.rows} view={roomView} label={t('map')}>
+  const tracks = useMemo(
+    () => (layout ? roomTracks(tables, layout.cols, layout.rows) : null),
+    [layout, tables],
+  );
+  const cell = tracks ? roomCellSize(width, tracks.unitsX) : 0;
+  // The room once its cells fit a finger, also on a phone; otherwise the list of tiles.
+  const positioned = tracks !== null && cell >= MIN_ROOM_CELL_PX;
+  return (
+    // One element measured the whole time: the room or the tiles follow the width (a tablet
+    // turned, a split screen) without losing the observer.
+    <div ref={ref}>
+      {positioned ? (
+        <FloorRoom
+          unitsX={tracks.unitsX}
+          unitsY={tracks.unitsY}
+          width={width}
+          view={roomView}
+          label={t('map')}
+        >
           {tables.map((table) => {
             const view = views.get(table.id);
             const joinedTo = view?.joinedToTableId
@@ -298,8 +317,8 @@ function AreaMap({
               <RoomTableButton
                 key={table.id}
                 table={table}
-                cols={layout.cols}
-                rows={layout.rows}
+                place={tracks.place(table)}
+                chairs={cell >= 46}
                 state={view?.state ?? 'free'}
                 orderCount={joinedTo ? 0 : (view?.orderIds.length ?? 0)}
                 guests={joinedTo ? 0 : (guests.get(table.id) ?? 0)}
@@ -311,52 +330,35 @@ function AreaMap({
             );
           })}
         </FloorRoom>
-      </div>
-    );
-  }
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        'grid gap-2 sm:gap-3',
-        // Three tables per row on a phone held upright (DEC-036), more on a tablet.
-        !positioned &&
-          'auto-rows-[minmax(6.5rem,auto)] grid-cols-[repeat(auto-fill,minmax(6.75rem,1fr))] sm:auto-rows-[minmax(7.5rem,auto)] sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]',
+      ) : (
+        <div
+          className={cn(
+            'grid gap-2 sm:gap-3',
+            // Three tables per row on a phone held upright (DEC-036), more on a tablet.
+            'auto-rows-[minmax(6.5rem,auto)] grid-cols-[repeat(auto-fill,minmax(6.75rem,1fr))] sm:auto-rows-[minmax(7.5rem,auto)] sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]',
+          )}
+        >
+          {tables.map((table) => {
+            const view = views.get(table.id);
+            const joinedTo = view?.joinedToTableId
+              ? tableById.get(view.joinedToTableId)
+              : undefined;
+            return (
+              <TableTile
+                key={table.id}
+                table={table}
+                state={view?.state ?? 'free'}
+                orderCount={joinedTo ? 0 : (view?.orderIds.length ?? 0)}
+                guests={joinedTo ? 0 : (guests.get(table.id) ?? 0)}
+                allergy={!joinedTo && allergy.has(table.id)}
+                minutes={minutesSince(view?.lastSentAt ?? null, now)}
+                joinedToLabel={joinedTo?.label ?? null}
+                onSelect={() => onSelect(table)}
+              />
+            );
+          })}
+        </div>
       )}
-      style={
-        positioned
-          ? {
-              gridTemplateColumns: `repeat(${layout.cols}, minmax(0, 1fr))`,
-              gridTemplateRows: `repeat(${layout.rows}, minmax(7rem, auto))`,
-            }
-          : undefined
-      }
-    >
-      {tables.map((table) => {
-        const view = views.get(table.id);
-        const joinedTo = view?.joinedToTableId ? tableById.get(view.joinedToTableId) : undefined;
-        return (
-          <TableTile
-            key={table.id}
-            table={table}
-            state={view?.state ?? 'free'}
-            orderCount={joinedTo ? 0 : (view?.orderIds.length ?? 0)}
-            guests={joinedTo ? 0 : (guests.get(table.id) ?? 0)}
-            allergy={!joinedTo && allergy.has(table.id)}
-            minutes={minutesSince(view?.lastSentAt ?? null, now)}
-            joinedToLabel={joinedTo?.label ?? null}
-            style={
-              positioned
-                ? {
-                    gridColumn: `${table.posX + 1} / span ${table.width}`,
-                    gridRow: `${table.posY + 1} / span ${table.height}`,
-                  }
-                : undefined
-            }
-            onSelect={() => onSelect(table)}
-          />
-        );
-      })}
     </div>
   );
 }
@@ -400,7 +402,8 @@ function TableTile({
       className={cn(
         'flex min-h-26 min-w-0 flex-col justify-between gap-2 border-2 p-3 text-left shadow-card transition-[transform,box-shadow] duration-150 select-none hover:shadow-raised active:scale-[0.97]',
         'outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
-        table.shape === 'round' ? 'rounded-[1.75rem] px-4' : 'rounded-2xl',
+        // Square tables only (DEC-057).
+        'rounded-2xl',
         TABLE_STATE_STYLES[state],
       )}
     >
@@ -464,8 +467,8 @@ function TableTile({
  */
 function RoomTableButton({
   table,
-  cols,
-  rows,
+  place,
+  chairs,
   state,
   orderCount,
   guests,
@@ -475,8 +478,8 @@ function RoomTableButton({
   onSelect,
 }: {
   table: FloorTable;
-  cols: number;
-  rows: number;
+  place: CSSProperties;
+  chairs: boolean;
   state: TableState;
   orderCount: number;
   guests: number;
@@ -500,16 +503,16 @@ function RoomTableButton({
       aria-label={t('table', { label: table.label })}
       aria-describedby={detailsId}
       onClick={onSelect}
-      style={roomCell(table, cols, rows)}
-      className="group cursor-pointer outline-none select-none active:scale-[0.98]"
+      style={place}
+      className="group cursor-pointer outline-none select-none"
     >
       <RoomTable
-        shape={table.shape === 'round' ? 'round' : 'rect'}
         width={table.width}
         height={table.height}
         seats={table.capacity}
-        topClassName={cn('@container gap-0.5 p-1', TABLE_STATE_STYLES[state])}
-        pulse={state === 'ready'}
+        chairs={chairs}
+        topClassName={cn('@container gap-0.5 p-1 active:brightness-95', TABLE_STATE_STYLES[state])}
+        attention={state === 'ready'}
       >
         <span className="flex items-center gap-1">
           <span className="font-brand text-[clamp(1.05rem,calc(var(--cell)*0.2),1.9rem)] leading-none font-semibold">

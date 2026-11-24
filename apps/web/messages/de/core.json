@@ -295,7 +295,7 @@
       "heightMore": "Tiefer",
       "removeNew": "Aus dem Plan nehmen",
       "removeHint": "Einen gespeicherten Tisch löschen Sie in der Tischliste.",
-      "selectHint": "Wählen Sie einen Tisch, um Name, Plätze, Form und Grösse zu ändern.",
+      "selectHint": "Wählen Sie einen Tisch, um Name, Plätze und Grösse zu ändern.",
       "photoErrors": {
         "ai_not_configured": "Für das Foto braucht es einen KI-Schlüssel (ANTHROPIC_API_KEY).",
         "ai_refused": "Die KI wollte dieses Foto nicht lesen. Versuchen Sie es mit einem anderen.",
